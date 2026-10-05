@@ -1,0 +1,232 @@
+{
+  "title": "Dibujo, imágenes y capas",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Dibujo, imágenes y capas",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "Todos los elementos geométricos. En Studio: Objetos → bloqueo, ocultación, grupos y nombre descriptivo.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "line",
+      "kind": "line",
+      "stroke_color": "@S7",
+      "stroke_width": 4,
+      "arrows": "both",
+      "x": 70,
+      "y": 200,
+      "w": 400,
+      "h": 1,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "polyline",
+      "kind": "polyline",
+      "stroke_color": "@Modbus",
+      "stroke_width": 4,
+      "stroke_style": "dash",
+      "x": 70,
+      "y": 240,
+      "w": 420,
+      "h": 70,
+      "points": [
+        [
+          0.0,
+          0.7142857142857143
+        ],
+        [
+          0.3333333333333333,
+          0.0
+        ],
+        [
+          0.6666666666666666,
+          1.0
+        ],
+        [
+          1.0,
+          0.14285714285714285
+        ]
+      ]
+    },
+    {
+      "id": "pipe",
+      "kind": "pipe",
+      "stroke_color": "@Linea",
+      "stroke_width": 12,
+      "arrows": "end",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Local.Marcha",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Marcha"
+            }
+          }
+        ]
+      },
+      "x": 75,
+      "y": 350,
+      "w": 405,
+      "h": 70,
+      "points": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.38271604938271603,
+          1.0
+        ],
+        [
+          0.38271604938271603,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "rect",
+      "kind": "rectangle",
+      "x": 70,
+      "y": 515,
+      "w": 170,
+      "h": 90,
+      "color": "@S7",
+      "stroke_color": "#1c4568",
+      "stroke_width": 3,
+      "filled": true,
+      "group": "formas"
+    },
+    {
+      "id": "ellipse",
+      "kind": "ellipse",
+      "x": 290,
+      "y": 515,
+      "w": 170,
+      "h": 90,
+      "color": "@Modbus",
+      "stroke_color": "#59327f",
+      "stroke_width": 3,
+      "filled": true,
+      "group": "formas"
+    },
+    {
+      "id": "image_panel",
+      "kind": "rectangle",
+      "x": 575,
+      "y": 140,
+      "w": 550,
+      "h": 470,
+      "color": "@Panel",
+      "stroke_color": "#dce5ed",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "valve",
+      "kind": "image",
+      "x": 675,
+      "y": 200,
+      "w": 350,
+      "h": 210,
+      "source": "assets/valve-off.svg",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Local.Marcha",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "source": "assets/valve-on.svg"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "image_state",
+      "kind": "button",
+      "x": 690,
+      "y": 470,
+      "w": 320,
+      "h": 42,
+      "text": "Cambiar estado de válvula",
+      "action": "toggle",
+      "font_size": 15,
+      "tag": "Local.Marcha"
+    },
+    {
+      "id": "image_label",
+      "kind": "text",
+      "x": 655,
+      "y": 550,
+      "w": 410,
+      "h": 38,
+      "text": "Imagen SVG que cambia por condición",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "hidden_example",
+      "kind": "text",
+      "x": 75,
+      "y": 655,
+      "w": 1000,
+      "h": 42,
+      "text": "Este texto está oculto solo en diseño; sí aparece en Runtime.",
+      "font_size": 16,
+      "editor_hidden": true,
+      "description": "Ejemplo de ocultación exclusiva de Studio"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

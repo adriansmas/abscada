@@ -1,0 +1,106 @@
+{
+  "retention_days": 365,
+  "categories": [
+    {
+      "id": "local",
+      "name": "Proceso interno",
+      "color": "#147d75"
+    },
+    {
+      "id": "equipment",
+      "name": "Equipos TCP",
+      "color": "#3678c8"
+    },
+    {
+      "id": "events",
+      "name": "Avisos",
+      "color": "#da982f"
+    }
+  ],
+  "items": [
+    {
+      "id": "local_high",
+      "tag": "Local.Nivel",
+      "category": "local",
+      "condition": "high",
+      "threshold": 80,
+      "message": "Nivel local alto",
+      "priority": 800,
+      "ack_required": true,
+      "enabled": true,
+      "hysteresis": 3,
+      "on_delay_ms": 500,
+      "off_delay_ms": 300
+    },
+    {
+      "id": "local_low",
+      "tag": "Local.Nivel",
+      "category": "local",
+      "condition": "low",
+      "threshold": 15,
+      "message": "Nivel local bajo",
+      "priority": 600,
+      "ack_required": true,
+      "enabled": true,
+      "hysteresis": 3,
+      "on_delay_ms": 500,
+      "off_delay_ms": 300
+    },
+    {
+      "id": "fault",
+      "tag": "Local.Fallo",
+      "category": "local",
+      "condition": "true",
+      "threshold": 0,
+      "message": "Fallo digital de ejemplo",
+      "priority": 900,
+      "ack_required": true,
+      "enabled": true,
+      "hysteresis": 0,
+      "on_delay_ms": 500,
+      "off_delay_ms": 300
+    },
+    {
+      "id": "s7_high",
+      "tag": "Siemens.Nivel",
+      "category": "equipment",
+      "condition": "high",
+      "threshold": 80,
+      "message": "Nivel alto en depósito S7",
+      "priority": 700,
+      "ack_required": true,
+      "enabled": true,
+      "hysteresis": 3,
+      "on_delay_ms": 500,
+      "off_delay_ms": 300
+    },
+    {
+      "id": "modbus_hot",
+      "tag": "Modbus.Temperatura",
+      "category": "equipment",
+      "condition": "high",
+      "threshold": 65,
+      "message": "Temperatura Modbus alta",
+      "priority": 750,
+      "ack_required": true,
+      "enabled": true,
+      "hysteresis": 3,
+      "on_delay_ms": 500,
+      "off_delay_ms": 300
+    },
+    {
+      "id": "manual",
+      "tag": "Local.Modo",
+      "category": "events",
+      "condition": "equal",
+      "threshold": 1,
+      "message": "Modo manual seleccionado",
+      "priority": 200,
+      "ack_required": false,
+      "enabled": true,
+      "hysteresis": 0,
+      "on_delay_ms": 500,
+      "off_delay_ms": 300
+    }
+  ]
+}

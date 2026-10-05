@@ -1,0 +1,38 @@
+{
+  "retention_days": 90,
+  "files": [
+    {
+      "id": "internas",
+      "name": "Variables internas · 1 s",
+      "interval_ms": 1000,
+      "variables": [
+        "Local.Nivel",
+        "Local.Consigna",
+        "Local.Temperatura",
+        "Local.Marcha"
+      ]
+    },
+    {
+      "id": "equipos",
+      "name": "Equipos TCP · 2 s",
+      "interval_ms": 2000,
+      "variables": [
+        "Siemens.Bomba1.Caudal",
+        "Siemens.Bomba2.Caudal",
+        "Siemens.Nivel",
+        "Modbus.Temperatura",
+        "Modbus.Contador"
+      ]
+    },
+    {
+      "id": "estados",
+      "name": "Estados y mandos · 5 s",
+      "interval_ms": 5000,
+      "variables": [
+        "Local.Modo",
+        "Local.Permiso",
+        "Local.Fallo"
+      ]
+    }
+  ]
+}

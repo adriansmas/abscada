@@ -1,0 +1,83 @@
+{
+  "title": "Confirmar parada de emergencia · Grupo 1",
+  "width": 520,
+  "height": 260,
+  "background": "#fbeaea",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "icono",
+      "kind": "text",
+      "x": 20,
+      "y": 20,
+      "w": 60,
+      "h": 60,
+      "text": "⚠",
+      "font_size": 40,
+      "bold": true,
+      "text_color": "@Disparo",
+      "text_align": "left"
+    },
+    {
+      "id": "texto",
+      "kind": "text",
+      "x": 90,
+      "y": 22,
+      "w": 410,
+      "h": 50,
+      "text": "¿Disparar el Grupo 1 con PARADA DE EMERGENCIA?",
+      "font_size": 17,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "detalle",
+      "kind": "text",
+      "x": 90,
+      "y": 76,
+      "w": 410,
+      "h": 70,
+      "text": "Abre el 52G, cierra el distribuidor y la válvula de entrada de forma rápida. El grupo queda bloqueado (86) hasta el rearme.",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "confirmar",
+      "kind": "button",
+      "x": 90,
+      "y": 170,
+      "w": 220,
+      "h": 46,
+      "text": "CONFIRMAR DISPARO",
+      "tag": "G1.OrdenEmergencia",
+      "action": "set",
+      "value": true,
+      "font_size": 13,
+      "bold": true,
+      "color": "@Disparo",
+      "border_color": "@Disparo",
+      "text_color": "#ffffff",
+      "dynamics": {}
+    },
+    {
+      "id": "cancelar",
+      "kind": "button",
+      "x": 330,
+      "y": 170,
+      "w": 170,
+      "h": 46,
+      "text": "Cerrar",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "action": "close_popup"
+    }
+  ]
+}

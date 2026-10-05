@@ -1,0 +1,145 @@
+{
+  "title": "Siemens S7 · DB1",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Siemens S7 · DB1",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "S7_Laboratorio · 127.0.0.1:1102 · rack 0 / slot 1 · adquisición cada 250 ms.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "label0",
+      "kind": "text",
+      "x": 30,
+      "y": 145,
+      "w": 500,
+      "h": 32,
+      "text": "Bomba1",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "s7unit0",
+      "kind": "faceplate",
+      "x": 30,
+      "y": 195,
+      "w": 530,
+      "h": 280,
+      "template": "unidad",
+      "bindings": {
+        "run": "Siemens.Bomba1.Marcha",
+        "pv": "Siemens.Bomba1.Caudal",
+        "sp": "Siemens.Bomba1.Consigna"
+      }
+    },
+    {
+      "id": "map0",
+      "kind": "text",
+      "x": 30,
+      "y": 510,
+      "w": 525,
+      "h": 95,
+      "text": "Marcha: %DB1.DBX0.0\nCaudal: %DB1.DBD4 · Consigna: %DB1.DBD8",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "label1",
+      "kind": "text",
+      "x": 595,
+      "y": 145,
+      "w": 500,
+      "h": 32,
+      "text": "Bomba2",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "s7unit1",
+      "kind": "faceplate",
+      "x": 595,
+      "y": 195,
+      "w": 530,
+      "h": 280,
+      "template": "unidad",
+      "bindings": {
+        "run": "Siemens.Bomba2.Marcha",
+        "pv": "Siemens.Bomba2.Caudal",
+        "sp": "Siemens.Bomba2.Consigna"
+      }
+    },
+    {
+      "id": "map1",
+      "kind": "text",
+      "x": 595,
+      "y": 510,
+      "w": 525,
+      "h": 95,
+      "text": "Marcha: %DB1.DBX16.0\nCaudal: %DB1.DBD20 · Consigna: %DB1.DBD24",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "level",
+      "kind": "text",
+      "x": 30,
+      "y": 640,
+      "w": 420,
+      "h": 44,
+      "text": "Nivel DB1.DBD12",
+      "tag": "Siemens.Nivel",
+      "unit": "%",
+      "decimals": 1,
+      "text_align": "left",
+      "color": "#ffffff",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "quality",
+      "kind": "text",
+      "x": 485,
+      "y": 640,
+      "w": 615,
+      "h": 44,
+      "text": "S7",
+      "tag": "Sistema.S7",
+      "unit": "",
+      "decimals": 1,
+      "text_align": "left",
+      "color": "#ffffff",
+      "text_color": "@Texto"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

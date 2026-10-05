@@ -1,0 +1,65 @@
+{
+  "title": "Interruptor",
+  "width": 44,
+  "height": 44,
+  "background": "@Fondo",
+  "parameters": {
+    "cerrado": "bool"
+  },
+  "elements": [
+    {
+      "id": "cuerpo",
+      "kind": "rectangle",
+      "x": 2,
+      "y": 2,
+      "w": 40,
+      "h": 40,
+      "color": "@Abierto",
+      "stroke_color": "@Texto",
+      "stroke_width": 2,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$cerrado",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Cerrado"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "estado",
+      "kind": "text_list",
+      "x": 2,
+      "y": 2,
+      "w": 40,
+      "h": 40,
+      "tag": "$cerrado",
+      "font_size": 16,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "#00000000",
+      "border_color": "#00000000",
+      "texts": [
+        {
+          "value": "true",
+          "text": "I"
+        },
+        {
+          "value": "false",
+          "text": "O"
+        }
+      ],
+      "default_text": "?"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "width": 1000,
+  "height": 650,
+  "elements": [
+    {
+      "id": "header",
+      "kind": "text",
+      "x": 30,
+      "y": 25,
+      "w": 940,
+      "h": 60,
+      "text": "CONTROL DE PROCESO",
+      "color": "#163e5d"
+    },
+    {
+      "id": "pump1",
+      "kind": "faceplate",
+      "x": 30,
+      "y": 170,
+      "w": 340,
+      "h": 220,
+      "template": "pump",
+      "bindings": {
+        "running": "Pump1.running",
+        "flow": "Pump1.flow",
+        "setpoint": "Pump1.setpoint"
+      }
+    },
+    {
+      "id": "pump2",
+      "kind": "faceplate",
+      "x": 405,
+      "y": 170,
+      "w": 340,
+      "h": 220,
+      "template": "pump",
+      "bindings": {
+        "running": "Pump2.running",
+        "flow": "Pump2.flow",
+        "setpoint": "Pump2.setpoint"
+      }
+    },
+    {
+      "id": "tank",
+      "kind": "bar",
+      "x": 810,
+      "y": 170,
+      "w": 110,
+      "h": 220,
+      "tag": "TankLevel",
+      "min": 0,
+      "max": 100
+    },
+    {
+      "id": "level",
+      "kind": "text",
+      "x": 780,
+      "y": 410,
+      "w": 185,
+      "h": 48,
+      "tag": "TankLevel",
+      "text": "Nivel",
+      "unit": "%"
+    },
+    {
+      "id": "operator",
+      "kind": "input",
+      "x": 30,
+      "y": 430,
+      "w": 715,
+      "h": 48,
+      "tag": "Operator",
+      "text": "Operador:"
+    }
+  ]
+}

@@ -1,0 +1,1151 @@
+{
+  "title": "Embalse, presa y aliviadero",
+  "width": 1400,
+  "height": 830,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "titulo",
+      "kind": "text",
+      "x": 14,
+      "y": 8,
+      "w": 900,
+      "h": 30,
+      "text": "EMBALSE, PRESA Y ALIVIADERO",
+      "font_size": 20,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "subtitulo",
+      "kind": "text",
+      "x": 14,
+      "y": 36,
+      "w": 900,
+      "h": 18,
+      "text": "Presa de gravedad · coronación 817,00 · NMN 815,00 · umbral aliviadero 808,00 · mínimo de explotación 800,00 msnm",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "seccion",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 60,
+      "w": 820,
+      "h": 462,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "seccion_titulo",
+      "kind": "text",
+      "x": 22,
+      "y": 66,
+      "w": 796,
+      "h": 20,
+      "text": "SECCIÓN POR LA PRESA",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "vaso",
+      "kind": "rectangle",
+      "x": 30,
+      "y": 100,
+      "w": 420,
+      "h": 400,
+      "color": "#ffffff",
+      "stroke_color": "@Borde",
+      "stroke_width": 1
+    },
+    {
+      "id": "agua",
+      "kind": "bar",
+      "x": 32,
+      "y": 102,
+      "w": 416,
+      "h": 396,
+      "tag": "SSCC.NivelEmbalse",
+      "min": 795.0,
+      "max": 818.0,
+      "color": "@Agua",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.NivelEmbalse",
+              "op": "ge",
+              "value": 815.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "SSCC.NivelEmbalse",
+              "op": "ge",
+              "value": 814.5,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso"
+            }
+          },
+          {
+            "when": {
+              "tag": "SSCC.NivelEmbalse",
+              "op": "le",
+              "value": 802.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cota0",
+      "kind": "line",
+      "x": 32,
+      "y": 117.39130434782606,
+      "w": 368,
+      "h": 1,
+      "stroke_color": "@Linea",
+      "stroke_width": 1,
+      "stroke_style": "dash",
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "cota0_t",
+      "kind": "text",
+      "x": 40,
+      "y": 97.39130434782606,
+      "w": 250,
+      "h": 20,
+      "text": "Coronación 817,00",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cota1",
+      "kind": "line",
+      "x": 32,
+      "y": 152.17391304347825,
+      "w": 368,
+      "h": 1,
+      "stroke_color": "@Linea",
+      "stroke_width": 1,
+      "stroke_style": "dash",
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "cota1_t",
+      "kind": "text",
+      "x": 40,
+      "y": 132.17391304347825,
+      "w": 250,
+      "h": 20,
+      "text": "NMN 815,00",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cota2",
+      "kind": "line",
+      "x": 32,
+      "y": 273.9130434782609,
+      "w": 368,
+      "h": 1,
+      "stroke_color": "@Linea",
+      "stroke_width": 1,
+      "stroke_style": "dash",
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "cota2_t",
+      "kind": "text",
+      "x": 40,
+      "y": 253.91304347826087,
+      "w": 250,
+      "h": 20,
+      "text": "Umbral aliviadero 808,00",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cota3",
+      "kind": "line",
+      "x": 32,
+      "y": 413.04347826086956,
+      "w": 368,
+      "h": 1,
+      "stroke_color": "@Linea",
+      "stroke_width": 1,
+      "stroke_style": "dash",
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "cota3_t",
+      "kind": "text",
+      "x": 40,
+      "y": 393.04347826086956,
+      "w": 250,
+      "h": 20,
+      "text": "Mínimo explotación 800,00",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "presa",
+      "kind": "image",
+      "x": 380,
+      "y": 86,
+      "w": 200,
+      "h": 422,
+      "source": "assets/presa.svg"
+    },
+    {
+      "id": "salida",
+      "kind": "pipe",
+      "x": 560,
+      "y": 470,
+      "w": 250,
+      "h": 1,
+      "stroke_color": "@Agua",
+      "stroke_width": 8,
+      "arrows": "end",
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "r0_t",
+      "kind": "text",
+      "x": 610,
+      "y": 100,
+      "w": 200,
+      "h": 22,
+      "text": "Nivel de embalse",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "r0",
+      "kind": "text",
+      "x": 610,
+      "y": 124,
+      "w": 160,
+      "h": 32,
+      "text": "",
+      "tag": "SSCC.NivelEmbalse",
+      "unit": "msnm",
+      "decimals": 2,
+      "font_size": 16,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.NivelEmbalse",
+              "op": "ge",
+              "value": 815.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "text_color": "#ffffff",
+              "border_color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "SSCC.NivelEmbalse",
+              "op": "ge",
+              "value": 814.5,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "r1_t",
+      "kind": "text",
+      "x": 610,
+      "y": 164,
+      "w": 200,
+      "h": 22,
+      "text": "Volumen embalsado",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "r1",
+      "kind": "text",
+      "x": 610,
+      "y": 188,
+      "w": 160,
+      "h": 28,
+      "text": "",
+      "tag": "SSCC.Volumen",
+      "unit": "hm³",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "r2_t",
+      "kind": "text",
+      "x": 610,
+      "y": 228,
+      "w": 200,
+      "h": 22,
+      "text": "Pluviómetro",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "r2",
+      "kind": "text",
+      "x": 610,
+      "y": 252,
+      "w": 160,
+      "h": 28,
+      "text": "",
+      "tag": "SSCC.Lluvia",
+      "unit": "mm/h",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "r3_t",
+      "kind": "text",
+      "x": 610,
+      "y": 292,
+      "w": 200,
+      "h": 22,
+      "text": "Temperatura ambiente",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "r3",
+      "kind": "text",
+      "x": 610,
+      "y": 316,
+      "w": 160,
+      "h": 28,
+      "text": "",
+      "tag": "SSCC.TempAmbiente",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "abajo_t",
+      "kind": "text",
+      "x": 610,
+      "y": 408,
+      "w": 200,
+      "h": 22,
+      "text": "Nivel de desagüe",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "desague",
+      "kind": "text",
+      "x": 610,
+      "y": 432,
+      "w": 160,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.NivelDesague",
+      "unit": "msnm",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "caudales",
+      "kind": "rectangle",
+      "x": 840,
+      "y": 60,
+      "w": 550,
+      "h": 250,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "caudales_titulo",
+      "kind": "text",
+      "x": 852,
+      "y": 66,
+      "w": 526,
+      "h": 20,
+      "text": "BALANCE DE CAUDALES",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "q0_t",
+      "kind": "text",
+      "x": 856,
+      "y": 95,
+      "w": 362,
+      "h": 22,
+      "text": "Caudal de entrada",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "q0",
+      "kind": "text",
+      "x": 1224,
+      "y": 92,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.CaudalEntrada",
+      "unit": "m³/s",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.CaudalEntrada",
+              "op": "gt",
+              "value": 60.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "q1_t",
+      "kind": "text",
+      "x": 856,
+      "y": 129,
+      "w": 362,
+      "h": 22,
+      "text": "Caudal turbinado (G1 + G2)",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "q1",
+      "kind": "text",
+      "x": 1224,
+      "y": 126,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "Sistema.CaudalTurbinado",
+      "unit": "m³/s",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "q2_t",
+      "kind": "text",
+      "x": 856,
+      "y": 163,
+      "w": 362,
+      "h": 22,
+      "text": "Caudal por aliviadero",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "q2",
+      "kind": "text",
+      "x": 1224,
+      "y": 160,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.CaudalAliviadero",
+      "unit": "m³/s",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.CaudalAliviadero",
+              "op": "gt",
+              "value": 1.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "q3_t",
+      "kind": "text",
+      "x": 856,
+      "y": 197,
+      "w": 362,
+      "h": 22,
+      "text": "Caudal ecológico",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "q3",
+      "kind": "text",
+      "x": 1224,
+      "y": 194,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.CaudalEcologico",
+      "unit": "m³/s",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "q4_t",
+      "kind": "text",
+      "x": 856,
+      "y": 231,
+      "w": 362,
+      "h": 22,
+      "text": "Caudal total de salida",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "q4",
+      "kind": "text",
+      "x": 1224,
+      "y": 228,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.CaudalSalida",
+      "unit": "m³/s",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "q5_t",
+      "kind": "text",
+      "x": 856,
+      "y": 265,
+      "w": 362,
+      "h": 22,
+      "text": "Salto bruto",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "q5",
+      "kind": "text",
+      "x": 1224,
+      "y": 262,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.SaltoBruto",
+      "unit": "m",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "aliv",
+      "kind": "rectangle",
+      "x": 840,
+      "y": 318,
+      "w": 550,
+      "h": 204,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "aliv_titulo",
+      "kind": "text",
+      "x": 852,
+      "y": 324,
+      "w": 526,
+      "h": 20,
+      "text": "ALIVIADERO · 2 COMPUERTAS TAINTOR 8 × 6 M",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "c1_t",
+      "kind": "text",
+      "x": 852,
+      "y": 340,
+      "w": 120,
+      "h": 20,
+      "text": "Compuerta 1",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "compuerta1",
+      "kind": "faceplate",
+      "x": 852,
+      "y": 360,
+      "w": 250,
+      "h": 156,
+      "template": "compuerta",
+      "bindings": {
+        "posicion": "SSCC.PosCompuerta1",
+        "consigna": "SSCC.ConsignaCompuerta1",
+        "automatico": "SSCC.AliviaderoAuto"
+      }
+    },
+    {
+      "id": "c2_t",
+      "kind": "text",
+      "x": 1114,
+      "y": 340,
+      "w": 120,
+      "h": 20,
+      "text": "Compuerta 2",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "compuerta2",
+      "kind": "faceplate",
+      "x": 1114,
+      "y": 360,
+      "w": 250,
+      "h": 156,
+      "template": "compuerta",
+      "bindings": {
+        "posicion": "SSCC.PosCompuerta2",
+        "consigna": "SSCC.ConsignaCompuerta2",
+        "automatico": "SSCC.AliviaderoAuto"
+      }
+    },
+    {
+      "id": "modo_aliv",
+      "kind": "button",
+      "x": 1236,
+      "y": 330,
+      "w": 144,
+      "h": 28,
+      "text": "Auto / manual",
+      "tag": "SSCC.AliviaderoAuto",
+      "action": "toggle",
+      "font_size": 12,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando"
+    },
+    {
+      "id": "tendencia",
+      "kind": "trend",
+      "x": 10,
+      "y": 530,
+      "w": 860,
+      "h": 300,
+      "view": "embalse"
+    },
+    {
+      "id": "toma",
+      "kind": "rectangle",
+      "x": 880,
+      "y": 530,
+      "w": 510,
+      "h": 300,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "toma_titulo",
+      "kind": "text",
+      "x": 892,
+      "y": 536,
+      "w": 486,
+      "h": 20,
+      "text": "TOMA Y TUBERÍA FORZADA",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "toma_marco",
+      "kind": "rectangle",
+      "x": 900,
+      "y": 566,
+      "w": 60,
+      "h": 200,
+      "color": "#ffffff",
+      "stroke_color": "@Linea",
+      "stroke_width": 2
+    },
+    {
+      "id": "toma_pos",
+      "kind": "bar",
+      "x": 904,
+      "y": 570,
+      "w": 52,
+      "h": 192,
+      "tag": "SSCC.PosCompuertaToma",
+      "min": 0,
+      "max": 100,
+      "color": "@Linea",
+      "dynamics": {}
+    },
+    {
+      "id": "toma_pos_t",
+      "kind": "text",
+      "x": 980,
+      "y": 566,
+      "w": 200,
+      "h": 20,
+      "text": "Compuerta de toma",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "toma_pos_v",
+      "kind": "text",
+      "x": 980,
+      "y": 590,
+      "w": 120,
+      "h": 28,
+      "text": "",
+      "tag": "SSCC.PosCompuertaToma",
+      "unit": "%",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "toma_ab",
+      "kind": "lamp",
+      "x": 1120,
+      "y": 568,
+      "w": 20,
+      "h": 20,
+      "tag": "SSCC.CompuertaTomaAbierta",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "toma_ab_t",
+      "kind": "text",
+      "x": 1148,
+      "y": 567,
+      "w": 92,
+      "h": 22,
+      "text": "Abierta",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "toma_ce",
+      "kind": "lamp",
+      "x": 1120,
+      "y": 596,
+      "w": 20,
+      "h": 20,
+      "tag": "SSCC.CompuertaTomaCerrada",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "toma_ce_t",
+      "kind": "text",
+      "x": 1148,
+      "y": 595,
+      "w": 92,
+      "h": 22,
+      "text": "Cerrada",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "abrir_toma",
+      "kind": "button",
+      "x": 980,
+      "y": 640,
+      "w": 180,
+      "h": 38,
+      "text": "ABRIR TOMA",
+      "tag": "SSCC.OrdenAbrirToma",
+      "action": "set",
+      "value": true,
+      "font_size": 13,
+      "bold": true,
+      "color": "@Mando",
+      "border_color": "@Mando",
+      "text_color": "#ffffff",
+      "dynamics": {}
+    },
+    {
+      "id": "cerrar_toma",
+      "kind": "button",
+      "x": 1180,
+      "y": 640,
+      "w": 190,
+      "h": 38,
+      "text": "CERRAR TOMA",
+      "tag": "SSCC.OrdenCerrarToma",
+      "action": "set",
+      "value": true,
+      "font_size": 13,
+      "bold": true,
+      "color": "@Linea",
+      "border_color": "@Linea",
+      "text_color": "#ffffff",
+      "dynamics": {
+        "enabled": {
+          "tag": "SSCC.CompuertaTomaCerrada",
+          "op": "eq",
+          "value": false,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#d7dce0",
+          "text_color": "#8a949d",
+          "border_color": "#c3c9ce"
+        },
+        "disabled_reason": "La compuerta ya está cerrada"
+      }
+    },
+    {
+      "id": "toma_nota",
+      "kind": "text",
+      "x": 980,
+      "y": 686,
+      "w": 395,
+      "h": 36,
+      "text": "El PLC solo cierra la toma con ambos grupos parados.",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "p_tub_t",
+      "kind": "text",
+      "x": 980,
+      "y": 743,
+      "w": 269,
+      "h": 22,
+      "text": "Presión en tubería forzada",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "p_tub",
+      "kind": "text",
+      "x": 1255,
+      "y": 740,
+      "w": 120,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.PresionTuberia",
+      "unit": "bar",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "caudal_tub_t",
+      "kind": "text",
+      "x": 980,
+      "y": 779,
+      "w": 269,
+      "h": 22,
+      "text": "Caudal turbinado total",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "caudal_tub",
+      "kind": "text",
+      "x": 1255,
+      "y": 776,
+      "w": 120,
+      "h": 26,
+      "text": "",
+      "tag": "Sistema.CaudalTurbinado",
+      "unit": "m³/s",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    }
+  ],
+  "on_open": [
+    "apertura"
+  ]
+}

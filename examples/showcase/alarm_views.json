@@ -1,0 +1,53 @@
+{
+  "pending": {
+    "title": "Alarmas pendientes",
+    "categories": [],
+    "min_priority": 1,
+    "mode": "pending",
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ]
+  },
+  "history": {
+    "title": "Histórico de alarmas",
+    "categories": [],
+    "min_priority": 1,
+    "mode": "history",
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ]
+  },
+  "events": {
+    "title": "Eventos de alarma",
+    "categories": [],
+    "min_priority": 1,
+    "mode": "events",
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ]
+  }
+}

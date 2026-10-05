@@ -1,0 +1,52 @@
+{
+  "process": {
+    "title": "Nivel y caudales",
+    "window_seconds": 600,
+    "axes": [
+      {
+        "id": "level",
+        "title": "Nivel (%)",
+        "side": "left",
+        "auto": false,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      },
+      {
+        "id": "flow",
+        "title": "Caudal (m³/h)",
+        "side": "right",
+        "auto": true,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "level",
+        "tag": "TankLevel",
+        "axis": "level",
+        "color": "#147d75",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "pump1",
+        "tag": "Pump1.flow",
+        "axis": "flow",
+        "color": "#3678c8",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "pump2",
+        "tag": "Pump2.flow",
+        "axis": "flow",
+        "color": "#d79832",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  }
+}

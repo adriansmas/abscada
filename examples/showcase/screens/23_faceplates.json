@@ -1,0 +1,128 @@
+{
+  "title": "Faceplates, contenedores y emergentes",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Faceplates, contenedores y emergentes",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "La misma plantilla con parámetros diferentes: una unidad interna y otra conectada a Siemens.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "name0",
+      "kind": "text",
+      "x": 30,
+      "y": 147,
+      "w": 520,
+      "h": 30,
+      "text": "INTERNA",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "unit0",
+      "kind": "faceplate",
+      "x": 30,
+      "y": 195,
+      "w": 530,
+      "h": 280,
+      "template": "unidad",
+      "bindings": {
+        "run": "Local.Marcha",
+        "pv": "Local.Nivel",
+        "sp": "Local.Consigna"
+      }
+    },
+    {
+      "id": "name1",
+      "kind": "text",
+      "x": 595,
+      "y": 147,
+      "w": 520,
+      "h": 30,
+      "text": "SIEMENS",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "unit1",
+      "kind": "faceplate",
+      "x": 595,
+      "y": 195,
+      "w": 530,
+      "h": 280,
+      "template": "equipos__unidad",
+      "bindings": {
+        "run": "Siemens.Bomba1.Marcha",
+        "pv": "Siemens.Bomba1.Caudal",
+        "sp": "Siemens.Bomba1.Consigna"
+      }
+    },
+    {
+      "id": "nonmodal",
+      "kind": "button",
+      "x": 30,
+      "y": 540,
+      "w": 350,
+      "h": 42,
+      "text": "Abrir ajustes no modales",
+      "action": "popup",
+      "font_size": 15,
+      "screen": "90_ajustes"
+    },
+    {
+      "id": "modal",
+      "kind": "button",
+      "x": 405,
+      "y": 540,
+      "w": 350,
+      "h": 42,
+      "text": "Abrir ayuda modal",
+      "action": "popup",
+      "font_size": 15,
+      "screen": "91_ayuda",
+      "modal": true
+    },
+    {
+      "id": "layout_note",
+      "kind": "text",
+      "x": 30,
+      "y": 620,
+      "w": 1090,
+      "h": 96,
+      "text": "La cabecera y el menú permanecen en sus contenedores. Los botones del menú navegan solo en «contenido». Las emergentes comparten adquisición y variables.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

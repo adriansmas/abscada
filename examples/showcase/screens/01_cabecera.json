@@ -1,0 +1,49 @@
+{
+  "title": "Cabecera compartida",
+  "width": 1360,
+  "height": 80,
+  "background": "#183445",
+  "elements": [
+    {
+      "id": "brand",
+      "kind": "text",
+      "x": 24,
+      "y": 20,
+      "w": 535,
+      "h": 40,
+      "text": "abSCADA / LABORATORIO",
+      "font_size": 25,
+      "text_align": "left",
+      "text_color": "#ffffff",
+      "bold": true
+    },
+    {
+      "id": "operator",
+      "kind": "text",
+      "x": 600,
+      "y": 21,
+      "w": 350,
+      "h": 38,
+      "text": "",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "#ffffff",
+      "tag": "Sistema.Operador",
+      "color": "#183445"
+    },
+    {
+      "id": "clock",
+      "kind": "text",
+      "x": 1000,
+      "y": 21,
+      "w": 335,
+      "h": 38,
+      "text": "",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "#ffffff",
+      "tag": "Sistema.Hora",
+      "color": "#183445"
+    }
+  ]
+}

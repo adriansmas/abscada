@@ -1,0 +1,397 @@
+{
+  "title": "Proceso con variables internas",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Proceso con variables internas",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "Los mandos y valores son locales. «Señal local» activa una tarea de ejemplo; no interviene en S7 ni Modbus.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "process",
+      "kind": "rectangle",
+      "x": 30,
+      "y": 140,
+      "w": 640,
+      "h": 505,
+      "color": "@Panel",
+      "stroke_color": "#dce5ed",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "controls",
+      "kind": "rectangle",
+      "x": 695,
+      "y": 140,
+      "w": 435,
+      "h": 505,
+      "color": "@Panel",
+      "stroke_color": "#dce5ed",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "inlet",
+      "kind": "pipe",
+      "stroke_color": "@Linea",
+      "stroke_width": 12,
+      "arrows": "end",
+      "x": 75,
+      "y": 240,
+      "w": 260,
+      "h": 90,
+      "points": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.4423076923076923,
+          1.0
+        ],
+        [
+          0.4423076923076923,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "outlet",
+      "kind": "pipe",
+      "stroke_color": "@Linea",
+      "stroke_width": 12,
+      "arrows": "end",
+      "x": 465,
+      "y": 460,
+      "w": 165,
+      "h": 85,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.6060606060606061,
+          0.0
+        ],
+        [
+          0.6060606060606061,
+          1.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "pump",
+      "kind": "ellipse",
+      "x": 115,
+      "y": 290,
+      "w": 80,
+      "h": 80,
+      "color": "#ffffff",
+      "stroke_color": "@S7",
+      "stroke_width": 3,
+      "filled": true,
+      "group": "bomba_local"
+    },
+    {
+      "id": "pump_line",
+      "kind": "line",
+      "stroke_color": "@Linea",
+      "stroke_width": 3,
+      "group": "bomba_local",
+      "x": 128,
+      "y": 302,
+      "w": 52,
+      "h": 54,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "tank",
+      "kind": "rectangle",
+      "x": 340,
+      "y": 230,
+      "w": 130,
+      "h": 305,
+      "color": "#edf3f7",
+      "stroke_color": "@Linea",
+      "stroke_width": 3,
+      "filled": true
+    },
+    {
+      "id": "tank_top",
+      "kind": "ellipse",
+      "x": 340,
+      "y": 215,
+      "w": 130,
+      "h": 30,
+      "color": "#edf3f7",
+      "stroke_color": "@Linea",
+      "stroke_width": 3,
+      "filled": true
+    },
+    {
+      "id": "level",
+      "kind": "bar",
+      "x": 360,
+      "y": 260,
+      "w": 90,
+      "h": 248,
+      "tag": "Local.Nivel",
+      "min": 0,
+      "max": 100,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Local.Nivel",
+              "op": "ge",
+              "value": 80.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Paro"
+            }
+          }
+        ],
+        "default": {
+          "color": "@Marcha"
+        },
+        "bad": {
+          "color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "temp_gauge",
+      "kind": "gauge",
+      "x": 505,
+      "y": 150,
+      "w": 150,
+      "h": 150,
+      "tag": "Local.Temperatura",
+      "min": 0,
+      "max": 60,
+      "unit": "°C",
+      "decimals": 1,
+      "text": "Temperatura",
+      "gauge_style": "dial",
+      "warning": 40,
+      "alarm": 50
+    },
+    {
+      "id": "running",
+      "kind": "lamp",
+      "x": 207,
+      "y": 305,
+      "w": 44,
+      "h": 44,
+      "tag": "Local.Marcha",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "#d7e0e9",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "pv",
+      "kind": "text",
+      "x": 335,
+      "y": 556,
+      "w": 280,
+      "h": 44,
+      "text": "Nivel",
+      "tag": "Local.Nivel",
+      "unit": "%",
+      "decimals": 1,
+      "text_align": "left",
+      "color": "#ffffff",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "tank_label",
+      "kind": "text",
+      "x": 340,
+      "y": 166,
+      "w": 190,
+      "h": 36,
+      "text": "TK-01",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "temp",
+      "kind": "text",
+      "x": 65,
+      "y": 580,
+      "w": 250,
+      "h": 44,
+      "text": "Temperatura",
+      "tag": "Local.Temperatura",
+      "unit": "°C",
+      "decimals": 1,
+      "text_align": "left",
+      "color": "#ffffff",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "run",
+      "kind": "button",
+      "x": 720,
+      "y": 165,
+      "w": 385,
+      "h": 42,
+      "text": "Marcha / paro",
+      "action": "toggle",
+      "font_size": 15,
+      "tag": "Local.Marcha"
+    },
+    {
+      "id": "generator",
+      "kind": "button",
+      "x": 720,
+      "y": 222,
+      "w": 385,
+      "h": 42,
+      "text": "Señal local: activar / parar",
+      "action": "toggle",
+      "font_size": 15,
+      "tag": "Local.Generador"
+    },
+    {
+      "id": "sp",
+      "kind": "input",
+      "x": 720,
+      "y": 292,
+      "w": 385,
+      "h": 44,
+      "text": "Consigna",
+      "tag": "Local.Consigna",
+      "unit": "%",
+      "decimals": 1,
+      "text_align": "left",
+      "color": "#ffffff",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "manual_level",
+      "kind": "input",
+      "x": 720,
+      "y": 354,
+      "w": 385,
+      "h": 44,
+      "text": "Nivel manual",
+      "tag": "Local.Nivel",
+      "unit": "%",
+      "decimals": 1,
+      "text_align": "left",
+      "color": "#ffffff",
+      "text_color": "@Texto",
+      "dynamics": {
+        "enabled": {
+          "tag": "Local.Generador",
+          "op": "eq",
+          "value": false,
+          "bad": false
+        },
+        "disabled_reason": "Detén la señal local para introducir un nivel manual"
+      }
+    },
+    {
+      "id": "batch",
+      "kind": "input",
+      "x": 720,
+      "y": 416,
+      "w": 385,
+      "h": 44,
+      "text": "Lote",
+      "tag": "Local.Texto",
+      "unit": "",
+      "decimals": 1,
+      "text_align": "left",
+      "color": "#ffffff",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "run_text",
+      "kind": "text_list",
+      "x": 720,
+      "y": 482,
+      "w": 385,
+      "h": 44,
+      "tag": "Local.Marcha",
+      "texts": [
+        {
+          "value": "false",
+          "text": "Equipo parado"
+        },
+        {
+          "value": "true",
+          "text": "Equipo en marcha"
+        }
+      ],
+      "default_text": "Estado desconocido",
+      "color": "#ffffff"
+    },
+    {
+      "id": "use",
+      "kind": "text",
+      "x": 30,
+      "y": 675,
+      "w": 1090,
+      "h": 60,
+      "text": "Doble clic en una entrada para escribir. El nivel > 80 activa una alarma con retardo; los valores se registran cada segundo.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

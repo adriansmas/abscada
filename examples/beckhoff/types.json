@@ -1,0 +1,13 @@
+{
+  "BancoEnsayo": {
+    "Marcha": "bool",
+    "Modo": "int",
+    "Consigna": "float",
+    "Velocidad": "float",
+    "Temperatura": "float",
+    "Presion": "float",
+    "Ciclos": "int",
+    "Estado": "string",
+    "AlarmaTemperatura": "bool"
+  }
+}

@@ -1,0 +1,1036 @@
+{
+  "title": "Panel del instructor · simulación",
+  "width": 1400,
+  "height": 830,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "titulo",
+      "kind": "text",
+      "x": 14,
+      "y": 8,
+      "w": 900,
+      "h": 30,
+      "text": "PANEL DEL INSTRUCTOR · SIMULACIÓN",
+      "font_size": 20,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "subtitulo",
+      "kind": "text",
+      "x": 14,
+      "y": 36,
+      "w": 900,
+      "h": 18,
+      "text": "Solo para formación: inyecta fallos en el PLC simulado (tools/hydro_plc.py). No existe en una planta real.",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "banda",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 60,
+      "w": 1380,
+      "h": 40,
+      "color": "#fff4dc",
+      "stroke_color": "@Aviso",
+      "stroke_width": 2
+    },
+    {
+      "id": "banda_t",
+      "kind": "text",
+      "x": 24,
+      "y": 68,
+      "w": 1350,
+      "h": 24,
+      "text": "MODO FORMACIÓN · las órdenes de esta pantalla activan averías simuladas. Desactívalas para recuperar la normalidad.",
+      "font_size": 14,
+      "bold": true,
+      "text_color": "#7a4b00",
+      "text_align": "left"
+    },
+    {
+      "id": "u0",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 110,
+      "w": 455,
+      "h": 470,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "u0_titulo",
+      "kind": "text",
+      "x": 22,
+      "y": 116,
+      "w": 431,
+      "h": 20,
+      "text": "GRUPO 1",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "u0f0",
+      "kind": "text_list",
+      "x": 26,
+      "y": 146,
+      "w": 110,
+      "h": 30,
+      "tag": "G1.SimCojinete",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G1.SimCojinete",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "u0b0",
+      "kind": "button",
+      "x": 146,
+      "y": 146,
+      "w": 300,
+      "h": 30,
+      "text": "Calentamiento de cojinete de empuje",
+      "tag": "G1.SimCojinete",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "u0d0",
+      "kind": "text",
+      "x": 146,
+      "y": 182,
+      "w": 300,
+      "h": 56,
+      "text": "Sube la temperatura del cojinete: alarma a 75 °C y disparo por temperatura a 85 °C.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "u0f1",
+      "kind": "text_list",
+      "x": 26,
+      "y": 252,
+      "w": 110,
+      "h": 30,
+      "tag": "G1.SimRefrigeracion",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G1.SimRefrigeracion",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "u0b1",
+      "kind": "button",
+      "x": 146,
+      "y": 252,
+      "w": 300,
+      "h": 30,
+      "text": "Fallo del agua de refrigeración",
+      "tag": "G1.SimRefrigeracion",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "u0d1",
+      "kind": "text",
+      "x": 146,
+      "y": 288,
+      "w": 300,
+      "h": 56,
+      "text": "Cae el caudal de refrigeración: fallo a los 5 s, suben todas las temperaturas y acaba en disparo.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "u0f2",
+      "kind": "text_list",
+      "x": 26,
+      "y": 358,
+      "w": 110,
+      "h": 30,
+      "tag": "G1.SimVibracion",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G1.SimVibracion",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "u0b2",
+      "kind": "button",
+      "x": 146,
+      "y": 358,
+      "w": 300,
+      "h": 30,
+      "text": "Desequilibrio / vibración",
+      "tag": "G1.SimVibracion",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "u0d2",
+      "kind": "text",
+      "x": 146,
+      "y": 394,
+      "w": 300,
+      "h": 56,
+      "text": "Vibración por encima de 7,1 mm/s: alarma y disparo por vibración muy alta.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "u0f3",
+      "kind": "text_list",
+      "x": 26,
+      "y": 464,
+      "w": 110,
+      "h": 30,
+      "tag": "G1.SimLocal",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G1.SimLocal",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "u0b3",
+      "kind": "button",
+      "x": 146,
+      "y": 464,
+      "w": 300,
+      "h": 30,
+      "text": "Selector en LOCAL",
+      "tag": "G1.SimLocal",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "u0d3",
+      "kind": "text",
+      "x": 146,
+      "y": 500,
+      "w": 300,
+      "h": 56,
+      "text": "El grupo pasa a mando local: el SCADA no puede arrancar, parar ni cambiar consignas.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "u1",
+      "kind": "rectangle",
+      "x": 475,
+      "y": 110,
+      "w": 455,
+      "h": 470,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "u1_titulo",
+      "kind": "text",
+      "x": 487,
+      "y": 116,
+      "w": 431,
+      "h": 20,
+      "text": "GRUPO 2",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "u1f0",
+      "kind": "text_list",
+      "x": 491,
+      "y": 146,
+      "w": 110,
+      "h": 30,
+      "tag": "G2.SimCojinete",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G2.SimCojinete",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "u1b0",
+      "kind": "button",
+      "x": 611,
+      "y": 146,
+      "w": 300,
+      "h": 30,
+      "text": "Calentamiento de cojinete de empuje",
+      "tag": "G2.SimCojinete",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "u1d0",
+      "kind": "text",
+      "x": 611,
+      "y": 182,
+      "w": 300,
+      "h": 56,
+      "text": "Sube la temperatura del cojinete: alarma a 75 °C y disparo por temperatura a 85 °C.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "u1f1",
+      "kind": "text_list",
+      "x": 491,
+      "y": 252,
+      "w": 110,
+      "h": 30,
+      "tag": "G2.SimRefrigeracion",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G2.SimRefrigeracion",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "u1b1",
+      "kind": "button",
+      "x": 611,
+      "y": 252,
+      "w": 300,
+      "h": 30,
+      "text": "Fallo del agua de refrigeración",
+      "tag": "G2.SimRefrigeracion",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "u1d1",
+      "kind": "text",
+      "x": 611,
+      "y": 288,
+      "w": 300,
+      "h": 56,
+      "text": "Cae el caudal de refrigeración: fallo a los 5 s, suben todas las temperaturas y acaba en disparo.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "u1f2",
+      "kind": "text_list",
+      "x": 491,
+      "y": 358,
+      "w": 110,
+      "h": 30,
+      "tag": "G2.SimVibracion",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G2.SimVibracion",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "u1b2",
+      "kind": "button",
+      "x": 611,
+      "y": 358,
+      "w": 300,
+      "h": 30,
+      "text": "Desequilibrio / vibración",
+      "tag": "G2.SimVibracion",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "u1d2",
+      "kind": "text",
+      "x": 611,
+      "y": 394,
+      "w": 300,
+      "h": 56,
+      "text": "Vibración por encima de 7,1 mm/s: alarma y disparo por vibración muy alta.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "u1f3",
+      "kind": "text_list",
+      "x": 491,
+      "y": 464,
+      "w": 110,
+      "h": 30,
+      "tag": "G2.SimLocal",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G2.SimLocal",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "u1b3",
+      "kind": "button",
+      "x": 611,
+      "y": 464,
+      "w": 300,
+      "h": 30,
+      "text": "Selector en LOCAL",
+      "tag": "G2.SimLocal",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "u1d3",
+      "kind": "text",
+      "x": 611,
+      "y": 500,
+      "w": 300,
+      "h": 56,
+      "text": "El grupo pasa a mando local: el SCADA no puede arrancar, parar ni cambiar consignas.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "comun",
+      "kind": "rectangle",
+      "x": 940,
+      "y": 110,
+      "w": 450,
+      "h": 470,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "comun_titulo",
+      "kind": "text",
+      "x": 952,
+      "y": 116,
+      "w": 426,
+      "h": 20,
+      "text": "SERVICIOS COMUNES",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "c0",
+      "kind": "text_list",
+      "x": 956,
+      "y": 146,
+      "w": 110,
+      "h": 30,
+      "tag": "SSCC.SimAvenida",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.SimAvenida",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cb0",
+      "kind": "button",
+      "x": 1076,
+      "y": 146,
+      "w": 300,
+      "h": 30,
+      "text": "Avenida en el río",
+      "tag": "SSCC.SimAvenida",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "cd0",
+      "kind": "text",
+      "x": 1076,
+      "y": 182,
+      "w": 300,
+      "h": 80,
+      "text": "Entrada de 135 m³/s: sube el embalse, abre el aliviadero en automático y salta la alarma de avenida.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "c1",
+      "kind": "text_list",
+      "x": 956,
+      "y": 286,
+      "w": 110,
+      "h": 30,
+      "tag": "SSCC.SimFalloRed",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.SimFalloRed",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cb1",
+      "kind": "button",
+      "x": 1076,
+      "y": 286,
+      "w": 300,
+      "h": 30,
+      "text": "Pérdida de red 66 kV",
+      "tag": "SSCC.SimFalloRed",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "cd1",
+      "kind": "text",
+      "x": 1076,
+      "y": 322,
+      "w": 300,
+      "h": 80,
+      "text": "Abre el 52L: rechazo de carga, sobrevelocidad y disparo de los grupos. Arranca el diésel.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "c2",
+      "kind": "text_list",
+      "x": 956,
+      "y": 426,
+      "w": 110,
+      "h": 30,
+      "tag": "SSCC.SimFalloCargador",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "NORMAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.SimFalloCargador",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cb2",
+      "kind": "button",
+      "x": 1076,
+      "y": 426,
+      "w": 300,
+      "h": 30,
+      "text": "Fallo del rectificador-cargador",
+      "tag": "SSCC.SimFalloCargador",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Aviso",
+      "text_color": "#7a4b00"
+    },
+    {
+      "id": "cd2",
+      "kind": "text",
+      "x": 1076,
+      "y": 462,
+      "w": 300,
+      "h": 80,
+      "text": "Las baterías se descargan lentamente: alarma a 110 V y crítica a 105 V.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "guia",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 590,
+      "w": 1380,
+      "h": 240,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "guia_titulo",
+      "kind": "text",
+      "x": 22,
+      "y": 596,
+      "w": 1356,
+      "h": 20,
+      "text": "EJERCICIO RECOMENDADO",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "g0",
+      "kind": "text",
+      "x": 30,
+      "y": 626,
+      "w": 1340,
+      "h": 34,
+      "text": "1. Comprueba en «Grupo 1» que está LISTO PARA ARRANCAR y pulsa ARRANCAR: sigue los 6 pasos de la secuencia hasta EN CARGA.",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "g1",
+      "kind": "text",
+      "x": 30,
+      "y": 664,
+      "w": 1340,
+      "h": 34,
+      "text": "2. Cambia la consigna de potencia a 3,5 MW y observa la alarma de zona rugosa (distribuidor entre 25 y 45 %). Vuelve a 8 MW.",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "g2",
+      "kind": "text",
+      "x": 30,
+      "y": 702,
+      "w": 1340,
+      "h": 34,
+      "text": "3. Activa «Calentamiento de cojinete» del Grupo 1: reconoce la alarma de temperatura y espera al disparo por protección.",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "g3",
+      "kind": "text",
+      "x": 30,
+      "y": 740,
+      "w": 1340,
+      "h": 34,
+      "text": "4. Desactiva la avería, espera a que el grupo se pare y pulsa REARME 86. Vuelve a arrancar.",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "g4",
+      "kind": "text",
+      "x": 30,
+      "y": 778,
+      "w": 1340,
+      "h": 34,
+      "text": "5. Provoca una «Pérdida de red 66 kV» con ambos grupos en carga. Restablece, cierra el 52L desde el unifilar y rearma los grupos.",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    }
+  ],
+  "on_open": [
+    "apertura"
+  ]
+}

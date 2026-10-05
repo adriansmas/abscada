@@ -1,0 +1,36 @@
+{
+  "title": "Laboratorio SCADA",
+  "width": 1360,
+  "height": 850,
+  "layout": true,
+  "background": "@Fondo",
+  "elements": [
+    {
+      "id": "cabecera",
+      "kind": "screen_container",
+      "x": 0,
+      "y": 0,
+      "w": 1360,
+      "h": 80,
+      "screen": "01_cabecera"
+    },
+    {
+      "id": "menu",
+      "kind": "screen_container",
+      "x": 0,
+      "y": 80,
+      "w": 200,
+      "h": 770,
+      "screen": "02_menu"
+    },
+    {
+      "id": "contenido",
+      "kind": "screen_container",
+      "x": 200,
+      "y": 80,
+      "w": 1160,
+      "h": 770,
+      "screen": "10_inicio"
+    }
+  ]
+}

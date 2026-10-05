@@ -1,0 +1,113 @@
+[
+  {
+    "name": "Banco",
+    "type": "BancoEnsayo",
+    "writable": true,
+    "bindings": {
+      "Banco.Marcha": {
+        "connection": "CX_Banco",
+        "version": 1,
+        "address": {
+          "symbol": "MAIN.bMarcha",
+          "encoding": "BOOL"
+        }
+      },
+      "Banco.Modo": {
+        "connection": "CX_Banco",
+        "version": 1,
+        "address": {
+          "symbol": "MAIN.nModo",
+          "encoding": "INT"
+        }
+      },
+      "Banco.Consigna": {
+        "connection": "CX_Banco",
+        "version": 1,
+        "address": {
+          "symbol": "MAIN.rConsignaVelocidad",
+          "encoding": "REAL"
+        }
+      },
+      "Banco.Velocidad": {
+        "connection": "CX_Banco",
+        "version": 1,
+        "address": {
+          "symbol": "MAIN.rVelocidad",
+          "encoding": "REAL"
+        }
+      },
+      "Banco.Temperatura": {
+        "connection": "CX_Banco",
+        "version": 1,
+        "address": {
+          "symbol": "MAIN.rTemperatura",
+          "encoding": "REAL"
+        }
+      },
+      "Banco.Presion": {
+        "connection": "CX_Banco",
+        "version": 1,
+        "address": {
+          "symbol": "MAIN.rPresion",
+          "encoding": "REAL"
+        }
+      },
+      "Banco.Ciclos": {
+        "connection": "CX_Banco",
+        "version": 1,
+        "address": {
+          "symbol": "MAIN.nCiclos",
+          "encoding": "DINT"
+        }
+      },
+      "Banco.Estado": {
+        "connection": "CX_Banco",
+        "version": 1,
+        "address": {
+          "symbol": "MAIN.sEstado",
+          "encoding": "STRING",
+          "length": 40
+        }
+      },
+      "Banco.AlarmaTemperatura": {
+        "connection": "CX_Banco",
+        "version": 1,
+        "address": {
+          "symbol": "GVL.bAlarmaTemperatura",
+          "encoding": "BOOL"
+        }
+      }
+    },
+    "overrides": {
+      "Velocidad": {
+        "writable": false
+      },
+      "Temperatura": {
+        "writable": false
+      },
+      "Presion": {
+        "writable": false
+      },
+      "Ciclos": {
+        "writable": false
+      },
+      "Estado": {
+        "writable": false
+      },
+      "AlarmaTemperatura": {
+        "writable": false
+      }
+    },
+    "initial": {
+      "Marcha": false,
+      "Modo": 1,
+      "Consigna": 1500.0,
+      "Velocidad": 0.0,
+      "Temperatura": 0.0,
+      "Presion": 0.0,
+      "Ciclos": 0,
+      "Estado": "",
+      "AlarmaTemperatura": false
+    }
+  }
+]

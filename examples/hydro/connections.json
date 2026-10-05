@@ -1,0 +1,38 @@
+[
+  {
+    "id": "PLC_G1",
+    "protocol": "s7",
+    "host": "127.0.0.1",
+    "port": 1102,
+    "rack": 0,
+    "slot": 1,
+    "poll_ms": 250
+  },
+  {
+    "id": "PLC_G2",
+    "protocol": "s7",
+    "host": "127.0.0.1",
+    "port": 1103,
+    "rack": 0,
+    "slot": 1,
+    "poll_ms": 250
+  },
+  {
+    "id": "PLC_SSCC",
+    "protocol": "s7",
+    "host": "127.0.0.1",
+    "port": 1104,
+    "rack": 0,
+    "slot": 1,
+    "poll_ms": 500
+  },
+  {
+    "id": "Contador_66kV",
+    "protocol": "modbus_tcp",
+    "host": "127.0.0.1",
+    "port": 1502,
+    "unit_id": 1,
+    "timeout_ms": 800,
+    "poll_ms": 1000
+  }
+]

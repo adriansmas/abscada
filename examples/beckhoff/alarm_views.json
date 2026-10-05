@@ -1,0 +1,16 @@
+{
+  "activas": {
+    "title": "Alarmas del banco",
+    "categories": [],
+    "min_priority": 1,
+    "mode": "pending",
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "message",
+      "state",
+      "entered_at",
+      "ack_at"
+    ]
+  }
+}

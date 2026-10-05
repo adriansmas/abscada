@@ -1,0 +1,16 @@
+{
+  "retention_days": 90,
+  "files": [
+    {
+      "id": "banco",
+      "name": "Banco · 1 s",
+      "interval_ms": 1000,
+      "variables": [
+        "Banco.Velocidad",
+        "Banco.Consigna",
+        "Banco.Temperatura",
+        "Banco.Presion"
+      ]
+    }
+  ]
+}

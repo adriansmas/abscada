@@ -1,0 +1,60 @@
+{
+  "title": "Histórico y archivos diarios",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Histórico y archivos diarios",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "Registro interno: 1 s · equipos: 2 s · modos: 5 s. Selecciona un intervalo en el visor para consultar días anteriores.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "history",
+      "kind": "trend",
+      "x": 30,
+      "y": 148,
+      "w": 1100,
+      "h": 535,
+      "view": "local"
+    },
+    {
+      "id": "files",
+      "kind": "text",
+      "x": 30,
+      "y": 697,
+      "w": 1090,
+      "h": 56,
+      "text": "Cada variable pertenece a un solo registro. «Local.SinRegistro» no se archiva. Los datos de ayer y anteayer se preparan con seed_showcase_history.py.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

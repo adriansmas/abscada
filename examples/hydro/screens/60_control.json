@@ -1,0 +1,567 @@
+{
+  "title": "Control conjunto de planta",
+  "width": 1400,
+  "height": 830,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "titulo",
+      "kind": "text",
+      "x": 14,
+      "y": 8,
+      "w": 900,
+      "h": 30,
+      "text": "CONTROL CONJUNTO DE PLANTA",
+      "font_size": 20,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "subtitulo",
+      "kind": "text",
+      "x": 14,
+      "y": 36,
+      "w": 900,
+      "h": 18,
+      "text": "Reparto automático de potencia entre grupos y regulación de nivel del embalse (script control_planta.py cada 2 s)",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "conjunto",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 60,
+      "w": 680,
+      "h": 330,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "conjunto_titulo",
+      "kind": "text",
+      "x": 22,
+      "y": 66,
+      "w": 656,
+      "h": 20,
+      "text": "CONTROL CONJUNTO DE POTENCIA",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "cc_estado",
+      "kind": "text_list",
+      "x": 30,
+      "y": 94,
+      "w": 200,
+      "h": 34,
+      "tag": "Planta.ControlConjunto",
+      "font_size": 14,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "INACTIVO"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Planta.ControlConjunto",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Marcha",
+              "border_color": "@Marcha"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cc_toggle",
+      "kind": "button",
+      "x": 250,
+      "y": 94,
+      "w": 220,
+      "h": 34,
+      "text": "Activar / desactivar",
+      "tag": "Planta.ControlConjunto",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando"
+    },
+    {
+      "id": "cc_sp_t",
+      "kind": "text",
+      "x": 30,
+      "y": 149,
+      "w": 494,
+      "h": 22,
+      "text": "Consigna de potencia de planta",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cc_sp",
+      "kind": "input",
+      "x": 530,
+      "y": 146,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "Planta.ConsignaPlanta",
+      "unit": "MW",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando",
+      "bold": true,
+      "dynamics": {
+        "enabled": {
+          "tag": "Planta.ControlNivel",
+          "op": "eq",
+          "value": false,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#e3e6e9",
+          "text_color": "#8a949d"
+        },
+        "disabled_reason": "La calcula el control de nivel"
+      }
+    },
+    {
+      "id": "cc_pv_t",
+      "kind": "text",
+      "x": 30,
+      "y": 185,
+      "w": 494,
+      "h": 22,
+      "text": "Potencia total generada",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cc_pv",
+      "kind": "text",
+      "x": 530,
+      "y": 182,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "Sistema.PotenciaTotal",
+      "unit": "MW",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cc_g1_t",
+      "kind": "text",
+      "x": 30,
+      "y": 221,
+      "w": 494,
+      "h": 22,
+      "text": "Consigna aplicada Grupo 1",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cc_g1",
+      "kind": "text",
+      "x": 530,
+      "y": 218,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "G1.ConsignaP",
+      "unit": "MW",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cc_g2_t",
+      "kind": "text",
+      "x": 30,
+      "y": 257,
+      "w": 494,
+      "h": 22,
+      "text": "Consigna aplicada Grupo 2",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cc_g2",
+      "kind": "text",
+      "x": 530,
+      "y": 254,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "G2.ConsignaP",
+      "unit": "MW",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cc_estado_t",
+      "kind": "text",
+      "x": 30,
+      "y": 294,
+      "w": 300,
+      "h": 20,
+      "text": "Estado del controlador",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "cc_msg",
+      "kind": "text",
+      "x": 30,
+      "y": 316,
+      "w": 640,
+      "h": 30,
+      "text": "",
+      "tag": "Planta.Estado",
+      "font_size": 13,
+      "text_align": "left",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "cc_n",
+      "kind": "text",
+      "x": 30,
+      "y": 352,
+      "w": 640,
+      "h": 30,
+      "text": "Reparte la consigna a partes iguales entre los grupos acoplados en remoto, entre 2 y 10 MW por grupo.",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "nivel",
+      "kind": "rectangle",
+      "x": 700,
+      "y": 60,
+      "w": 690,
+      "h": 330,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "nivel_titulo",
+      "kind": "text",
+      "x": 712,
+      "y": 66,
+      "w": 666,
+      "h": 20,
+      "text": "REGULACIÓN DE NIVEL DEL EMBALSE",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "cn_estado",
+      "kind": "text_list",
+      "x": 720,
+      "y": 94,
+      "w": 200,
+      "h": 34,
+      "tag": "Planta.ControlNivel",
+      "font_size": 14,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "ACTIVO"
+        },
+        {
+          "value": "false",
+          "text": "INACTIVO"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Planta.ControlNivel",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Marcha",
+              "border_color": "@Marcha"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cn_toggle",
+      "kind": "button",
+      "x": 940,
+      "y": 94,
+      "w": 220,
+      "h": 34,
+      "text": "Activar / desactivar",
+      "tag": "Planta.ControlNivel",
+      "action": "toggle",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando"
+    },
+    {
+      "id": "cn_sp_t",
+      "kind": "text",
+      "x": 720,
+      "y": 149,
+      "w": 504,
+      "h": 22,
+      "text": "Consigna de nivel",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cn_sp",
+      "kind": "input",
+      "x": 1230,
+      "y": 146,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "Planta.ConsignaNivel",
+      "unit": "msnm",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando",
+      "bold": true,
+      "dynamics": {}
+    },
+    {
+      "id": "cn_pv_t",
+      "kind": "text",
+      "x": 720,
+      "y": 185,
+      "w": 504,
+      "h": 22,
+      "text": "Nivel actual",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cn_pv",
+      "kind": "text",
+      "x": 1230,
+      "y": 182,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.NivelEmbalse",
+      "unit": "msnm",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cn_q_t",
+      "kind": "text",
+      "x": 720,
+      "y": 221,
+      "w": 504,
+      "h": 22,
+      "text": "Caudal de entrada",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cn_q",
+      "kind": "text",
+      "x": 1230,
+      "y": 218,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.CaudalEntrada",
+      "unit": "m³/s",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cn_t_t",
+      "kind": "text",
+      "x": 720,
+      "y": 257,
+      "w": 504,
+      "h": 22,
+      "text": "Caudal turbinado",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cn_t",
+      "kind": "text",
+      "x": 1230,
+      "y": 254,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "Sistema.CaudalTurbinado",
+      "unit": "m³/s",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "cn_n",
+      "kind": "text",
+      "x": 720,
+      "y": 294,
+      "w": 650,
+      "h": 80,
+      "text": "Con el control de nivel activo, la consigna de planta se ajusta para mantener el embalse en la cota deseada (acción integral: +1,5 MW por cada metro por encima de la consigna, cada 2 s). Requiere el control conjunto activo.",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "tend",
+      "kind": "trend",
+      "x": 10,
+      "y": 400,
+      "w": 1380,
+      "h": 430,
+      "view": "produccion"
+    }
+  ],
+  "on_open": [
+    "apertura"
+  ]
+}

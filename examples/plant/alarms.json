@@ -1,0 +1,59 @@
+{
+  "retention_days": 365,
+  "categories": [
+    {
+      "id": "process",
+      "name": "Proceso",
+      "color": "#d74c4c"
+    },
+    {
+      "id": "equipment",
+      "name": "Equipos",
+      "color": "#d79832"
+    }
+  ],
+  "items": [
+    {
+      "id": "tank_high",
+      "message": "Nivel alto del depósito",
+      "tag": "TankLevel",
+      "category": "process",
+      "condition": "high",
+      "threshold": 80,
+      "hysteresis": 3,
+      "on_delay_ms": 500,
+      "off_delay_ms": 500,
+      "priority": 800,
+      "ack_required": true,
+      "enabled": true
+    },
+    {
+      "id": "tank_low",
+      "message": "Nivel bajo del depósito",
+      "tag": "TankLevel",
+      "category": "process",
+      "condition": "low",
+      "threshold": 20,
+      "hysteresis": 3,
+      "on_delay_ms": 500,
+      "off_delay_ms": 500,
+      "priority": 600,
+      "ack_required": true,
+      "enabled": true
+    },
+    {
+      "id": "pump_flow_high",
+      "message": "Caudal alto en bomba 1",
+      "tag": "Pump1.flow",
+      "category": "equipment",
+      "condition": "high",
+      "threshold": 75,
+      "hysteresis": 2,
+      "on_delay_ms": 200,
+      "off_delay_ms": 200,
+      "priority": 500,
+      "ack_required": true,
+      "enabled": true
+    }
+  ]
+}

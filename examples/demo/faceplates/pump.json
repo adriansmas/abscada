@@ -1,0 +1,12 @@
+{
+  "width": 340,
+  "height": 220,
+  "parameters": {"running": "bool", "flow": "float", "setpoint": "float"},
+  "elements": [
+    {"id": "title", "kind": "text", "x": 0, "y": 0, "w": 340, "h": 38, "text": "ESTACIÓN DE BOMBEO"},
+    {"id": "state", "kind": "lamp", "x": 14, "y": 52, "w": 44, "h": 44, "tag": "$running"},
+    {"id": "flow", "kind": "text", "x": 70, "y": 52, "w": 254, "h": 44, "text": "Caudal", "tag": "$flow", "unit": "m³/h"},
+    {"id": "setpoint", "kind": "input", "x": 14, "y": 111, "w": 310, "h": 42, "text": "Consigna", "tag": "$setpoint", "unit": "m³/h"},
+    {"id": "command", "kind": "button", "x": 14, "y": 167, "w": 310, "h": 40, "text": "Marcha / paro", "tag": "$running", "action": "toggle"}
+  ]
+}

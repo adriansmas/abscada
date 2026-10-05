@@ -1,0 +1,183 @@
+[
+  {
+    "name": "Local",
+    "type": "BancoLocal",
+    "initial": {
+      "Marcha": false,
+      "Permiso": true,
+      "Generador": false,
+      "Fallo": false,
+      "Pulsador": false,
+      "Orden": 0,
+      "Modo": 0,
+      "Consigna": 55.0,
+      "Nivel": 35.0,
+      "Temperatura": 24.0,
+      "SinRegistro": 0.0,
+      "Texto": "Lote de demostración"
+    },
+    "writable": true
+  },
+  {
+    "name": "Sistema",
+    "type": "Sesion",
+    "initial": {
+      "Operador": "Operador demo",
+      "Ciclos": 0,
+      "Aperturas": 0,
+      "UltimoEvento": "Sin eventos",
+      "Inicio": "",
+      "Hora": "",
+      "S7": "Sin lectura",
+      "Modbus": "Sin lectura"
+    },
+    "writable": true
+  },
+  {
+    "name": "Siemens",
+    "type": "PlantaS7",
+    "initial": {
+      "Bomba1": {
+        "Marcha": false,
+        "Caudal": 0.0,
+        "Consigna": 60.0
+      },
+      "Bomba2": {
+        "Marcha": false,
+        "Caudal": 0.0,
+        "Consigna": 45.0
+      },
+      "Nivel": 0.0
+    },
+    "writable": true,
+    "overrides": {
+      "Bomba1.Caudal": {
+        "writable": false
+      },
+      "Bomba2.Caudal": {
+        "writable": false
+      },
+      "Nivel": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "Siemens.Bomba1.Marcha": {
+        "connection": "S7_Laboratorio",
+        "address": "%DB1.DBX0.0"
+      },
+      "Siemens.Bomba1.Caudal": {
+        "connection": "S7_Laboratorio",
+        "address": "%DB1.DBD4"
+      },
+      "Siemens.Bomba1.Consigna": {
+        "connection": "S7_Laboratorio",
+        "address": "%DB1.DBD8"
+      },
+      "Siemens.Bomba2.Marcha": {
+        "connection": "S7_Laboratorio",
+        "address": "%DB1.DBX16.0"
+      },
+      "Siemens.Bomba2.Caudal": {
+        "connection": "S7_Laboratorio",
+        "address": "%DB1.DBD20"
+      },
+      "Siemens.Bomba2.Consigna": {
+        "connection": "S7_Laboratorio",
+        "address": "%DB1.DBD24"
+      },
+      "Siemens.Nivel": {
+        "connection": "S7_Laboratorio",
+        "address": "%DB1.DBD12"
+      }
+    }
+  },
+  {
+    "name": "Modbus",
+    "type": "EquipoModbus",
+    "initial": {
+      "Habilitar": false,
+      "Listo": false,
+      "Consigna": 40.0,
+      "Temperatura": 0.0,
+      "Contador": 0,
+      "Modo": 0
+    },
+    "writable": true,
+    "overrides": {
+      "Listo": {
+        "writable": false
+      },
+      "Temperatura": {
+        "writable": false
+      },
+      "Contador": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "Modbus.Habilitar": {
+        "connection": "Modbus_Laboratorio",
+        "version": 1,
+        "address": {
+          "area": "coils",
+          "offset": 0,
+          "encoding": "bool"
+        }
+      },
+      "Modbus.Listo": {
+        "connection": "Modbus_Laboratorio",
+        "version": 1,
+        "address": {
+          "area": "discrete_inputs",
+          "offset": 0,
+          "encoding": "bool"
+        }
+      },
+      "Modbus.Consigna": {
+        "connection": "Modbus_Laboratorio",
+        "version": 1,
+        "address": {
+          "area": "holding_registers",
+          "offset": 0,
+          "encoding": "float32",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      },
+      "Modbus.Temperatura": {
+        "connection": "Modbus_Laboratorio",
+        "version": 1,
+        "address": {
+          "area": "input_registers",
+          "offset": 0,
+          "encoding": "float32",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      },
+      "Modbus.Contador": {
+        "connection": "Modbus_Laboratorio",
+        "version": 1,
+        "address": {
+          "area": "input_registers",
+          "offset": 2,
+          "encoding": "uint32",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      },
+      "Modbus.Modo": {
+        "connection": "Modbus_Laboratorio",
+        "version": 1,
+        "address": {
+          "area": "holding_registers",
+          "offset": 2,
+          "encoding": "uint16",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      }
+    }
+  }
+]

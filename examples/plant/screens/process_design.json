@@ -1,0 +1,382 @@
+{
+  "title": "Estación de bombeo",
+  "width": 1200,
+  "height": 640,
+  "background": "#f4f7fa",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "open_settings",
+      "kind": "button",
+      "x": 585,
+      "y": 510,
+      "w": 170,
+      "h": 38,
+      "text": "Ajustes",
+      "action": "popup",
+      "screen": "pump_settings",
+      "modal": false
+    },
+    {
+      "id": "feed_one",
+      "kind": "pipe",
+      "stroke_color": "#7c94a5",
+      "stroke_width": 14,
+      "x": 80,
+      "y": 130,
+      "w": 485,
+      "h": 50,
+      "points": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.30927835051546393,
+          1.0
+        ],
+        [
+          0.7938144329896907,
+          1.0
+        ],
+        [
+          0.7938144329896907,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "feed_two",
+      "kind": "pipe",
+      "stroke_color": "#7c94a5",
+      "stroke_width": 14,
+      "x": 80,
+      "y": 330,
+      "w": 485,
+      "h": 65,
+      "points": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.30927835051546393,
+          1.0
+        ],
+        [
+          0.7216494845360825,
+          1.0
+        ],
+        [
+          0.7216494845360825,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "outlet",
+      "kind": "pipe",
+      "stroke_color": "#7c94a5",
+      "stroke_width": 14,
+      "arrows": "end",
+      "x": 775,
+      "y": 330,
+      "w": 345,
+      "h": 130,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.43478260869565216,
+          0.0
+        ],
+        [
+          0.43478260869565216,
+          1.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "tank_body",
+      "kind": "rectangle",
+      "x": 565,
+      "y": 85,
+      "w": 210,
+      "h": 340,
+      "color": "#f9fbfd",
+      "stroke_color": "#7c94a5",
+      "stroke_width": 3
+    },
+    {
+      "id": "tank_top",
+      "kind": "ellipse",
+      "x": 565,
+      "y": 65,
+      "w": 210,
+      "h": 42,
+      "color": "#eef3f7",
+      "stroke_color": "#7c94a5",
+      "stroke_width": 3
+    },
+    {
+      "id": "tank_level",
+      "kind": "bar",
+      "x": 594,
+      "y": 124,
+      "w": 151,
+      "h": 271,
+      "tag": "TankLevel",
+      "min": 0,
+      "max": 100
+    },
+    {
+      "id": "tank_label",
+      "kind": "text",
+      "x": 570,
+      "y": 13,
+      "w": 205,
+      "h": 36,
+      "text": "TK-01",
+      "font_size": 22,
+      "text_color": "#324d63"
+    },
+    {
+      "id": "tank_value",
+      "kind": "text",
+      "x": 550,
+      "y": 435,
+      "w": 240,
+      "h": 50,
+      "text": "Nivel",
+      "tag": "TankLevel",
+      "unit": "%",
+      "decimals": 1,
+      "font_size": 20,
+      "color": "#ffffff"
+    },
+    {
+      "id": "pump1_body",
+      "kind": "ellipse",
+      "x": 235,
+      "y": 146,
+      "w": 68,
+      "h": 68,
+      "color": "#f9fbfd",
+      "stroke_color": "#688795",
+      "stroke_width": 4
+    },
+    {
+      "id": "pump1_impeller",
+      "kind": "line",
+      "x": 250,
+      "y": 160,
+      "w": 38,
+      "h": 40,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "stroke_color": "#688795",
+      "stroke_width": 3
+    },
+    {
+      "id": "pump1_status",
+      "kind": "lamp",
+      "x": 314,
+      "y": 161,
+      "w": 38,
+      "h": 38,
+      "tag": "Pump1.running"
+    },
+    {
+      "id": "pump1_label",
+      "kind": "text",
+      "x": 205,
+      "y": 88,
+      "w": 170,
+      "h": 35,
+      "text": "Bomba P-01",
+      "font_size": 18
+    },
+    {
+      "id": "pump1_flow",
+      "kind": "text",
+      "x": 142,
+      "y": 229,
+      "w": 270,
+      "h": 33,
+      "text": "Caudal",
+      "tag": "Pump1.flow",
+      "unit": "m³/h",
+      "decimals": 1,
+      "font_size": 16
+    },
+    {
+      "id": "pump1_command",
+      "kind": "button",
+      "x": 184,
+      "y": 269,
+      "w": 120,
+      "h": 36,
+      "text": "Marcha / paro",
+      "tag": "Pump1.running",
+      "action": "toggle"
+    },
+    {
+      "id": "pump1_setpoint",
+      "kind": "input",
+      "x": 315,
+      "y": 269,
+      "w": 140,
+      "h": 36,
+      "text": "SP",
+      "tag": "Pump1.setpoint",
+      "unit": "m³/h",
+      "decimals": 1
+    },
+    {
+      "id": "pump2_body",
+      "kind": "ellipse",
+      "x": 235,
+      "y": 361,
+      "w": 68,
+      "h": 68,
+      "color": "#f9fbfd",
+      "stroke_color": "#688795",
+      "stroke_width": 4
+    },
+    {
+      "id": "pump2_impeller",
+      "kind": "line",
+      "x": 250,
+      "y": 375,
+      "w": 38,
+      "h": 40,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "stroke_color": "#688795",
+      "stroke_width": 3
+    },
+    {
+      "id": "pump2_status",
+      "kind": "lamp",
+      "x": 314,
+      "y": 376,
+      "w": 38,
+      "h": 38,
+      "tag": "Pump2.running"
+    },
+    {
+      "id": "pump2_label",
+      "kind": "text",
+      "x": 205,
+      "y": 303,
+      "w": 170,
+      "h": 35,
+      "text": "Bomba P-02",
+      "font_size": 18
+    },
+    {
+      "id": "pump2_flow",
+      "kind": "text",
+      "x": 142,
+      "y": 444,
+      "w": 270,
+      "h": 33,
+      "text": "Caudal",
+      "tag": "Pump2.flow",
+      "unit": "m³/h",
+      "decimals": 1,
+      "font_size": 16
+    },
+    {
+      "id": "pump2_command",
+      "kind": "button",
+      "x": 184,
+      "y": 484,
+      "w": 120,
+      "h": 36,
+      "text": "Marcha / paro",
+      "tag": "Pump2.running",
+      "action": "toggle"
+    },
+    {
+      "id": "pump2_setpoint",
+      "kind": "input",
+      "x": 315,
+      "y": 484,
+      "w": 140,
+      "h": 36,
+      "text": "SP",
+      "tag": "Pump2.setpoint",
+      "unit": "m³/h",
+      "decimals": 1
+    },
+    {
+      "id": "supply_one",
+      "kind": "text",
+      "x": 28,
+      "y": 109,
+      "w": 130,
+      "h": 28,
+      "text": "Alimentación 1",
+      "font_size": 14,
+      "text_color": "#718397"
+    },
+    {
+      "id": "supply_two",
+      "kind": "text",
+      "x": 28,
+      "y": 324,
+      "w": 130,
+      "h": 28,
+      "text": "Alimentación 2",
+      "font_size": 14,
+      "text_color": "#718397"
+    },
+    {
+      "id": "outlet_label",
+      "kind": "text",
+      "x": 970,
+      "y": 491,
+      "w": 170,
+      "h": 30,
+      "text": "A proceso",
+      "font_size": 16,
+      "text_color": "#718397"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

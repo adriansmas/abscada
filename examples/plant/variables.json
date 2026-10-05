@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Pump1",
+    "type": "Pump",
+    "initial": {
+      "running": false,
+      "flow": 0.0,
+      "setpoint": 60.0
+    },
+    "writable": true,
+    "overrides": {
+      "flow": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "Pump1.running": {
+        "connection": "plant",
+        "address": "%DB1.DBX0.0"
+      },
+      "Pump1.flow": {
+        "connection": "plant",
+        "address": "%DB1.DBD4"
+      },
+      "Pump1.setpoint": {
+        "connection": "plant",
+        "address": "%DB1.DBD8"
+      }
+    }
+  },
+  {
+    "name": "Pump2",
+    "type": "Pump",
+    "initial": {
+      "running": false,
+      "flow": 0.0,
+      "setpoint": 45.0
+    },
+    "writable": true,
+    "overrides": {
+      "flow": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "Pump2.running": {
+        "connection": "plant",
+        "address": "%DB1.DBX16.0"
+      },
+      "Pump2.flow": {
+        "connection": "plant",
+        "address": "%DB1.DBD20"
+      },
+      "Pump2.setpoint": {
+        "connection": "plant",
+        "address": "%DB1.DBD24"
+      }
+    }
+  },
+  {
+    "name": "TankLevel",
+    "type": "float",
+    "initial": 0.0,
+    "writable": false,
+    "binding": {
+      "connection": "plant",
+      "address": "%DB1.DBD12"
+    }
+  },
+  {
+    "name": "Operator",
+    "type": "string",
+    "initial": "Demo local",
+    "writable": true
+  }
+]

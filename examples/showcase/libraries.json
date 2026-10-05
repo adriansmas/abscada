@@ -1,0 +1,165 @@
+{
+  "equipos": {
+    "source": "C:\\Users\\user\\Documents\\desarrollos\\abScada\\examples\\libraries\\equipos-1.0.0.abscada-library.json",
+    "sha256": "4a02e6e1281b3b0766dbe8a1f5ecaa60f8287e683439f6be24b7a0b1bc182cee",
+    "package": {
+      "schema_version": 1,
+      "name": "Equipos de proceso",
+      "version": "1.0.0",
+      "author": "abSCADA",
+      "license": "GPL-3.0-or-later",
+      "faceplates": {
+        "unidad": {
+          "title": "Unidad reutilizable",
+          "width": 500,
+          "height": 260,
+          "background": "#ffffff",
+          "parameters": {
+            "run": "bool",
+            "pv": "float",
+            "sp": "float"
+          },
+          "elements": [
+            {
+              "id": "heading",
+              "kind": "text",
+              "x": 18,
+              "y": 12,
+              "w": 465,
+              "h": 32,
+              "text": "UNIDAD PARAMETRIZADA",
+              "font_size": 16,
+              "text_align": "left",
+              "text_color": "#243c50"
+            },
+            {
+              "id": "lamp",
+              "kind": "lamp",
+              "x": 22,
+              "y": 57,
+              "w": 44,
+              "h": 44,
+              "tag": "$run",
+              "lamp_colors": {
+                "on": "#147d75",
+                "off": "#d7e0e9",
+                "bad": "#da982f"
+              }
+            },
+            {
+              "id": "pv",
+              "kind": "text",
+              "x": 88,
+              "y": 59,
+              "w": 390,
+              "h": 44,
+              "text": "PV",
+              "tag": "$pv",
+              "unit": "u",
+              "decimals": 1,
+              "text_align": "left",
+              "color": "#ffffff",
+              "text_color": "#243c50"
+            },
+            {
+              "id": "sp",
+              "kind": "input",
+              "x": 25,
+              "y": 121,
+              "w": 450,
+              "h": 44,
+              "text": "SP",
+              "tag": "$sp",
+              "unit": "u",
+              "decimals": 1,
+              "text_align": "left",
+              "color": "#ffffff",
+              "text_color": "#243c50"
+            },
+            {
+              "id": "command",
+              "kind": "button",
+              "x": 25,
+              "y": 190,
+              "w": 280,
+              "h": 42,
+              "text": "Marcha / paro",
+              "action": "toggle",
+              "font_size": 15,
+              "tag": "$run"
+            },
+            {
+              "id": "status",
+              "kind": "text_list",
+              "x": 315,
+              "y": 190,
+              "w": 160,
+              "h": 42,
+              "tag": "$run",
+              "texts": [
+                {
+                  "value": "true",
+                  "text": "MARCHA"
+                },
+                {
+                  "value": "false",
+                  "text": "PARADO"
+                }
+              ],
+              "default_text": "—"
+            }
+          ]
+        },
+        "valvula": {
+          "title": "Válvula con mando",
+          "width": 450,
+          "height": 280,
+          "parameters": {
+            "run": "bool"
+          },
+          "elements": [
+            {
+              "id": "image",
+              "kind": "image",
+              "x": 70,
+              "y": 0,
+              "w": 310,
+              "h": 200,
+              "source": "assets/e7d7c86342194f789b5fe39767b502e06393b4d7eea9eaf8d91babb165d39808.svg",
+              "dynamics": {
+                "states": [
+                  {
+                    "when": {
+                      "tag": "$run",
+                      "op": "eq",
+                      "value": true,
+                      "bad": false
+                    },
+                    "style": {
+                      "source": "assets/d8731df35fea0fdf6c4e1e88998da4e0c9827077bd512bf2cdbfd6e61a40aa84.svg"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "command",
+              "kind": "button",
+              "x": 60,
+              "y": 220,
+              "w": 330,
+              "h": 44,
+              "text": "Abrir / cerrar",
+              "tag": "$run",
+              "action": "toggle"
+            }
+          ]
+        }
+      },
+      "assets": {
+        "assets/e7d7c86342194f789b5fe39767b502e06393b4d7eea9eaf8d91babb165d39808.svg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNTAwIDMwMCI+PHJlY3Qgd2lkdGg9IjUwMCIgaGVpZ2h0PSIzMDAiIHJ4PSIyNCIgZmlsbD0iI2VkZjNmNyIvPjxwYXRoIGQ9Ik00MCAxNTBINDYwIiBzdHJva2U9IiNiNWM0ZDEiIHN0cm9rZS13aWR0aD0iMzIiLz48cGF0aCBkPSJNMTYwIDc1TDM0MCAyMjVWNzVMMTYwIDIyNVoiIGZpbGw9IiM4Mzk0YTUiIHN0cm9rZT0iIzI0M2M1MCIgc3Ryb2tlLXdpZHRoPSI1Ii8+PHBhdGggZD0iTTI1MCAxNTBWMzVNMjEwIDM1SDI5MCIgc3Ryb2tlPSIjMjQzYzUwIiBzdHJva2Utd2lkdGg9IjgiLz48dGV4dCB4PSIyNTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiIGZpbGw9IiMyNDNjNTAiPlbDgUxWVUxBIMK3IENFUlJBREE8L3RleHQ+PC9zdmc+",
+        "assets/d8731df35fea0fdf6c4e1e88998da4e0c9827077bd512bf2cdbfd6e61a40aa84.svg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iMzAwIiB2aWV3Qm94PSIwIDAgNTAwIDMwMCI+PHJlY3Qgd2lkdGg9IjUwMCIgaGVpZ2h0PSIzMDAiIHJ4PSIyNCIgZmlsbD0iI2VkZjNmNyIvPjxwYXRoIGQ9Ik00MCAxNTBINDYwIiBzdHJva2U9IiNiNWM0ZDEiIHN0cm9rZS13aWR0aD0iMzIiLz48cGF0aCBkPSJNMTYwIDc1TDM0MCAyMjVWNzVMMTYwIDIyNVoiIGZpbGw9IiMxNDdkNzUiIHN0cm9rZT0iIzI0M2M1MCIgc3Ryb2tlLXdpZHRoPSI1Ii8+PHBhdGggZD0iTTI1MCAxNTBWMzVNMjEwIDM1SDI5MCIgc3Ryb2tlPSIjMjQzYzUwIiBzdHJva2Utd2lkdGg9IjgiLz48dGV4dCB4PSIyNTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiIGZpbGw9IiMyNDNjNTAiPlbDgUxWVUxBIMK3IEFCSUVSVEE8L3RleHQ+PC9zdmc+"
+      }
+    }
+  }
+}

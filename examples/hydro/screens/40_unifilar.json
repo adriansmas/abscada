@@ -1,0 +1,1905 @@
+{
+  "title": "Esquema unifilar · subestación 66 kV",
+  "width": 1400,
+  "height": 830,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "titulo",
+      "kind": "text",
+      "x": 14,
+      "y": 8,
+      "w": 900,
+      "h": 30,
+      "text": "ESQUEMA UNIFILAR · SUBESTACIÓN 66 KV",
+      "font_size": 20,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "subtitulo",
+      "kind": "text",
+      "x": 14,
+      "y": 36,
+      "w": 900,
+      "h": 18,
+      "text": "Rojo = interruptor cerrado · verde = abierto · azul = conductor en tensión",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "fondo",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 60,
+      "w": 1010,
+      "h": 770,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "linea_t",
+      "kind": "text",
+      "x": 360,
+      "y": 70,
+      "w": 400,
+      "h": 22,
+      "text": "LÍNEA L-6601 → SE COMARCAL 66 kV",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "linea",
+      "kind": "line",
+      "x": 520,
+      "y": 96,
+      "w": 1,
+      "h": 44,
+      "stroke_color": "@Muerto",
+      "stroke_width": 5,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.RedPresente",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "52l",
+      "kind": "faceplate",
+      "x": 498,
+      "y": 140,
+      "w": 44,
+      "h": 44,
+      "template": "interruptor",
+      "bindings": {
+        "cerrado": "SSCC.Interruptor52L"
+      }
+    },
+    {
+      "id": "52l_t",
+      "kind": "text",
+      "x": 552,
+      "y": 150,
+      "w": 50,
+      "h": 22,
+      "text": "52L",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "abrir_52l",
+      "kind": "button",
+      "x": 620,
+      "y": 140,
+      "w": 130,
+      "h": 34,
+      "text": "ABRIR 52L",
+      "tag": "SSCC.OrdenAbrir52L",
+      "action": "set",
+      "value": true,
+      "font_size": 13,
+      "bold": true,
+      "color": "@Abierto",
+      "border_color": "@Abierto",
+      "text_color": "#ffffff",
+      "dynamics": {
+        "enabled": {
+          "tag": "SSCC.Interruptor52L",
+          "op": "eq",
+          "value": true,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#d7dce0",
+          "text_color": "#8a949d",
+          "border_color": "#c3c9ce"
+        },
+        "disabled_reason": "El interruptor ya está abierto"
+      }
+    },
+    {
+      "id": "cerrar_52l",
+      "kind": "button",
+      "x": 760,
+      "y": 140,
+      "w": 130,
+      "h": 34,
+      "text": "CERRAR 52L",
+      "tag": "SSCC.OrdenCerrar52L",
+      "action": "set",
+      "value": true,
+      "font_size": 13,
+      "bold": true,
+      "color": "@Cerrado",
+      "border_color": "@Cerrado",
+      "text_color": "#ffffff",
+      "dynamics": {
+        "enabled": {
+          "tag": "SSCC.RedPresente",
+          "op": "eq",
+          "value": true,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#d7dce0",
+          "text_color": "#8a949d",
+          "border_color": "#c3c9ce"
+        },
+        "disabled_reason": "Sin tensión de red en la línea"
+      }
+    },
+    {
+      "id": "bajada",
+      "kind": "line",
+      "x": 520,
+      "y": 184,
+      "w": 1,
+      "h": 46,
+      "stroke_color": "@Muerto",
+      "stroke_width": 5,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.TensionBarras66",
+              "op": "gt",
+              "value": 10.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "barras",
+      "kind": "line",
+      "x": 120,
+      "y": 230,
+      "w": 800,
+      "h": 1,
+      "stroke_color": "@Muerto",
+      "stroke_width": 8,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.TensionBarras66",
+              "op": "gt",
+              "value": 10.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "barras_t",
+      "kind": "text",
+      "x": 130,
+      "y": 204,
+      "w": 140,
+      "h": 20,
+      "text": "BARRAS 66 kV",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "barras_v",
+      "kind": "text",
+      "x": 790,
+      "y": 196,
+      "w": 120,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.TensionBarras66",
+      "unit": "kV",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "f0a",
+      "kind": "line",
+      "x": 260,
+      "y": 230,
+      "w": 1,
+      "h": 50,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.TensionBarras66",
+              "op": "gt",
+              "value": 10.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "tp0a",
+      "kind": "ellipse",
+      "x": 234,
+      "y": 280,
+      "w": 52,
+      "h": 52,
+      "filled": false,
+      "stroke_color": "@Texto",
+      "stroke_width": 2
+    },
+    {
+      "id": "tp0b",
+      "kind": "ellipse",
+      "x": 234,
+      "y": 314,
+      "w": 52,
+      "h": 52,
+      "filled": false,
+      "stroke_color": "@Texto",
+      "stroke_width": 2
+    },
+    {
+      "id": "tp0_t",
+      "kind": "text",
+      "x": 294,
+      "y": 312,
+      "w": 200,
+      "h": 20,
+      "text": "TP1  66/6,3 kV  12,5 MVA",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "f0b",
+      "kind": "line",
+      "x": 260,
+      "y": 366,
+      "w": 1,
+      "h": 44,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.TensionBarras66",
+              "op": "gt",
+              "value": 10.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "52g0",
+      "kind": "faceplate",
+      "x": 238,
+      "y": 410,
+      "w": 44,
+      "h": 44,
+      "template": "interruptor",
+      "bindings": {
+        "cerrado": "G1.Interruptor52G"
+      }
+    },
+    {
+      "id": "52g0_t",
+      "kind": "text",
+      "x": 290,
+      "y": 420,
+      "w": 60,
+      "h": 20,
+      "text": "52G1",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "f0c",
+      "kind": "line",
+      "x": 260,
+      "y": 454,
+      "w": 1,
+      "h": 56,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G1.Tension",
+              "op": "gt",
+              "value": 1.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "gen0",
+      "kind": "ellipse",
+      "x": 224,
+      "y": 510,
+      "w": 72,
+      "h": 72,
+      "color": "#ffffff",
+      "stroke_color": "@Texto",
+      "stroke_width": 3,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G1.Paso",
+              "op": "eq",
+              "value": 10,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "G1.Acoplado",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "gen0_t",
+      "kind": "text",
+      "x": 224,
+      "y": 534,
+      "w": 72,
+      "h": 26,
+      "text": "G1",
+      "font_size": 18,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "center"
+    },
+    {
+      "id": "gen0_d",
+      "kind": "text",
+      "x": 180,
+      "y": 590,
+      "w": 160,
+      "h": 20,
+      "text": "Grupo 1 · 6,3 kV",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "center"
+    },
+    {
+      "id": "m00_t",
+      "kind": "text",
+      "x": 310,
+      "y": 477,
+      "w": 26,
+      "h": 22,
+      "text": "P",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "m00",
+      "kind": "text",
+      "x": 342,
+      "y": 474,
+      "w": 118,
+      "h": 26,
+      "text": "",
+      "tag": "G1.Potencia",
+      "unit": "MW",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "m01_t",
+      "kind": "text",
+      "x": 310,
+      "y": 507,
+      "w": 26,
+      "h": 22,
+      "text": "Q",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "m01",
+      "kind": "text",
+      "x": 342,
+      "y": 504,
+      "w": 118,
+      "h": 26,
+      "text": "",
+      "tag": "G1.Reactiva",
+      "unit": "Mvar",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "m02_t",
+      "kind": "text",
+      "x": 310,
+      "y": 537,
+      "w": 26,
+      "h": 22,
+      "text": "U",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "m02",
+      "kind": "text",
+      "x": 342,
+      "y": 534,
+      "w": 118,
+      "h": 26,
+      "text": "",
+      "tag": "G1.Tension",
+      "unit": "kV",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "m03_t",
+      "kind": "text",
+      "x": 310,
+      "y": 567,
+      "w": 26,
+      "h": 22,
+      "text": "I",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "m03",
+      "kind": "text",
+      "x": 342,
+      "y": 564,
+      "w": 118,
+      "h": 26,
+      "text": "",
+      "tag": "G1.Intensidad",
+      "unit": "A",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "f1a",
+      "kind": "line",
+      "x": 560,
+      "y": 230,
+      "w": 1,
+      "h": 50,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.TensionBarras66",
+              "op": "gt",
+              "value": 10.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "tp1a",
+      "kind": "ellipse",
+      "x": 534,
+      "y": 280,
+      "w": 52,
+      "h": 52,
+      "filled": false,
+      "stroke_color": "@Texto",
+      "stroke_width": 2
+    },
+    {
+      "id": "tp1b",
+      "kind": "ellipse",
+      "x": 534,
+      "y": 314,
+      "w": 52,
+      "h": 52,
+      "filled": false,
+      "stroke_color": "@Texto",
+      "stroke_width": 2
+    },
+    {
+      "id": "tp1_t",
+      "kind": "text",
+      "x": 594,
+      "y": 312,
+      "w": 200,
+      "h": 20,
+      "text": "TP2  66/6,3 kV  12,5 MVA",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "f1b",
+      "kind": "line",
+      "x": 560,
+      "y": 366,
+      "w": 1,
+      "h": 44,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.TensionBarras66",
+              "op": "gt",
+              "value": 10.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "52g1",
+      "kind": "faceplate",
+      "x": 538,
+      "y": 410,
+      "w": 44,
+      "h": 44,
+      "template": "interruptor",
+      "bindings": {
+        "cerrado": "G2.Interruptor52G"
+      }
+    },
+    {
+      "id": "52g1_t",
+      "kind": "text",
+      "x": 590,
+      "y": 420,
+      "w": 60,
+      "h": 20,
+      "text": "52G2",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "f1c",
+      "kind": "line",
+      "x": 560,
+      "y": 454,
+      "w": 1,
+      "h": 56,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G2.Tension",
+              "op": "gt",
+              "value": 1.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "gen1",
+      "kind": "ellipse",
+      "x": 524,
+      "y": 510,
+      "w": 72,
+      "h": 72,
+      "color": "#ffffff",
+      "stroke_color": "@Texto",
+      "stroke_width": 3,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G2.Paso",
+              "op": "eq",
+              "value": 10,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "G2.Acoplado",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "gen1_t",
+      "kind": "text",
+      "x": 524,
+      "y": 534,
+      "w": 72,
+      "h": 26,
+      "text": "G2",
+      "font_size": 18,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "center"
+    },
+    {
+      "id": "gen1_d",
+      "kind": "text",
+      "x": 480,
+      "y": 590,
+      "w": 160,
+      "h": 20,
+      "text": "Grupo 2 · 6,3 kV",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "center"
+    },
+    {
+      "id": "m10_t",
+      "kind": "text",
+      "x": 610,
+      "y": 477,
+      "w": 26,
+      "h": 22,
+      "text": "P",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "m10",
+      "kind": "text",
+      "x": 642,
+      "y": 474,
+      "w": 118,
+      "h": 26,
+      "text": "",
+      "tag": "G2.Potencia",
+      "unit": "MW",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "m11_t",
+      "kind": "text",
+      "x": 610,
+      "y": 507,
+      "w": 26,
+      "h": 22,
+      "text": "Q",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "m11",
+      "kind": "text",
+      "x": 642,
+      "y": 504,
+      "w": 118,
+      "h": 26,
+      "text": "",
+      "tag": "G2.Reactiva",
+      "unit": "Mvar",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "m12_t",
+      "kind": "text",
+      "x": 610,
+      "y": 537,
+      "w": 26,
+      "h": 22,
+      "text": "U",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "m12",
+      "kind": "text",
+      "x": 642,
+      "y": 534,
+      "w": 118,
+      "h": 26,
+      "text": "",
+      "tag": "G2.Tension",
+      "unit": "kV",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "m13_t",
+      "kind": "text",
+      "x": 610,
+      "y": 567,
+      "w": 26,
+      "h": 22,
+      "text": "I",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "m13",
+      "kind": "text",
+      "x": 642,
+      "y": 564,
+      "w": 118,
+      "h": 26,
+      "text": "",
+      "tag": "G2.Intensidad",
+      "unit": "A",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "aux_a",
+      "kind": "line",
+      "x": 860,
+      "y": 230,
+      "w": 1,
+      "h": 70,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.TensionBarras66",
+              "op": "gt",
+              "value": 10.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "tsa_a",
+      "kind": "ellipse",
+      "x": 840,
+      "y": 300,
+      "w": 40,
+      "h": 40,
+      "filled": false,
+      "stroke_color": "@Texto",
+      "stroke_width": 2
+    },
+    {
+      "id": "tsa_b",
+      "kind": "ellipse",
+      "x": 840,
+      "y": 326,
+      "w": 40,
+      "h": 40,
+      "filled": false,
+      "stroke_color": "@Texto",
+      "stroke_width": 2
+    },
+    {
+      "id": "tsa_t",
+      "kind": "text",
+      "x": 710,
+      "y": 322,
+      "w": 120,
+      "h": 20,
+      "text": "TSA 66/0,4 kV",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "right"
+    },
+    {
+      "id": "aux_b",
+      "kind": "line",
+      "x": 860,
+      "y": 366,
+      "w": 1,
+      "h": 284,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.TrafoAuxOk",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "barras_400",
+      "kind": "line",
+      "x": 620,
+      "y": 650,
+      "w": 340,
+      "h": 1,
+      "stroke_color": "@Muerto",
+      "stroke_width": 6,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.Tension400V",
+              "op": "gt",
+              "value": 300.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "b400_t",
+      "kind": "text",
+      "x": 630,
+      "y": 660,
+      "w": 260,
+      "h": 20,
+      "text": "SERVICIOS AUXILIARES 400 V",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "b400_v",
+      "kind": "text",
+      "x": 860,
+      "y": 680,
+      "w": 100,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.Tension400V",
+      "unit": "V",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "diesel_l",
+      "kind": "line",
+      "x": 700,
+      "y": 650,
+      "w": 1,
+      "h": 70,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.GrupoDiesel",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Energizado"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "diesel",
+      "kind": "ellipse",
+      "x": 676,
+      "y": 720,
+      "w": 48,
+      "h": 48,
+      "color": "#ffffff",
+      "stroke_color": "@Texto",
+      "stroke_width": 2,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.GrupoDiesel",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Marcha"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "diesel_t",
+      "kind": "text",
+      "x": 676,
+      "y": 732,
+      "w": 48,
+      "h": 24,
+      "text": "GE",
+      "font_size": 14,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "center"
+    },
+    {
+      "id": "diesel_d",
+      "kind": "text",
+      "x": 734,
+      "y": 734,
+      "w": 270,
+      "h": 20,
+      "text": "Grupo diésel de emergencia 250 kVA",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "contador",
+      "kind": "rectangle",
+      "x": 1030,
+      "y": 60,
+      "w": 360,
+      "h": 330,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "contador_titulo",
+      "kind": "text",
+      "x": 1042,
+      "y": 66,
+      "w": 336,
+      "h": 20,
+      "text": "CONTADOR FISCAL 66 KV (MODBUS)",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "c0_t",
+      "kind": "text",
+      "x": 1046,
+      "y": 95,
+      "w": 164,
+      "h": 22,
+      "text": "Potencia activa",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "c0",
+      "kind": "text",
+      "x": 1216,
+      "y": 92,
+      "w": 160,
+      "h": 26,
+      "text": "",
+      "tag": "Contador.Potencia",
+      "unit": "MW",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "c1_t",
+      "kind": "text",
+      "x": 1046,
+      "y": 129,
+      "w": 164,
+      "h": 22,
+      "text": "Potencia reactiva",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "c1",
+      "kind": "text",
+      "x": 1216,
+      "y": 126,
+      "w": 160,
+      "h": 26,
+      "text": "",
+      "tag": "Contador.Reactiva",
+      "unit": "Mvar",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "c2_t",
+      "kind": "text",
+      "x": 1046,
+      "y": 163,
+      "w": 164,
+      "h": 22,
+      "text": "Tensión",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "c2",
+      "kind": "text",
+      "x": 1216,
+      "y": 160,
+      "w": 160,
+      "h": 26,
+      "text": "",
+      "tag": "Contador.Tension",
+      "unit": "kV",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "c3_t",
+      "kind": "text",
+      "x": 1046,
+      "y": 197,
+      "w": 164,
+      "h": 22,
+      "text": "Frecuencia",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "c3",
+      "kind": "text",
+      "x": 1216,
+      "y": 194,
+      "w": 160,
+      "h": 26,
+      "text": "",
+      "tag": "Contador.Frecuencia",
+      "unit": "Hz",
+      "decimals": 3,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "c4_t",
+      "kind": "text",
+      "x": 1046,
+      "y": 231,
+      "w": 164,
+      "h": 22,
+      "text": "Factor de potencia",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "c4",
+      "kind": "text",
+      "x": 1216,
+      "y": 228,
+      "w": 160,
+      "h": 26,
+      "text": "",
+      "tag": "Contador.CosPhi",
+      "unit": "",
+      "decimals": 3,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "c5_t",
+      "kind": "text",
+      "x": 1046,
+      "y": 265,
+      "w": 164,
+      "h": 22,
+      "text": "Energía exportada",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "c5",
+      "kind": "text",
+      "x": 1216,
+      "y": 262,
+      "w": 160,
+      "h": 26,
+      "text": "",
+      "tag": "Contador.EnergiaExportada",
+      "unit": "kWh",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "c6_t",
+      "kind": "text",
+      "x": 1046,
+      "y": 299,
+      "w": 164,
+      "h": 22,
+      "text": "Energía importada",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "c6",
+      "kind": "text",
+      "x": 1216,
+      "y": 296,
+      "w": 160,
+      "h": 26,
+      "text": "",
+      "tag": "Contador.EnergiaImportada",
+      "unit": "kWh",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "c_com",
+      "kind": "lamp",
+      "x": 1046,
+      "y": 344,
+      "w": 20,
+      "h": 20,
+      "tag": "Contador.Comunicacion",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "c_com_t",
+      "kind": "text",
+      "x": 1074,
+      "y": 343,
+      "w": 302,
+      "h": 22,
+      "text": "Comunicación con contador",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "red",
+      "kind": "rectangle",
+      "x": 1030,
+      "y": 400,
+      "w": 360,
+      "h": 160,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "red_titulo",
+      "kind": "text",
+      "x": 1042,
+      "y": 406,
+      "w": 336,
+      "h": 20,
+      "text": "RED",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "red_ok",
+      "kind": "lamp",
+      "x": 1046,
+      "y": 434,
+      "w": 20,
+      "h": 20,
+      "tag": "SSCC.RedPresente",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "@Disparo",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "red_ok_t",
+      "kind": "text",
+      "x": 1074,
+      "y": 433,
+      "w": 302,
+      "h": 22,
+      "text": "Tensión de red presente",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "red_f_t",
+      "kind": "text",
+      "x": 1046,
+      "y": 469,
+      "w": 184,
+      "h": 22,
+      "text": "Frecuencia de red",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "red_f",
+      "kind": "text",
+      "x": 1236,
+      "y": 466,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.FrecuenciaRed",
+      "unit": "Hz",
+      "decimals": 3,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.FrecuenciaRed",
+              "op": "lt",
+              "value": 49.8,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          },
+          {
+            "when": {
+              "tag": "SSCC.FrecuenciaRed",
+              "op": "gt",
+              "value": 50.2,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "red_v_t",
+      "kind": "text",
+      "x": 1046,
+      "y": 505,
+      "w": 184,
+      "h": 22,
+      "text": "Tensión de barras",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "red_v",
+      "kind": "text",
+      "x": 1236,
+      "y": 502,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.TensionBarras66",
+      "unit": "kV",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "leyenda",
+      "kind": "rectangle",
+      "x": 1030,
+      "y": 570,
+      "w": 360,
+      "h": 260,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "leyenda_titulo",
+      "kind": "text",
+      "x": 1042,
+      "y": 576,
+      "w": 336,
+      "h": 20,
+      "text": "LEYENDA",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "ley0",
+      "kind": "rectangle",
+      "x": 1048,
+      "y": 606,
+      "w": 26,
+      "h": 26,
+      "color": "@Cerrado",
+      "stroke_color": "@Texto",
+      "stroke_width": 1
+    },
+    {
+      "id": "ley0_t",
+      "kind": "text",
+      "x": 1086,
+      "y": 608,
+      "w": 290,
+      "h": 22,
+      "text": "Interruptor cerrado (I)",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "ley1",
+      "kind": "rectangle",
+      "x": 1048,
+      "y": 646,
+      "w": 26,
+      "h": 26,
+      "color": "@Abierto",
+      "stroke_color": "@Texto",
+      "stroke_width": 1
+    },
+    {
+      "id": "ley1_t",
+      "kind": "text",
+      "x": 1086,
+      "y": 648,
+      "w": 290,
+      "h": 22,
+      "text": "Interruptor abierto (O)",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "ley2",
+      "kind": "rectangle",
+      "x": 1048,
+      "y": 686,
+      "w": 26,
+      "h": 26,
+      "color": "@Energizado",
+      "stroke_color": "@Texto",
+      "stroke_width": 1
+    },
+    {
+      "id": "ley2_t",
+      "kind": "text",
+      "x": 1086,
+      "y": 688,
+      "w": 290,
+      "h": 22,
+      "text": "Conductor en tensión",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "ley3",
+      "kind": "rectangle",
+      "x": 1048,
+      "y": 726,
+      "w": 26,
+      "h": 26,
+      "color": "@Muerto",
+      "stroke_color": "@Texto",
+      "stroke_width": 1
+    },
+    {
+      "id": "ley3_t",
+      "kind": "text",
+      "x": 1086,
+      "y": 728,
+      "w": 290,
+      "h": 22,
+      "text": "Conductor sin tensión",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "ley4",
+      "kind": "rectangle",
+      "x": 1048,
+      "y": 766,
+      "w": 26,
+      "h": 26,
+      "color": "@Aviso",
+      "stroke_color": "@Texto",
+      "stroke_width": 1
+    },
+    {
+      "id": "ley4_t",
+      "kind": "text",
+      "x": 1086,
+      "y": 768,
+      "w": 290,
+      "h": 22,
+      "text": "Calidad de dato dudosa / sin comunicación",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    }
+  ],
+  "on_open": [
+    "apertura"
+  ]
+}

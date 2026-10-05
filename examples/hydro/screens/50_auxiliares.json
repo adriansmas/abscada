@@ -1,0 +1,1374 @@
+{
+  "title": "Servicios auxiliares",
+  "width": 1400,
+  "height": 830,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "titulo",
+      "kind": "text",
+      "x": 14,
+      "y": 8,
+      "w": 900,
+      "h": 30,
+      "text": "SERVICIOS AUXILIARES",
+      "font_size": 20,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "subtitulo",
+      "kind": "text",
+      "x": 14,
+      "y": 36,
+      "w": 900,
+      "h": 18,
+      "text": "Grupos oleohidráulicos, refrigeración, drenaje, aire comprimido, corriente continua y 400 V",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "oleo0",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 60,
+      "w": 335,
+      "h": 370,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "oleo0_titulo",
+      "kind": "text",
+      "x": 22,
+      "y": 66,
+      "w": 311,
+      "h": 20,
+      "text": "OLEOHIDRÁULICO Y REFRIGERACIÓN G1",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "oleo0_m",
+      "kind": "gauge",
+      "x": 24,
+      "y": 92,
+      "w": 170,
+      "h": 170,
+      "tag": "G1.PresionOleo",
+      "min": 0,
+      "max": 80,
+      "unit": "bar",
+      "decimals": 1,
+      "text": "Acumulador",
+      "gauge_style": "dial",
+      "warning": 66,
+      "alarm": 72,
+      "color": "#34495e",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G1.PresionOleo",
+              "op": "lt",
+              "value": 52.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "oleo0_v",
+      "kind": "text",
+      "x": 210,
+      "y": 100,
+      "w": 120,
+      "h": 30,
+      "text": "",
+      "tag": "G1.PresionOleo",
+      "unit": "bar",
+      "decimals": 1,
+      "font_size": 16,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "G1.PresionOleo",
+              "op": "lt",
+              "value": 45.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "text_color": "#ffffff",
+              "border_color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "G1.PresionOleo",
+              "op": "lt",
+              "value": 52.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "oleo0_p",
+      "kind": "faceplate",
+      "x": 210,
+      "y": 146,
+      "w": 50,
+      "h": 50,
+      "template": "bomba",
+      "bindings": {
+        "marcha": "G1.BombaOleo",
+        "fallo": "G1.FalloBombaOleo"
+      }
+    },
+    {
+      "id": "oleo0_pt",
+      "kind": "text",
+      "x": 266,
+      "y": 146,
+      "w": 76,
+      "h": 50,
+      "text": "Bomba de aceite\n56 / 63 bar",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "oleo0_lim",
+      "kind": "text",
+      "x": 210,
+      "y": 210,
+      "w": 130,
+      "h": 40,
+      "text": "Alarma 52 bar\nDisparo 45 bar",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "ref0_t",
+      "kind": "text",
+      "x": 30,
+      "y": 337,
+      "w": 184,
+      "h": 22,
+      "text": "Caudal refrigeración",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "ref0",
+      "kind": "text",
+      "x": 220,
+      "y": 334,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "G1.CaudalRefrigeracion",
+      "unit": "l/s",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "ref0_s",
+      "kind": "lamp",
+      "x": 30,
+      "y": 374,
+      "w": 20,
+      "h": 20,
+      "tag": "G1.FalloRefrigeracion",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "ref0_s_t",
+      "kind": "text",
+      "x": 58,
+      "y": 373,
+      "w": 272,
+      "h": 22,
+      "text": "Fallo de refrigeración",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "ref0_on",
+      "kind": "lamp",
+      "x": 30,
+      "y": 400,
+      "w": 20,
+      "h": 20,
+      "tag": "G1.Refrigeracion",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "ref0_on_t",
+      "kind": "text",
+      "x": 58,
+      "y": 399,
+      "w": 272,
+      "h": 22,
+      "text": "Bombas de refrigeración",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "oleo1",
+      "kind": "rectangle",
+      "x": 355,
+      "y": 60,
+      "w": 335,
+      "h": 370,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "oleo1_titulo",
+      "kind": "text",
+      "x": 367,
+      "y": 66,
+      "w": 311,
+      "h": 20,
+      "text": "OLEOHIDRÁULICO Y REFRIGERACIÓN G2",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "oleo1_m",
+      "kind": "gauge",
+      "x": 369,
+      "y": 92,
+      "w": 170,
+      "h": 170,
+      "tag": "G2.PresionOleo",
+      "min": 0,
+      "max": 80,
+      "unit": "bar",
+      "decimals": 1,
+      "text": "Acumulador",
+      "gauge_style": "dial",
+      "warning": 66,
+      "alarm": 72,
+      "color": "#34495e",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G2.PresionOleo",
+              "op": "lt",
+              "value": 52.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "oleo1_v",
+      "kind": "text",
+      "x": 555,
+      "y": 100,
+      "w": 120,
+      "h": 30,
+      "text": "",
+      "tag": "G2.PresionOleo",
+      "unit": "bar",
+      "decimals": 1,
+      "font_size": 16,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "G2.PresionOleo",
+              "op": "lt",
+              "value": 45.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "text_color": "#ffffff",
+              "border_color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "G2.PresionOleo",
+              "op": "lt",
+              "value": 52.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "oleo1_p",
+      "kind": "faceplate",
+      "x": 555,
+      "y": 146,
+      "w": 50,
+      "h": 50,
+      "template": "bomba",
+      "bindings": {
+        "marcha": "G2.BombaOleo",
+        "fallo": "G2.FalloBombaOleo"
+      }
+    },
+    {
+      "id": "oleo1_pt",
+      "kind": "text",
+      "x": 611,
+      "y": 146,
+      "w": 76,
+      "h": 50,
+      "text": "Bomba de aceite\n56 / 63 bar",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "oleo1_lim",
+      "kind": "text",
+      "x": 555,
+      "y": 210,
+      "w": 130,
+      "h": 40,
+      "text": "Alarma 52 bar\nDisparo 45 bar",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "ref1_t",
+      "kind": "text",
+      "x": 375,
+      "y": 337,
+      "w": 184,
+      "h": 22,
+      "text": "Caudal refrigeración",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "ref1",
+      "kind": "text",
+      "x": 565,
+      "y": 334,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "G2.CaudalRefrigeracion",
+      "unit": "l/s",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "ref1_s",
+      "kind": "lamp",
+      "x": 375,
+      "y": 374,
+      "w": 20,
+      "h": 20,
+      "tag": "G2.FalloRefrigeracion",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "ref1_s_t",
+      "kind": "text",
+      "x": 403,
+      "y": 373,
+      "w": 272,
+      "h": 22,
+      "text": "Fallo de refrigeración",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "ref1_on",
+      "kind": "lamp",
+      "x": 375,
+      "y": 400,
+      "w": 20,
+      "h": 20,
+      "tag": "G2.Refrigeracion",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "ref1_on_t",
+      "kind": "text",
+      "x": 403,
+      "y": 399,
+      "w": 272,
+      "h": 22,
+      "text": "Bombas de refrigeración",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "drenaje",
+      "kind": "rectangle",
+      "x": 700,
+      "y": 60,
+      "w": 340,
+      "h": 370,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "drenaje_titulo",
+      "kind": "text",
+      "x": 712,
+      "y": 66,
+      "w": 316,
+      "h": 20,
+      "text": "POZO DE DRENAJE DE LA CENTRAL",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "pozo_m",
+      "kind": "rectangle",
+      "x": 720,
+      "y": 96,
+      "w": 90,
+      "h": 260,
+      "color": "#ffffff",
+      "stroke_color": "@Linea",
+      "stroke_width": 2
+    },
+    {
+      "id": "pozo",
+      "kind": "bar",
+      "x": 724,
+      "y": 100,
+      "w": 82,
+      "h": 252,
+      "tag": "SSCC.NivelPozo",
+      "min": 0,
+      "max": 100,
+      "color": "@Agua",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.NivelPozo",
+              "op": "ge",
+              "value": 80.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "pozo_v",
+      "kind": "text",
+      "x": 720,
+      "y": 366,
+      "w": 90,
+      "h": 28,
+      "text": "",
+      "tag": "SSCC.NivelPozo",
+      "unit": "%",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.NivelPozo",
+              "op": "ge",
+              "value": 80.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "text_color": "#ffffff",
+              "border_color": "@Disparo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "bd0",
+      "kind": "faceplate",
+      "x": 830,
+      "y": 110,
+      "w": 50,
+      "h": 50,
+      "template": "bomba",
+      "bindings": {
+        "marcha": "SSCC.BombaDrenaje1",
+        "fallo": "SSCC.FalloDrenaje"
+      }
+    },
+    {
+      "id": "bd0_t",
+      "kind": "text",
+      "x": 890,
+      "y": 112,
+      "w": 140,
+      "h": 20,
+      "text": "Bomba 1 (principal)",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "bd0_l",
+      "kind": "text",
+      "x": 890,
+      "y": 134,
+      "w": 140,
+      "h": 36,
+      "text": "Arranque / parada 60 / 20 %",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "bd1",
+      "kind": "faceplate",
+      "x": 830,
+      "y": 230,
+      "w": 50,
+      "h": 50,
+      "template": "bomba",
+      "bindings": {
+        "marcha": "SSCC.BombaDrenaje2",
+        "fallo": "SSCC.FalloDrenaje"
+      }
+    },
+    {
+      "id": "bd1_t",
+      "kind": "text",
+      "x": 890,
+      "y": 232,
+      "w": 140,
+      "h": 20,
+      "text": "Bomba 2 (reserva)",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "bd1_l",
+      "kind": "text",
+      "x": 890,
+      "y": 254,
+      "w": 140,
+      "h": 36,
+      "text": "Arranque / parada 78 / 30 %",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "pozo_nota",
+      "kind": "text",
+      "x": 830,
+      "y": 366,
+      "w": 200,
+      "h": 22,
+      "text": "Alarma de nivel alto: 80 %",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "aire",
+      "kind": "rectangle",
+      "x": 1050,
+      "y": 60,
+      "w": 340,
+      "h": 180,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "aire_titulo",
+      "kind": "text",
+      "x": 1062,
+      "y": 66,
+      "w": 316,
+      "h": 20,
+      "text": "AIRE COMPRIMIDO (FRENOS)",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "compresor",
+      "kind": "faceplate",
+      "x": 1068,
+      "y": 96,
+      "w": 50,
+      "h": 50,
+      "template": "bomba",
+      "bindings": {
+        "marcha": "SSCC.Compresor",
+        "fallo": "SSCC.FalloCompresor"
+      }
+    },
+    {
+      "id": "compresor_t",
+      "kind": "text",
+      "x": 1128,
+      "y": 98,
+      "w": 250,
+      "h": 44,
+      "text": "Compresor\narranca 7 · para 8 bar",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "aire_v_t",
+      "kind": "text",
+      "x": 1068,
+      "y": 169,
+      "w": 184,
+      "h": 22,
+      "text": "Presión calderín",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "aire_v",
+      "kind": "text",
+      "x": 1258,
+      "y": 166,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.PresionAire",
+      "unit": "bar",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.PresionAire",
+              "op": "lt",
+              "value": 6.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "aire_n",
+      "kind": "text",
+      "x": 1068,
+      "y": 202,
+      "w": 300,
+      "h": 20,
+      "text": "Alarma de presión baja: 6 bar",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "cc",
+      "kind": "rectangle",
+      "x": 1050,
+      "y": 250,
+      "w": 340,
+      "h": 180,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "cc_titulo",
+      "kind": "text",
+      "x": 1062,
+      "y": 256,
+      "w": 316,
+      "h": 20,
+      "text": "CORRIENTE CONTINUA 125 V",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "cargador",
+      "kind": "lamp",
+      "x": 1068,
+      "y": 286,
+      "w": 20,
+      "h": 20,
+      "tag": "SSCC.CargadorOk",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "@Disparo",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "cargador_t",
+      "kind": "text",
+      "x": 1096,
+      "y": 285,
+      "w": 272,
+      "h": 22,
+      "text": "Rectificador-cargador",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "bat_t",
+      "kind": "text",
+      "x": 1068,
+      "y": 321,
+      "w": 184,
+      "h": 22,
+      "text": "Tensión de baterías",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "bat",
+      "kind": "text",
+      "x": 1258,
+      "y": 318,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.TensionBaterias",
+      "unit": "V",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.TensionBaterias",
+              "op": "lt",
+              "value": 105.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "text_color": "#ffffff",
+              "border_color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "SSCC.TensionBaterias",
+              "op": "lt",
+              "value": 110.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "bat_n",
+      "kind": "text",
+      "x": 1068,
+      "y": 354,
+      "w": 300,
+      "h": 40,
+      "text": "Batería de plomo 60 elementos · alarma 110 V · crítica 105 V",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "ca",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 440,
+      "w": 690,
+      "h": 170,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "ca_titulo",
+      "kind": "text",
+      "x": 22,
+      "y": 446,
+      "w": 666,
+      "h": 20,
+      "text": "SERVICIOS AUXILIARES DE CORRIENTE ALTERNA 400 V",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "tsa",
+      "kind": "lamp",
+      "x": 30,
+      "y": 478,
+      "w": 20,
+      "h": 20,
+      "tag": "SSCC.TrafoAuxOk",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "@Disparo",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "tsa_t",
+      "kind": "text",
+      "x": 58,
+      "y": 477,
+      "w": 312,
+      "h": 22,
+      "text": "Transformador de servicios auxiliares",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "diesel",
+      "kind": "lamp",
+      "x": 30,
+      "y": 508,
+      "w": 20,
+      "h": 20,
+      "tag": "SSCC.GrupoDiesel",
+      "lamp_colors": {
+        "on": "@Aviso",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "diesel_t",
+      "kind": "text",
+      "x": 58,
+      "y": 507,
+      "w": 312,
+      "h": 22,
+      "text": "Grupo diésel de emergencia",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v400_t",
+      "kind": "text",
+      "x": 30,
+      "y": 543,
+      "w": 214,
+      "h": 22,
+      "text": "Tensión barras 400 V",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v400",
+      "kind": "text",
+      "x": 250,
+      "y": 540,
+      "w": 120,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.Tension400V",
+      "unit": "V",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.Tension400V",
+              "op": "lt",
+              "value": 360.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "text_color": "#ffffff",
+              "border_color": "@Disparo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ca_n",
+      "kind": "text",
+      "x": 400,
+      "y": 474,
+      "w": 280,
+      "h": 110,
+      "text": "Ante pérdida de red, el diésel arranca a los 3 s y recupera la barra de 400 V para los auxiliares esenciales.",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "resumen",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 620,
+      "w": 690,
+      "h": 210,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "resumen_titulo",
+      "kind": "text",
+      "x": 22,
+      "y": 626,
+      "w": 666,
+      "h": 20,
+      "text": "ALARMAS POR ÁREA (CALCULADAS EN LOS PLC)",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "area0",
+      "kind": "lamp",
+      "x": 30,
+      "y": 658,
+      "w": 20,
+      "h": 20,
+      "tag": "G1.AlarmaGrupo",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "area0_t",
+      "kind": "text",
+      "x": 58,
+      "y": 657,
+      "w": 272,
+      "h": 22,
+      "text": "Grupo 1",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "area1",
+      "kind": "lamp",
+      "x": 360,
+      "y": 658,
+      "w": 20,
+      "h": 20,
+      "tag": "G2.AlarmaGrupo",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "area1_t",
+      "kind": "text",
+      "x": 388,
+      "y": 657,
+      "w": 272,
+      "h": 22,
+      "text": "Grupo 2",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "area2",
+      "kind": "lamp",
+      "x": 30,
+      "y": 692,
+      "w": 20,
+      "h": 20,
+      "tag": "SSCC.AlarmaPresa",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "area2_t",
+      "kind": "text",
+      "x": 58,
+      "y": 691,
+      "w": 272,
+      "h": 22,
+      "text": "Presa y embalse",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "area3",
+      "kind": "lamp",
+      "x": 360,
+      "y": 692,
+      "w": 20,
+      "h": 20,
+      "tag": "SSCC.AlarmaSubestacion",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "area3_t",
+      "kind": "text",
+      "x": 388,
+      "y": 691,
+      "w": 272,
+      "h": 22,
+      "text": "Subestación 66 kV",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "area4",
+      "kind": "lamp",
+      "x": 30,
+      "y": 726,
+      "w": 20,
+      "h": 20,
+      "tag": "SSCC.AlarmaAuxiliares",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "area4_t",
+      "kind": "text",
+      "x": 58,
+      "y": 725,
+      "w": 272,
+      "h": 22,
+      "text": "Servicios auxiliares",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "res_n",
+      "kind": "text",
+      "x": 30,
+      "y": 770,
+      "w": 640,
+      "h": 40,
+      "text": "La cabecera muestra este mismo resumen en todas las pantallas.",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "alarmas",
+      "kind": "alarm_view",
+      "x": 710,
+      "y": 440,
+      "w": 680,
+      "h": 390,
+      "view": "activas_sscc"
+    },
+    {
+      "id": "oleo0_p_abrir",
+      "kind": "button",
+      "x": 210,
+      "y": 146,
+      "w": 50,
+      "h": 50,
+      "text": "",
+      "action": "faceplate_popup",
+      "template": "bomba_detalle",
+      "bindings": {
+        "marcha": "G1.BombaOleo",
+        "fallo": "G1.FalloBombaOleo"
+      },
+      "title": "Bomba de aceite G1",
+      "color": "#00000000",
+      "border_color": "#00000000"
+    },
+    {
+      "id": "oleo1_p_abrir",
+      "kind": "button",
+      "x": 555,
+      "y": 146,
+      "w": 50,
+      "h": 50,
+      "text": "",
+      "action": "faceplate_popup",
+      "template": "bomba_detalle",
+      "bindings": {
+        "marcha": "G2.BombaOleo",
+        "fallo": "G2.FalloBombaOleo"
+      },
+      "title": "Bomba de aceite G2",
+      "color": "#00000000",
+      "border_color": "#00000000"
+    },
+    {
+      "id": "bd0_abrir",
+      "kind": "button",
+      "x": 830,
+      "y": 110,
+      "w": 50,
+      "h": 50,
+      "text": "",
+      "action": "faceplate_popup",
+      "template": "bomba_detalle",
+      "bindings": {
+        "marcha": "SSCC.BombaDrenaje1",
+        "fallo": "SSCC.FalloDrenaje"
+      },
+      "title": "Bomba de drenaje 1",
+      "color": "#00000000",
+      "border_color": "#00000000"
+    },
+    {
+      "id": "bd1_abrir",
+      "kind": "button",
+      "x": 830,
+      "y": 230,
+      "w": 50,
+      "h": 50,
+      "text": "",
+      "action": "faceplate_popup",
+      "template": "bomba_detalle",
+      "bindings": {
+        "marcha": "SSCC.BombaDrenaje2",
+        "fallo": "SSCC.FalloDrenaje"
+      },
+      "title": "Bomba de drenaje 2",
+      "color": "#00000000",
+      "border_color": "#00000000"
+    },
+    {
+      "id": "compresor_abrir",
+      "kind": "button",
+      "x": 1068,
+      "y": 96,
+      "w": 50,
+      "h": 50,
+      "text": "",
+      "action": "faceplate_popup",
+      "template": "bomba_detalle",
+      "bindings": {
+        "marcha": "SSCC.Compresor",
+        "fallo": "SSCC.FalloCompresor"
+      },
+      "title": "Compresor de aire",
+      "color": "#00000000",
+      "border_color": "#00000000"
+    }
+  ],
+  "on_open": [
+    "apertura"
+  ]
+}
