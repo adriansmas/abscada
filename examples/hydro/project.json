@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "name": "CH Valdearenas",
+  "startup_screen": "00_layout",
+  "palette": {
+    "Fondo": "#dde1e4",
+    "Panel": "#eceef0",
+    "Borde": "#b4bbc2",
+    "Texto": "#1f2a33",
+    "TextoSuave": "#5b6670",
+    "Valor": "#f8f9fa",
+    "Linea": "#6c7882",
+    "Agua": "#4f86b8",
+    "Marcha": "#2e8b57",
+    "Paro": "#9aa3ab",
+    "Disparo": "#d32f2f",
+    "Aviso": "#e89a1c",
+    "Cerrado": "#c62828",
+    "Abierto": "#2e7d32",
+    "Energizado": "#1f5f99",
+    "Muerto": "#a9b1b8",
+    "Cabecera": "#22303a",
+    "Menu": "#2c3a45",
+    "Mando": "#2b6cb0",
+    "Apagado": "#3a4a56"
+  },
+  "display": {
+    "main": {
+      "mode": "maximized"
+    }
+  }
+}

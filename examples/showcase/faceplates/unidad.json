@@ -1,0 +1,101 @@
+{
+  "title": "Unidad reutilizable",
+  "width": 500,
+  "height": 260,
+  "background": "#ffffff",
+  "parameters": {
+    "run": "bool",
+    "pv": "float",
+    "sp": "float"
+  },
+  "elements": [
+    {
+      "id": "heading",
+      "kind": "text",
+      "x": 18,
+      "y": 12,
+      "w": 465,
+      "h": 32,
+      "text": "UNIDAD PARAMETRIZADA",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "lamp",
+      "kind": "lamp",
+      "x": 22,
+      "y": 57,
+      "w": 44,
+      "h": 44,
+      "tag": "$run",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "#d7e0e9",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "pv",
+      "kind": "text",
+      "x": 88,
+      "y": 59,
+      "w": 390,
+      "h": 44,
+      "text": "PV",
+      "tag": "$pv",
+      "unit": "u",
+      "decimals": 1,
+      "text_align": "left",
+      "color": "#ffffff",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "sp",
+      "kind": "input",
+      "x": 25,
+      "y": 121,
+      "w": 450,
+      "h": 44,
+      "text": "SP",
+      "tag": "$sp",
+      "unit": "u",
+      "decimals": 1,
+      "text_align": "left",
+      "color": "#ffffff",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "command",
+      "kind": "button",
+      "x": 25,
+      "y": 190,
+      "w": 280,
+      "h": 42,
+      "text": "Marcha / paro",
+      "action": "toggle",
+      "font_size": 15,
+      "tag": "$run"
+    },
+    {
+      "id": "status",
+      "kind": "text_list",
+      "x": 315,
+      "y": 190,
+      "w": 160,
+      "h": 42,
+      "tag": "$run",
+      "texts": [
+        {
+          "value": "true",
+          "text": "MARCHA"
+        },
+        {
+          "value": "false",
+          "text": "PARADO"
+        }
+      ],
+      "default_text": "—"
+    }
+  ]
+}

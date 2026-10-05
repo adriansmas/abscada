@@ -1,0 +1,81 @@
+{
+  "title": "Cabecera común",
+  "width": 1200,
+  "height": 90,
+  "background": "#f4f7fa",
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 24,
+      "y": 16,
+      "w": 500,
+      "h": 40,
+      "text": "Estación de bombeo",
+      "font_size": 28,
+      "text_color": "#243c50",
+      "text_align": "left",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 58,
+      "w": 455,
+      "h": 25,
+      "text": "Línea de llenado · Depósito de proceso",
+      "font_size": 14,
+      "text_color": "#718397",
+      "text_align": "left"
+    },
+    {
+      "id": "nav_process_design",
+      "kind": "button",
+      "x": 610,
+      "y": 24,
+      "w": 130,
+      "h": 36,
+      "text": "Proceso",
+      "action": "screen",
+      "screen": "process_design",
+      "target_container": "contenido"
+    },
+    {
+      "id": "nav_overview",
+      "kind": "button",
+      "x": 750,
+      "y": 24,
+      "w": 130,
+      "h": 36,
+      "text": "Equipos",
+      "action": "screen",
+      "screen": "overview",
+      "target_container": "contenido"
+    },
+    {
+      "id": "nav_history",
+      "kind": "button",
+      "x": 890,
+      "y": 24,
+      "w": 130,
+      "h": 36,
+      "text": "Gráficas",
+      "action": "screen",
+      "screen": "history",
+      "target_container": "contenido"
+    },
+    {
+      "id": "nav_alarms",
+      "kind": "button",
+      "x": 1030,
+      "y": 24,
+      "w": 130,
+      "h": 36,
+      "text": "Alarmas",
+      "action": "screen",
+      "screen": "alarms",
+      "target_container": "contenido"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "title": "Ajustes de bombeo",
+  "width": 480,
+  "height": 340,
+  "background": "#f4f7fa",
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 24,
+      "y": 18,
+      "w": 420,
+      "h": 40,
+      "text": "Ajustes de bombeo",
+      "font_size": 24,
+      "bold": true,
+      "text_align": "left",
+      "text_color": "#243c50"
+    },
+    {
+      "id": "pump1_label",
+      "kind": "text",
+      "x": 24,
+      "y": 90,
+      "w": 230,
+      "h": 36,
+      "text": "Bomba 1 · Consigna",
+      "font_size": 16,
+      "text_align": "left"
+    },
+    {
+      "id": "pump1_value",
+      "kind": "input",
+      "x": 275,
+      "y": 90,
+      "w": 180,
+      "h": 38,
+      "tag": "Pump1.setpoint",
+      "unit": "m³/h",
+      "decimals": 1,
+      "text": ""
+    },
+    {
+      "id": "pump2_label",
+      "kind": "text",
+      "x": 24,
+      "y": 150,
+      "w": 230,
+      "h": 36,
+      "text": "Bomba 2 · Consigna",
+      "font_size": 16,
+      "text_align": "left"
+    },
+    {
+      "id": "pump2_value",
+      "kind": "input",
+      "x": 275,
+      "y": 150,
+      "w": 180,
+      "h": 38,
+      "tag": "Pump2.setpoint",
+      "unit": "m³/h",
+      "decimals": 1,
+      "text": ""
+    },
+    {
+      "id": "close",
+      "kind": "button",
+      "x": 315,
+      "y": 275,
+      "w": 140,
+      "h": 38,
+      "text": "Cerrar",
+      "action": "close_popup"
+    },
+    {
+      "id": "pump1_state",
+      "kind": "text_list",
+      "x": 24,
+      "y": 212,
+      "w": 210,
+      "h": 38,
+      "tag": "Pump1.running",
+      "font_size": 14,
+      "texts": [
+        {
+          "value": "0",
+          "text": "Bomba 1 · Parada"
+        },
+        {
+          "value": "1",
+          "text": "Bomba 1 · En marcha"
+        }
+      ],
+      "default_text": "—"
+    },
+    {
+      "id": "pump2_state",
+      "kind": "text_list",
+      "x": 246,
+      "y": 212,
+      "w": 210,
+      "h": 38,
+      "tag": "Pump2.running",
+      "font_size": 14,
+      "texts": [
+        {
+          "value": "0",
+          "text": "Bomba 2 · Parada"
+        },
+        {
+          "value": "1",
+          "text": "Bomba 2 · En marcha"
+        }
+      ],
+      "default_text": "—"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

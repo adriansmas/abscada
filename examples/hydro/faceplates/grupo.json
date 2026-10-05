@@ -1,0 +1,407 @@
+{
+  "title": "Resumen de grupo",
+  "width": 290,
+  "height": 214,
+  "background": "@Panel",
+  "parameters": {
+    "paso": "int",
+    "potencia": "float",
+    "consigna": "float",
+    "remoto": "bool",
+    "listo": "bool",
+    "disparo": "bool",
+    "causa": "int",
+    "arranque": "bool",
+    "parada": "bool",
+    "rearme": "bool",
+    "velocidad": "float",
+    "caudal": "float",
+    "acoplado": "bool",
+    "alarma": "bool"
+  },
+  "elements": [
+    {
+      "id": "mando",
+      "kind": "button",
+      "x": 206,
+      "y": 10,
+      "w": 74,
+      "h": 32,
+      "text": "Mando…",
+      "font_size": 12,
+      "bold": true,
+      "color": "@Mando",
+      "border_color": "@Mando",
+      "text_color": "#ffffff",
+      "action": "faceplate_popup",
+      "template": "mando_grupo",
+      "bindings": {
+        "paso": "$paso",
+        "potencia": "$potencia",
+        "consigna": "$consigna",
+        "remoto": "$remoto",
+        "listo": "$listo",
+        "disparo": "$disparo",
+        "causa": "$causa",
+        "arranque": "$arranque",
+        "parada": "$parada",
+        "rearme": "$rearme"
+      }
+    },
+    {
+      "id": "estado",
+      "kind": "text_list",
+      "x": 10,
+      "y": 10,
+      "w": 190,
+      "h": 32,
+      "tag": "$paso",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Paro",
+      "border_color": "@Paro",
+      "texts": [
+        {
+          "value": "0",
+          "text": "PARADO"
+        },
+        {
+          "value": "1",
+          "text": "ARRANQUE DE AUXILIARES"
+        },
+        {
+          "value": "2",
+          "text": "APERTURA VÁLVULA DE ENTRADA"
+        },
+        {
+          "value": "3",
+          "text": "ACELERACIÓN"
+        },
+        {
+          "value": "4",
+          "text": "EXCITACIÓN"
+        },
+        {
+          "value": "5",
+          "text": "SINCRONIZACIÓN"
+        },
+        {
+          "value": "6",
+          "text": "EN CARGA"
+        },
+        {
+          "value": "7",
+          "text": "DESCARGA"
+        },
+        {
+          "value": "8",
+          "text": "DESACOPLAMIENTO"
+        },
+        {
+          "value": "9",
+          "text": "CIERRE Y FRENADO"
+        },
+        {
+          "value": "10",
+          "text": "DISPARO · BLOQUEO 86"
+        }
+      ],
+      "default_text": "—",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$paso",
+              "op": "eq",
+              "value": 10,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "$paso",
+              "op": "eq",
+              "value": 6,
+              "bad": false
+            },
+            "style": {
+              "color": "@Marcha",
+              "border_color": "@Marcha"
+            }
+          },
+          {
+            "when": {
+              "tag": "$paso",
+              "op": "gt",
+              "value": 0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "border_color": "@Aviso"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v0_t",
+      "kind": "text",
+      "x": 10,
+      "y": 55,
+      "w": 134,
+      "h": 22,
+      "text": "Potencia",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v0",
+      "kind": "text",
+      "x": 150,
+      "y": 52,
+      "w": 130,
+      "h": 26,
+      "text": "",
+      "tag": "$potencia",
+      "unit": "MW",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v1_t",
+      "kind": "text",
+      "x": 10,
+      "y": 86,
+      "w": 134,
+      "h": 22,
+      "text": "Consigna P",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v1",
+      "kind": "text",
+      "x": 150,
+      "y": 83,
+      "w": 130,
+      "h": 26,
+      "text": "",
+      "tag": "$consigna",
+      "unit": "MW",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v2_t",
+      "kind": "text",
+      "x": 10,
+      "y": 117,
+      "w": 134,
+      "h": 22,
+      "text": "Velocidad",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v2",
+      "kind": "text",
+      "x": 150,
+      "y": 114,
+      "w": 130,
+      "h": 26,
+      "text": "",
+      "tag": "$velocidad",
+      "unit": "%",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v3_t",
+      "kind": "text",
+      "x": 10,
+      "y": 148,
+      "w": 134,
+      "h": 22,
+      "text": "Caudal",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v3",
+      "kind": "text",
+      "x": 150,
+      "y": 145,
+      "w": 130,
+      "h": 26,
+      "text": "",
+      "tag": "$caudal",
+      "unit": "m³/s",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "l52g",
+      "kind": "lamp",
+      "x": 12,
+      "y": 182,
+      "w": 16,
+      "h": 16,
+      "tag": "$acoplado",
+      "lamp_colors": {
+        "on": "@Cerrado",
+        "off": "@Abierto",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "l52g_t",
+      "kind": "text",
+      "x": 32,
+      "y": 179,
+      "w": 50,
+      "h": 22,
+      "text": "52G",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "remoto",
+      "kind": "text_list",
+      "x": 90,
+      "y": 179,
+      "w": 90,
+      "h": 24,
+      "tag": "$remoto",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@Texto",
+      "texts": [
+        {
+          "value": "true",
+          "text": "REMOTO"
+        },
+        {
+          "value": "false",
+          "text": "LOCAL"
+        }
+      ],
+      "default_text": "—",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$remoto",
+              "op": "eq",
+              "value": false,
+              "bad": false
+            },
+            "style": {
+              "text_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "alarma",
+      "kind": "text_list",
+      "x": 190,
+      "y": 179,
+      "w": 90,
+      "h": 24,
+      "tag": "$alarma",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Paro",
+      "border_color": "@Paro",
+      "texts": [
+        {
+          "value": "true",
+          "text": "ALARMA"
+        },
+        {
+          "value": "false",
+          "text": "SIN ALARMA"
+        }
+      ],
+      "default_text": "—",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$alarma",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

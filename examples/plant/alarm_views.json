@@ -1,0 +1,9 @@
+{
+  "process": {
+    "title": "Alarmas de planta",
+    "categories": [],
+    "min_priority": 1,
+    "mode": "pending",
+    "allow_ack": true
+  }
+}

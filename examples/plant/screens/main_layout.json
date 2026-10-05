@@ -1,0 +1,30 @@
+{
+  "title": "Estación de bombeo",
+  "layout": true,
+  "width": 1200,
+  "height": 730,
+  "background": "#f4f7fa",
+  "elements": [
+    {
+      "id": "cabecera",
+      "kind": "screen_container",
+      "x": 0,
+      "y": 0,
+      "w": 1200,
+      "h": 90,
+      "screen": "common_header"
+    },
+    {
+      "id": "contenido",
+      "kind": "screen_container",
+      "x": 0,
+      "y": 90,
+      "w": 1200,
+      "h": 640,
+      "screen": "process_design"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

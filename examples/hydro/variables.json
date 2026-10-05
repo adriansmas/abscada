@@ -1,0 +1,1256 @@
+[
+  {
+    "name": "G1",
+    "type": "GrupoHidro",
+    "initial": {
+      "OrdenArranque": false,
+      "OrdenParada": false,
+      "OrdenEmergencia": false,
+      "OrdenRearme": false,
+      "Remoto": false,
+      "ListoArranque": false,
+      "Acoplado": false,
+      "Disparo": false,
+      "ValvulaAbierta": false,
+      "ValvulaCerrada": false,
+      "Interruptor52G": false,
+      "InterruptorCampo": false,
+      "Frenos": false,
+      "Refrigeracion": false,
+      "BombaOleo": false,
+      "AlarmaGrupo": false,
+      "SimCojinete": false,
+      "SimRefrigeracion": false,
+      "SimVibracion": false,
+      "SimLocal": false,
+      "ZonaRugosa": false,
+      "FalloRefrigeracion": false,
+      "FalloBombaOleo": false,
+      "Paso": 0,
+      "ConsignaP": 0.0,
+      "ConsignaQ": 0.0,
+      "Velocidad": 0.0,
+      "VelocidadRpm": 0.0,
+      "Distribuidor": 0.0,
+      "PosValvula": 0.0,
+      "Caudal": 0.0,
+      "Potencia": 0.0,
+      "Reactiva": 0.0,
+      "Tension": 0.0,
+      "Intensidad": 0.0,
+      "Frecuencia": 0.0,
+      "CosPhi": 0.0,
+      "TempGuiaSup": 0.0,
+      "TempEmpuje": 0.0,
+      "TempGuiaTurbina": 0.0,
+      "TempEstator": 0.0,
+      "TempAceite": 0.0,
+      "Vibracion": 0.0,
+      "PresionOleo": 0.0,
+      "CaudalRefrigeracion": 0.0,
+      "PresionEspiral": 0.0,
+      "CorrienteExcitacion": 0.0,
+      "Energia": 0.0,
+      "HorasMarcha": 0.0,
+      "Arranques": 0,
+      "CausaDisparo": 0
+    },
+    "writable": true,
+    "overrides": {
+      "Remoto": {
+        "writable": false
+      },
+      "ListoArranque": {
+        "writable": false
+      },
+      "Acoplado": {
+        "writable": false
+      },
+      "Disparo": {
+        "writable": false
+      },
+      "ValvulaAbierta": {
+        "writable": false
+      },
+      "ValvulaCerrada": {
+        "writable": false
+      },
+      "Interruptor52G": {
+        "writable": false
+      },
+      "InterruptorCampo": {
+        "writable": false
+      },
+      "Frenos": {
+        "writable": false
+      },
+      "Refrigeracion": {
+        "writable": false
+      },
+      "BombaOleo": {
+        "writable": false
+      },
+      "AlarmaGrupo": {
+        "writable": false
+      },
+      "ZonaRugosa": {
+        "writable": false
+      },
+      "FalloRefrigeracion": {
+        "writable": false
+      },
+      "FalloBombaOleo": {
+        "writable": false
+      },
+      "Paso": {
+        "writable": false
+      },
+      "Velocidad": {
+        "writable": false
+      },
+      "VelocidadRpm": {
+        "writable": false
+      },
+      "Distribuidor": {
+        "writable": false
+      },
+      "PosValvula": {
+        "writable": false
+      },
+      "Caudal": {
+        "writable": false
+      },
+      "Potencia": {
+        "writable": false
+      },
+      "Reactiva": {
+        "writable": false
+      },
+      "Tension": {
+        "writable": false
+      },
+      "Intensidad": {
+        "writable": false
+      },
+      "Frecuencia": {
+        "writable": false
+      },
+      "CosPhi": {
+        "writable": false
+      },
+      "TempGuiaSup": {
+        "writable": false
+      },
+      "TempEmpuje": {
+        "writable": false
+      },
+      "TempGuiaTurbina": {
+        "writable": false
+      },
+      "TempEstator": {
+        "writable": false
+      },
+      "TempAceite": {
+        "writable": false
+      },
+      "Vibracion": {
+        "writable": false
+      },
+      "PresionOleo": {
+        "writable": false
+      },
+      "CaudalRefrigeracion": {
+        "writable": false
+      },
+      "PresionEspiral": {
+        "writable": false
+      },
+      "CorrienteExcitacion": {
+        "writable": false
+      },
+      "Energia": {
+        "writable": false
+      },
+      "HorasMarcha": {
+        "writable": false
+      },
+      "Arranques": {
+        "writable": false
+      },
+      "CausaDisparo": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "G1.OrdenArranque": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX0.0"
+      },
+      "G1.OrdenParada": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX0.1"
+      },
+      "G1.OrdenEmergencia": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX0.2"
+      },
+      "G1.OrdenRearme": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX0.3"
+      },
+      "G1.Remoto": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX0.4"
+      },
+      "G1.ListoArranque": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX0.5"
+      },
+      "G1.Acoplado": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX0.6"
+      },
+      "G1.Disparo": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX0.7"
+      },
+      "G1.ValvulaAbierta": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX1.0"
+      },
+      "G1.ValvulaCerrada": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX1.1"
+      },
+      "G1.Interruptor52G": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX1.2"
+      },
+      "G1.InterruptorCampo": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX1.3"
+      },
+      "G1.Frenos": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX1.4"
+      },
+      "G1.Refrigeracion": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX1.5"
+      },
+      "G1.BombaOleo": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX1.6"
+      },
+      "G1.AlarmaGrupo": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX1.7"
+      },
+      "G1.SimCojinete": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX2.0"
+      },
+      "G1.SimRefrigeracion": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX2.1"
+      },
+      "G1.SimVibracion": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX2.2"
+      },
+      "G1.SimLocal": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX2.3"
+      },
+      "G1.ZonaRugosa": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX2.4"
+      },
+      "G1.FalloRefrigeracion": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX2.5"
+      },
+      "G1.FalloBombaOleo": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBX2.6"
+      },
+      "G1.Paso": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD4"
+      },
+      "G1.ConsignaP": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD8"
+      },
+      "G1.ConsignaQ": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD12"
+      },
+      "G1.Velocidad": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD16"
+      },
+      "G1.VelocidadRpm": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD20"
+      },
+      "G1.Distribuidor": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD24"
+      },
+      "G1.PosValvula": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD28"
+      },
+      "G1.Caudal": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD32"
+      },
+      "G1.Potencia": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD36"
+      },
+      "G1.Reactiva": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD40"
+      },
+      "G1.Tension": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD44"
+      },
+      "G1.Intensidad": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD48"
+      },
+      "G1.Frecuencia": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD52"
+      },
+      "G1.CosPhi": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD56"
+      },
+      "G1.TempGuiaSup": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD60"
+      },
+      "G1.TempEmpuje": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD64"
+      },
+      "G1.TempGuiaTurbina": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD68"
+      },
+      "G1.TempEstator": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD72"
+      },
+      "G1.TempAceite": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD76"
+      },
+      "G1.Vibracion": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD80"
+      },
+      "G1.PresionOleo": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD84"
+      },
+      "G1.CaudalRefrigeracion": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD88"
+      },
+      "G1.PresionEspiral": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD92"
+      },
+      "G1.CorrienteExcitacion": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD96"
+      },
+      "G1.Energia": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD100"
+      },
+      "G1.HorasMarcha": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD104"
+      },
+      "G1.Arranques": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD108"
+      },
+      "G1.CausaDisparo": {
+        "connection": "PLC_G1",
+        "address": "%DB1.DBD112"
+      }
+    }
+  },
+  {
+    "name": "G2",
+    "type": "GrupoHidro",
+    "initial": {
+      "OrdenArranque": false,
+      "OrdenParada": false,
+      "OrdenEmergencia": false,
+      "OrdenRearme": false,
+      "Remoto": false,
+      "ListoArranque": false,
+      "Acoplado": false,
+      "Disparo": false,
+      "ValvulaAbierta": false,
+      "ValvulaCerrada": false,
+      "Interruptor52G": false,
+      "InterruptorCampo": false,
+      "Frenos": false,
+      "Refrigeracion": false,
+      "BombaOleo": false,
+      "AlarmaGrupo": false,
+      "SimCojinete": false,
+      "SimRefrigeracion": false,
+      "SimVibracion": false,
+      "SimLocal": false,
+      "ZonaRugosa": false,
+      "FalloRefrigeracion": false,
+      "FalloBombaOleo": false,
+      "Paso": 0,
+      "ConsignaP": 0.0,
+      "ConsignaQ": 0.0,
+      "Velocidad": 0.0,
+      "VelocidadRpm": 0.0,
+      "Distribuidor": 0.0,
+      "PosValvula": 0.0,
+      "Caudal": 0.0,
+      "Potencia": 0.0,
+      "Reactiva": 0.0,
+      "Tension": 0.0,
+      "Intensidad": 0.0,
+      "Frecuencia": 0.0,
+      "CosPhi": 0.0,
+      "TempGuiaSup": 0.0,
+      "TempEmpuje": 0.0,
+      "TempGuiaTurbina": 0.0,
+      "TempEstator": 0.0,
+      "TempAceite": 0.0,
+      "Vibracion": 0.0,
+      "PresionOleo": 0.0,
+      "CaudalRefrigeracion": 0.0,
+      "PresionEspiral": 0.0,
+      "CorrienteExcitacion": 0.0,
+      "Energia": 0.0,
+      "HorasMarcha": 0.0,
+      "Arranques": 0,
+      "CausaDisparo": 0
+    },
+    "writable": true,
+    "overrides": {
+      "Remoto": {
+        "writable": false
+      },
+      "ListoArranque": {
+        "writable": false
+      },
+      "Acoplado": {
+        "writable": false
+      },
+      "Disparo": {
+        "writable": false
+      },
+      "ValvulaAbierta": {
+        "writable": false
+      },
+      "ValvulaCerrada": {
+        "writable": false
+      },
+      "Interruptor52G": {
+        "writable": false
+      },
+      "InterruptorCampo": {
+        "writable": false
+      },
+      "Frenos": {
+        "writable": false
+      },
+      "Refrigeracion": {
+        "writable": false
+      },
+      "BombaOleo": {
+        "writable": false
+      },
+      "AlarmaGrupo": {
+        "writable": false
+      },
+      "ZonaRugosa": {
+        "writable": false
+      },
+      "FalloRefrigeracion": {
+        "writable": false
+      },
+      "FalloBombaOleo": {
+        "writable": false
+      },
+      "Paso": {
+        "writable": false
+      },
+      "Velocidad": {
+        "writable": false
+      },
+      "VelocidadRpm": {
+        "writable": false
+      },
+      "Distribuidor": {
+        "writable": false
+      },
+      "PosValvula": {
+        "writable": false
+      },
+      "Caudal": {
+        "writable": false
+      },
+      "Potencia": {
+        "writable": false
+      },
+      "Reactiva": {
+        "writable": false
+      },
+      "Tension": {
+        "writable": false
+      },
+      "Intensidad": {
+        "writable": false
+      },
+      "Frecuencia": {
+        "writable": false
+      },
+      "CosPhi": {
+        "writable": false
+      },
+      "TempGuiaSup": {
+        "writable": false
+      },
+      "TempEmpuje": {
+        "writable": false
+      },
+      "TempGuiaTurbina": {
+        "writable": false
+      },
+      "TempEstator": {
+        "writable": false
+      },
+      "TempAceite": {
+        "writable": false
+      },
+      "Vibracion": {
+        "writable": false
+      },
+      "PresionOleo": {
+        "writable": false
+      },
+      "CaudalRefrigeracion": {
+        "writable": false
+      },
+      "PresionEspiral": {
+        "writable": false
+      },
+      "CorrienteExcitacion": {
+        "writable": false
+      },
+      "Energia": {
+        "writable": false
+      },
+      "HorasMarcha": {
+        "writable": false
+      },
+      "Arranques": {
+        "writable": false
+      },
+      "CausaDisparo": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "G2.OrdenArranque": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX0.0"
+      },
+      "G2.OrdenParada": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX0.1"
+      },
+      "G2.OrdenEmergencia": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX0.2"
+      },
+      "G2.OrdenRearme": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX0.3"
+      },
+      "G2.Remoto": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX0.4"
+      },
+      "G2.ListoArranque": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX0.5"
+      },
+      "G2.Acoplado": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX0.6"
+      },
+      "G2.Disparo": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX0.7"
+      },
+      "G2.ValvulaAbierta": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX1.0"
+      },
+      "G2.ValvulaCerrada": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX1.1"
+      },
+      "G2.Interruptor52G": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX1.2"
+      },
+      "G2.InterruptorCampo": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX1.3"
+      },
+      "G2.Frenos": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX1.4"
+      },
+      "G2.Refrigeracion": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX1.5"
+      },
+      "G2.BombaOleo": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX1.6"
+      },
+      "G2.AlarmaGrupo": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX1.7"
+      },
+      "G2.SimCojinete": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX2.0"
+      },
+      "G2.SimRefrigeracion": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX2.1"
+      },
+      "G2.SimVibracion": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX2.2"
+      },
+      "G2.SimLocal": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX2.3"
+      },
+      "G2.ZonaRugosa": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX2.4"
+      },
+      "G2.FalloRefrigeracion": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX2.5"
+      },
+      "G2.FalloBombaOleo": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBX2.6"
+      },
+      "G2.Paso": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD4"
+      },
+      "G2.ConsignaP": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD8"
+      },
+      "G2.ConsignaQ": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD12"
+      },
+      "G2.Velocidad": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD16"
+      },
+      "G2.VelocidadRpm": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD20"
+      },
+      "G2.Distribuidor": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD24"
+      },
+      "G2.PosValvula": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD28"
+      },
+      "G2.Caudal": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD32"
+      },
+      "G2.Potencia": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD36"
+      },
+      "G2.Reactiva": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD40"
+      },
+      "G2.Tension": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD44"
+      },
+      "G2.Intensidad": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD48"
+      },
+      "G2.Frecuencia": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD52"
+      },
+      "G2.CosPhi": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD56"
+      },
+      "G2.TempGuiaSup": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD60"
+      },
+      "G2.TempEmpuje": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD64"
+      },
+      "G2.TempGuiaTurbina": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD68"
+      },
+      "G2.TempEstator": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD72"
+      },
+      "G2.TempAceite": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD76"
+      },
+      "G2.Vibracion": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD80"
+      },
+      "G2.PresionOleo": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD84"
+      },
+      "G2.CaudalRefrigeracion": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD88"
+      },
+      "G2.PresionEspiral": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD92"
+      },
+      "G2.CorrienteExcitacion": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD96"
+      },
+      "G2.Energia": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD100"
+      },
+      "G2.HorasMarcha": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD104"
+      },
+      "G2.Arranques": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD108"
+      },
+      "G2.CausaDisparo": {
+        "connection": "PLC_G2",
+        "address": "%DB1.DBD112"
+      }
+    }
+  },
+  {
+    "name": "SSCC",
+    "type": "ServiciosComunes",
+    "initial": {
+      "CompuertaTomaAbierta": false,
+      "CompuertaTomaCerrada": false,
+      "OrdenAbrirToma": false,
+      "OrdenCerrarToma": false,
+      "Interruptor52L": false,
+      "OrdenAbrir52L": false,
+      "OrdenCerrar52L": false,
+      "RedPresente": false,
+      "BombaDrenaje1": false,
+      "BombaDrenaje2": false,
+      "Compresor": false,
+      "CargadorOk": false,
+      "TrafoAuxOk": false,
+      "GrupoDiesel": false,
+      "AliviaderoAuto": false,
+      "SimAvenida": false,
+      "SimFalloRed": false,
+      "SimFalloCargador": false,
+      "AlarmaPresa": false,
+      "AlarmaSubestacion": false,
+      "AlarmaAuxiliares": false,
+      "FalloDrenaje": false,
+      "FalloCompresor": false,
+      "NivelEmbalse": 0.0,
+      "Volumen": 0.0,
+      "CaudalEntrada": 0.0,
+      "CaudalSalida": 0.0,
+      "PosCompuerta1": 0.0,
+      "ConsignaCompuerta1": 0.0,
+      "PosCompuerta2": 0.0,
+      "ConsignaCompuerta2": 0.0,
+      "CaudalAliviadero": 0.0,
+      "CaudalEcologico": 0.0,
+      "NivelDesague": 0.0,
+      "SaltoBruto": 0.0,
+      "Lluvia": 0.0,
+      "PresionTuberia": 0.0,
+      "NivelPozo": 0.0,
+      "PresionAire": 0.0,
+      "TensionBaterias": 0.0,
+      "Tension400V": 0.0,
+      "TensionBarras66": 0.0,
+      "FrecuenciaRed": 0.0,
+      "TempAmbiente": 0.0,
+      "PosCompuertaToma": 0.0
+    },
+    "writable": true,
+    "overrides": {
+      "CompuertaTomaAbierta": {
+        "writable": false
+      },
+      "CompuertaTomaCerrada": {
+        "writable": false
+      },
+      "Interruptor52L": {
+        "writable": false
+      },
+      "RedPresente": {
+        "writable": false
+      },
+      "BombaDrenaje1": {
+        "writable": false
+      },
+      "BombaDrenaje2": {
+        "writable": false
+      },
+      "Compresor": {
+        "writable": false
+      },
+      "CargadorOk": {
+        "writable": false
+      },
+      "TrafoAuxOk": {
+        "writable": false
+      },
+      "GrupoDiesel": {
+        "writable": false
+      },
+      "AlarmaPresa": {
+        "writable": false
+      },
+      "AlarmaSubestacion": {
+        "writable": false
+      },
+      "AlarmaAuxiliares": {
+        "writable": false
+      },
+      "FalloDrenaje": {
+        "writable": false
+      },
+      "FalloCompresor": {
+        "writable": false
+      },
+      "NivelEmbalse": {
+        "writable": false
+      },
+      "Volumen": {
+        "writable": false
+      },
+      "CaudalEntrada": {
+        "writable": false
+      },
+      "CaudalSalida": {
+        "writable": false
+      },
+      "PosCompuerta1": {
+        "writable": false
+      },
+      "PosCompuerta2": {
+        "writable": false
+      },
+      "CaudalAliviadero": {
+        "writable": false
+      },
+      "CaudalEcologico": {
+        "writable": false
+      },
+      "NivelDesague": {
+        "writable": false
+      },
+      "SaltoBruto": {
+        "writable": false
+      },
+      "Lluvia": {
+        "writable": false
+      },
+      "PresionTuberia": {
+        "writable": false
+      },
+      "NivelPozo": {
+        "writable": false
+      },
+      "PresionAire": {
+        "writable": false
+      },
+      "TensionBaterias": {
+        "writable": false
+      },
+      "Tension400V": {
+        "writable": false
+      },
+      "TensionBarras66": {
+        "writable": false
+      },
+      "FrecuenciaRed": {
+        "writable": false
+      },
+      "TempAmbiente": {
+        "writable": false
+      },
+      "PosCompuertaToma": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "SSCC.CompuertaTomaAbierta": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX0.0"
+      },
+      "SSCC.CompuertaTomaCerrada": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX0.1"
+      },
+      "SSCC.OrdenAbrirToma": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX0.2"
+      },
+      "SSCC.OrdenCerrarToma": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX0.3"
+      },
+      "SSCC.Interruptor52L": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX0.4"
+      },
+      "SSCC.OrdenAbrir52L": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX0.5"
+      },
+      "SSCC.OrdenCerrar52L": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX0.6"
+      },
+      "SSCC.RedPresente": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX0.7"
+      },
+      "SSCC.BombaDrenaje1": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX1.0"
+      },
+      "SSCC.BombaDrenaje2": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX1.1"
+      },
+      "SSCC.Compresor": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX1.2"
+      },
+      "SSCC.CargadorOk": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX1.3"
+      },
+      "SSCC.TrafoAuxOk": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX1.4"
+      },
+      "SSCC.GrupoDiesel": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX1.5"
+      },
+      "SSCC.AliviaderoAuto": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX1.6"
+      },
+      "SSCC.SimAvenida": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX1.7"
+      },
+      "SSCC.SimFalloRed": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX2.0"
+      },
+      "SSCC.SimFalloCargador": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX2.1"
+      },
+      "SSCC.AlarmaPresa": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX2.2"
+      },
+      "SSCC.AlarmaSubestacion": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX2.3"
+      },
+      "SSCC.AlarmaAuxiliares": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX2.4"
+      },
+      "SSCC.FalloDrenaje": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX2.5"
+      },
+      "SSCC.FalloCompresor": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBX2.6"
+      },
+      "SSCC.NivelEmbalse": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD4"
+      },
+      "SSCC.Volumen": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD8"
+      },
+      "SSCC.CaudalEntrada": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD12"
+      },
+      "SSCC.CaudalSalida": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD16"
+      },
+      "SSCC.PosCompuerta1": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD20"
+      },
+      "SSCC.ConsignaCompuerta1": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD24"
+      },
+      "SSCC.PosCompuerta2": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD28"
+      },
+      "SSCC.ConsignaCompuerta2": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD32"
+      },
+      "SSCC.CaudalAliviadero": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD36"
+      },
+      "SSCC.CaudalEcologico": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD40"
+      },
+      "SSCC.NivelDesague": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD44"
+      },
+      "SSCC.SaltoBruto": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD48"
+      },
+      "SSCC.Lluvia": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD52"
+      },
+      "SSCC.PresionTuberia": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD56"
+      },
+      "SSCC.NivelPozo": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD60"
+      },
+      "SSCC.PresionAire": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD64"
+      },
+      "SSCC.TensionBaterias": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD68"
+      },
+      "SSCC.Tension400V": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD72"
+      },
+      "SSCC.TensionBarras66": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD76"
+      },
+      "SSCC.FrecuenciaRed": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD80"
+      },
+      "SSCC.TempAmbiente": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD84"
+      },
+      "SSCC.PosCompuertaToma": {
+        "connection": "PLC_SSCC",
+        "address": "%DB1.DBD88"
+      }
+    }
+  },
+  {
+    "name": "Contador",
+    "type": "Contador",
+    "writable": false,
+    "bindings": {
+      "Contador.Comunicacion": {
+        "connection": "Contador_66kV",
+        "version": 1,
+        "address": {
+          "area": "discrete_inputs",
+          "offset": 0,
+          "encoding": "bool"
+        }
+      },
+      "Contador.Potencia": {
+        "connection": "Contador_66kV",
+        "version": 1,
+        "address": {
+          "area": "input_registers",
+          "offset": 0,
+          "encoding": "float32",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      },
+      "Contador.Reactiva": {
+        "connection": "Contador_66kV",
+        "version": 1,
+        "address": {
+          "area": "input_registers",
+          "offset": 2,
+          "encoding": "float32",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      },
+      "Contador.Tension": {
+        "connection": "Contador_66kV",
+        "version": 1,
+        "address": {
+          "area": "input_registers",
+          "offset": 4,
+          "encoding": "float32",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      },
+      "Contador.Frecuencia": {
+        "connection": "Contador_66kV",
+        "version": 1,
+        "address": {
+          "area": "input_registers",
+          "offset": 6,
+          "encoding": "float32",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      },
+      "Contador.CosPhi": {
+        "connection": "Contador_66kV",
+        "version": 1,
+        "address": {
+          "area": "input_registers",
+          "offset": 8,
+          "encoding": "float32",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      },
+      "Contador.EnergiaExportada": {
+        "connection": "Contador_66kV",
+        "version": 1,
+        "address": {
+          "area": "input_registers",
+          "offset": 10,
+          "encoding": "uint32",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      },
+      "Contador.EnergiaImportada": {
+        "connection": "Contador_66kV",
+        "version": 1,
+        "address": {
+          "area": "input_registers",
+          "offset": 12,
+          "encoding": "uint32",
+          "byte_order": "big",
+          "word_order": "big"
+        }
+      }
+    },
+    "initial": {
+      "Comunicacion": false,
+      "Potencia": 0.0,
+      "Reactiva": 0.0,
+      "Tension": 0.0,
+      "Frecuencia": 0.0,
+      "CosPhi": 0.0,
+      "EnergiaExportada": 0,
+      "EnergiaImportada": 0
+    }
+  },
+  {
+    "name": "Sistema",
+    "type": "Sistema",
+    "writable": true,
+    "initial": {
+      "Fecha": "",
+      "Hora": "",
+      "Inicio": "",
+      "Operador": "Operador de turno",
+      "Pantalla": "",
+      "ComG1": true,
+      "ComG2": true,
+      "ComSSCC": true,
+      "ComContador": true,
+      "ComTodas": true,
+      "PotenciaTotal": 0.0,
+      "CaudalTurbinado": 0.0,
+      "EnergiaHoy": 0.0
+    }
+  },
+  {
+    "name": "Planta",
+    "type": "ControlPlanta",
+    "writable": true,
+    "initial": {
+      "ControlConjunto": false,
+      "ConsignaPlanta": 16.0,
+      "ControlNivel": false,
+      "ConsignaNivel": 812.5,
+      "Estado": "Control conjunto desactivado"
+    }
+  }
+]

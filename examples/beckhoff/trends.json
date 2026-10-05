@@ -1,0 +1,60 @@
+{
+  "banco": {
+    "title": "Velocidad, temperatura y presión",
+    "window_seconds": 600,
+    "axes": [
+      {
+        "id": "rpm",
+        "title": "Velocidad (rpm)",
+        "side": "left",
+        "auto": false,
+        "min": 0,
+        "max": 3000,
+        "visible": true
+      },
+      {
+        "id": "t",
+        "title": "Temperatura (°C) / presión (bar)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 120,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "v",
+        "tag": "Banco.Velocidad",
+        "axis": "rpm",
+        "color": "#2b6cb0",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "Banco.Consigna",
+        "axis": "rpm",
+        "color": "#7f9bb3",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "t",
+        "tag": "Banco.Temperatura",
+        "axis": "t",
+        "color": "#c0392b",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "tag": "Banco.Presion",
+        "axis": "t",
+        "color": "#2e8b57",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  }
+}

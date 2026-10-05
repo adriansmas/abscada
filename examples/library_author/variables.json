@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Marcha",
+    "type": "bool",
+    "initial": false,
+    "writable": true
+  },
+  {
+    "name": "Valor",
+    "type": "float",
+    "initial": 35.0,
+    "writable": true
+  },
+  {
+    "name": "Consigna",
+    "type": "float",
+    "initial": 55.0,
+    "writable": true
+  }
+]

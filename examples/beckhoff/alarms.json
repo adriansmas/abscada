@@ -1,0 +1,54 @@
+{
+  "retention_days": 365,
+  "categories": [
+    {
+      "id": "banco",
+      "name": "Banco de ensayo",
+      "color": "#2b6cb0"
+    }
+  ],
+  "items": [
+    {
+      "id": "temp_alta",
+      "tag": "Banco.Temperatura",
+      "category": "banco",
+      "condition": "high",
+      "threshold": 75,
+      "message": "Temperatura de devanado alta",
+      "priority": 700,
+      "ack_required": true,
+      "enabled": true,
+      "hysteresis": 2,
+      "on_delay_ms": 1000,
+      "off_delay_ms": 500
+    },
+    {
+      "id": "temp_muy_alta",
+      "tag": "Banco.AlarmaTemperatura",
+      "category": "banco",
+      "condition": "true",
+      "threshold": 0,
+      "message": "Temperatura de devanado muy alta (PLC)",
+      "priority": 900,
+      "ack_required": true,
+      "enabled": true,
+      "hysteresis": 0,
+      "on_delay_ms": 0,
+      "off_delay_ms": 500
+    },
+    {
+      "id": "sobrevelocidad",
+      "tag": "Banco.Velocidad",
+      "category": "banco",
+      "condition": "high",
+      "threshold": 2800,
+      "message": "Velocidad excesiva",
+      "priority": 800,
+      "ack_required": true,
+      "enabled": true,
+      "hysteresis": 50,
+      "on_delay_ms": 500,
+      "off_delay_ms": 500
+    }
+  ]
+}

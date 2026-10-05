@@ -1,0 +1,159 @@
+{
+  "title": "Compuerta de aliviadero",
+  "width": 250,
+  "height": 190,
+  "background": "@Panel",
+  "parameters": {
+    "posicion": "float",
+    "consigna": "float",
+    "automatico": "bool"
+  },
+  "elements": [
+    {
+      "id": "marco",
+      "kind": "rectangle",
+      "x": 14,
+      "y": 14,
+      "w": 52,
+      "h": 162,
+      "color": "#ffffff",
+      "stroke_color": "@Linea",
+      "stroke_width": 2
+    },
+    {
+      "id": "apertura",
+      "kind": "bar",
+      "x": 18,
+      "y": 18,
+      "w": 44,
+      "h": 154,
+      "tag": "$posicion",
+      "min": 0,
+      "max": 100,
+      "color": "@Agua",
+      "dynamics": {}
+    },
+    {
+      "id": "pos_t",
+      "kind": "text",
+      "x": 80,
+      "y": 12,
+      "w": 160,
+      "h": 24,
+      "text": "Apertura",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "pos",
+      "kind": "text",
+      "x": 80,
+      "y": 38,
+      "w": 150,
+      "h": 30,
+      "text": "",
+      "tag": "$posicion",
+      "unit": "%",
+      "decimals": 1,
+      "font_size": 16,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "sp_t",
+      "kind": "text",
+      "x": 80,
+      "y": 74,
+      "w": 160,
+      "h": 24,
+      "text": "Consigna",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "sp",
+      "kind": "input",
+      "x": 80,
+      "y": 100,
+      "w": 150,
+      "h": 30,
+      "text": "",
+      "tag": "$consigna",
+      "unit": "%",
+      "decimals": 1,
+      "font_size": 15,
+      "text_align": "right",
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando",
+      "bold": true,
+      "dynamics": {
+        "enabled": {
+          "tag": "$automatico",
+          "op": "eq",
+          "value": false,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#e3e6e9",
+          "text_color": "#8a949d",
+          "border_color": "@Borde"
+        },
+        "disabled_reason": "Aliviadero en automático: la consigna la calcula el PLC"
+      }
+    },
+    {
+      "id": "modo",
+      "kind": "text_list",
+      "x": 80,
+      "y": 142,
+      "w": 150,
+      "h": 28,
+      "tag": "$automatico",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Linea",
+      "border_color": "@Linea",
+      "texts": [
+        {
+          "value": "true",
+          "text": "AUTOMÁTICO"
+        },
+        {
+          "value": "false",
+          "text": "MANUAL"
+        }
+      ],
+      "default_text": "—",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$automatico",
+              "op": "eq",
+              "value": false,
+              "bad": false
+            },
+            "style": {
+              "color": "@Mando",
+              "border_color": "@Mando"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

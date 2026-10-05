@@ -1,0 +1,78 @@
+{
+  "title": "Detalle de bomba",
+  "width": 420,
+  "height": 300,
+  "background": "#f4f7fa",
+  "parameters": {
+    "running": "bool",
+    "flow": "float",
+    "setpoint": "float"
+  },
+  "elements": [
+    {
+      "id": "heading",
+      "kind": "text",
+      "x": 16,
+      "y": 12,
+      "w": 388,
+      "h": 36,
+      "text": "DETALLE DE BOMBA",
+      "bold": true,
+      "text_align": "left"
+    },
+    {
+      "id": "state",
+      "kind": "lamp",
+      "x": 16,
+      "y": 62,
+      "w": 52,
+      "h": 52,
+      "tag": "$running"
+    },
+    {
+      "id": "flow",
+      "kind": "text",
+      "x": 80,
+      "y": 62,
+      "w": 324,
+      "h": 52,
+      "text": "Caudal",
+      "tag": "$flow",
+      "unit": "m³/h",
+      "font_size": 20,
+      "text_align": "left"
+    },
+    {
+      "id": "setpoint",
+      "kind": "input",
+      "x": 16,
+      "y": 130,
+      "w": 388,
+      "h": 44,
+      "text": "Consigna",
+      "tag": "$setpoint",
+      "unit": "m³/h"
+    },
+    {
+      "id": "command",
+      "kind": "button",
+      "x": 16,
+      "y": 188,
+      "w": 388,
+      "h": 44,
+      "text": "Marcha / paro",
+      "tag": "$running",
+      "action": "toggle"
+    },
+    {
+      "id": "close",
+      "kind": "button",
+      "x": 284,
+      "y": 246,
+      "w": 120,
+      "h": 38,
+      "text": "Cerrar",
+      "action": "close_popup"
+    }
+  ]
+}

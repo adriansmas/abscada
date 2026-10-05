@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "name": "Planta de proceso",
+  "startup_screen": "main_layout"
+}

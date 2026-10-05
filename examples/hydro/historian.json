@@ -1,0 +1,81 @@
+{
+  "retention_days": 365,
+  "files": [
+    {
+      "id": "electrico",
+      "name": "Eléctrico y regulación · 2 s",
+      "interval_ms": 2000,
+      "variables": [
+        "G1.Potencia",
+        "G1.Reactiva",
+        "G1.Tension",
+        "G1.Frecuencia",
+        "G1.Velocidad",
+        "G1.Distribuidor",
+        "G1.Caudal",
+        "G2.Potencia",
+        "G2.Reactiva",
+        "G2.Tension",
+        "G2.Frecuencia",
+        "G2.Velocidad",
+        "G2.Distribuidor",
+        "G2.Caudal",
+        "Contador.Potencia",
+        "SSCC.FrecuenciaRed"
+      ]
+    },
+    {
+      "id": "termico",
+      "name": "Temperaturas y vibraciones · 5 s",
+      "interval_ms": 5000,
+      "variables": [
+        "G1.TempGuiaSup",
+        "G1.TempEmpuje",
+        "G1.TempGuiaTurbina",
+        "G1.TempEstator",
+        "G1.TempAceite",
+        "G1.Vibracion",
+        "G1.PresionOleo",
+        "G2.TempGuiaSup",
+        "G2.TempEmpuje",
+        "G2.TempGuiaTurbina",
+        "G2.TempEstator",
+        "G2.TempAceite",
+        "G2.Vibracion",
+        "G2.PresionOleo"
+      ]
+    },
+    {
+      "id": "embalse",
+      "name": "Embalse y caudales · 10 s",
+      "interval_ms": 10000,
+      "variables": [
+        "SSCC.NivelEmbalse",
+        "SSCC.CaudalEntrada",
+        "SSCC.CaudalSalida",
+        "SSCC.CaudalAliviadero",
+        "SSCC.PosCompuerta1",
+        "SSCC.PosCompuerta2",
+        "SSCC.SaltoBruto",
+        "SSCC.Lluvia",
+        "Sistema.CaudalTurbinado"
+      ]
+    },
+    {
+      "id": "estados",
+      "name": "Estados y auxiliares · 5 s",
+      "interval_ms": 5000,
+      "variables": [
+        "G1.Paso",
+        "G2.Paso",
+        "G1.Acoplado",
+        "G2.Acoplado",
+        "SSCC.Interruptor52L",
+        "SSCC.TensionBaterias",
+        "SSCC.NivelPozo",
+        "SSCC.PresionAire",
+        "Sistema.PotenciaTotal"
+      ]
+    }
+  ]
+}

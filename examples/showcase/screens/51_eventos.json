@@ -1,0 +1,110 @@
+{
+  "title": "Histórico de alarmas y eventos",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Histórico de alarmas y eventos",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "Prueba el ciclo: activar → reconocer (ACK) → retornar. Las fechas y el operador quedan registrados en SQLite.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "alarms",
+      "kind": "alarm_view",
+      "x": 30,
+      "y": 210,
+      "w": 1100,
+      "h": 485,
+      "view": "events"
+    },
+    {
+      "id": "high",
+      "kind": "button",
+      "x": 30,
+      "y": 140,
+      "w": 260,
+      "h": 42,
+      "text": "Nivel alto (90 %)",
+      "action": "set",
+      "font_size": 15,
+      "value": 90.0,
+      "tag": "Local.Nivel"
+    },
+    {
+      "id": "normal",
+      "kind": "button",
+      "x": 310,
+      "y": 140,
+      "w": 260,
+      "h": 42,
+      "text": "Nivel normal (50 %)",
+      "action": "set",
+      "font_size": 15,
+      "value": 50.0,
+      "tag": "Local.Nivel"
+    },
+    {
+      "id": "fault",
+      "kind": "button",
+      "x": 590,
+      "y": 140,
+      "w": 260,
+      "h": 42,
+      "text": "Activar / quitar fallo",
+      "action": "toggle",
+      "font_size": 15,
+      "tag": "Local.Fallo"
+    },
+    {
+      "id": "history",
+      "kind": "button",
+      "x": 870,
+      "y": 140,
+      "w": 260,
+      "h": 42,
+      "text": "Ver ocurrencias",
+      "action": "popup",
+      "font_size": 15,
+      "screen": "95_ocurrencias"
+    },
+    {
+      "id": "alarm_hint",
+      "kind": "text",
+      "x": 30,
+      "y": 707,
+      "w": 1090,
+      "h": 44,
+      "text": "Detén la señal local para mantener el nivel manual. El visor permite cambiar filtros, periodo, columnas y exportar CSV.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

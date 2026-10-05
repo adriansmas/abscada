@@ -1,0 +1,463 @@
+{
+  "title": "Mando de grupo",
+  "width": 480,
+  "height": 330,
+  "background": "@Panel",
+  "parameters": {
+    "paso": "int",
+    "potencia": "float",
+    "consigna": "float",
+    "remoto": "bool",
+    "listo": "bool",
+    "disparo": "bool",
+    "causa": "int",
+    "arranque": "bool",
+    "parada": "bool",
+    "rearme": "bool"
+  },
+  "elements": [
+    {
+      "id": "estado",
+      "kind": "text_list",
+      "x": 12,
+      "y": 12,
+      "w": 456,
+      "h": 36,
+      "tag": "$paso",
+      "font_size": 15,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Paro",
+      "border_color": "@Paro",
+      "texts": [
+        {
+          "value": "0",
+          "text": "PARADO"
+        },
+        {
+          "value": "1",
+          "text": "ARRANQUE DE AUXILIARES"
+        },
+        {
+          "value": "2",
+          "text": "APERTURA VÁLVULA DE ENTRADA"
+        },
+        {
+          "value": "3",
+          "text": "ACELERACIÓN"
+        },
+        {
+          "value": "4",
+          "text": "EXCITACIÓN"
+        },
+        {
+          "value": "5",
+          "text": "SINCRONIZACIÓN"
+        },
+        {
+          "value": "6",
+          "text": "EN CARGA"
+        },
+        {
+          "value": "7",
+          "text": "DESCARGA"
+        },
+        {
+          "value": "8",
+          "text": "DESACOPLAMIENTO"
+        },
+        {
+          "value": "9",
+          "text": "CIERRE Y FRENADO"
+        },
+        {
+          "value": "10",
+          "text": "DISPARO · BLOQUEO 86"
+        }
+      ],
+      "default_text": "SIN COMUNICACIÓN",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$paso",
+              "op": "eq",
+              "value": 10,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "$paso",
+              "op": "eq",
+              "value": 6,
+              "bad": false
+            },
+            "style": {
+              "color": "@Marcha",
+              "border_color": "@Marcha"
+            }
+          },
+          {
+            "when": {
+              "tag": "$paso",
+              "op": "gt",
+              "value": 0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "border_color": "@Aviso"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "modo",
+      "kind": "text_list",
+      "x": 12,
+      "y": 60,
+      "w": 130,
+      "h": 30,
+      "tag": "$remoto",
+      "font_size": 13,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "REMOTO"
+        },
+        {
+          "value": "false",
+          "text": "LOCAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Aviso",
+      "text_color": "#ffffff",
+      "border_color": "@Aviso",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$remoto",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Linea",
+              "border_color": "@Linea"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "listo",
+      "kind": "lamp",
+      "x": 160,
+      "y": 66,
+      "w": 20,
+      "h": 20,
+      "tag": "$listo",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "listo_t",
+      "kind": "text",
+      "x": 188,
+      "y": 65,
+      "w": 272,
+      "h": 22,
+      "text": "Listo para arrancar",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "potencia_t",
+      "kind": "text",
+      "x": 12,
+      "y": 107,
+      "w": 310,
+      "h": 22,
+      "text": "Potencia activa",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "potencia",
+      "kind": "text",
+      "x": 328,
+      "y": 104,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "$potencia",
+      "unit": "MW",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "consigna_t",
+      "kind": "text",
+      "x": 12,
+      "y": 141,
+      "w": 310,
+      "h": 22,
+      "text": "Consigna de potencia activa",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "consigna",
+      "kind": "input",
+      "x": 328,
+      "y": 138,
+      "w": 140,
+      "h": 26,
+      "text": "",
+      "tag": "$consigna",
+      "unit": "MW",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando",
+      "bold": true,
+      "dynamics": {
+        "enabled": {
+          "tag": "$remoto",
+          "op": "eq",
+          "value": true,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#e3e6e9",
+          "text_color": "#8a949d"
+        },
+        "disabled_reason": "Grupo en local"
+      }
+    },
+    {
+      "id": "arrancar",
+      "kind": "button",
+      "x": 12,
+      "y": 180,
+      "w": 144,
+      "h": 40,
+      "text": "ARRANCAR",
+      "tag": "$arranque",
+      "action": "set",
+      "value": true,
+      "font_size": 13,
+      "bold": true,
+      "color": "@Marcha",
+      "border_color": "@Marcha",
+      "text_color": "#ffffff",
+      "dynamics": {
+        "enabled": {
+          "tag": "$listo",
+          "op": "eq",
+          "value": true,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#d7dce0",
+          "text_color": "#8a949d",
+          "border_color": "#c3c9ce"
+        },
+        "disabled_reason": "Condiciones de arranque no cumplidas"
+      }
+    },
+    {
+      "id": "parar",
+      "kind": "button",
+      "x": 168,
+      "y": 180,
+      "w": 144,
+      "h": 40,
+      "text": "PARAR",
+      "tag": "$parada",
+      "action": "set",
+      "value": true,
+      "font_size": 13,
+      "bold": true,
+      "color": "@Linea",
+      "border_color": "@Linea",
+      "text_color": "#ffffff",
+      "dynamics": {
+        "enabled": {
+          "tag": "$paso",
+          "op": "ne",
+          "value": 0,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#d7dce0",
+          "text_color": "#8a949d",
+          "border_color": "#c3c9ce"
+        },
+        "disabled_reason": "El grupo ya está parado"
+      }
+    },
+    {
+      "id": "rearmar",
+      "kind": "button",
+      "x": 324,
+      "y": 180,
+      "w": 144,
+      "h": 40,
+      "text": "REARME 86",
+      "tag": "$rearme",
+      "action": "set",
+      "value": true,
+      "font_size": 13,
+      "bold": true,
+      "color": "@Mando",
+      "border_color": "@Mando",
+      "text_color": "#ffffff",
+      "dynamics": {
+        "enabled": {
+          "tag": "$disparo",
+          "op": "eq",
+          "value": true,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#d7dce0",
+          "text_color": "#8a949d",
+          "border_color": "#c3c9ce"
+        },
+        "disabled_reason": "No hay disparo que rearmar"
+      }
+    },
+    {
+      "id": "causa_t",
+      "kind": "text",
+      "x": 12,
+      "y": 234,
+      "w": 200,
+      "h": 18,
+      "text": "Causa de disparo",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "causa",
+      "kind": "text_list",
+      "x": 12,
+      "y": 254,
+      "w": 300,
+      "h": 28,
+      "tag": "$causa",
+      "font_size": 12,
+      "bold": true,
+      "texts": [
+        {
+          "value": "0",
+          "text": "Sin disparo"
+        },
+        {
+          "value": "1",
+          "text": "Parada de emergencia"
+        },
+        {
+          "value": "2",
+          "text": "Temperatura de cojinete"
+        },
+        {
+          "value": "3",
+          "text": "Sobrevelocidad"
+        },
+        {
+          "value": "4",
+          "text": "Vibración muy alta"
+        },
+        {
+          "value": "5",
+          "text": "Presión de aceite muy baja"
+        },
+        {
+          "value": "6",
+          "text": "Temperatura de estator"
+        },
+        {
+          "value": "7",
+          "text": "Protección eléctrica / red"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$causa",
+              "op": "gt",
+              "value": 0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "text_color": "#ffffff",
+              "border_color": "@Disparo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cerrar",
+      "kind": "button",
+      "x": 348,
+      "y": 280,
+      "w": 120,
+      "h": 38,
+      "text": "Cerrar",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "action": "close_popup"
+    }
+  ]
+}

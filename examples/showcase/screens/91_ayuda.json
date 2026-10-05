@@ -1,0 +1,122 @@
+{
+  "title": "Mapa del laboratorio",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Mapa del laboratorio",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "El README del proyecto contiene el recorrido completo y los mapas de direcciones.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "help0",
+      "kind": "text",
+      "x": 40,
+      "y": 150,
+      "w": 1080,
+      "h": 53,
+      "text": "01–05: banco interno, dinámica visual, dibujos y componentes.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "help1",
+      "kind": "text",
+      "x": 40,
+      "y": 224,
+      "w": 1080,
+      "h": 53,
+      "text": "06–07: equipos externos S7 y Modbus, sin sustitución de lecturas.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "help2",
+      "kind": "text",
+      "x": 40,
+      "y": 298,
+      "w": 1080,
+      "h": 53,
+      "text": "08–09: tiempo real, variable sin registro e históricos entre días.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "help3",
+      "kind": "text",
+      "x": 40,
+      "y": 372,
+      "w": 1080,
+      "h": 53,
+      "text": "10–11: alarmas, reconocimiento, retorno y exportación.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "help4",
+      "kind": "text",
+      "x": 40,
+      "y": 446,
+      "w": 1080,
+      "h": 53,
+      "text": "12: scripts de inicio, apertura, botón y tarea periódica.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "help5",
+      "kind": "text",
+      "x": 40,
+      "y": 520,
+      "w": 1080,
+      "h": 53,
+      "text": "Guardar proyecto conserva todo; Versiones permite activar Git local.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "close",
+      "kind": "button",
+      "x": 760,
+      "y": 650,
+      "w": 330,
+      "h": 42,
+      "text": "Cerrar ayuda",
+      "action": "close_popup",
+      "font_size": 15
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

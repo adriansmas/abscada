@@ -1,0 +1,14 @@
+{
+  "startup": [
+    "startup"
+  ],
+  "tasks": [
+    {
+      "id": "cada_segundo",
+      "script": "periodic",
+      "interval_ms": 1000,
+      "enabled": true
+    }
+  ],
+  "timeout_seconds": 10
+}

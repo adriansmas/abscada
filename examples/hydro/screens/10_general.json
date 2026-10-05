@@ -1,0 +1,884 @@
+{
+  "title": "Vista general de la central",
+  "width": 1400,
+  "height": 830,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "titulo",
+      "kind": "text",
+      "x": 14,
+      "y": 8,
+      "w": 900,
+      "h": 30,
+      "text": "VISTA GENERAL DE LA CENTRAL",
+      "font_size": 20,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "subtitulo",
+      "kind": "text",
+      "x": 14,
+      "y": 36,
+      "w": 900,
+      "h": 18,
+      "text": "Embalse → toma → tubería forzada → 2 grupos Francis → transformadores → línea de 66 kV",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "sinoptico",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 60,
+      "w": 1380,
+      "h": 410,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "vaso",
+      "kind": "rectangle",
+      "x": 30,
+      "y": 120,
+      "w": 330,
+      "h": 300,
+      "color": "#ffffff",
+      "stroke_color": "@Borde",
+      "stroke_width": 1
+    },
+    {
+      "id": "agua",
+      "kind": "bar",
+      "x": 32,
+      "y": 122,
+      "w": 326,
+      "h": 296,
+      "tag": "SSCC.NivelEmbalse",
+      "min": 795,
+      "max": 818,
+      "color": "@Agua",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.NivelEmbalse",
+              "op": "ge",
+              "value": 815.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "SSCC.NivelEmbalse",
+              "op": "ge",
+              "value": 814.5,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "presa",
+      "kind": "image",
+      "x": 300,
+      "y": 96,
+      "w": 150,
+      "h": 330,
+      "source": "assets/presa.svg"
+    },
+    {
+      "id": "embalse_t",
+      "kind": "text",
+      "x": 40,
+      "y": 70,
+      "w": 200,
+      "h": 22,
+      "text": "EMBALSE",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "nivel",
+      "kind": "text",
+      "x": 40,
+      "y": 92,
+      "w": 160,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.NivelEmbalse",
+      "unit": "msnm",
+      "decimals": 2,
+      "font_size": 15,
+      "text_align": "left",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "volumen",
+      "kind": "text",
+      "x": 206,
+      "y": 92,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "SSCC.Volumen",
+      "unit": "hm³",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "left",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "toma",
+      "kind": "lamp",
+      "x": 438,
+      "y": 352,
+      "w": 18,
+      "h": 18,
+      "tag": "SSCC.CompuertaTomaAbierta",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "@Disparo",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "toma_t",
+      "kind": "text",
+      "x": 430,
+      "y": 372,
+      "w": 60,
+      "h": 18,
+      "text": "Toma",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "tuberia",
+      "kind": "pipe",
+      "x": 450,
+      "y": 390,
+      "w": 790,
+      "h": 50,
+      "stroke_color": "@Agua",
+      "stroke_width": 12,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.189873417721519,
+          0.0
+        ],
+        [
+          0.31645569620253167,
+          1.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "tuberia_t",
+      "kind": "text",
+      "x": 460,
+      "y": 400,
+      "w": 200,
+      "h": 20,
+      "text": "Tubería forzada Ø2,2 m",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "p_tub",
+      "kind": "text",
+      "x": 560,
+      "y": 448,
+      "w": 110,
+      "h": 24,
+      "text": "",
+      "tag": "SSCC.PresionTuberia",
+      "unit": "bar",
+      "decimals": 2,
+      "font_size": 12,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "aliviadero",
+      "kind": "polyline",
+      "x": 372,
+      "y": 104,
+      "w": 98,
+      "h": 226,
+      "stroke_color": "@Muerto",
+      "stroke_width": 6,
+      "stroke_style": "dash",
+      "arrows": "end",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.CaudalAliviadero",
+              "op": "gt",
+              "value": 1.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Agua"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.3877551020408163,
+          0.1592920353982301
+        ],
+        [
+          0.6938775510204082,
+          0.6902654867256637
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "aliv_t",
+      "kind": "text",
+      "x": 470,
+      "y": 120,
+      "w": 120,
+      "h": 20,
+      "text": "Aliviadero",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "aliv",
+      "kind": "text",
+      "x": 470,
+      "y": 142,
+      "w": 110,
+      "h": 24,
+      "text": "",
+      "tag": "SSCC.CaudalAliviadero",
+      "unit": "m³/s",
+      "decimals": 1,
+      "font_size": 12,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.CaudalAliviadero",
+              "op": "gt",
+              "value": 1.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ramal0",
+      "kind": "pipe",
+      "x": 810,
+      "y": 400,
+      "w": 1,
+      "h": 40,
+      "stroke_color": "@Agua",
+      "stroke_width": 10,
+      "points": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "G1_t",
+      "kind": "text",
+      "x": 740,
+      "y": 72,
+      "w": 290,
+      "h": 22,
+      "text": "GRUPO 1",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "tile_G1",
+      "kind": "faceplate",
+      "x": 740,
+      "y": 96,
+      "w": 290,
+      "h": 214,
+      "template": "grupo",
+      "bindings": {
+        "paso": "G1.Paso",
+        "potencia": "G1.Potencia",
+        "consigna": "G1.ConsignaP",
+        "velocidad": "G1.Velocidad",
+        "caudal": "G1.Caudal",
+        "acoplado": "G1.Acoplado",
+        "remoto": "G1.Remoto",
+        "alarma": "G1.AlarmaGrupo",
+        "listo": "G1.ListoArranque",
+        "disparo": "G1.Disparo",
+        "causa": "G1.CausaDisparo",
+        "arranque": "G1.OrdenArranque",
+        "parada": "G1.OrdenParada",
+        "rearme": "G1.OrdenRearme"
+      }
+    },
+    {
+      "id": "maquina_G1",
+      "kind": "image",
+      "x": 770,
+      "y": 318,
+      "w": 80,
+      "h": 84,
+      "source": "assets/grupo_parado.svg",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G1.Paso",
+              "op": "eq",
+              "value": 10,
+              "bad": false
+            },
+            "style": {
+              "source": "assets/grupo_disparo.svg"
+            }
+          },
+          {
+            "when": {
+              "tag": "G1.Velocidad",
+              "op": "gt",
+              "value": 5.0,
+              "bad": false
+            },
+            "style": {
+              "source": "assets/grupo_marcha.svg"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ir_G1",
+      "kind": "button",
+      "x": 880,
+      "y": 344,
+      "w": 150,
+      "h": 34,
+      "text": "Detalle G1 →",
+      "font_size": 13,
+      "bold": true,
+      "color": "@Mando",
+      "border_color": "@Mando",
+      "text_color": "#ffffff",
+      "action": "screen",
+      "screen": "30_grupo1",
+      "target_container": "contenido"
+    },
+    {
+      "id": "ramal1",
+      "kind": "pipe",
+      "x": 1140,
+      "y": 400,
+      "w": 1,
+      "h": 40,
+      "stroke_color": "@Agua",
+      "stroke_width": 10,
+      "points": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "G2_t",
+      "kind": "text",
+      "x": 1070,
+      "y": 72,
+      "w": 290,
+      "h": 22,
+      "text": "GRUPO 2",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "tile_G2",
+      "kind": "faceplate",
+      "x": 1070,
+      "y": 96,
+      "w": 290,
+      "h": 214,
+      "template": "grupo",
+      "bindings": {
+        "paso": "G2.Paso",
+        "potencia": "G2.Potencia",
+        "consigna": "G2.ConsignaP",
+        "velocidad": "G2.Velocidad",
+        "caudal": "G2.Caudal",
+        "acoplado": "G2.Acoplado",
+        "remoto": "G2.Remoto",
+        "alarma": "G2.AlarmaGrupo",
+        "listo": "G2.ListoArranque",
+        "disparo": "G2.Disparo",
+        "causa": "G2.CausaDisparo",
+        "arranque": "G2.OrdenArranque",
+        "parada": "G2.OrdenParada",
+        "rearme": "G2.OrdenRearme"
+      }
+    },
+    {
+      "id": "maquina_G2",
+      "kind": "image",
+      "x": 1100,
+      "y": 318,
+      "w": 80,
+      "h": 84,
+      "source": "assets/grupo_parado.svg",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G2.Paso",
+              "op": "eq",
+              "value": 10,
+              "bad": false
+            },
+            "style": {
+              "source": "assets/grupo_disparo.svg"
+            }
+          },
+          {
+            "when": {
+              "tag": "G2.Velocidad",
+              "op": "gt",
+              "value": 5.0,
+              "bad": false
+            },
+            "style": {
+              "source": "assets/grupo_marcha.svg"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ir_G2",
+      "kind": "button",
+      "x": 1210,
+      "y": 344,
+      "w": 150,
+      "h": 34,
+      "text": "Detalle G2 →",
+      "font_size": 13,
+      "bold": true,
+      "color": "@Mando",
+      "border_color": "@Mando",
+      "text_color": "#ffffff",
+      "action": "screen",
+      "screen": "31_grupo2",
+      "target_container": "contenido"
+    },
+    {
+      "id": "desague",
+      "kind": "line",
+      "x": 1240,
+      "y": 440,
+      "w": 130,
+      "h": 1,
+      "stroke_color": "@Agua",
+      "stroke_width": 6,
+      "arrows": "end",
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "desague_t",
+      "kind": "text",
+      "x": 1220,
+      "y": 410,
+      "w": 160,
+      "h": 20,
+      "text": "Río / canal de desagüe",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "kpi0",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 476,
+      "w": 223,
+      "h": 64,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "kpi0_t",
+      "kind": "text",
+      "x": 22,
+      "y": 481,
+      "w": 200,
+      "h": 18,
+      "text": "POTENCIA PLANTA",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "kpi0_v",
+      "kind": "text",
+      "x": 18,
+      "y": 500,
+      "w": 207,
+      "h": 34,
+      "text": "",
+      "tag": "Sistema.PotenciaTotal",
+      "unit": "MW",
+      "decimals": 2,
+      "font_size": 20,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Panel",
+      "border_color": "@Panel",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "kpi1",
+      "kind": "rectangle",
+      "x": 241,
+      "y": 476,
+      "w": 223,
+      "h": 64,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "kpi1_t",
+      "kind": "text",
+      "x": 253,
+      "y": 481,
+      "w": 200,
+      "h": 18,
+      "text": "ENERGÍA HOY",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "kpi1_v",
+      "kind": "text",
+      "x": 249,
+      "y": 500,
+      "w": 207,
+      "h": 34,
+      "text": "",
+      "tag": "Sistema.EnergiaHoy",
+      "unit": "MWh",
+      "decimals": 1,
+      "font_size": 20,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Panel",
+      "border_color": "@Panel",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "kpi2",
+      "kind": "rectangle",
+      "x": 472,
+      "y": 476,
+      "w": 223,
+      "h": 64,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "kpi2_t",
+      "kind": "text",
+      "x": 484,
+      "y": 481,
+      "w": 200,
+      "h": 18,
+      "text": "CAUDAL TURBINADO",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "kpi2_v",
+      "kind": "text",
+      "x": 480,
+      "y": 500,
+      "w": 207,
+      "h": 34,
+      "text": "",
+      "tag": "Sistema.CaudalTurbinado",
+      "unit": "m³/s",
+      "decimals": 2,
+      "font_size": 20,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Panel",
+      "border_color": "@Panel",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "kpi3",
+      "kind": "rectangle",
+      "x": 703,
+      "y": 476,
+      "w": 223,
+      "h": 64,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "kpi3_t",
+      "kind": "text",
+      "x": 715,
+      "y": 481,
+      "w": 200,
+      "h": 18,
+      "text": "CAUDAL DE ENTRADA",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "kpi3_v",
+      "kind": "text",
+      "x": 711,
+      "y": 500,
+      "w": 207,
+      "h": 34,
+      "text": "",
+      "tag": "SSCC.CaudalEntrada",
+      "unit": "m³/s",
+      "decimals": 1,
+      "font_size": 20,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Panel",
+      "border_color": "@Panel",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "kpi4",
+      "kind": "rectangle",
+      "x": 934,
+      "y": 476,
+      "w": 223,
+      "h": 64,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "kpi4_t",
+      "kind": "text",
+      "x": 946,
+      "y": 481,
+      "w": 200,
+      "h": 18,
+      "text": "SALTO BRUTO",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "kpi4_v",
+      "kind": "text",
+      "x": 942,
+      "y": 500,
+      "w": 207,
+      "h": 34,
+      "text": "",
+      "tag": "SSCC.SaltoBruto",
+      "unit": "m",
+      "decimals": 2,
+      "font_size": 20,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Panel",
+      "border_color": "@Panel",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "kpi5",
+      "kind": "rectangle",
+      "x": 1165,
+      "y": 476,
+      "w": 223,
+      "h": 64,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "kpi5_t",
+      "kind": "text",
+      "x": 1177,
+      "y": 481,
+      "w": 200,
+      "h": 18,
+      "text": "FRECUENCIA RED",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "kpi5_v",
+      "kind": "text",
+      "x": 1173,
+      "y": 500,
+      "w": 207,
+      "h": 34,
+      "text": "",
+      "tag": "SSCC.FrecuenciaRed",
+      "unit": "Hz",
+      "decimals": 3,
+      "font_size": 20,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Panel",
+      "border_color": "@Panel",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "alarmas",
+      "kind": "alarm_view",
+      "x": 10,
+      "y": 548,
+      "w": 1380,
+      "h": 280,
+      "view": "activas"
+    }
+  ],
+  "on_open": [
+    "apertura"
+  ]
+}

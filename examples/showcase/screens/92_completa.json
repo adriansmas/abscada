@@ -1,0 +1,61 @@
+{
+  "title": "Navegación de ventana completa",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Navegación de ventana completa",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "Esta acción sustituye el layout completo. El botón inferior restaura cabecera, menú y contenido.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "logo",
+      "kind": "image",
+      "x": 390,
+      "y": 210,
+      "w": 380,
+      "h": 250,
+      "source": "assets/valve-on.svg"
+    },
+    {
+      "id": "back",
+      "kind": "button",
+      "x": 380,
+      "y": 570,
+      "w": 400,
+      "h": 42,
+      "text": "Volver al laboratorio",
+      "action": "screen",
+      "font_size": 15,
+      "screen": "00_layout",
+      "target_container": "__window__"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

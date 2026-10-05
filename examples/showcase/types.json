@@ -1,0 +1,44 @@
+{
+  "Bomba": {
+    "Marcha": "bool",
+    "Caudal": "float",
+    "Consigna": "float"
+  },
+  "PlantaS7": {
+    "Bomba1": "Bomba",
+    "Bomba2": "Bomba",
+    "Nivel": "float"
+  },
+  "EquipoModbus": {
+    "Habilitar": "bool",
+    "Listo": "bool",
+    "Consigna": "float",
+    "Temperatura": "float",
+    "Contador": "int",
+    "Modo": "int"
+  },
+  "BancoLocal": {
+    "Marcha": "bool",
+    "Permiso": "bool",
+    "Generador": "bool",
+    "Fallo": "bool",
+    "Pulsador": "bool",
+    "Orden": "int",
+    "Modo": "int",
+    "Consigna": "float",
+    "Nivel": "float",
+    "Temperatura": "float",
+    "SinRegistro": "float",
+    "Texto": "string"
+  },
+  "Sesion": {
+    "Operador": "string",
+    "Ciclos": "int",
+    "Aperturas": "int",
+    "UltimoEvento": "string",
+    "Inicio": "string",
+    "Hora": "string",
+    "S7": "string",
+    "Modbus": "string"
+  }
+}

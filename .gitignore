@@ -1,0 +1,25 @@
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Project runtime data (SQLite archives, locks, save temporaries)
+runtime/
+.abscada-save-*/
+.abscada-recovery-*/
+.abscada-save.lock
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Generated screenshots and local tooling
+artifacts/
+.claude/
+*.log
+Thumbs.db
+.DS_Store

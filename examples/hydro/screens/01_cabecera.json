@@ -1,0 +1,465 @@
+{
+  "title": "Cabecera",
+  "width": 1600,
+  "height": 70,
+  "background": "@Cabecera",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "marca",
+      "kind": "text",
+      "x": 18,
+      "y": 8,
+      "w": 210,
+      "h": 28,
+      "text": "CH VALDEARENAS",
+      "font_size": 19,
+      "bold": true,
+      "text_color": "#ffffff",
+      "text_align": "left"
+    },
+    {
+      "id": "marca2",
+      "kind": "text",
+      "x": 18,
+      "y": 38,
+      "w": 220,
+      "h": 20,
+      "text": "SCADA · 2 × 10 MW · 66 kV",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "#9fb0bd",
+      "text_align": "left"
+    },
+    {
+      "id": "k0_t",
+      "kind": "text",
+      "x": 250,
+      "y": 6,
+      "w": 165,
+      "h": 18,
+      "text": "POTENCIA PLANTA",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#9fb0bd",
+      "text_align": "left"
+    },
+    {
+      "id": "k0",
+      "kind": "text",
+      "x": 250,
+      "y": 26,
+      "w": 165,
+      "h": 34,
+      "text": "",
+      "tag": "Sistema.PotenciaTotal",
+      "unit": "MW",
+      "decimals": 2,
+      "font_size": 19,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#ffffff"
+    },
+    {
+      "id": "k1_t",
+      "kind": "text",
+      "x": 425,
+      "y": 6,
+      "w": 165,
+      "h": 18,
+      "text": "NIVEL EMBALSE",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#9fb0bd",
+      "text_align": "left"
+    },
+    {
+      "id": "k1",
+      "kind": "text",
+      "x": 425,
+      "y": 26,
+      "w": 165,
+      "h": 34,
+      "text": "",
+      "tag": "SSCC.NivelEmbalse",
+      "unit": "msnm",
+      "decimals": 2,
+      "font_size": 19,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#ffffff"
+    },
+    {
+      "id": "k2_t",
+      "kind": "text",
+      "x": 600,
+      "y": 6,
+      "w": 165,
+      "h": 18,
+      "text": "FRECUENCIA RED",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#9fb0bd",
+      "text_align": "left"
+    },
+    {
+      "id": "k2",
+      "kind": "text",
+      "x": 600,
+      "y": 26,
+      "w": 165,
+      "h": 34,
+      "text": "",
+      "tag": "SSCC.FrecuenciaRed",
+      "unit": "Hz",
+      "decimals": 3,
+      "font_size": 19,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#ffffff"
+    },
+    {
+      "id": "k3_t",
+      "kind": "text",
+      "x": 775,
+      "y": 6,
+      "w": 165,
+      "h": 18,
+      "text": "ENERGÍA HOY",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#9fb0bd",
+      "text_align": "left"
+    },
+    {
+      "id": "k3",
+      "kind": "text",
+      "x": 775,
+      "y": 26,
+      "w": 165,
+      "h": 34,
+      "text": "",
+      "tag": "Sistema.EnergiaHoy",
+      "unit": "MWh",
+      "decimals": 1,
+      "font_size": 19,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#ffffff"
+    },
+    {
+      "id": "areas_t",
+      "kind": "text",
+      "x": 960,
+      "y": 6,
+      "w": 300,
+      "h": 18,
+      "text": "ALARMAS DE ÁREA",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#9fb0bd",
+      "text_align": "left"
+    },
+    {
+      "id": "area0",
+      "kind": "text_list",
+      "x": 960,
+      "y": 28,
+      "w": 60,
+      "h": 30,
+      "tag": "G1.AlarmaGrupo",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "G1"
+        },
+        {
+          "value": "false",
+          "text": "G1"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G1.AlarmaGrupo",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "area1",
+      "kind": "text_list",
+      "x": 1026,
+      "y": 28,
+      "w": 60,
+      "h": 30,
+      "tag": "G2.AlarmaGrupo",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "G2"
+        },
+        {
+          "value": "false",
+          "text": "G2"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "G2.AlarmaGrupo",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "area2",
+      "kind": "text_list",
+      "x": 1092,
+      "y": 28,
+      "w": 60,
+      "h": 30,
+      "tag": "SSCC.AlarmaPresa",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "PRESA"
+        },
+        {
+          "value": "false",
+          "text": "PRESA"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.AlarmaPresa",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "area3",
+      "kind": "text_list",
+      "x": 1158,
+      "y": 28,
+      "w": 60,
+      "h": 30,
+      "tag": "SSCC.AlarmaSubestacion",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "SUBEST."
+        },
+        {
+          "value": "false",
+          "text": "SUBEST."
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.AlarmaSubestacion",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "area4",
+      "kind": "text_list",
+      "x": 1224,
+      "y": 28,
+      "w": 60,
+      "h": 30,
+      "tag": "SSCC.AlarmaAuxiliares",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "SSAA"
+        },
+        {
+          "value": "false",
+          "text": "SSAA"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "SSCC.AlarmaAuxiliares",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "coms",
+      "kind": "text_list",
+      "x": 1296,
+      "y": 28,
+      "w": 60,
+      "h": 30,
+      "tag": "Sistema.ComTodas",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "COM"
+        },
+        {
+          "value": "false",
+          "text": "COM"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Sistema.ComTodas",
+              "op": "eq",
+              "value": false,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "fecha",
+      "kind": "text",
+      "x": 1380,
+      "y": 8,
+      "w": 205,
+      "h": 24,
+      "text": "",
+      "tag": "Sistema.Fecha",
+      "font_size": 13,
+      "text_align": "right",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#9fb0bd"
+    },
+    {
+      "id": "hora",
+      "kind": "text",
+      "x": 1380,
+      "y": 30,
+      "w": 205,
+      "h": 32,
+      "text": "",
+      "tag": "Sistema.Hora",
+      "font_size": 21,
+      "bold": true,
+      "text_align": "right",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#ffffff"
+    }
+  ]
+}

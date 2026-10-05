@@ -1,0 +1,19 @@
+{
+  "retention_days": 90,
+  "files": [
+    {
+      "id": "process",
+      "name": "Proceso",
+      "interval_ms": 1000,
+      "variables": [
+        "TankLevel",
+        "Pump1.flow",
+        "Pump2.flow",
+        "Pump1.setpoint",
+        "Pump2.setpoint",
+        "Pump1.running",
+        "Pump2.running"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "name": "Banco de ensayo Beckhoff",
+  "startup_screen": "banco",
+  "palette": {
+    "Fondo": "#dde1e4",
+    "Panel": "#eceef0",
+    "Borde": "#b4bbc2",
+    "Texto": "#1f2a33",
+    "Suave": "#5b6670",
+    "Marcha": "#2e8b57",
+    "Paro": "#9aa3ab",
+    "Alarma": "#d32f2f",
+    "Aviso": "#e89a1c",
+    "Mando": "#2b6cb0"
+  }
+}

@@ -1,0 +1,414 @@
+{
+  "title": "Estados, permisos y gestos",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Estados, permisos y gestos",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "Visibilidad, habilitación, colores de paleta, lista de textos y escrituras al pulsar/soltar.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "card0",
+      "kind": "rectangle",
+      "x": 30,
+      "y": 145,
+      "w": 345,
+      "h": 375,
+      "color": "@Panel",
+      "stroke_color": "#dce5ed",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "head0",
+      "kind": "text",
+      "x": 50,
+      "y": 163,
+      "w": 300,
+      "h": 30,
+      "text": "VISIBILIDAD",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "card1",
+      "kind": "rectangle",
+      "x": 405,
+      "y": 145,
+      "w": 345,
+      "h": 375,
+      "color": "@Panel",
+      "stroke_color": "#dce5ed",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "head1",
+      "kind": "text",
+      "x": 425,
+      "y": 163,
+      "w": 300,
+      "h": 30,
+      "text": "PERMISO",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "card2",
+      "kind": "rectangle",
+      "x": 780,
+      "y": 145,
+      "w": 345,
+      "h": 375,
+      "color": "@Panel",
+      "stroke_color": "#dce5ed",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "head2",
+      "kind": "text",
+      "x": 800,
+      "y": 163,
+      "w": 300,
+      "h": 30,
+      "text": "PULSACIÓN",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "MARCHA",
+      "kind": "button",
+      "x": 60,
+      "y": 230,
+      "w": 285,
+      "h": 42,
+      "text": "MARCHA",
+      "action": "set",
+      "font_size": 15,
+      "value": true,
+      "color": "@Marcha",
+      "text_color": "#ffffff",
+      "dynamics": {
+        "visible": {
+          "tag": "Local.Marcha",
+          "op": "eq",
+          "value": false,
+          "bad": false
+        }
+      },
+      "tag": "Local.Marcha"
+    },
+    {
+      "id": "PARO",
+      "kind": "button",
+      "x": 60,
+      "y": 230,
+      "w": 285,
+      "h": 42,
+      "text": "PARO",
+      "action": "set",
+      "font_size": 15,
+      "value": false,
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "dynamics": {
+        "visible": {
+          "tag": "Local.Marcha",
+          "op": "eq",
+          "value": true,
+          "bad": false
+        }
+      },
+      "tag": "Local.Marcha"
+    },
+    {
+      "id": "run_status",
+      "kind": "lamp",
+      "x": 165,
+      "y": 303,
+      "w": 44,
+      "h": 44,
+      "tag": "Local.Marcha",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "#d7e0e9",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "overlap",
+      "kind": "text",
+      "x": 55,
+      "y": 380,
+      "w": 285,
+      "h": 95,
+      "text": "Dos botones superpuestos. Solo recibe clic el que corresponde al estado.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "permit",
+      "kind": "button",
+      "x": 430,
+      "y": 230,
+      "w": 285,
+      "h": 42,
+      "text": "Habilitar / bloquear permiso",
+      "action": "toggle",
+      "font_size": 15,
+      "tag": "Local.Permiso"
+    },
+    {
+      "id": "guarded",
+      "kind": "button",
+      "x": 430,
+      "y": 298,
+      "w": 285,
+      "h": 42,
+      "text": "Orden con permiso",
+      "action": "toggle",
+      "font_size": 15,
+      "dynamics": {
+        "enabled": {
+          "tag": "Local.Permiso",
+          "op": "eq",
+          "value": true,
+          "bad": false
+        },
+        "disabled_reason": "El permiso local está desactivado",
+        "disabled": {
+          "color": "#d4dce4",
+          "text_color": "#63768b"
+        }
+      },
+      "tag": "Local.Marcha"
+    },
+    {
+      "id": "permit_lamp",
+      "kind": "lamp",
+      "x": 550,
+      "y": 375,
+      "w": 44,
+      "h": 44,
+      "tag": "Local.Permiso",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "#d7e0e9",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "momentary",
+      "kind": "button",
+      "x": 805,
+      "y": 230,
+      "w": 285,
+      "h": 42,
+      "text": "Mantener pulsado",
+      "action": "momentary",
+      "font_size": 15,
+      "tag": "Local.Pulsador"
+    },
+    {
+      "id": "momentary_status",
+      "kind": "lamp",
+      "x": 815,
+      "y": 292,
+      "w": 44,
+      "h": 44,
+      "tag": "Local.Pulsador",
+      "lamp_colors": {
+        "on": "@Marcha",
+        "off": "#d7e0e9",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "phases",
+      "kind": "button",
+      "x": 805,
+      "y": 355,
+      "w": 285,
+      "h": 42,
+      "text": "Pulsar: 10 / soltar: 0",
+      "action": "press_release",
+      "font_size": 15,
+      "press_value": 10,
+      "release_value": 0,
+      "tag": "Local.Orden"
+    },
+    {
+      "id": "command",
+      "kind": "text",
+      "x": 805,
+      "y": 422,
+      "w": 285,
+      "h": 44,
+      "text": "Orden",
+      "tag": "Local.Orden",
+      "unit": "",
+      "decimals": 1,
+      "text_align": "left",
+      "color": "#ffffff",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "mode0",
+      "kind": "button",
+      "x": 30,
+      "y": 560,
+      "w": 260,
+      "h": 42,
+      "text": "Parado",
+      "action": "set",
+      "font_size": 15,
+      "value": 0,
+      "tag": "Local.Modo"
+    },
+    {
+      "id": "mode1",
+      "kind": "button",
+      "x": 310,
+      "y": 560,
+      "w": 260,
+      "h": 42,
+      "text": "Manual",
+      "action": "set",
+      "font_size": 15,
+      "value": 1,
+      "tag": "Local.Modo"
+    },
+    {
+      "id": "mode2",
+      "kind": "button",
+      "x": 590,
+      "y": 560,
+      "w": 260,
+      "h": 42,
+      "text": "Automático",
+      "action": "set",
+      "font_size": 15,
+      "value": 2,
+      "tag": "Local.Modo"
+    },
+    {
+      "id": "mode3",
+      "kind": "button",
+      "x": 870,
+      "y": 560,
+      "w": 260,
+      "h": 42,
+      "text": "Desconocido",
+      "action": "set",
+      "font_size": 15,
+      "value": 9,
+      "tag": "Local.Modo"
+    },
+    {
+      "id": "mode_text",
+      "kind": "text_list",
+      "x": 30,
+      "y": 630,
+      "w": 535,
+      "h": 62,
+      "tag": "Local.Modo",
+      "texts": [
+        {
+          "value": "0",
+          "text": "Modo parado"
+        },
+        {
+          "value": "1",
+          "text": "Modo manual"
+        },
+        {
+          "value": "2",
+          "text": "Modo automático"
+        }
+      ],
+      "default_text": "Modo no definido",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Local.Modo",
+              "op": "eq",
+              "value": 1,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff"
+            }
+          },
+          {
+            "when": {
+              "tag": "Local.Modo",
+              "op": "eq",
+              "value": 2,
+              "bad": false
+            },
+            "style": {
+              "color": "@Marcha",
+              "text_color": "#ffffff"
+            }
+          }
+        ],
+        "default": {
+          "color": "#ffffff"
+        }
+      }
+    },
+    {
+      "id": "palette_note",
+      "kind": "text",
+      "x": 590,
+      "y": 625,
+      "w": 525,
+      "h": 90,
+      "text": "Colores compartidos: @Marcha, @Paro y @Aviso. Cambia la paleta desde Studio y reinicia Runtime para aplicar.",
+      "font_size": 16,
+      "text_align": "left",
+      "text_color": "@Texto"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "title": "Ocurrencias de alarmas",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Ocurrencias de alarmas",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "Cada activación conserva entrada, retorno y reconocimiento.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "history",
+      "kind": "alarm_view",
+      "x": 30,
+      "y": 140,
+      "w": 1100,
+      "h": 530,
+      "view": "history"
+    },
+    {
+      "id": "close",
+      "kind": "button",
+      "x": 850,
+      "y": 700,
+      "w": 280,
+      "h": 42,
+      "text": "Cerrar ventana",
+      "action": "close_popup",
+      "font_size": 15
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

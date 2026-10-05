@@ -1,0 +1,13 @@
+[
+  {
+    "id": "CX_Banco",
+    "protocol": "ads",
+    "host": "127.0.0.1",
+    "port": 48898,
+    "ams_net_id": "127.0.0.1.1.1",
+    "ams_port": 851,
+    "local_ams_net_id": "auto",
+    "timeout_ms": 1000,
+    "poll_ms": 200
+  }
+]

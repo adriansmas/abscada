@@ -1,0 +1,45 @@
+{
+  "title": "Válvula con mando",
+  "width": 450,
+  "height": 280,
+  "parameters": {
+    "run": "bool"
+  },
+  "elements": [
+    {
+      "id": "image",
+      "kind": "image",
+      "x": 70,
+      "y": 0,
+      "w": 310,
+      "h": 200,
+      "source": "assets/valve-off.svg",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$run",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "source": "assets/valve-on.svg"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "command",
+      "kind": "button",
+      "x": 60,
+      "y": 220,
+      "w": 330,
+      "h": 44,
+      "text": "Abrir / cerrar",
+      "tag": "$run",
+      "action": "toggle"
+    }
+  ]
+}

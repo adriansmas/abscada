@@ -1,0 +1,111 @@
+{
+  "activas": {
+    "categories": [],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Alarmas activas y pendientes de reconocer",
+    "mode": "pending"
+  },
+  "historico": {
+    "categories": [],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Histórico de alarmas",
+    "mode": "history"
+  },
+  "eventos": {
+    "categories": [],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Registro de eventos",
+    "mode": "events"
+  },
+  "activas_g1": {
+    "categories": [
+      "g1"
+    ],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Alarmas del Grupo 1",
+    "mode": "pending"
+  },
+  "activas_g2": {
+    "categories": [
+      "g2"
+    ],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Alarmas del Grupo 2",
+    "mode": "pending"
+  },
+  "activas_sscc": {
+    "categories": [
+      "sscc",
+      "subestacion"
+    ],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Alarmas de servicios auxiliares y subestación",
+    "mode": "pending"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "name": "Biblioteca de equipos · autor",
+  "startup_screen": "main",
+  "palette": {
+    "Fondo": "#f4f7fa",
+    "Panel": "#ffffff",
+    "Texto": "#243c50",
+    "Marcha": "#147d75",
+    "Paro": "#c64b51",
+    "Aviso": "#da982f",
+    "S7": "#3678c8",
+    "Modbus": "#8152b4",
+    "Linea": "#7c94a5"
+  }
+}

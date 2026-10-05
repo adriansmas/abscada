@@ -1,0 +1,84 @@
+{
+  "title": "Gráficas en vivo",
+  "width": 1160,
+  "height": 770,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": true,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "title",
+      "kind": "text",
+      "x": 30,
+      "y": 22,
+      "w": 1090,
+      "h": 44,
+      "text": "Gráficas en vivo",
+      "font_size": 28,
+      "text_align": "left",
+      "text_color": "@Texto",
+      "bold": true
+    },
+    {
+      "id": "subtitle",
+      "kind": "text",
+      "x": 30,
+      "y": 72,
+      "w": 1090,
+      "h": 48,
+      "text": "Curvas registradas y no registradas. Activa la señal local o arranca los servidores externos para observar cambios.",
+      "font_size": 14,
+      "text_align": "left",
+      "text_color": "#63768b"
+    },
+    {
+      "id": "graph",
+      "kind": "trend",
+      "x": 30,
+      "y": 148,
+      "w": 1100,
+      "h": 535,
+      "view": "local"
+    },
+    {
+      "id": "generator",
+      "kind": "button",
+      "x": 30,
+      "y": 704,
+      "w": 300,
+      "h": 42,
+      "text": "Activar / parar señal local",
+      "action": "toggle",
+      "font_size": 15,
+      "tag": "Local.Generador"
+    },
+    {
+      "id": "unrecorded",
+      "kind": "button",
+      "x": 360,
+      "y": 704,
+      "w": 320,
+      "h": 42,
+      "text": "Abrir curva sin registro",
+      "action": "popup",
+      "font_size": 15,
+      "screen": "93_sin_registro"
+    },
+    {
+      "id": "equipment",
+      "kind": "button",
+      "x": 710,
+      "y": 704,
+      "w": 390,
+      "h": 42,
+      "text": "Abrir curva S7 + Modbus",
+      "action": "popup",
+      "font_size": 15,
+      "screen": "94_equipos"
+    }
+  ],
+  "on_open": [
+    "screen_open"
+  ]
+}

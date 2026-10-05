@@ -1,0 +1,15 @@
+{
+  "width": 1200,
+  "height": 640,
+  "elements": [
+    {
+      "id": "plant_alarms",
+      "kind": "alarm_view",
+      "view": "process",
+      "x": 10,
+      "y": 10,
+      "w": 1180,
+      "h": 620
+    }
+  ]
+}

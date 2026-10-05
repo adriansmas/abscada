@@ -1,0 +1,332 @@
+{
+  "produccion": {
+    "title": "Producción y nivel",
+    "window_seconds": 1800,
+    "axes": [
+      {
+        "id": "mw",
+        "title": "Potencia (MW)",
+        "side": "left",
+        "auto": false,
+        "min": 0,
+        "max": 22,
+        "visible": true
+      },
+      {
+        "id": "nivel",
+        "title": "Nivel (msnm)",
+        "side": "right",
+        "auto": true,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "g1",
+        "tag": "G1.Potencia",
+        "axis": "mw",
+        "color": "#2b6cb0",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "g2",
+        "tag": "G2.Potencia",
+        "axis": "mw",
+        "color": "#6b46c1",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "total",
+        "tag": "Contador.Potencia",
+        "axis": "mw",
+        "color": "#2e8b57",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "nivel",
+        "tag": "SSCC.NivelEmbalse",
+        "axis": "nivel",
+        "color": "#4f86b8",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  },
+  "embalse": {
+    "title": "Embalse: nivel y caudales",
+    "window_seconds": 3600,
+    "axes": [
+      {
+        "id": "nivel",
+        "title": "Nivel (msnm)",
+        "side": "left",
+        "auto": true,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      },
+      {
+        "id": "q",
+        "title": "Caudal (m³/s)",
+        "side": "right",
+        "auto": true,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "nivel",
+        "tag": "SSCC.NivelEmbalse",
+        "axis": "nivel",
+        "color": "#1f5f99",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "entrada",
+        "tag": "SSCC.CaudalEntrada",
+        "axis": "q",
+        "color": "#2c7a7b",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "salida",
+        "tag": "SSCC.CaudalSalida",
+        "axis": "q",
+        "color": "#c05621",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "aliv",
+        "tag": "SSCC.CaudalAliviadero",
+        "axis": "q",
+        "color": "#e89a1c",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  },
+  "electrico": {
+    "title": "Tensión y frecuencia de los generadores",
+    "window_seconds": 900,
+    "axes": [
+      {
+        "id": "kv",
+        "title": "Tensión (kV)",
+        "side": "left",
+        "auto": false,
+        "min": 0,
+        "max": 7.5,
+        "visible": true
+      },
+      {
+        "id": "hz",
+        "title": "Frecuencia (Hz)",
+        "side": "right",
+        "auto": false,
+        "min": 48,
+        "max": 52,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "v1",
+        "tag": "G1.Tension",
+        "axis": "kv",
+        "color": "#2b6cb0",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "v2",
+        "tag": "G2.Tension",
+        "axis": "kv",
+        "color": "#6b46c1",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "f1",
+        "tag": "G1.Frecuencia",
+        "axis": "hz",
+        "color": "#c05621",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "f2",
+        "tag": "G2.Frecuencia",
+        "axis": "hz",
+        "color": "#e89a1c",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "fred",
+        "tag": "SSCC.FrecuenciaRed",
+        "axis": "hz",
+        "color": "#4a5568",
+        "width": 1,
+        "visible": true
+      }
+    ]
+  },
+  "termico_g1": {
+    "title": "Grupo 1: temperaturas y vibración",
+    "window_seconds": 900,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": 0,
+        "max": 140,
+        "visible": true
+      },
+      {
+        "id": "v",
+        "title": "Vibración (mm/s)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 10,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "gs",
+        "tag": "G1.TempGuiaSup",
+        "axis": "c",
+        "color": "#2b6cb0",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "em",
+        "tag": "G1.TempEmpuje",
+        "axis": "c",
+        "color": "#c53030",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "gt",
+        "tag": "G1.TempGuiaTurbina",
+        "axis": "c",
+        "color": "#2c7a7b",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "es",
+        "tag": "G1.TempEstator",
+        "axis": "c",
+        "color": "#d69e2e",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "ac",
+        "tag": "G1.TempAceite",
+        "axis": "c",
+        "color": "#718096",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "vi",
+        "tag": "G1.Vibracion",
+        "axis": "v",
+        "color": "#6b46c1",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  },
+  "termico_g2": {
+    "title": "Grupo 2: temperaturas y vibración",
+    "window_seconds": 900,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": 0,
+        "max": 140,
+        "visible": true
+      },
+      {
+        "id": "v",
+        "title": "Vibración (mm/s)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 10,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "gs",
+        "tag": "G2.TempGuiaSup",
+        "axis": "c",
+        "color": "#2b6cb0",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "em",
+        "tag": "G2.TempEmpuje",
+        "axis": "c",
+        "color": "#c53030",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "gt",
+        "tag": "G2.TempGuiaTurbina",
+        "axis": "c",
+        "color": "#2c7a7b",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "es",
+        "tag": "G2.TempEstator",
+        "axis": "c",
+        "color": "#d69e2e",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "ac",
+        "tag": "G2.TempAceite",
+        "axis": "c",
+        "color": "#718096",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "vi",
+        "tag": "G2.Vibracion",
+        "axis": "v",
+        "color": "#6b46c1",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "startup": [
+    "startup"
+  ],
+  "timeout_seconds": 5,
+  "tasks": [
+    {
+      "id": "communication_quality",
+      "script": "check_quality",
+      "interval_ms": 5000,
+      "enabled": true
+    }
+  ]
+}

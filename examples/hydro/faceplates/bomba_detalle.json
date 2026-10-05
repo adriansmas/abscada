@@ -1,0 +1,196 @@
+{
+  "title": "Bomba",
+  "width": 360,
+  "height": 230,
+  "background": "@Panel",
+  "parameters": {
+    "marcha": "bool",
+    "fallo": "bool"
+  },
+  "elements": [
+    {
+      "id": "cuerpo",
+      "kind": "ellipse",
+      "x": 16,
+      "y": 16,
+      "w": 80,
+      "h": 80,
+      "color": "@Paro",
+      "stroke_color": "@Texto",
+      "stroke_width": 3,
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$fallo",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo"
+            }
+          },
+          {
+            "when": {
+              "tag": "$marcha",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Marcha"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "rodete",
+      "kind": "polyline",
+      "x": 38,
+      "y": 34,
+      "w": 42,
+      "h": 44,
+      "stroke_color": "#ffffff",
+      "stroke_width": 4,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.5
+        ],
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "marcha",
+      "kind": "text_list",
+      "x": 112,
+      "y": 20,
+      "w": 232,
+      "h": 32,
+      "tag": "$marcha",
+      "font_size": 13,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "EN MARCHA"
+        },
+        {
+          "value": "false",
+          "text": "PARADA"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$marcha",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Marcha",
+              "border_color": "@Marcha"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "fallo",
+      "kind": "text_list",
+      "x": 112,
+      "y": 62,
+      "w": 232,
+      "h": 32,
+      "tag": "$fallo",
+      "font_size": 13,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "FALLO"
+        },
+        {
+          "value": "false",
+          "text": "SIN FALLO"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Paro",
+      "text_color": "#ffffff",
+      "border_color": "@Paro",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$fallo",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "nota",
+      "kind": "text",
+      "x": 16,
+      "y": 112,
+      "w": 328,
+      "h": 48,
+      "text": "Arranque y parada automáticos por el PLC (nivel o presión). Sin mando desde el SCADA.",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "cerrar",
+      "kind": "button",
+      "x": 224,
+      "y": 176,
+      "w": 120,
+      "h": 38,
+      "text": "Cerrar",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "action": "close_popup"
+    }
+  ]
+}

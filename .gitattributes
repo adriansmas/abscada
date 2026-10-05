@@ -1,0 +1,12 @@
+# Same line endings on Windows and Linux: LF in the repository and working tree,
+# except Windows scripts.
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.zip binary
+*.sqlite3 binary
