@@ -119,6 +119,19 @@ def test_simulator_mode_serves_s7():
         process.wait(timeout=5)
 
 
+def test_simulator_output_to_a_file_accepts_non_cp1252_text(tmp_path):
+    # In the .exe the simulator log is a file with the Windows codepage; «→» crashed the hydro simulator.
+    code = ("import types, abscada.simulators as s, abscada.__main__ as m\n"
+            "s.SIMULATORS['hydro'] = types.SimpleNamespace(run=lambda argv: print('127.0.0.1 → 502', flush=True))\n"
+            "m.main(['--simulador', 'hydro'])\n")
+    log = tmp_path / "simulador.log"
+    with log.open("wb") as output:
+        result = subprocess.run([sys.executable, "-c", code], stdout=output, stderr=subprocess.STDOUT,
+                                env={**os.environ, "PYTHONIOENCODING": "cp1252", "PYTHONUTF8": "0"}, timeout=30)
+    assert result.returncode == 0, log.read_text(errors="replace")
+    assert "→ 502" in log.read_text(encoding="utf-8")
+
+
 def test_unknown_simulator_is_rejected():
     from abscada import simulator_manager
     with pytest.raises(ValueError, match="desconocido"):
