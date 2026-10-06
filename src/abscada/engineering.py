@@ -100,12 +100,20 @@ class RecordsPage(QWidget):
         self.columns, self.fields, self.title, self.identity = columns, fields, title, identity
         layout = QVBoxLayout(self); layout.setContentsMargins(0, 6, 0, 0)
         toolbar = QHBoxLayout()
-        self.search = QLineEdit(); self.search.setPlaceholderText("Filtrar…")
-        self.search.textChanged.connect(self.refresh)
-        toolbar.addWidget(self.search, 1)
         for text, callback in (("+ Añadir", lambda: self.edit(None)), ("Editar…", self.edit_selected), ("Eliminar", self.delete)):
             button = QPushButton(text); button.clicked.connect(callback); toolbar.addWidget(button)
+            if text == "+ Añadir":
+                button.setObjectName("primary")
+        toolbar.addStretch()
+        # Search box apart from the buttons: it only filters the list.
+        self.search = QLineEdit(); self.search.setPlaceholderText("🔍 Filtrar la lista…"); self.search.setObjectName("searchField")
+        self.search.setClearButtonEnabled(True); self.search.setFixedWidth(280)
+        self.search.textChanged.connect(self.refresh)
+        toolbar.addWidget(self.search)
         layout.addLayout(toolbar)
+        self.notice = QLabel(); self.notice.setObjectName("filterNotice"); self.notice.hide()
+        self.notice.linkActivated.connect(lambda link: self.search.clear())
+        layout.addWidget(self.notice)
         self.table = QTableWidget(0, len(columns))
         self.table.setHorizontalHeaderLabels([label for _, label in columns])
         self.table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
@@ -121,7 +129,12 @@ class RecordsPage(QWidget):
 
     def refresh(self, *args):
         needle = self.search.text().casefold()
-        self.rows = [row for row in self.getter() if needle in str(row).casefold()]
+        everything = self.getter()
+        self.rows = [row for row in everything if needle in str(row).casefold()]
+        self.notice.setVisible(bool(needle))
+        if needle:
+            self.notice.setText(f"Filtro «{self.search.text()}»: se muestran {len(self.rows)} de {len(everything)} · "
+                                f"<a href='clear'>Quitar el filtro</a>")
         self.table.setSortingEnabled(False)
         self.table.setRowCount(len(self.rows))
         for index, row in enumerate(self.rows):
@@ -170,6 +183,8 @@ class RecordsPage(QWidget):
                 rows.append(data)
             if self.host.mutate(lambda: self.setter(rows)):
                 dialog.accept()
+                if not previous:
+                    self.search.clear()
         buttons = dialog.findChild(QDialogButtonBox)
         buttons.accepted.disconnect(); buttons.accepted.connect(accept)
         dialog.exec()
@@ -214,15 +229,11 @@ class OperationalEngineering:
             [("id", "ID"), ("name", "Nombre"), ("color", "Color")], lambda: [text("id", "ID"), text("name", "Nombre"), color_field("#d74c4c")], "Categoría de alarmas")
         self.alarms.addTab(self.alarm_definitions, "Alarmas")
         self.alarms.addTab(self.categories, "Categorías")
+        # Retention lives in «Ajustes del proyecto → Registros»; the SQLite copy in «Herramientas».
         self.historian = QWidget(); layout = QVBoxLayout(self.historian); layout.setContentsMargins(0, 0, 0, 0)
-        row = QHBoxLayout()
-        row.addWidget(QLabel("Retención de variables (días)"))
-        self.retention = QSpinBox(); self.retention.setRange(1, 36500); row.addWidget(self.retention)
-        row.addWidget(QLabel("Alarmas (días)"))
-        self.alarm_retention = QSpinBox(); self.alarm_retention.setRange(1, 36500); row.addWidget(self.alarm_retention)
-        save = QPushButton("Aplicar"); save.clicked.connect(self.save_retention); row.addWidget(save); row.addStretch()
-        backup = QPushButton("Copia SQLite…"); backup.clicked.connect(self.backup); row.addWidget(backup)
-        layout.addLayout(row)
+        hint = QLabel("Cada fichero de registro guarda un grupo de variables con su frecuencia. Las gráficas los consultan "
+                      "para mostrar el histórico.")
+        hint.setWordWrap(True); hint.setObjectName("muted"); layout.addWidget(hint)
         self.logs = self.records(lambda: self.host.project.historian["files"],
             lambda rows: self.host.project.historian.__setitem__("files", rows),
             [("id", "Fichero"), ("name", "Nombre"), ("interval_ms", "Frecuencia (ms)"), ("variables", "Variables")], self.log_fields, "Fichero de registro")
@@ -283,12 +294,6 @@ class OperationalEngineering:
             numeric("interval_ms", "Frecuencia (ms)", 1000, True),
             ("variables", "Variables", "multi", [], self.tags())]
 
-    def save_retention(self):
-        def update():
-            self.host.project.historian["retention_days"] = self.retention.value()
-            self.host.project.alarms["retention_days"] = self.alarm_retention.value()
-        self.host.mutate(update)
-
     def backup(self):
         from .storage import ArchiveReader, database_path
         from .viewers import READERS
@@ -320,8 +325,6 @@ class OperationalEngineering:
     def refresh(self):
         for page in self.pages:
             page.refresh()
-        self.retention.setValue(self.host.project.historian.get("retention_days", 90))
-        self.alarm_retention.setValue(self.host.project.alarms.get("retention_days", 365))
 
     def edit_trend(self, name):
         """Configuration of one trend control (each control owns its configuration)."""

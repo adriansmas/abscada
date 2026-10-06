@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt, QSettings
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QFormLayout, QHBoxLayout,
     QGroupBox, QLineEdit, QSpinBox, QDoubleSpinBox, QCheckBox, QPushButton,
-    QComboBox, QColorDialog, QTableWidget, QTableWidgetItem, QHeaderView, QMenu,QToolButton)
+    QComboBox, QColorDialog, QTableWidget, QTableWidgetItem, QHeaderView, QMenu,QToolButton, QLabel)
 from .drawing import PATH_KINDS, SHAPE_KINDS, world_points, set_points
 
 
@@ -73,8 +73,8 @@ class ScreenProperties(QWidget):
         self.name = QLineEdit(); self.name.setReadOnly(True)
         self.title = QLineEdit(); self.title.editingFinished.connect(self.apply)
         form.addRow("Documento", self.name); form.addRow("Título", self.title)
-        self.startup = QCheckBox("Pantalla inicial")
-        self.startup.clicked.connect(self.apply); form.addRow(self.startup)
+        # The start screen is chosen in the project tree (right click) or in «Ajustes del proyecto».
+        self.startup = QLabel("▶ Pantalla de inicio del runtime"); self.startup.setObjectName("muted"); form.addRow(self.startup)
         layout.addWidget(general)
         size = QGroupBox("Lienzo"); form = QFormLayout(size)
         self.width, self.height = QSpinBox(), QSpinBox()
@@ -86,8 +86,8 @@ class ScreenProperties(QWidget):
         self.grid_size = QSpinBox(); self.grid_size.setRange(1,200)
         self.grid_size.editingFinished.connect(self.apply)
         self.show_grid = QCheckBox("Mostrar cuadrícula"); self.show_grid.clicked.connect(self.apply)
-        self.snap = QCheckBox("Ajustar a cuadrícula"); self.snap.clicked.connect(self.apply)
-        form.addRow("Paso (px)", self.grid_size); form.addRow(self.show_grid); form.addRow(self.snap)
+        # «Ajustar a cuadrícula» is in the bar above the canvas.
+        form.addRow("Paso (px)", self.grid_size); form.addRow(self.show_grid)
         layout.addWidget(grid)
         advanced = QPushButton("Ajustes avanzados…"); advanced.clicked.connect(host.edit_graphic_document)
         layout.addWidget(advanced)
@@ -110,12 +110,10 @@ class ScreenProperties(QWidget):
         self.width.setValue(int(doc["width"])); self.height.setValue(int(doc["height"]))
         self.background.setText(doc.get("background", "#ffffff"))
         self.grid_size.setValue(doc.get("grid_size",10))
-        self.show_grid.setChecked(doc.get("show_grid",True)); self.snap.setChecked(doc.get("snap_to_grid",True))
+        self.show_grid.setChecked(doc.get("show_grid",True))
         is_screen = self.host.document_kind == "screens"
-        self.startup.setVisible(is_screen)
         self.events_button.setVisible(is_screen)
-        current = self.host.project.manifest["startup_screen"] == self.host.document_name and is_screen
-        self.startup.setChecked(current); self.startup.setEnabled(not current)
+        self.startup.setVisible(is_screen and self.host.project.manifest["startup_screen"] == self.host.document_name)
         self.syncing = False
 
     def apply(self):
@@ -123,13 +121,9 @@ class ScreenProperties(QWidget):
             return
         update = dict(title=self.title.text(), width=self.width.value(), height=self.height.value(),
             background=self.background.text(), grid_size=self.grid_size.value(),
-            show_grid=self.show_grid.isChecked(), snap_to_grid=self.snap.isChecked())
-        def save():
-            self.host.document().update(update)
-            if self.startup.isChecked() and self.host.document_kind == "screens":
-                self.host.project.manifest["startup_screen"] = self.host.document_name
-        if any(self.host.document().get(k) != v for k,v in update.items()) or (self.startup.isChecked() and self.host.project.manifest["startup_screen"] != self.host.document_name):
-            self.host.mutate(save, selected_ids=[])
+            show_grid=self.show_grid.isChecked())
+        if any(self.host.document().get(k) != v for k,v in update.items()):
+            self.host.mutate(lambda: self.host.document().update(update), selected_ids=[])
 
 
 class DrawingProperties(QGroupBox):

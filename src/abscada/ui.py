@@ -44,7 +44,13 @@ def button(text, callback, primary=False):
     return widget
 
 
+TOOL_GROUPS = (("Indicadores y mandos", ("text", "lamp", "button", "input", "bar", "gauge", "text_list", "image")),
+               ("Trazados y formas", None),
+               ("Visores y composición", ("faceplate", "trend", "alarm_view", "screen_container")))
+
+
 class Toolbox(QListWidget):
+    """Every drawing tool, grouped under a title; the search box filters them."""
     def __init__(self):
         super().__init__()
         self.setObjectName("toolbox")
@@ -58,13 +64,35 @@ class Toolbox(QListWidget):
         self.setIconSize(QSize(24, 24))
 
         self.setDragEnabled(True)
-        self.setFixedHeight(204)
-        for kind, title in PALETTE.items():
-            item = QListWidgetItem(tool_icon(kind), title)
-            item.setSizeHint(QSize(190, 30))
-            item.setData(Qt.ItemDataRole.UserRole, kind)
-            item.setToolTip(title + (" · clic para cada punto; Enter o doble clic para terminar; Esc para cancelar" if kind in PATH_KINDS else ""))
-            self.addItem(item)
+        self.setMinimumHeight(204)
+        listed = set()
+        for title, kinds in TOOL_GROUPS:
+            kinds = kinds or tuple(k for k in PALETTE if k in PATH_KINDS | SHAPE_KINDS)
+            header = QListWidgetItem(title.upper())
+            header.setFlags(Qt.ItemFlag.NoItemFlags)
+            header.setSizeHint(QSize(190, 24))
+            font = header.font(); font.setBold(True); font.setPointSizeF(font.pointSizeF() * 0.85); header.setFont(font)
+            self.addItem(header)
+            for kind in kinds:
+                self.add_tool(kind); listed.add(kind)
+        for kind in PALETTE:
+            if kind not in listed:
+                self.add_tool(kind)
+
+    def add_tool(self, kind):
+        title = PALETTE[kind]
+        item = QListWidgetItem(tool_icon(kind), title)
+        item.setSizeHint(QSize(190, 30))
+        item.setData(Qt.ItemDataRole.UserRole, kind)
+        item.setToolTip(title + (" · clic para cada punto; Enter o doble clic para terminar; Esc para cancelar" if kind in PATH_KINDS else ""))
+        self.addItem(item)
+
+    def filter(self, text=""):
+        query = text.casefold()
+        for i in range(self.count()):
+            item = self.item(i)
+            is_header = item.data(Qt.ItemDataRole.UserRole) is None
+            item.setHidden(bool(query) and (is_header or query not in item.text().casefold()))
 
     def startDrag(self, actions):
         item = self.currentItem()
@@ -79,9 +107,10 @@ class Toolbox(QListWidget):
 
 from .variable_forms import VariableForms
 from .project_tree import ProjectTree, ProjectTreeActions
+from .clipboard_actions import ClipboardActions
 
 
-class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, QMainWindow):
+class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, ClipboardActions, QMainWindow):
     design_mode = True
 
     def __init__(self, project):
@@ -102,7 +131,6 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.setWindowTitle("abSCADA Studio · " + project.manifest["name"])
         self.resize(1440, 860)
         self.setMinimumSize(980, 650)
-        self.build_toolbar()
         root = QWidget()
         row = QHBoxLayout(root)
         row.setContentsMargins(0, 0, 0, 0)
@@ -120,6 +148,12 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         titles.addWidget(self.page_title)
         top.addLayout(titles)
         top.addStretch()
+        self.unsaved_label = QPushButton("● Cambios sin guardar · Guardar (Ctrl+S)")
+        self.unsaved_label.setObjectName("unsavedBadge")
+        self.unsaved_label.setToolTip("Los cambios se conservan al pasar de una sección a otra, pero solo se escriben en disco al guardar.")
+        self.unsaved_label.clicked.connect(lambda: self.save_project())
+        self.unsaved_label.hide()
+        top.addWidget(self.unsaved_label)
         self.mode_label = label("MODO DISEÑO", "designBadge")
         self.mode_label.setFixedHeight(28)
         top.addWidget(self.mode_label)
@@ -139,11 +173,24 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.build_variables()
         self.build_catalogs()
         self.operational_editor = OperationalEngineering(self)
-        for page in (self.operational_editor.alarms, self.operational_editor.historian):
-            self.pages.addWidget(page)
         from .automation_editor import AutomationEditor
         self.automation_editor = AutomationEditor(self)
-        self.pages.addWidget(self.automation_editor)
+        # Variables and their structure types share one section.
+        self.variables_tabs = QTabWidget()
+        self.variables_tabs.addTab(self.variables_page, "Variables")
+        self.variables_tabs.addTab(self.types_page, "Tipos de datos (estructuras)")
+        self.variables_tabs.currentChanged.connect(lambda index: self.page_title.setText("Variables" if index == 0 else "Tipos de datos"))
+        self.section_pages = dict(screens=self.graphics_page, faceplates=self.graphics_page, variables=self.variables_tabs,
+                                  types=self.variables_tabs, connections=self.connections_page, diagnostics=self.diagnostics_page,
+                                  alarms=self.operational_editor.alarms, historian=self.operational_editor.historian,
+                                  automation=self.automation_editor)
+        for page in dict.fromkeys(self.section_pages.values()):
+            self.pages.addWidget(page)
+        from .studio_shell import SectionRail, build_menus
+        self.section_rail = SectionRail(self)
+        self.workspace_row.insertWidget(0, self.section_rail)
+        self.section_rail.show_section("screens")
+        build_menus(self)
         self.populate_navigation()
         self.refresh_variables()
         self.refresh_catalogs()
@@ -152,66 +199,12 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         settings=QSettings('abSCADA','Studio')
         if settings.contains('graphicsSplitter'):self.graphics_splitter.restoreState(settings.value('graphicsSplitter'))
         self.toolbox_title.setChecked(settings.value('toolsExpanded',True,type=bool))
-        self.resources_panel.setFixedWidth(210 if settings.value('compactPanels',False,type=bool) else 232)
+        self.resources_panel.setFixedWidth(232)
         self.connection_status_timer=QTimer(self);self.connection_status_timer.timeout.connect(self.update_connection_status);self.connection_status_timer.start(1000)
 
     @property
     def runtime(self):
         return self.runtime_window.runtime if self.runtime_window else None
-
-    def build_toolbar(self):
-        toolbar = self.addToolBar("Proyecto")
-        toolbar.setMovable(False)
-        for title, callback, shortcut in (("Nuevo proyecto", self.new_project, "Ctrl+N"), ("Abrir…", lambda: self.open_project(), "Ctrl+O"),
-                                          ("Guardar proyecto", self.save_project, "Ctrl+S"), ("Recargar archivos", self.reload_project, "")):
-            action = QAction(title, self)
-            action.triggered.connect(callback)
-            action.setShortcut(shortcut)
-            toolbar.addAction(action)
-            if title == "Abrir…":
-                recent = QMenu(self)
-                recent.aboutToShow.connect(lambda: self.fill_recent_menu(recent))
-                recent_button = QToolButton()
-                recent_button.setText("Recientes")
-                recent_button.setMenu(recent)
-                recent_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
-                toolbar.addWidget(recent_button)
-        from .project_dialogs import VersionDialog
-        toolbar.addAction("Versiones…", lambda: VersionDialog(self).exec())
-        from .palette_editor import edit_palette
-        toolbar.addAction('Paleta…',lambda:edit_palette(self))
-        from .project_settings import edit_project_settings
-        toolbar.addAction('Ajustes del proyecto…',lambda:edit_project_settings(self))
-        from .library_editor import LibraryDialog
-        toolbar.addAction('Bibliotecas…',lambda:LibraryDialog(self).exec())
-        toolbar.addAction('Revisar',self.review_project)
-        toolbar.addAction('Prueba visual…',self.open_visual_preview)
-        compact=QAction('Panel compacto',self);compact.setCheckable(True)
-        compact.setChecked(QSettings('abSCADA','Studio').value('compactPanels',False,type=bool))
-        def set_compact(checked):
-            if hasattr(self,'resources_panel'):self.resources_panel.setFixedWidth(210 if checked else 232)
-            QSettings('abSCADA','Studio').setValue('compactPanels',checked)
-        compact.toggled.connect(set_compact);toolbar.addAction(compact)
-        toolbar.addSeparator()
-        self.undo_action, self.redo_action = QAction("Deshacer", self), QAction("Rehacer", self)
-        self.undo_action.setShortcut(QKeySequence.StandardKey.Undo)
-        self.redo_action.setShortcuts([QKeySequence("Ctrl+Shift+Z"), QKeySequence("Ctrl+Y")])
-        self.undo_action.triggered.connect(self.undo)
-        self.redo_action.triggered.connect(self.redo)
-        toolbar.addAction(self.undo_action)
-        toolbar.addAction(self.redo_action)
-        toolbar.addSeparator()
-        from .help_dialogs import SimulatorsDialog, about, open_log_folder
-        toolbar.addAction("Simuladores…", lambda: SimulatorsDialog(self).exec())
-        help_menu = QMenu(self)
-        help_menu.addAction("Acerca de abSCADA", lambda: about(self))
-        help_menu.addAction("Abrir carpeta de registros", open_log_folder)
-        help_button = QToolButton()
-        help_button.setText("Ayuda")
-        help_button.setMenu(help_menu)
-        help_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
-        toolbar.addWidget(help_button)
-        self.update_history_actions()
 
     def open_visual_preview(self):
         from .visual_preview import VisualPreview
@@ -232,20 +225,24 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         except Exception as exc: messages=[str(exc)]
         QMessageBox.information(self,'Revisión del proyecto','\n'.join(messages) or 'No se han encontrado errores de configuración')
 
+    def active_rail(self):
+        from .studio_shell import RAIL_OF
+        return RAIL_OF.get(self.active_section, self.active_section)
+
     def navigate(self, key):
         self.active_section = key
         self.update_connection_status()
-        self.toolbox.setVisible(key in {'screens','faceplates'} and self.toolbox_title.isChecked())
-        self.tool_options.setVisible(key in {'screens','faceplates'} and self.toolbox_title.isChecked())
-        self.toolbox_title.setVisible(key in {"screens", "faceplates"})
-        self.document_buttons.setVisible(key in {"screens", "faceplates"})
-        self.resource_tabs.setTabEnabled(1,key in {"screens", "faceplates"})
-        if key not in {"screens", "faceplates"}:
-            self.resource_tabs.setCurrentIndex(0)
+        graphics = key in {"screens", "faceplates"}
+        # The project tree and the drawing tools only make sense while editing screens.
+        self.resources_panel.setVisible(graphics)
         titles = {"screens": "Pantallas", "faceplates": "Faceplates", "variables": "Variables",
                   "types": "Tipos de datos", "connections": "Conexiones", "diagnostics": "Diagnóstico", "alarms": "Alarmas", "historian": "Registros", "automation": "Scripts y tareas"}
         self.page_title.setText(titles[key])
-        self.pages.setCurrentIndex({"screens": 0, "faceplates": 0, "variables": 1, "types": 2, "connections": 3, "diagnostics": 4, "alarms": 5, "historian": 6, "automation": 7}[key])
+        self.pages.setCurrentWidget(self.section_pages[key])
+        if key in {"variables", "types"}:
+            self.variables_tabs.setCurrentIndex(1 if key == "types" else 0)
+        if hasattr(self, "section_rail"):
+            self.section_rail.show_section(key)
         if key in {"screens", "faceplates"} and getattr(self.project, key) and self.document_kind != key:
             from .faceplate_libraries import owner
             choices = [name for name in getattr(self.project,key) if key != 'faceplates' or not owner(self.project,name)]
@@ -264,13 +261,17 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         tools.addWidget(self.document_label)
         tools.addStretch()
         self.canvas_actions = []
-        for title, callback, shortcut in (("Duplicar", self.duplicate_element, "Ctrl+D"), ("Eliminar", self.delete_element, "Delete")):
+        for title, callback, shortcut, visible in (("Copiar", self.copy_elements, "Ctrl+C", False), ("Cortar", self.cut_elements, "Ctrl+X", False),
+                                                   ("Pegar", self.paste_elements, "Ctrl+V", False),
+                                                   ("Duplicar", self.duplicate_element, "Ctrl+D", True), ("Eliminar", self.delete_element, "Delete", True)):
             action = QAction(title, page)
             action.setShortcut(shortcut)
+            # Canvas only: in a text field Ctrl+C / Ctrl+V keep copying text.
             action.setShortcutContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
             self.canvas_actions.append(action)
-            action.triggered.connect(callback)
-            tools.addWidget(button(title, callback))
+            action.triggered.connect(lambda checked=False, c=callback: c())
+            if visible:
+                tools.addWidget(button(title, callback))
         self.snap_action = QCheckBox("Ajustar a cuadrícula")
         self.snap_action.setChecked(True)
         tools.addWidget(self.snap_action)
@@ -282,7 +283,9 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 factor = int(self.zoom_field.currentText().rstrip("%"))/100
                 self.view.auto_fit=False; self.view.resetTransform(); self.view.scale(factor,factor)
         self.zoom_field.activated.connect(zoom); tools.addWidget(self.zoom_field)
-        layout.addLayout(tools)
+        bar = QWidget(); bar.setObjectName("canvasBar"); bar.setLayout(tools)
+        tools.setContentsMargins(8, 4, 8, 4)
+        layout.addWidget(bar)
         self.graphics_splitter = QSplitter()
         splitter = self.graphics_splitter
         layout.addWidget(splitter, 1)
@@ -294,45 +297,42 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         box = QVBoxLayout(resources)
         box.setContentsMargins(8, 8, 8, 8)
         box.setSpacing(5)
-        box.addWidget(label("PROYECTO", "sectionTitle"))
+        header = QHBoxLayout(); header.setContentsMargins(0, 0, 0, 0)
+        header.addWidget(label("PROYECTO", "sectionTitle")); header.addStretch()
+        create = QToolButton(); create.setText("+ Crear"); create.setObjectName("createButton")
+        create.setToolTip("Crear una pantalla, una carpeta para ordenarlas o un faceplate (plantilla de equipo)")
+        create.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        menu = QMenu(create)
+        menu.addAction("Pantalla…", lambda: self.new_document(False, folder=self.current_folder()))
+        menu.addAction("Carpeta de pantallas…", lambda: self.tree_new_folder(self.current_folder()))
+        menu.addAction("Faceplate (plantilla de equipo)…", lambda: self.new_document(True))
+        create.setMenu(menu); header.addWidget(create)
+        box.addLayout(header)
         box.addWidget(self.project_label)
         self.navigation = ProjectTree(self)
         self.navigation.currentItemChanged.connect(self.select_document)
+        self.navigation.setToolTip("Clic derecho para crear, renombrar, duplicar o eliminar. Arrastra para mover a una carpeta.")
         self.resource_tabs = QTabWidget()
         self.resource_tabs.addTab(self.navigation, "Proyecto")
         self.layers = QListWidget(); self.layers.setSelectionMode(QListWidget.SelectionMode.ExtendedSelection)
         self.layers.itemSelectionChanged.connect(self.select_layers)
         self.layers.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.layers.customContextMenuRequested.connect(self.layer_menu)
-        self.resource_tabs.addTab(self.layers, "Objetos")
+        self.layers.setToolTip("Elementos de la pantalla abierta, del fondo al frente. Selecciona aquí los que se tapan entre sí; "
+                               "clic derecho para ocultar, bloquear u ordenar.")
+        self.resource_tabs.addTab(self.layers, "Elementos")
+        self.resource_tabs.setTabToolTip(1, self.layers.toolTip())
         box.addWidget(self.resource_tabs, 1)
-        self.document_buttons = QWidget()
-        row = QHBoxLayout(self.document_buttons); row.setContentsMargins(0,0,0,0)
-        create = QToolButton(); create.setText("Nuevo documento")
-        create.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
-        menu = QMenu(create)
-        menu.addAction("Pantalla…", lambda: self.new_document(False, folder=self.current_folder()))
-        menu.addAction("Carpeta de pantallas…", lambda: self.tree_new_folder(self.current_folder()))
-        menu.addAction("Faceplate…", lambda: self.new_document(True))
-        create.setMenu(menu); row.addWidget(create); row.addStretch()
-        box.addWidget(self.document_buttons)
         box.addSpacing(4)
         self.toolbox_title = QToolButton();self.toolbox_title.setText('Herramientas de dibujo ▾')
         self.toolbox_title.setCheckable(True);self.toolbox_title.setChecked(True)
         box.addWidget(self.toolbox_title)
         self.toolbox = Toolbox()
-        self.toolbox.itemClicked.connect(lambda item: self.add_element(item.data(Qt.ItemDataRole.UserRole)))
+        self.toolbox.itemClicked.connect(lambda item: item.data(Qt.ItemDataRole.UserRole) and self.add_element(item.data(Qt.ItemDataRole.UserRole)))
         self.tool_options=QWidget(); options=QVBoxLayout(self.tool_options);options.setContentsMargins(0,0,0,0)
-        self.tool_category=QComboBox();self.tool_category.addItems(['Básicos','Trazados y formas','Visores y composición','Todos'])
-        self.tool_search=QLineEdit();self.tool_search.setPlaceholderText('Buscar herramienta…')
-        options.addWidget(self.tool_category);options.addWidget(self.tool_search);box.addWidget(self.tool_options)
-        def filter_tools():
-            groups=[{'text','lamp','button','input','bar','gauge','image','text_list'},PATH_KINDS|SHAPE_KINDS,{'faceplate','trend','alarm_view','screen_container'},set(PALETTE)]
-            query=self.tool_search.text().casefold()
-            for i in range(self.toolbox.count()):
-                item=self.toolbox.item(i)
-                item.setHidden((not query and item.data(Qt.ItemDataRole.UserRole) not in groups[self.tool_category.currentIndex()]) or (query not in item.text().casefold()))
-        self.tool_category.currentIndexChanged.connect(filter_tools);self.tool_search.textChanged.connect(filter_tools);filter_tools()
+        self.tool_search=QLineEdit();self.tool_search.setPlaceholderText('🔍 Buscar herramienta…');self.tool_search.setClearButtonEnabled(True)
+        options.addWidget(self.tool_search);box.addWidget(self.tool_options)
+        self.tool_search.textChanged.connect(self.toolbox.filter)
         def collapse_tools(checked):
             self.toolbox.setVisible(checked);self.tool_options.setVisible(checked)
             QSettings('abSCADA','Studio').setValue('toolsExpanded',checked)
@@ -375,7 +375,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         for title, mode in (("Izquierda","left"),("Centro horizontal","center"),("Derecha","right"),("Arriba","top"),("Centro vertical","middle"),("Abajo","bottom")):
             menu.addAction(title, lambda checked=False, mode=mode: self.align_elements(mode))
         align.setMenu(menu); tools.insertWidget(3,align)
-        self.pages.addWidget(page)
+        self.graphics_page = page
 
     def build_inspector(self):
         scroll = QScrollArea()
@@ -559,11 +559,17 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.viewer_button = button("Configurar…", self.configure_viewer)
         viewer_form.addWidget(self.viewer_button)
         body.addWidget(self.viewer_group)
-        self.form_button = button("Aplicar propiedades", self.apply_fields)
+        # Every field applies on its own (auto_apply): there is no «Aplicar» button.
         from .dynamic_editor import edit_dynamics
-        body.insertWidget(body.indexOf(appearance),button('Condiciones y estados…',lambda:edit_dynamics(self)))
-        body.addWidget(self.form_button)
-        body.addWidget(button("JSON avanzado…", self.edit_selected_json))
+        dynamic = button('Propiedades dinámicas…', lambda: edit_dynamics(self))
+        dynamic.setToolTip("Cambiar color, visibilidad, habilitación o texto según el valor de las variables")
+        body.insertWidget(body.indexOf(appearance), dynamic)
+        advanced = QToolButton(); advanced.setText("Avanzado"); advanced.setObjectName("linkButton")
+        advanced.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        advanced_menu = QMenu(advanced)
+        advanced_menu.addAction("Editar el elemento como JSON…", self.edit_selected_json)
+        advanced.setMenu(advanced_menu)
+        body.addWidget(advanced, 0, Qt.AlignmentFlag.AlignRight)
         from .selection_editor import CommonProperties
         self.common_properties=CommonProperties(self);self.common_properties.hide()
         layout.addWidget(self.common_properties)
@@ -586,17 +592,31 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         layout = QVBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
         tools = QHBoxLayout()
-        self.filter = QLineEdit()
-        self.filter.setPlaceholderText("Buscar variable, tipo, conexión o dirección…")
-        self.filter.textChanged.connect(self.refresh_variables)
-        tools.addWidget(self.filter, 1)
         tools.addWidget(button("+ Nueva variable", self.add_variable, True))
         tools.addWidget(button("Editar…", self.edit_variable_form))
         tools.addWidget(button("Duplicar…", self.duplicate_variable))
-        tools.addWidget(button("Expandir", lambda: self.table.expandAll()))
-        tools.addWidget(button("Contraer", lambda: self.table.collapseAll()))
-        tools.addWidget(button("JSON avanzado…", self.edit_variables))
+        more = QToolButton(); more.setText("Más"); more.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        more_menu = QMenu(more)
+        more_menu.addAction("Expandir todas las estructuras", lambda: self.table.expandAll())
+        more_menu.addAction("Contraer todas las estructuras", lambda: self.table.collapseAll())
+        more_menu.addSeparator()
+        more_menu.addAction("Editar como JSON (avanzado)…", self.edit_variables)
+        more.setMenu(more_menu); tools.addWidget(more)
+        tools.addStretch()
+        # A search box, clearly apart from the creation buttons: typing here only filters the list.
+        self.filter = QLineEdit()
+        self.filter.setObjectName("searchField")
+        self.filter.setPlaceholderText("🔍 Filtrar la lista…")
+        self.filter.setToolTip("Muestra solo las variables cuyo nombre, tipo, conexión o dirección contienen este texto")
+        self.filter.setClearButtonEnabled(True)
+        self.filter.setFixedWidth(300)
+        self.filter.textChanged.connect(self.refresh_variables)
+        tools.addWidget(self.filter)
         layout.addLayout(tools)
+        self.filter_notice = QLabel(); self.filter_notice.setObjectName("filterNotice"); self.filter_notice.hide()
+        self.filter_notice.setTextFormat(Qt.TextFormat.RichText)
+        self.filter_notice.linkActivated.connect(lambda link: self.filter.clear())
+        layout.addWidget(self.filter_notice)
         self.table = QTreeWidget()
         self.table.setHeaderLabels(["Variable", "Tipo", "Valor inicial", "Acceso", "PLC / conexión", "Ubicación", "Enlace", "Registro"])
         self.table.setAlternatingRowColors(True)
@@ -612,7 +632,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.table.setColumnWidth(7, 150)
         self.table.itemDoubleClicked.connect(self.edit_variable_form)
         layout.addWidget(self.table, 1)
-        self.pages.addWidget(page)
+        self.variables_page = page
 
     def make_table(self, headers):
         table = QTableWidget(0, len(headers))
@@ -643,7 +663,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             table.cellDoubleClicked.connect(lambda row, col, k=key: self.edit_catalog(k, False))
             setattr(self, key + "_table", table)
             layout.addWidget(table)
-            self.pages.addWidget(page)
+            setattr(self, key + "_page", page)
         page = QWidget()
         layout = QVBoxLayout(page)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -651,7 +671,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.log.setReadOnly(True)
         self.log.setMaximumBlockCount(2000)
         layout.addWidget(self.log)
-        self.pages.addWidget(page)
+        self.diagnostics_page = page
 
     def select_document(self, item, previous=None):
         value = item.data(0, Qt.ItemDataRole.UserRole) if item else None
@@ -725,7 +745,6 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if len(items)>1:self.common_properties.refresh()
         self.inspector_fields.setVisible(len(items) == 1)
         self.inspector_fields.setEnabled(len(items) == 1)
-        self.form_button.setEnabled(len(items) == 1)
         self.selection_label.setText(("PROPIEDADES DE PANTALLA" if self.document_kind == "screens" else "PROPIEDADES DE FACEPLATE") if not items else f"{len(items)} ELEMENTOS" if len(items) > 1 else PALETTE[items[0].element["kind"]].upper())
         if len(items)!=1:
             self._syncing = False
@@ -1074,6 +1093,16 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
     def editable(self):
         return True
 
+    @property
+    def dirty(self):
+        return getattr(self, "_dirty", False)
+
+    @dirty.setter
+    def dirty(self, value):
+        self._dirty = value
+        if hasattr(self, "unsaved_label"):
+            self.unsaved_label.setVisible(value)
+
     def mark_dirty(self):
         self.dirty = True
         self.update_runtime_difference()
@@ -1387,6 +1416,12 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 self.table.setItemWidget(item, 7, record)
                 if name == selected_name:
                     self.table.setCurrentItem(item)
+        shown = self.table.topLevelItemCount()
+        total = len(self.project.variables)
+        self.filter_notice.setVisible(bool(query))
+        if query:
+            self.filter_notice.setText(f"Filtro «{self.filter.text()}»: se muestran {shown} de {total} variables · "
+                                       f"<a href='clear'>Quitar el filtro</a>")
 
     def fill_table(self, table, rows):
         table.setRowCount(len(rows))
@@ -1418,7 +1453,14 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             self.connections_table.setItem(row,5,QTableWidgetItem(text))
 
     def add_variable(self):
+        before = {v["name"] for v in self.project.variables}
         self.variable_form(None)
+        created = [v["name"] for v in self.project.variables if v["name"] not in before]
+        if created:
+            # A new variable must always be visible, even if the list was filtered.
+            self.filter.clear()
+            for item in self.table.findItems(created[0], Qt.MatchFlag.MatchExactly, 0):
+                self.table.setCurrentItem(item)
 
     def edit_variable_form(self, *args):
         item = self.table.currentItem()

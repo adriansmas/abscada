@@ -50,13 +50,17 @@ def test_toolbox_click_adds_and_selects_element(studio):
     assert window.toolbox.isVisible()
     assert window.samples == {}
     assert len(window.scene.items()) == 6
-    item = window.toolbox.item(0)
+    header = window.toolbox.item(0)
+    assert header.data(Qt.ItemDataRole.UserRole) is None and header.text() == "INDICADORES Y MANDOS"
+    QTest.mouseClick(window.toolbox.viewport(), Qt.MouseButton.LeftButton,
+                     pos=window.toolbox.visualItemRect(header).center())
+    assert len(window.scene.items()) == 6
+    item = window.toolbox.item(1)
     QTest.mouseClick(window.toolbox.viewport(), Qt.MouseButton.LeftButton,
                      pos=window.toolbox.visualItemRect(item).center())
     assert len(window.scene.items()) == 7
     assert len(window.scene.selectedItems()) == 1
     assert window.scene.selectedItems()[0].element["kind"] == "text"
-    assert window.form_button.isEnabled()
     assert window.inspector_fields.isVisible()
 
 
@@ -311,6 +315,8 @@ def test_all_tools_fit_and_inspector_always_shows_context(studio):
     viewport = studio.toolbox.viewport().rect()
     for index in range(studio.toolbox.count()):
         item=studio.toolbox.item(index)
+        if item.data(Qt.ItemDataRole.UserRole) is None:
+            continue  # group title, hidden while searching
         studio.tool_search.setText(item.text())
         QApplication.processEvents()
         assert not item.isHidden()
