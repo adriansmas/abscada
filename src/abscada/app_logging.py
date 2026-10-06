@@ -1,4 +1,5 @@
 """Rotating log file plus a crash dialog, so beta testers can send useful reports."""
+import faulthandler
 import logging
 import platform
 import sys
@@ -33,6 +34,12 @@ def setup(mode="studio"):
                         format="%(asctime)s %(levelname)s [%(threadName)s] %(name)s: %(message)s")
     log.info("abSCADA %s · %s · Python %s · %s%s", __version__, mode, platform.python_version(),
              platform.platform(), " · ejecutable" if frozen() else "")
+    try:
+        # Native crashes (Qt, drivers) bypass Python's excepthook: dump their traceback too.
+        setup.fault_file = open(log_dir() / "fallos-nativos.log", "a", encoding="utf-8")
+        faulthandler.enable(setup.fault_file, all_threads=True)
+    except OSError:
+        pass
     sys.excepthook = _excepthook
     threading.excepthook = lambda args: _excepthook(args.exc_type, args.exc_value, args.exc_traceback, args.thread)
     return log_file()
