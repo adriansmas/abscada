@@ -18,6 +18,10 @@ def main(argv=None):
         from .simulators import SIMULATORS
         if len(argv) < 2 or argv[1] not in SIMULATORS:
             raise SystemExit("Uso: abscada --simulador {" + ",".join(SIMULATORS) + "} [opciones]")
+        # Redirected to a log file the console encoding is cp1252, which cannot write «→», «º»…
+        for stream in (sys.stdout, sys.stderr):
+            if stream is not None and hasattr(stream, "reconfigure"):
+                stream.reconfigure(encoding="utf-8", errors="replace")
         SIMULATORS[argv[1]].run(argv[2:])
         return
 
