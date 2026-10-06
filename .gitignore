@@ -17,6 +17,10 @@ runtime/
 .env.local
 .env.*.local
 
+# Written by packaging/build_exe.py during a build
+src/abscada/_build_info.py
+packaging/abscada.png
+
 # Generated screenshots and local tooling
 artifacts/
 .claude/

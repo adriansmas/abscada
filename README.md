@@ -26,6 +26,17 @@ python3 -m venv .venv
 
 Qt necesita una sesión gráfica y las bibliotecas de sistema correspondientes a la distribución. En CI se utiliza `QT_QPA_PLATFORM=offscreen`. Verificado localmente en Windows con Python 3.14.3; la ejecución en Linux está pendiente. El workflow incluido ejecuta la misma suite en ambos sistemas cuando el repositorio se publique en GitHub.
 
+## Ejecutable para Windows (beta)
+
+```powershell
+.venv\Scripts\python -m pip install -e ".[s7,modbus]" pyinstaller
+.venv\Scripts\python packaging/build_exe.py
+```
+
+Genera `dist/abSCADA/abscada.exe` y `dist/abSCADA-<versión>-windows.zip`. El mismo proceso se ejecuta en GitHub Actions: **Actions → Windows build → Run workflow**, o al subir una etiqueta `v*`, que publica además una *release*. La guía para quien prueba la beta está en [docs/BETA.md](docs/BETA.md).
+
+Los proyectos se abren desde su archivo `.abscada`. Sin argumentos se muestra una pantalla de inicio con proyectos recientes y ejemplos; `abscada --simulador hydro|ads|laboratorio|s7` arranca un PLC simulado.
+
 ## Diseñar y ejecutar
 
 La [especificación de bibliotecas](docs/LIBRARY_AUTHORING_SPEC.md) detalla controles, propiedades y criterios de adaptación desde WinCC Unified.

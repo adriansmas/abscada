@@ -1,34 +1,41 @@
 # Pendientes
 
-Lista viva, revisada el 5 de octubre de 2026. Ordenada por lo que hace falta para entregar una **beta en .exe** a un compañero, y después por producto. Marca con `[x]` lo terminado.
+Lista viva, revisada el 6 de octubre de 2026. Ordenada por lo que hace falta para entregar una **beta en .exe** a un compañero, y después por producto. Marca con `[x]` lo terminado.
 
 ## Fase 0 · Base de trabajo (ahora)
 
-- [ ] **Git y GitHub.** Instalar Git, crear el repositorio, `.gitignore` completo (artifacts, datos de runtime, `.claude/`), primer commit y subida a GitHub privado.
+- [x] **Git y GitHub.** Instalar Git, crear el repositorio, `.gitignore` completo (artifacts, datos de runtime, `.claude/`), primer commit y subida a GitHub privado.
 - [ ] **CI en GitHub Actions.** `tests.yml` existe (Windows y Linux, Python 3.11/3.14) pero nunca se ha ejecutado. Ver que pasa en Linux; los 2 tests de Git fallan aquí solo porque no hay Git instalado.
 - [ ] **Decidir dónde se desarrolla** (Windows o Linux) y clonar allí.
 
 ## Fase 1 · Beta en .exe para pruebas externas
 
 ### Bloqueantes para el ejecutable
-- [ ] **Scripts dentro del .exe.** `script_runner` lanza un intérprete Python aparte; en un ejecutable congelado `sys.executable` es el propio .exe. Hay que relanzar el .exe en «modo ejecutor de scripts».
-- [ ] **Arranque sin rutas relativas.** Sin argumentos se abre `examples/plant` relativo al directorio actual. Debe abrir una pantalla de inicio (proyectos recientes, nuevo, abrir, ejemplos).
-- [ ] **Ejemplos y recursos empaquetados.** Incluir `examples/` en el paquete y copiarlos a *Documentos* del usuario al abrirlos, para no escribir en *Program Files*.
-- [ ] **Simuladores accesibles sin Python.** S7, central hidroeléctrica y ADS como `abscada.exe --simulador hydro|s7|ads` o desde un menú *Herramientas → Simuladores*, para que el probador pueda usar los ejemplos.
-- [ ] **Empaquetado con PyInstaller** en modo carpeta (`onedir`): arranca más rápido y da menos falsos positivos de antivirus que `onefile`. Icono, versión y metadatos del ejecutable. Comprobar que entran PySide6, python-snap7 (`snap7.dll`) y pyModbusTCP.
-- [ ] **Compilación del .exe en CI** (runner de Windows) que publique un ZIP descargable en cada versión etiquetada.
+- [x] **Scripts dentro del .exe.** `script_runner` lanza un intérprete Python aparte; en un ejecutable congelado `sys.executable` es el propio .exe. Hay que relanzar el .exe en «modo ejecutor de scripts».
+- [x] **Arranque sin rutas relativas.** Sin argumentos se abre `examples/plant` relativo al directorio actual. Debe abrir una pantalla de inicio (proyectos recientes, nuevo, abrir, ejemplos).
+- [x] **Ejemplos y recursos empaquetados.** Incluir `examples/` en el paquete y copiarlos a *Documentos* del usuario al abrirlos, para no escribir en *Program Files*.
+- [x] **Simuladores accesibles sin Python.** S7, central hidroeléctrica y ADS como `abscada.exe --simulador hydro|s7|ads` o desde un menú *Herramientas → Simuladores*, para que el probador pueda usar los ejemplos.
+- [x] **Empaquetado con PyInstaller** en modo carpeta (`onedir`): arranca más rápido y da menos falsos positivos de antivirus que `onefile`. Icono, versión y metadatos del ejecutable. Hecho: `packaging/build_exe.py`, 133 MB en carpeta; python-snap7 3.x es Python puro (sin DLL).
+- [x] **Compilación del .exe en CI** (runner de Windows) que publique un ZIP descargable en cada versión etiquetada.
 
 ### Proyecto como archivo (en lugar de carpeta)
-- [ ] **Archivo principal `.abscada`.** El usuario abre `MiPlanta.abscada`; la carpeta con pantallas y scripts queda al lado, como en TIA Portal o Visual Studio. Se mantiene el formato abierto (JSON legible, Git y VS Code).
-- [ ] **Nuevo proyecto con «Guardar como»**: nombre del archivo y carpeta creada automáticamente.
-- [ ] **Abrir** con filtro `*.abscada` (y `project.json` de proyectos antiguos), **proyectos recientes** y apertura por línea de comandos o doble clic.
+- [x] **Archivo principal `.abscada`.** El usuario abre `MiPlanta.abscada`; la carpeta con pantallas y scripts queda al lado, como en TIA Portal o Visual Studio. Se mantiene el formato abierto (JSON legible, Git y VS Code).
+- [x] **Nuevo proyecto con «Guardar como»**: nombre del archivo y carpeta creada automáticamente.
+- [x] **Abrir** con filtro `*.abscada` (y `project.json` de proyectos antiguos), **proyectos recientes** y apertura por línea de comandos o doble clic.
 - [ ] **Asociación de la extensión** `.abscada` al instalar (en Fase 2, con instalador).
-- [ ] **Migración** de proyectos existentes: los ejemplos actuales y los de los usuarios siguen abriendo.
+- [x] **Migración** de proyectos existentes: los ejemplos actuales y los de los usuarios siguen abriendo.
 
 ### Para que el probador pueda reportar
-- [ ] **Registro de errores** en un archivo (`%LOCALAPPDATA%\abSCADA\logs`) y diálogo de error con «Copiar detalles» en lugar de cierres silenciosos.
-- [ ] **Acerca de** con versión y fecha de compilación.
-- [ ] **Guía de prueba** de una página para el compañero: qué probar y cómo reportar (issue en GitHub con plantilla).
+- [x] **Registro de errores** en un archivo (`%LOCALAPPDATA%\abSCADA\logs`) y diálogo de error con «Copiar detalles» en lugar de cierres silenciosos.
+- [x] **Acerca de** con versión y fecha de compilación.
+- [x] **Guía de prueba** de una página para el compañero: qué probar y cómo reportar (issue en GitHub con plantilla).
+
+### Detectado al probar el .exe (beta 0.5.0b1)
+- [ ] **Ejecutor de scripts persistente.** En el .exe cada ejecución relanza el ejecutable (~0,7 s frente a ~0,1 s con Python). Con tareas de 1 s funciona, pero gasta CPU. Mantener un proceso hijo vivo que reciba las peticiones por la tubería.
+- [ ] **Simuladores: ubicación definitiva.** Hoy van en el mismo .exe (`--simulador`, menú *Simuladores…*). Para 1.0, etiquetarlos como *herramientas de formación* o separarlos en `abscada-simuladores.exe` opcional en el instalador.
+- [ ] **Firma de código** para evitar el aviso de SmartScreen («Windows protegió su PC»).
+- [ ] **Modo consola**: el .exe es de ventana, así que `--validate` y `--headless` no muestran salida. Añadir un `abscada-cli.exe` o mostrar el resultado en un diálogo.
+- [ ] Plantilla de *issue* en GitHub para los reportes de la beta.
 
 ## Fase 2 · Producto
 

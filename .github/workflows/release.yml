@@ -1,0 +1,52 @@
+name: Windows build
+# Builds dist/abSCADA-<version>-windows.zip on a Windows runner.
+# - Manual run (Actions → Windows build → Run workflow): ZIP available as a workflow artifact.
+# - Tag push v* (e.g. v0.5.0b1): also attached to a GitHub Release (marked pre-release for betas).
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  windows-exe:
+    runs-on: windows-latest
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -e ".[dev,s7,modbus]" pyinstaller
+      - name: Tests before packaging
+        run: python -m pytest -q
+      - name: Build executable
+        run: python packaging/build_exe.py
+      - name: Smoke test of the packaged helper modes
+        shell: python
+        run: |
+          import json, subprocess
+          exe = r"dist\abSCADA\abscada.exe"
+          request = dict(source="ctx.write('A', ctx.read('B') + 1)", filename="t.py", event="startup",
+                         samples={"B": dict(value=1, quality="good")})
+          out = subprocess.run([exe, "--script-runner"], input=json.dumps(request), capture_output=True,
+                               text=True, timeout=120).stdout
+          assert json.loads(out)["actions"] == [["A", 2]], out
+          print("script runner OK")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: abSCADA-windows
+          path: dist/abSCADA-*-windows.zip
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          flags=""
+          case "$GITHUB_REF_NAME" in *a*|*b*|*rc*) flags="--prerelease";; esac
+          gh release create "$GITHUB_REF_NAME" dist/abSCADA-*-windows.zip $flags \
+            --title "abSCADA $GITHUB_REF_NAME" --notes-file docs/BETA.md

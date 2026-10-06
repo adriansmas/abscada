@@ -25,8 +25,8 @@ class SimulatorsDialog(QDialog):
         self.setWindowTitle("Simuladores de PLC")
         self.resize(640, 300)
         layout = QVBoxLayout(self)
-        layout.addWidget(QLabel("PLC simulados para probar los ejemplos sin equipos reales. "
-                                "Se detienen al cerrar abSCADA."))
+        layout.addWidget(QLabel("PLC simulados para probar los ejemplos y para formación, sin equipos reales.\n"
+                                "No los arranques en un equipo conectado a una instalación real. Se detienen al cerrar abSCADA."))
         grid = QGridLayout()
         self.rows = {}
         for row, simulator in enumerate(SIMULATORS.values()):
