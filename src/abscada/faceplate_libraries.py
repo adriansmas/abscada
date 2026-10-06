@@ -93,7 +93,7 @@ def export_library(project, names, target, name, version, author='', license='')
     validate_package(package)
     target = Path(target)
     # Exclusive creation keeps published versions immutable, including from other processes.
-    with target.open('x', encoding='utf-8') as stream:
+    with target.open('x', encoding='utf-8', newline='\n') as stream:
         json.dump(package, stream, ensure_ascii=False, indent=2, allow_nan=False)
         stream.write('\n')
     return package

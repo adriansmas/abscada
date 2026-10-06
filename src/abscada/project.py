@@ -4,7 +4,6 @@ from __future__ import annotations
 import copy
 import json
 import math
-import os
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -48,13 +47,6 @@ def coerce(value, kind):
 
 def read_json(path):
     return json.loads(path.read_text(encoding="utf-8"))
-
-
-def write_json(path, data):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    os.replace(temporary, path)
 
 
 @dataclass

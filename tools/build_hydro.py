@@ -1111,10 +1111,11 @@ def unit_svg(state, tall=False):
 def write_assets(root):
     assets = root / "assets"
     assets.mkdir(parents=True, exist_ok=True)
-    (assets / "presa.svg").write_text(DAM_SVG, encoding="utf-8")
+    # newline="\n": the repository stores text as LF (.gitattributes), also on Windows.
+    (assets / "presa.svg").write_text(DAM_SVG, encoding="utf-8", newline="\n")
     for state in ("parado", "marcha", "disparo"):
-        (assets / f"grupo_{state}.svg").write_text(unit_svg(state), encoding="utf-8")
-        (assets / f"grupo_{state}_alto.svg").write_text(unit_svg(state, tall=True), encoding="utf-8")
+        (assets / f"grupo_{state}.svg").write_text(unit_svg(state), encoding="utf-8", newline="\n")
+        (assets / f"grupo_{state}_alto.svg").write_text(unit_svg(state, tall=True), encoding="utf-8", newline="\n")
 
 
 # ---------------------------------------------------------------------------
@@ -1129,7 +1130,7 @@ def build_project(root, force=False):
         shutil.rmtree(root)
     root.mkdir(parents=True, exist_ok=True)
     if readme is not None:
-        (root / "README.md").write_text(readme, encoding="utf-8")
+        (root / "README.md").write_text(readme, encoding="utf-8", newline="\n")
     # Only the main window is placed: extra windows are opened by the operator, so the
     # example also works on a single-monitor laptop. See README for a 3-monitor layout.
     project = Project(root, dict(schema_version=1, name="CH Valdearenas", startup_screen="00_layout", palette=PALETTE,

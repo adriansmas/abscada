@@ -24,6 +24,11 @@ from hydro_map import PORTS  # noqa: E402
 from hydro_plc import HydroPLCs  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
+# Screens shown in the documentation; --publish copies them to both places.
+PUBLISHED = {"normal": ["10_general", "20_embalse", "30_grupo1", "40_unifilar", "50_auxiliares", "60_control",
+                        "72_tend_g1", "90_instructor", "95_emergencia_g1"],
+             "averia": ["30_grupo1", "80_alarmas"]}
+PUBLISH_TO = [ROOT / "docs" / "hydro"]
 
 
 def free_port():
@@ -44,6 +49,8 @@ def main():
     parser.add_argument("--seconds", type=float, default=70.0, help="Tiempo de operación antes de capturar")
     parser.add_argument("--averia", action="store_true",
                         help="Calienta el cojinete de empuje de G1 hasta el disparo antes de capturar")
+    parser.add_argument("--publish", action="store_true",
+                        help="Copia las capturas de la documentación a docs/hydro")
     args = parser.parse_args()
     out = ROOT / "artifacts" / ("hydro_averia" if args.averia else "hydro")
     out.mkdir(parents=True, exist_ok=True)
@@ -70,7 +77,11 @@ def main():
         pump(app, 22)
         if args.averia:
             g1.db["SimCojinete"] = True
-            pump(app, 75)
+            # Wait for the trip itself (Paso 10); heating time depends on the load reached.
+            deadline = time.monotonic() + 180
+            while g1.db["Paso"] != 10 and time.monotonic() < deadline:
+                pump(app, 1)
+            pump(app, 3)
             print("G1 paso", g1.db["Paso"], "causa", g1.db["CausaDisparo"], "empuje", round(g1.db["TempEmpuje"], 1))
         for name in project.screens:
             if name in ("00_layout", "01_cabecera", "02_menu"):
@@ -83,6 +94,14 @@ def main():
             pump(app, 1.2)
             window.grab().save(str(out / f"{name}.png"))
         print(out)
+        if args.publish:
+            kind = "averia" if args.averia else "normal"
+            suffix = "_averia" if args.averia else ""
+            for folder in PUBLISH_TO:
+                folder.mkdir(parents=True, exist_ok=True)
+                for name in PUBLISHED[kind]:
+                    shutil.copyfile(out / f"{name}.png", folder / f"{name}{suffix}.png")
+            print("Publicadas en", ", ".join(str(f.relative_to(ROOT)) for f in PUBLISH_TO))
     finally:
         if window:
             window.close()
