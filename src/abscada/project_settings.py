@@ -82,6 +82,18 @@ def edit_project_settings(studio):
     display = DisplayPanel(studio)
     tabs.addTab(display, "Operación")
 
+    records = QWidget(); form = QFormLayout(records)
+    retention, alarm_retention = QSpinBox(), QSpinBox()
+    for field, value in ((retention, project.historian.get("retention_days", 90)), (alarm_retention, project.alarms.get("retention_days", 365))):
+        field.setRange(1, 36500); field.setValue(value); field.setSuffix(" días"); field.setFixedWidth(130)
+    retention.setObjectName("historianRetention"); alarm_retention.setObjectName("alarmRetention")
+    form.addRow("Conservar valores registrados", retention)
+    form.addRow("Conservar alarmas y eventos", alarm_retention)
+    note = QLabel("Los días más antiguos se borran automáticamente. Para guardar una copia de los datos usa "
+                  "Herramientas → Copia de seguridad de los registros.")
+    note.setWordWrap(True); note.setObjectName("muted"); form.addRow(note)
+    tabs.addTab(records, "Registros")
+
     scale_request = []
     def ask_scale():
         from PySide6.QtWidgets import QMessageBox
@@ -106,6 +118,10 @@ def edit_project_settings(studio):
         else:
             target.manifest["screen_defaults"] = dict(width=width.value(), height=height.value())
         apply_display(target.manifest, display.data())
+        if retention.value() != project.historian.get("retention_days", 90):
+            target.historian["retention_days"] = retention.value()
+        if alarm_retention.value() != project.alarms.get("retention_days", 365):
+            target.alarms["retention_days"] = alarm_retention.value()
         if scale_request:
             scale_screens(target, width.value(), height.value(), scale_request[0])
 

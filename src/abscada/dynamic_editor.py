@@ -1,7 +1,7 @@
 """Visual conditions and state appearance, configured without expressions."""
 import copy
 from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QFormLayout,QCheckBox,QComboBox,QLineEdit,
-    QPushButton,QTableWidget,QTableWidgetItem,QHeaderView,QTabWidget,QDialogButtonBox,QLabel)
+    QPushButton,QTableWidget,QTableWidgetItem,QHeaderView,QTabWidget,QDialogButtonBox,QLabel,QGroupBox,QScrollArea)
 from .dialogs import EditorDialog
 from .value_editor import ValueEditor
 from .graphic_properties import ColorField
@@ -43,36 +43,55 @@ class ConditionForm(QWidget):
 
 
 class StyleForm(QWidget):
-    def __init__(self,value=None,kind='button'):
-        super().__init__(); self.fields={}; form=QFormLayout(self)
+    def __init__(self,value=None,kind='button',hint=True):
+        super().__init__(); self.fields={}; form=QFormLayout(self); form.setContentsMargins(0,0,0,0)
         supported=dynamics.style_keys(kind)
-        for key,title in [('color','Fondo / relleno'),('text_color','Texto'),('border_color','Borde'),('stroke_color','Trazo'),('text','Texto mostrado'),('source','Imagen (ruta del proyecto)')]:
+        for key,title in [('color','Fondo'),('text_color','Color del texto'),('border_color','Borde'),('stroke_color','Trazo'),('text','Texto mostrado'),('source','Imagen (ruta del proyecto)')]:
             if key not in supported: continue
             field=ColorField(lambda:None) if key in dynamics.COLOR_KEYS else QLineEdit()
             field.setText((value or {}).get(key,'')); self.fields[key]=field; form.addRow(title,field)
-        hint=QLabel('Vacío: conservar la propiedad del objeto'); form.addRow(hint)
+        if hint: form.addRow(QLabel('Vacío: conservar la propiedad del objeto'))
 
     def data(self): return {key:field.text() for key,field in self.fields.items() if field.text()}
 
 
 class DynamicDialog(EditorDialog):
+    """Appearance (one page, in the order it is applied), visibility and enabling of one element."""
     def __init__(self,studio,element):
         super().__init__(studio); self.studio=studio; self.element=element
-        self.setWindowTitle('Condiciones y estados · '+element['id']); self.resize(690,580)
+        self.setWindowTitle('Propiedades dinámicas · '+element['id']); self.resize(720,640)
         layout=QVBoxLayout(self); tabs=QTabWidget(); layout.addWidget(tabs)
         d=element.get('dynamics',{})
-        self.visible=ConditionForm(studio,d.get('visible')); tabs.addTab(self.visible,'Visibilidad')
-        enabled=QWidget(); form=QVBoxLayout(enabled); self.enabled=ConditionForm(studio,d.get('enabled')); form.addWidget(self.enabled)
-        self.reason=QLineEdit(d.get('disabled_reason','')); self.reason.setPlaceholderText('Motivo de bloqueo (tooltip)'); form.addWidget(self.reason); form.addStretch()
-        tabs.addTab(enabled,'Habilitación')
-        page=QWidget(); box=QVBoxLayout(page)
-        self.states=copy.deepcopy(d.get('states',[])); self.table=QTableWidget(0,2); self.table.setHorizontalHeaderLabels(['Condición (primera coincidencia)','Apariencia'])
+        appearance=QWidget(); page=QVBoxLayout(appearance)
+        intro=QLabel('Cómo se ve el elemento en el runtime. Se aplica en este orden; lo que dejes vacío conserva '
+                     'la propiedad normal del elemento.')
+        intro.setWordWrap(True); intro.setObjectName('muted'); page.addWidget(intro)
+        self.lamp={}
+        if element['kind']=='lamp':
+            group=QGroupBox('Colores del piloto');form=QFormLayout(group)
+            for key,title,default in [('off','Apagado (falso / 0)','#d7e0e9'),('on','Encendido (verdadero / 1)','#14b889'),('bad','Sin comunicación','#e5a339')]:
+                field=ColorField(lambda:None); field.setText(element.get('lamp_colors',{}).get(key,default));self.lamp[key]=field; form.addRow(title,field)
+            page.addWidget(group)
+        self.styles={}
+        def style_group(key,title,hint):
+            group=QGroupBox(title); box=QVBoxLayout(group)
+            if hint:
+                note=QLabel(hint); note.setWordWrap(True); note.setObjectName('muted'); box.addWidget(note)
+            field=StyleForm(d.get(key),element['kind'],hint=False); self.styles[key]=field; box.addWidget(field)
+            return group
+        page.addWidget(style_group('default','1 · Normal','Apariencia fija en el runtime.'))
+        states=QGroupBox('2 · Según el valor de variables'); box=QVBoxLayout(states)
+        note=QLabel('Por ejemplo: rojo si Bomba.Fallo es verdadero. Se usa el primer estado que se cumpla.')
+        note.setWordWrap(True); note.setObjectName('muted'); box.addWidget(note)
+        self.states=copy.deepcopy(d.get('states',[])); self.table=QTableWidget(0,2); self.table.setHorizontalHeaderLabels(['Cuando','Apariencia'])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch); self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.table.setMinimumHeight(110)
         box.addWidget(self.table); row=QHBoxLayout(); box.addLayout(row)
+        operators={'eq':'=','ne':'≠','gt':'>','ge':'≥','lt':'<','le':'≤'}
         def refresh():
             self.table.setRowCount(len(self.states))
             for i,state in enumerate(self.states):
-                c=state['when']; self.table.setItem(i,0,QTableWidgetItem(f"{c['tag']} {c['op']} {c['value']}")); self.table.setItem(i,1,QTableWidgetItem(' · '.join(f'{k}: {v}' for k,v in state['style'].items())))
+                c=state['when']; self.table.setItem(i,0,QTableWidgetItem(f"{c['tag']} {operators.get(c['op'],c['op'])} {c['value']}")); self.table.setItem(i,1,QTableWidgetItem(' · '.join(f'{k}: {v}' for k,v in state['style'].items())))
         def edit(new):
             index=-1 if new else self.table.currentRow()
             if not new and index<0: return
@@ -95,21 +114,23 @@ class DynamicDialog(EditorDialog):
         def move():
             i=self.table.currentRow()
             if i>0:self.states[i-1],self.states[i]=self.states[i],self.states[i-1];refresh();self.table.selectRow(i-1)
-        for title,callback in [('Añadir',lambda:edit(True)),('Editar',lambda:edit(False)),('Eliminar',remove),('Subir',move)]:
+        for title,callback in [('Añadir estado',lambda:edit(True)),('Editar',lambda:edit(False)),('Eliminar',remove),('Subir',move)]:
             b=QPushButton(title);b.clicked.connect(callback);row.addWidget(b)
-        refresh(); tabs.addTab(page,'Estados')
-        self.styles={}
-        for key,title in [('default','Predeterminado'),('bad','Mala calidad'),('disabled','Deshabilitado')]:
-            field=StyleForm(d.get(key),element['kind']); self.styles[key]=field; tabs.addTab(field,title)
-        self.lamp={}
-        if element['kind']=='lamp':
-            page=QWidget();form=QFormLayout(page)
-            for key,title,default in [('off','Falso / 0','#d7e0e9'),('on','Verdadero / 1','#14b889'),('bad','Sin calidad válida','#e5a339')]:
-                field=ColorField(lambda:None); field.setText(element.get('lamp_colors',{}).get(key,default));self.lamp[key]=field; form.addRow(title,field)
-            tabs.insertTab(0,page,'Piloto');tabs.setCurrentIndex(0)
+        row.addStretch()
+        self.table.cellDoubleClicked.connect(lambda r,c: edit(False))
+        refresh(); page.addWidget(states)
+        page.addWidget(style_group('bad','3 · Sin comunicación (mala calidad)','Cuando alguna de sus variables no tiene un valor válido del PLC.'))
+        page.addWidget(style_group('disabled','4 · Deshabilitado','Cuando no se cumple la condición de la pestaña «Habilitación».'))
+        page.addStretch()
+        scroll=QScrollArea(); scroll.setWidgetResizable(True); scroll.setWidget(appearance)
+        has_style=bool(dynamics.style_keys(element['kind'])) or element['kind']=='lamp'
+        if has_style:
+            tabs.addTab(scroll,'Apariencia')
+        self.visible=ConditionForm(studio,d.get('visible')); tabs.addTab(self.visible,'Visibilidad')
+        enabled=QWidget(); form=QVBoxLayout(enabled); self.enabled=ConditionForm(studio,d.get('enabled')); form.addWidget(self.enabled)
+        self.reason=QLineEdit(d.get('disabled_reason','')); self.reason.setPlaceholderText('Motivo de bloqueo (se muestra al pasar el ratón)'); form.addWidget(self.reason); form.addStretch()
+        tabs.addTab(enabled,'Habilitación')
         self.validator=self.validate; studio.dialog_buttons(self,layout)
-        if element['kind'] in {'faceplate','screen_container','trend','alarm_view'}:
-            for i in range(tabs.count()-1,1,-1):tabs.setTabVisible(i,False)
 
     def data(self):
         d={key:field.data() for key,field in self.styles.items() if field.data()}

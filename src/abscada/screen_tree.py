@@ -212,6 +212,46 @@ def delete_screen(project, name):
     del project.screens[name]
 
 
+# --- faceplates -------------------------------------------------------------------------------
+
+def _uses_template(element, name):
+    return element.get("template") == name and (element["kind"] == "faceplate" or element.get("action") == "faceplate_popup")
+
+
+def faceplate_references(project, name):
+    return [f"{'faceplate ' if collection == 'faceplates' else ''}{document_name} · {element['id']}"
+            for collection, document_name, document in _editable_documents(project)
+            for element in document["elements"] if _uses_template(element, name)]
+
+
+def rename_faceplate(project, old, new):
+    if new == old:
+        return
+    if new.casefold() != old.casefold():
+        check_new_name(project, new, "faceplates")
+    elif not NAME.fullmatch(new):
+        raise ValueError("Usa solo letras sin acentos, números, «_» y «-»")
+    project.faceplates = {new if key == old else key: value for key, value in project.faceplates.items()}
+    for _, _, document in _editable_documents(project):
+        for element in document["elements"]:
+            if _uses_template(element, old):
+                element["template"] = new
+
+
+def duplicate_faceplate(project, name, new):
+    check_new_name(project, new, "faceplates")
+    document = copy.deepcopy(project.faceplates[name])
+    document["title"] = f"{document.get('title', name)} (copia)"
+    project.faceplates[new] = document
+
+
+def delete_faceplate(project, name):
+    used = faceplate_references(project, name)
+    if used:
+        raise ValueError(f"No se puede eliminar «{name}» porque se usa en:\n· " + "\n· ".join(used))
+    del project.faceplates[name]
+
+
 # --- viewers (trends and alarm views) ---------------------------------------------------------
 
 def _viewer_elements(project, skip_screen=None):

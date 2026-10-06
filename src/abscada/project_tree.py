@@ -1,4 +1,4 @@
-"""Studio project tree: screens in folders, faceplates, libraries and sections.
+"""Studio project tree: screens in folders, faceplates and libraries (sections are in the side bar).
 
 Right click for document and folder actions; drag screens and folders onto a folder to move them.
 The rules themselves live in screen_tree (no Qt).
@@ -11,8 +11,6 @@ from . import screen_tree
 from .graphics import tool_icon
 
 ROLE = Qt.ItemDataRole.UserRole
-SECTIONS = (("variables", "Variables"), ("types", "Tipos de datos"), ("connections", "Conexiones"), ("alarms", "Alarmas"),
-            ("historian", "Registros"), ("automation", "Scripts y tareas"), ("diagnostics", "Diagnóstico"))
 
 
 class ProjectTree(QTreeWidget):
@@ -77,7 +75,7 @@ class ProjectTreeActions:
             if tip:
                 item.setToolTip(0, tip)
             (parent.addChild if isinstance(parent, QTreeWidgetItem) else tree.addTopLevelItem)(item)
-            if value == (self.document_kind, self.document_name) or value == ("section", self.active_section) and self.active_section not in {"screens", "faceplates"}:
+            if value == (self.document_kind, self.document_name):
                 tree.setCurrentItem(item)
             return item
 
@@ -104,8 +102,6 @@ class ProjectTreeActions:
                 library = node(group, alias + " · " + entry["package"]["version"], ("library", alias))
                 for name in expected_faces(alias, entry["package"]):
                     node(library, name.removeprefix(alias + "__"), ("faceplates", name), None, "Plantilla vinculada · solo lectura: " + name)
-        for key, title in SECTIONS:
-            node(tree, title, ("section", key))
         for item in self._tree_items():
             item.setExpanded(item.data(0, ROLE) not in collapsed)
         tree.blockSignals(False)
@@ -167,8 +163,15 @@ class ProjectTreeActions:
             start.setEnabled(self.project.manifest.get("startup_screen") != name)
             menu.addSeparator()
             menu.addAction("Eliminar…", lambda: self.tree_delete_screen(name))
-        elif value == ("group", "faceplates") or kind == "faceplates":
+        elif value == ("group", "faceplates"):
             menu.addAction("Nuevo faceplate…", lambda: self.new_document(True))
+        elif kind == "faceplates" and value[1] in self.project.faceplates and not self.faceplate_is_linked(value[1]):
+            name = value[1]
+            menu.addAction("Renombrar…", lambda: self.tree_rename(item))
+            menu.addAction("Duplicar…", lambda: self.tree_duplicate_faceplate(name))
+            menu.addSeparator()
+            menu.addAction("Nuevo faceplate…", lambda: self.new_document(True))
+            menu.addAction("Eliminar…", lambda: self.tree_delete_faceplate(name))
         if not menu.isEmpty():
             menu.exec(position)
 
@@ -181,7 +184,9 @@ class ProjectTreeActions:
         value = item.data(0, ROLE) if item else None
         if not value or not self.editable():
             return
-        if value[0] == "folder":
+        if value[0] == "faceplates" and value[1] in self.project.faceplates and not self.faceplate_is_linked(value[1]):
+            self.rename_faceplate_from_tree(value[1])
+        elif value[0] == "folder":
             name = self.ask_text("Renombrar carpeta", "Nuevo nombre", value[1].rpartition("/")[2])
             if name:
                 self.tree_mutate(lambda: screen_tree.rename_folder(self.project, value[1], name))
@@ -198,6 +203,30 @@ class ProjectTreeActions:
                     QMessageBox.information(self, "Pantalla renombrada",
                                             f"Los botones, contenedores y la configuración se han actualizado. Revisa estos scripts, "
                                             f"que mencionan «{old}» como texto: {', '.join(pending)}")
+
+    def faceplate_is_linked(self, name):
+        from .faceplate_libraries import owner
+        return bool(owner(self.project, name))
+
+    def rename_faceplate_from_tree(self, old):
+        new = self.ask_text("Renombrar faceplate", "Nuevo nombre (letras sin acentos, números, _ y -)", old)
+        if new and new != old:
+            showing = ("faceplates", new) if (self.document_kind, self.document_name) == ("faceplates", old) else None
+            self.tree_mutate(lambda: screen_tree.rename_faceplate(self.project, old, new), showing)
+
+    def tree_duplicate_faceplate(self, name):
+        new = self.ask_text("Duplicar faceplate", "Nombre de la copia", name + "_copia")
+        if new:
+            self.tree_mutate(lambda: screen_tree.duplicate_faceplate(self.project, name, new), ("faceplates", new))
+
+    def tree_delete_faceplate(self, name):
+        used = screen_tree.faceplate_references(self.project, name)
+        if used:
+            self.error(f"No se puede eliminar «{name}» porque se usa en:\n· " + "\n· ".join(used))
+            return
+        if QMessageBox.question(self, "Eliminar faceplate", f"¿Eliminar el faceplate «{name}»? Se puede deshacer con Ctrl+Z.") \
+                == QMessageBox.StandardButton.Yes:
+            self.tree_mutate(lambda: screen_tree.delete_faceplate(self.project, name))
 
     def tree_duplicate(self, name):
         new = self.ask_text("Duplicar pantalla", "Nombre de la copia", name + "_copia")
