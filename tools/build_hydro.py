@@ -12,6 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from abscada.drawing import set_points  # noqa: E402
 from abscada.project import Project  # noqa: E402
+from abscada.project_files import is_project  # noqa: E402
 from hydro_map import COMMON_FIELDS, METER_FIELDS, PORTS, STEPS, TRIP_CAUSES, UNIT_FIELDS  # noqa: E402
 
 PALETTE = {
@@ -1122,7 +1123,7 @@ def write_assets(root):
 def build_project(root, force=False):
     root = Path(root).resolve()
     readme = None
-    if (root / "project.json").exists():
+    if is_project(root):
         if not force:
             raise ValueError("El proyecto ya existe; usa --force para regenerarlo (se pierden sus cambios)")
         # The README is hand-written documentation, not generated: keep it.
@@ -1135,7 +1136,7 @@ def build_project(root, force=False):
     # example also works on a single-monitor laptop. See README for a 3-monitor layout.
     project = Project(root, dict(schema_version=1, name="CH Valdearenas", startup_screen="00_layout", palette=PALETTE,
                                  display=dict(main=dict(mode="maximized"))),
-                      {}, [], [], {}, {})
+                      {}, [], [], {}, {}, manifest_file="valdearenas.abscada")
     project.types, project.variables = build_variables()
     project.connections = build_connections()
     project.faceplates = build_faceplates()

@@ -235,11 +235,11 @@ def run_demo(sim, stop):
         stop.wait(0.1)
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description="PLC Beckhoff TwinCAT ADS simulado (banco de ensayo)")
     parser.add_argument("--port", type=int, default=48898, help="Puerto TCP AMS (48898 por defecto)")
     parser.add_argument("--ams-port", type=int, default=851, help="Puerto ADS del runtime PLC (851 TC3, 801 TC2)")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     try:
         sim = AdsSimulator(DEMO_SYMBOLS, port=args.port, ams_port=args.ams_port).start()
     except OSError as error:

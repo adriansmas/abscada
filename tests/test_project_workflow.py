@@ -20,7 +20,7 @@ def test_new_screen_dialog_dimensions_and_single_save(operational_studio):
 
 def test_save_rolls_back_io_failure_and_removes_deleted_sources(operational_project,monkeypatch):
     p=operational_project;p.scripts={'old':'print(1)'};p.save()
-    original=(p.root/'project.json').read_bytes()
+    original=p.manifest_path.read_bytes()
     p.manifest['name']='Changed';p.scripts={'new':'print(2)'}
     replace=os.replace
     def fail(source,target):
@@ -28,7 +28,7 @@ def test_save_rolls_back_io_failure_and_removes_deleted_sources(operational_proj
         return replace(source,target)
     monkeypatch.setattr(os,'replace',fail)
     with pytest.raises(OSError):p.save()
-    assert (p.root/'project.json').read_bytes()==original
+    assert p.manifest_path.read_bytes()==original
     assert Project.load(p.root).scripts=={'old':'print(1)'}
     monkeypatch.setattr(os,'replace',replace);p.save()
     assert Project.load(p.root).scripts=={'new':'print(2)'}

@@ -42,7 +42,14 @@ class Context:
         self.actions.append([name, value])
 
 
+def _pipe(stream, fd, mode):
+    # A windowed .exe has no console streams; the Runtime's pipes are still fds 0 and 1.
+    return stream if stream is not None else io.open(fd, mode, encoding='utf-8', closefd=False)
+
+
 def main():
+    sys.stdin = _pipe(sys.stdin, 0, 'r')
+    sys.stdout = _pipe(sys.stdout, 1, 'w')
     request = json.load(sys.stdin)
     ctx = Context(request)
     output = TailOutput()
@@ -54,6 +61,7 @@ def main():
     except BaseException:
         encoded = json.dumps(dict(ok=False, error=traceback.format_exc()[-16000:], output=output.getvalue()[-16000:]))
     sys.stdout.write(encoded)
+    sys.stdout.flush()
 
 
 if __name__ == '__main__':

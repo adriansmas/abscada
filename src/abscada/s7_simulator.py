@@ -18,10 +18,10 @@ def create_server(port=1102):
     return server, memory
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description="PLC Siemens S7 simulado · DB1")
     parser.add_argument("--port", type=int, default=1102)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     server, memory = create_server(args.port)
     print(f"PLC simulado en puerto {args.port}: DB1.X0.0 marcha, DB1.R4 caudal, DB1.R8 consigna, DB1.R12 nivel", flush=True)
     try:

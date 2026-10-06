@@ -114,7 +114,8 @@ class ScriptService:
         flags = subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
         process = None
         try:
-            process = subprocess.Popen([sys.executable, '-I', str(Path(__file__).with_name('script_runner.py'))],
+            from .app_paths import script_runner_command
+            process = subprocess.Popen(script_runner_command(),
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8',
                 cwd=self.project.root, creationflags=flags)
             deadline = time.monotonic()+self.project.automation.get('timeout_seconds', 10)

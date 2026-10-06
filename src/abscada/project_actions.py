@@ -1,7 +1,7 @@
 """Project file operations and advanced document editing for Studio."""
 from pathlib import Path
 import json
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QDialogButtonBox, QInputDialog, QMessageBox, QFileDialog
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QDialogButtonBox, QMessageBox
 from .project import Project
 from .dialogs import EditorDialog as QDialog
 
@@ -90,11 +90,13 @@ class ProjectActions:
             return not self.dirty
         return True
 
-    def replace_project(self, root):
+    def replace_project(self, path):
         try:
-            project = Project.load(root)
+            project = Project.load(path)
             if not self.stop_runtime():
                 return
+            from .start_dialog import remember_project
+            remember_project(project.manifest_path)
             self.project = project
             self.document_kind, self.document_name = "screens", project.manifest["startup_screen"]
             self.dirty = False
@@ -110,33 +112,34 @@ class ProjectActions:
         except Exception as exc:
             self.error(exc)
 
-    def open_project(self):
+    def open_project(self, path=None):
         if not self.maybe_save():
             return
-        root = QFileDialog.getExistingDirectory(self, "Carpeta del proyecto")
-        if root:
-            self.replace_project(root)
+        from .start_dialog import ask_open_project
+        path = path or ask_open_project(self)
+        if path:
+            self.replace_project(path)
 
     def new_project(self):
         if not self.maybe_save():
             return
-        root = QFileDialog.getExistingDirectory(self, "Elige una carpeta vacía para el nuevo proyecto")
-        if not root:
-            return
-        if any(Path(root).iterdir()):
-            self.error("Elige una carpeta vacía para evitar sobrescribir archivos")
-            return
-        name, ok = QInputDialog.getText(self, "Nuevo proyecto", "Nombre", text="Mi SCADA")
-        if not ok or not name.strip():
-            return
-        project = Project(Path(root), dict(schema_version=1, name=name.strip(), startup_screen="main"),
-                          {}, [], [], {"main": dict(width=1000, height=650, elements=[])}, {})
+        from .start_dialog import ask_new_project
         try:
-            project.save()
-            self.replace_project(root)
+            path = ask_new_project(self)
         except Exception as exc:
             self.error(exc)
+            return
+        if path:
+            self.replace_project(path)
 
     def reload_project(self):
         if self.maybe_save():
-            self.replace_project(self.project.root)
+            self.replace_project(self.project.manifest_path)
+
+    def fill_recent_menu(self, menu):
+        from .start_dialog import recent_projects
+        menu.clear()
+        for path in recent_projects():
+            menu.addAction(f"{Path(path).stem}  —  {Path(path).parent}", lambda p=path: self.open_project(p))
+        if menu.isEmpty():
+            menu.addAction("Sin proyectos recientes").setEnabled(False)

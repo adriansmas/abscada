@@ -161,12 +161,20 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
     def build_toolbar(self):
         toolbar = self.addToolBar("Proyecto")
         toolbar.setMovable(False)
-        for title, callback, shortcut in (("Nuevo proyecto", self.new_project, "Ctrl+N"), ("Abrir…", self.open_project, "Ctrl+O"),
+        for title, callback, shortcut in (("Nuevo proyecto", self.new_project, "Ctrl+N"), ("Abrir…", lambda: self.open_project(), "Ctrl+O"),
                                           ("Guardar proyecto", self.save_project, "Ctrl+S"), ("Recargar archivos", self.reload_project, "")):
             action = QAction(title, self)
             action.triggered.connect(callback)
             action.setShortcut(shortcut)
             toolbar.addAction(action)
+            if title == "Abrir…":
+                recent = QMenu(self)
+                recent.aboutToShow.connect(lambda: self.fill_recent_menu(recent))
+                recent_button = QToolButton()
+                recent_button.setText("Recientes")
+                recent_button.setMenu(recent)
+                recent_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+                toolbar.addWidget(recent_button)
         from .project_dialogs import VersionDialog
         toolbar.addAction("Versiones…", lambda: VersionDialog(self).exec())
         from .palette_editor import edit_palette
@@ -191,6 +199,17 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         self.redo_action.triggered.connect(self.redo)
         toolbar.addAction(self.undo_action)
         toolbar.addAction(self.redo_action)
+        toolbar.addSeparator()
+        from .help_dialogs import SimulatorsDialog, about, open_log_folder
+        toolbar.addAction("Simuladores…", lambda: SimulatorsDialog(self).exec())
+        help_menu = QMenu(self)
+        help_menu.addAction("Acerca de abSCADA", lambda: about(self))
+        help_menu.addAction("Abrir carpeta de registros", open_log_folder)
+        help_button = QToolButton()
+        help_button.setText("Ayuda")
+        help_button.setMenu(help_menu)
+        help_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        toolbar.addWidget(help_button)
         self.update_history_actions()
 
     def open_visual_preview(self):
