@@ -66,17 +66,26 @@ class Project:
     scripts: dict = field(default_factory=dict)
     automation: dict = field(default_factory=lambda: dict(startup=[], tasks=[], timeout_seconds=10))
     libraries: dict = field(default_factory=dict)
+    # Main project file inside root: "<Name>.abscada", or "project.json" for older projects.
+    manifest_file: str = "project.json"
+
+    @property
+    def manifest_path(self):
+        return Path(self.root) / self.manifest_file
 
     @classmethod
-    def load(cls, directory):
-        root = Path(directory).resolve()
-        manifest = read_json(root / "project.json")
+    def load(cls, path):
+        """Open a project from its .abscada file, its legacy project.json, or its folder."""
+        from .project_files import locate
+        root, manifest_file = locate(path)
+        manifest = read_json(root / manifest_file)
         if manifest.get("schema_version") != 1:
             raise ValueError("Versión de proyecto no soportada (se requiere 1)")
         project = cls(root, manifest, read_json(root / "types.json"),
                       read_json(root / "variables.json"), read_json(root / "connections.json"),
                       {p.stem: read_json(p) for p in sorted((root / "screens").glob("*.json"))},
-                      {p.stem: read_json(p) for p in sorted((root / "faceplates").glob("*.json"))})
+                      {p.stem: read_json(p) for p in sorted((root / "faceplates").glob("*.json"))},
+                      manifest_file=manifest_file)
         for key in ("alarms", "historian", "trends", "alarm_views", "automation", "libraries"):
             if (root / f"{key}.json").exists():
                 setattr(project, key, read_json(root / f"{key}.json"))

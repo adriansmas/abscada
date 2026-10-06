@@ -9,6 +9,7 @@ import shutil
 from pathlib import Path
 
 from abscada.project import Project
+from abscada.project_files import is_project
 
 PALETTE = {"Fondo": "#dde1e4", "Panel": "#eceef0", "Borde": "#b4bbc2", "Texto": "#1f2a33", "Suave": "#5b6670",
            "Marcha": "#2e8b57", "Paro": "#9aa3ab", "Alarma": "#d32f2f", "Aviso": "#e89a1c", "Mando": "#2b6cb0"}
@@ -29,7 +30,7 @@ FIELDS = [  # (field, type, symbol, PLC type, writable)
 def build_project(root, force=False):
     root = Path(root).resolve()
     readme = None
-    if (root / "project.json").exists():
+    if is_project(root):
         if not force:
             raise ValueError("El proyecto ya existe; usa --force para regenerarlo (se pierden sus cambios)")
         readme = (root / "README.md").read_text(encoding="utf-8") if (root / "README.md").exists() else None
@@ -39,7 +40,7 @@ def build_project(root, force=False):
         (root / "README.md").write_text(readme, encoding="utf-8", newline="\n")
 
     p = Project(root, dict(schema_version=1, name="Banco de ensayo Beckhoff", startup_screen="banco", palette=PALETTE),
-                {}, [], [], {}, {})
+                {}, [], [], {}, {}, manifest_file="banco_beckhoff.abscada")
     p.types = {"BancoEnsayo": {field: kind for field, kind, *_ in FIELDS}}
     bindings = {}
     for field, kind, symbol, plc_type, _ in FIELDS:

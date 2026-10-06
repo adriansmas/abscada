@@ -2,14 +2,15 @@
 from pathlib import Path
 import argparse
 from abscada.project import Project
+from abscada.project_files import is_project
 from abscada.drawing import set_points
 
 
 def build_project(root):
     root=Path(root).resolve()
-    if (root/'project.json').exists():raise ValueError('El proyecto ya existe; usa otra carpeta para no sobrescribir cambios')
+    if is_project(root):raise ValueError('El proyecto ya existe; usa otra carpeta para no sobrescribir cambios')
     palette={'Fondo':'#f4f7fa','Panel':'#ffffff','Texto':'#243c50','Marcha':'#147d75','Paro':'#c64b51','Aviso':'#da982f','S7':'#3678c8','Modbus':'#8152b4','Linea':'#7c94a5'}
-    p=Project(root,dict(schema_version=1,name='Laboratorio SCADA',startup_screen='00_layout',palette=palette),{},[],[],{}, {})
+    p=Project(root,dict(schema_version=1,name='Laboratorio SCADA',startup_screen='00_layout',palette=palette),{},[],[],{}, {},manifest_file='laboratorio.abscada')
     p.types={
         'Bomba':{'Marcha':'bool','Caudal':'float','Consigna':'float'},
         'PlantaS7':{'Bomba1':'Bomba','Bomba2':'Bomba','Nivel':'float'},

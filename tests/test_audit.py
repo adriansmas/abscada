@@ -106,7 +106,7 @@ def test_git_literal_asset_names(operational_project):
 
 
 def test_failed_rollback_keeps_recovery_copy(operational_project,monkeypatch):
-    p=operational_project;before=(p.root/'project.json').read_bytes()
+    p=operational_project;before=p.manifest_path.read_bytes()
     p.manifest['name']='changed';p.scripts={'new':'print(1)'}
     replace=os.replace
     def fail(source,target):
@@ -116,7 +116,7 @@ def test_failed_rollback_keeps_recovery_copy(operational_project,monkeypatch):
     with pytest.raises(OSError,match='Copias recuperables'):p.save()
     recovery=list(p.root.glob('.abscada-recovery-*'))
     assert len(recovery)==1
-    assert (recovery[0]/'backup/project.json').read_bytes()==before
+    assert (recovery[0]/'backup'/p.manifest_file).read_bytes()==before
 
 
 def test_releasing_outside_runtime_button_cancels_command(operational_studio):

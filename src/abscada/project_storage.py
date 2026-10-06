@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 def documents(project):
-    data = {'project.json': project.manifest}
+    data = {getattr(project, 'manifest_file', 'project.json'): project.manifest}
     for key in ('types','variables','connections','alarms','historian','trends','alarm_views','automation'):
         data[key+'.json'] = getattr(project, key)
     if project.libraries:
@@ -27,7 +27,7 @@ def documents(project):
 
 
 def disk_state(root):
-    paths = list(root.glob('*.json'))
+    paths = list(root.glob('*.json')) + list(root.glob('*.abscada'))
     for folder, pattern in (('screens','*.json'),('faceplates','*.json'),('scripts','*.py')):
         paths.extend((root/folder).glob(pattern))
     return {p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
