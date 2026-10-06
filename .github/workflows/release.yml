@@ -2,6 +2,7 @@ name: Windows build
 # Builds dist/abSCADA-<version>-windows.zip on a Windows runner.
 # - Manual run (Actions → Windows build → Run workflow): ZIP available as a workflow artifact.
 # - Tag push v* (e.g. v0.5.0b1): also attached to a GitHub Release (marked pre-release for betas).
+#   Creating the release on github.com with a new v* tag works too: the ZIP is added to it.
 on:
   workflow_dispatch:
   push:
@@ -46,7 +47,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          flags=""
-          case "$GITHUB_REF_NAME" in *a*|*b*|*rc*) flags="--prerelease";; esac
-          gh release create "$GITHUB_REF_NAME" dist/abSCADA-*-windows.zip $flags \
-            --title "abSCADA $GITHUB_REF_NAME" --notes-file docs/BETA.md
+          # The release may already exist when it was drafted on github.com (that creates the tag).
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/abSCADA-*-windows.zip --clobber
+          else
+            flags=""
+            case "$GITHUB_REF_NAME" in *a*|*b*|*rc*) flags="--prerelease";; esac
+            gh release create "$GITHUB_REF_NAME" dist/abSCADA-*-windows.zip $flags \
+              --title "abSCADA $GITHUB_REF_NAME" --notes-file docs/BETA.md
+          fi
