@@ -36,6 +36,19 @@ Lista viva, revisada el 6 de octubre de 2026. Ordenada por lo que hace falta par
 - [ ] **Firma de código** para evitar el aviso de SmartScreen («Windows protegió su PC»).
 - [ ] **Modo consola**: el .exe es de ventana, así que `--validate` y `--headless` no muestran salida. Añadir un `abscada-cli.exe` o mostrar el resultado en un diálogo.
 - [ ] Plantilla de *issue* en GitHub para los reportes de la beta.
+- [x] **Simulador hidráulico en el .exe** se cerraba al escribir «→» en su registro (cp1252). Salida en UTF-8.
+
+### Revisión de usabilidad (6 de octubre de 2026, con el primer probador)
+- [x] Menú Archivo / Edición / Proyecto / Herramientas / Ayuda; barra corta (Guardar, Deshacer, Rehacer).
+- [x] Barra lateral de secciones; «Tipos de datos» como pestaña de Variables.
+- [x] Pantallas en carpetas, layout como pantalla normal, renombrar / duplicar / eliminar pantallas y faceplates.
+- [x] Tendencias y visores de alarmas se configuran desde su control (sin sección «Gráficas» ni pestaña «Visores»).
+- [x] Copiar / cortar / pegar entre pantallas.
+- [x] «Ajustes del proyecto»: pantalla de inicio, tamaño de pantallas, monitores, escalado del runtime (maximizado por defecto) y retención.
+- [x] Inspector sin «Aplicar propiedades»; «Propiedades dinámicas» con una sola página de apariencia; JSON en «Avanzado».
+- [x] Filtros de las listas separados de los botones, con aviso de filas ocultas; aviso «Cambios sin guardar».
+- [ ] Rehacer las capturas de Studio del README con la interfaz nueva.
+- [ ] Probar con el probador la nueva versión y recoger una segunda ronda de comentarios.
 
 ## Fase 2 · Producto
 
