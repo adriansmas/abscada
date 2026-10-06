@@ -569,6 +569,13 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         layout.addStretch()
 
         self.inspector_fields.hide()
+        # Long combo items and wide numeric ranges must not force a horizontal scrollbar
+        # (fonts are wider on Linux): let those fields shrink to the panel width.
+        for combo in inspector.findChildren(QComboBox):
+            combo.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+            combo.setMinimumContentsLength(8)
+        for spin in inspector.findChildren(QDoubleSpinBox) + inspector.findChildren(QSpinBox):
+            spin.setMinimumWidth(64)
         scroll.setWidget(inspector)
         return scroll
 
