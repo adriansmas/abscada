@@ -130,5 +130,6 @@
   ],
   "on_open": [
     "apertura"
-  ]
+  ],
+  "folder": "Tendencias"
 }

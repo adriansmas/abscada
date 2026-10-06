@@ -5,6 +5,10 @@ Monitors are numbered from 1 in project files, as operators see them.
 import hashlib
 
 MODES = {"normal", "maximized", "fullscreen"}
+# The operation window opens maximized unless the project says otherwise.
+MAIN_MODE = "maximized"
+# fit: keep proportions · stretch: fill the window · none: actual size
+SCALES = {"fit", "stretch", "none"}
 MAX_MONITORS = 16
 
 
@@ -28,16 +32,18 @@ def validate_window(options):
 
 
 def validate_display(project):
-    """manifest.display = {main: {monitor, mode}, windows: [{screen, monitor, mode, on_top}]}"""
+    """manifest.display = {main: {monitor, mode, scale}, windows: [{screen, monitor, mode, on_top}]}"""
     display = project.manifest.get("display", {})
     if not isinstance(display, dict) or set(display) - {"main", "windows"}:
         raise ValueError("Configuración de monitores inválida")
     main = display.get("main", {})
-    if not isinstance(main, dict) or set(main) - {"monitor", "mode"}:
+    if not isinstance(main, dict) or set(main) - {"monitor", "mode", "scale"}:
         raise ValueError("Configuración de la ventana principal inválida")
     monitor_number(main.get("monitor"))
-    if main.get("mode", "normal") not in MODES:
+    if main.get("mode", MAIN_MODE) not in MODES:
         raise ValueError("Modo de ventana desconocido")
+    if main.get("scale", "fit") not in SCALES:
+        raise ValueError("Escalado desconocido")
     windows = display.get("windows", [])
     if not isinstance(windows, list):
         raise ValueError("La lista de ventanas de arranque es inválida")

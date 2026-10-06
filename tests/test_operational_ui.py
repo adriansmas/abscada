@@ -63,11 +63,15 @@ def test_engineering_alarm_and_historian_forms_undo_and_save(operational_studio)
     assert Project.load(window.project.root).alarms == window.project.alarms
 
 
-def test_trend_configuration_creates_curve_without_json(operational_studio):
+def test_trend_is_configured_from_its_control(operational_studio):
     window = operational_studio
+    window.add_element("trend")
+    element = window.scene.selectedItems()[0].element
+    view = element["view"]
+    assert window.project.trends[view]["curves"] == []
     def fill_trend():
         dialog = QApplication.activeModalWidget()
-        dialog.findChild(QLineEdit,"trendId").setText("new")
+        assert dialog.findChild(QLineEdit, "trendId") is None
         dialog.findChild(QLineEdit,"trendTitle").setText("Nivel del depósito")
         tabs = dialog.findChild(QTabWidget)
         page = tabs.widget(1)
@@ -81,14 +85,16 @@ def test_trend_configuration_creates_curve_without_json(operational_studio):
         buttons = dialog.findChildren(QDialogButtonBox, options=Qt.FindChildOption.FindDirectChildrenOnly)[0]
         buttons.button(QDialogButtonBox.StandardButton.Save).click()
     QTimer.singleShot(0,fill_trend)
-    window.operational_editor.edit_trend(None)
-    assert window.project.trends["new"]["curves"][0]["color"]=="#123456"
-    assert window.project.trends["new"]["curves"][0]["axis"]=="process"
-    window.add_element("trend")
-    assert window.scene.selectedItems()[0].element["view"] in window.project.trends
-    assert window.project.trends[window.scene.selectedItems()[0].element["view"]]["curves"] == []
-    window.viewer_field.setCurrentText("new"); window.apply_fields()
-    assert window.scene.selectedItems()[0].element["view"]=="new"
+    window.configure_viewer()
+    trend = window.project.trends[view]
+    assert trend["title"] == "Nivel del depósito" and trend["curves"][0]["color"] == "#123456"
+    assert "Nivel del depósito" in window.viewer_summary.text()
+    # Each control owns its configuration: a copy gets its own one, deleting removes it.
+    window.duplicate_element()
+    copy_view = window.scene.selectedItems()[0].element["view"]
+    assert copy_view != view and window.project.trends[copy_view] == trend
+    window.delete_element()
+    assert copy_view not in window.project.trends and view in window.project.trends
 
 
 def test_runtime_alarm_ack_and_embedded_widgets(operational_studio):

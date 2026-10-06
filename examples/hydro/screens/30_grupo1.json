@@ -3050,5 +3050,6 @@
   ],
   "on_open": [
     "apertura"
-  ]
+  ],
+  "folder": "Proceso"
 }

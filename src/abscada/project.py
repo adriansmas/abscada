@@ -92,6 +92,8 @@ class Project:
         project.scripts = {p.stem: p.read_text(encoding="utf-8") for p in (root / "scripts").glob("*.py")}
         from .recording import migrate
         migrate(project)
+        from .screen_tree import migrate as organise
+        organise(project)
         from .faceplate_libraries import hydrate
         hydrate(project)
         project.validate()
@@ -319,6 +321,10 @@ class Project:
         validate_display(self)
         from .screen_layouts import validate_layouts
         validate_layouts(self)
+        from .screen_tree import validate_folders
+        validate_folders(self)
+        from .project_settings import validate_settings
+        validate_settings(self)
         from .scripting import validate_scripts
         validate_scripts(self)
 

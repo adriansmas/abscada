@@ -9,7 +9,7 @@ from .theme import STYLE, configure_fonts
 from .graphics import CanvasScene, CanvasView, ElementItem
 from .runtime import Runtime
 from .viewers import AlarmViewer, TrendViewer
-from .operation_windows import popup_key, popup_title, settings_key
+from .operation_windows import MAIN_MODE, popup_key, popup_title, settings_key
 
 
 def monitors():
@@ -45,6 +45,7 @@ class RuntimeWindow(QMainWindow):
         self.resize(1180, 820)
         self.scene = CanvasScene(self)
         self.view = CanvasView(self.scene, self)
+        self.view.scale_mode = self.project.manifest.get("display", {}).get("main", {}).get("scale", "fit")
         self.setCentralWidget(self.view)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.refresh)
@@ -69,7 +70,7 @@ class RuntimeWindow(QMainWindow):
         main = display.get("main", {})
         self.settings_key = settings_key(self.project, "main")
         self.place(1180, 820, main)
-        self.show_mode(main.get("mode", "normal"))
+        self.show_mode(main.get("mode", MAIN_MODE))
         for index, window in enumerate(display.get("windows", [])):
             self.present(f"display_{index}", dict(screen=window["screen"]), options=window)
 

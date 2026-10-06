@@ -1,0 +1,227 @@
+"""Studio project tree: screens in folders, faceplates, libraries and sections.
+
+Right click for document and folder actions; drag screens and folders onto a folder to move them.
+The rules themselves live in screen_tree (no Qt).
+"""
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QAbstractItemView, QInputDialog, QMenu, QMessageBox, QStyle, QTreeWidget, QTreeWidgetItem
+
+from . import screen_tree
+from .graphics import tool_icon
+
+ROLE = Qt.ItemDataRole.UserRole
+SECTIONS = (("variables", "Variables"), ("types", "Tipos de datos"), ("connections", "Conexiones"), ("alarms", "Alarmas"),
+            ("historian", "Registros"), ("automation", "Scripts y tareas"), ("diagnostics", "Diagnóstico"))
+
+
+class ProjectTree(QTreeWidget):
+    def __init__(self, host):
+        super().__init__()
+        self.host = host
+        self.setHeaderHidden(True)
+        self.setIndentation(12)
+        self.setMinimumHeight(150)
+        self.setDragEnabled(True)
+        self.setAcceptDrops(True)
+        self.setDropIndicatorShown(True)
+        self.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(lambda position: host.tree_menu(self.itemAt(position), self.viewport().mapToGlobal(position)))
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_F2:
+            self.host.tree_rename(self.currentItem())
+        else:
+            super().keyPressEvent(event)
+
+    def dropEvent(self, event):
+        # The project is rebuilt from data after the move, Qt must not move the items itself.
+        source, target = self.currentItem(), self.itemAt(event.position().toPoint())
+        event.setDropAction(Qt.DropAction.IgnoreAction)
+        event.accept()
+        if source is not None:
+            self.host.tree_drop(source.data(0, ROLE), target.data(0, ROLE) if target else None)
+
+
+def folder_of_target(project, value):
+    """Folder that receives a drop on ``value`` (a folder, a screen or the «Pantallas» group)."""
+    if not value:
+        return None
+    if value[0] == "folder":
+        return value[1]
+    if value == ("group", "screens"):
+        return ""
+    if value[0] == "screens":
+        return project.screens[value[1]].get("folder", "")
+    return None
+
+
+class ProjectTreeActions:
+    """Mixin for Studio's Window."""
+
+    def populate_navigation(self):
+        from .faceplate_libraries import owner, expected_faces
+        tree = self.navigation
+        collapsed = {item.data(0, ROLE) for item in self._tree_items() if not item.isExpanded()}
+        tree.blockSignals(True)
+        tree.clear()
+        folder_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon)
+        startup = self.project.manifest.get("startup_screen")
+
+        def node(parent, text, value, icon=None, tip=""):
+            item = QTreeWidgetItem([text])
+            item.setData(0, ROLE, value)
+            if icon is not None:
+                item.setIcon(0, icon)
+            if tip:
+                item.setToolTip(0, tip)
+            (parent.addChild if isinstance(parent, QTreeWidgetItem) else tree.addTopLevelItem)(item)
+            if value == (self.document_kind, self.document_name) or value == ("section", self.active_section) and self.active_section not in {"screens", "faceplates"}:
+                tree.setCurrentItem(item)
+            return item
+
+        screens = node(tree, "Pantallas", ("group", "screens"))
+        folders = {"": screens}
+        for path in screen_tree.folders(self.project):
+            folders[path] = node(folders[screen_tree.parent_folder(path)], path.rpartition("/")[2], ("folder", path), folder_icon)
+        for name, document in self.project.screens.items():
+            layout = screen_tree.is_layout(document)
+            tip = "Pantalla con zonas para otras pantallas (layout)" if layout else ""
+            if name == startup:
+                tip = ("Pantalla de inicio del runtime. " + tip).strip()
+            item = node(folders[document.get("folder", "")], f"{name}  ▶ inicio" if name == startup else name, ("screens", name),
+                        tool_icon("screen_container" if layout else "image"), tip)
+            if name == startup:
+                font = QFont(item.font(0)); font.setBold(True); item.setFont(0, font)
+        faceplates = node(tree, "Faceplates", ("group", "faceplates"))
+        for name in self.project.faceplates:
+            if not owner(self.project, name):
+                node(faceplates, name, ("faceplates", name), tool_icon("faceplate"))
+        if self.project.libraries:
+            group = node(tree, "Bibliotecas", ("group", "libraries"))
+            for alias, entry in self.project.libraries.items():
+                library = node(group, alias + " · " + entry["package"]["version"], ("library", alias))
+                for name in expected_faces(alias, entry["package"]):
+                    node(library, name.removeprefix(alias + "__"), ("faceplates", name), None, "Plantilla vinculada · solo lectura: " + name)
+        for key, title in SECTIONS:
+            node(tree, title, ("section", key))
+        for item in self._tree_items():
+            item.setExpanded(item.data(0, ROLE) not in collapsed)
+        tree.blockSignals(False)
+
+    def _tree_items(self):
+        stack = [self.navigation.topLevelItem(i) for i in range(self.navigation.topLevelItemCount())]
+        while stack:
+            item = stack.pop()
+            yield item
+            stack.extend(item.child(i) for i in range(item.childCount()))
+
+    # --- actions --------------------------------------------------------------------------------
+
+    def tree_mutate(self, callback, document=None):
+        """Change the project from the tree; ``document`` is the document to show afterwards."""
+        previous = (self.document_kind, self.document_name)
+
+        def run():
+            callback()
+            self.project.validate()
+            if document:
+                self.document_kind, self.document_name = document
+            elif self.document_name not in getattr(self.project, self.document_kind):
+                self.document_kind, self.document_name = "screens", self.project.manifest["startup_screen"]
+        if self.mutate(run, selected_ids=[]):
+            return True
+        self.document_kind, self.document_name = previous
+        return False
+
+    def ask_text(self, title, label, text=""):
+        value, ok = QInputDialog.getText(self, title, label, text=text)
+        return value.strip() if ok and value.strip() else None
+
+    def tree_menu(self, item, position):
+        if not self.editable():
+            return
+        value = item.data(0, ROLE) if item else None
+        menu = QMenu(self)
+        kind = value[0] if value else None
+        if value in (None, ("group", "screens")) or kind == "folder":
+            folder = value[1] if kind == "folder" else ""
+            menu.addAction("Nueva pantalla…", lambda: self.new_document(False, folder=folder))
+            menu.addAction("Nueva carpeta…", lambda: self.tree_new_folder(folder))
+            if kind == "folder":
+                menu.addSeparator()
+                menu.addAction("Renombrar carpeta…", lambda: self.tree_rename(item))
+                menu.addAction("Eliminar carpeta (su contenido sube un nivel)", lambda: self.tree_mutate(lambda: screen_tree.delete_folder(self.project, folder)))
+        elif kind == "screens":
+            name = value[1]
+            menu.addAction("Renombrar…", lambda: self.tree_rename(item))
+            menu.addAction("Duplicar…", lambda: self.tree_duplicate(name))
+            move = menu.addMenu("Mover a carpeta")
+            current = self.project.screens[name].get("folder", "")
+            for path in [""] + screen_tree.folders(self.project):
+                action = move.addAction("(raíz de Pantallas)" if not path else "    " * path.count("/") + path.rpartition("/")[2],
+                                        lambda p=path: self.tree_mutate(lambda: screen_tree.move_screen(self.project, name, p)))
+                action.setEnabled(path != current)
+            start = menu.addAction("Usar como pantalla de inicio", lambda: self.tree_mutate(lambda: self.project.manifest.__setitem__("startup_screen", name)))
+            start.setEnabled(self.project.manifest.get("startup_screen") != name)
+            menu.addSeparator()
+            menu.addAction("Eliminar…", lambda: self.tree_delete_screen(name))
+        elif value == ("group", "faceplates") or kind == "faceplates":
+            menu.addAction("Nuevo faceplate…", lambda: self.new_document(True))
+        if not menu.isEmpty():
+            menu.exec(position)
+
+    def tree_new_folder(self, parent):
+        name = self.ask_text("Nueva carpeta", "Nombre de la carpeta" + (f" dentro de «{parent}»" if parent else ""))
+        if name:
+            self.tree_mutate(lambda: screen_tree.add_folder(self.project, parent, name))
+
+    def tree_rename(self, item):
+        value = item.data(0, ROLE) if item else None
+        if not value or not self.editable():
+            return
+        if value[0] == "folder":
+            name = self.ask_text("Renombrar carpeta", "Nuevo nombre", value[1].rpartition("/")[2])
+            if name:
+                self.tree_mutate(lambda: screen_tree.rename_folder(self.project, value[1], name))
+        elif value[0] == "screens":
+            old = value[1]
+            new = self.ask_text("Renombrar pantalla", "Nuevo nombre de archivo (letras sin acentos, números, _ y -)", old)
+            if not new or new == old:
+                return
+            pending = []
+            showing = self.document_name if self.document_kind == "screens" and self.document_name != old else new
+            if self.tree_mutate(lambda: pending.extend(screen_tree.rename_screen(self.project, old, new)),
+                                ("screens", showing) if self.document_kind == "screens" else None):
+                if pending:
+                    QMessageBox.information(self, "Pantalla renombrada",
+                                            f"Los botones, contenedores y la configuración se han actualizado. Revisa estos scripts, "
+                                            f"que mencionan «{old}» como texto: {', '.join(pending)}")
+
+    def tree_duplicate(self, name):
+        new = self.ask_text("Duplicar pantalla", "Nombre de la copia", name + "_copia")
+        if new:
+            self.tree_mutate(lambda: screen_tree.duplicate_screen(self.project, name, new), ("screens", new))
+
+    def tree_delete_screen(self, name):
+        used = screen_tree.screen_references(self.project, name)
+        if used:
+            self.error(f"No se puede eliminar «{name}» porque se usa en:\n· " + "\n· ".join(used))
+            return
+        mentioned = screen_tree.scripts_mentioning(self.project, name)
+        extra = f"\n\nAtención: estos scripts la mencionan: {', '.join(mentioned)}" if mentioned else ""
+        if QMessageBox.question(self, "Eliminar pantalla", f"¿Eliminar la pantalla «{name}»? Se puede deshacer con Ctrl+Z.{extra}") \
+                == QMessageBox.StandardButton.Yes:
+            self.tree_mutate(lambda: screen_tree.delete_screen(self.project, name))
+
+    def tree_drop(self, source, target):
+        if not self.editable() or not source:
+            return
+        folder = folder_of_target(self.project, target)
+        if folder is None:
+            return
+        if source[0] == "screens" and self.project.screens[source[1]].get("folder", "") != folder:
+            self.tree_mutate(lambda: screen_tree.move_screen(self.project, source[1], folder))
+        elif source[0] == "folder" and screen_tree.parent_folder(source[1]) != folder:
+            self.tree_mutate(lambda: screen_tree.move_folder(self.project, source[1], folder))

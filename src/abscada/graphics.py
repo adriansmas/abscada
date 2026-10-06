@@ -257,6 +257,8 @@ class CanvasView(DrawingInteraction, QGraphicsView):
         super().__init__(scene)
         self.host = host
         self.auto_fit = True
+        # Runtime only (Ajustes del proyecto → Operación): fit, stretch or none.
+        self.scale_mode = "fit"
         self.setRenderHint(QPainter.RenderHint.Antialiasing)
         self.setFrameShape(QGraphicsView.Shape.NoFrame)
         self.setAcceptDrops(host.design_mode)
@@ -266,7 +268,12 @@ class CanvasView(DrawingInteraction, QGraphicsView):
     def fit_canvas(self):
         self.auto_fit = True
         pad = 24 if self.host.design_mode else 0
-        self.fitInView(self.scene().sceneRect().adjusted(-pad, -pad, pad, pad), Qt.AspectRatioMode.KeepAspectRatio)
+        mode = "fit" if self.host.design_mode else self.scale_mode
+        if mode == "none":
+            self.resetTransform()
+        else:
+            self.fitInView(self.scene().sceneRect().adjusted(-pad, -pad, pad, pad),
+                           Qt.AspectRatioMode.IgnoreAspectRatio if mode == "stretch" else Qt.AspectRatioMode.KeepAspectRatio)
         self.update_zoom_label()
 
     def update_zoom_label(self):

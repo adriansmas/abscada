@@ -380,5 +380,6 @@
       "action": "popup",
       "screen": "99_ayuda"
     }
-  ]
+  ],
+  "folder": "Estructura"
 }

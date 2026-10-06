@@ -7,15 +7,17 @@ from .dialogs import EditorDialog as QDialog
 
 
 class NewDocumentDialog(QDialog):
-    def __init__(self,host,faceplate=False,layout=False):
-        super().__init__(host); self.host=host; self.faceplate=faceplate; self.is_layout=layout
-        self.setWindowTitle('Nuevo '+('faceplate' if faceplate else 'layout' if layout else 'pantalla'))
+    def __init__(self,host,faceplate=False):
+        super().__init__(host); self.host=host; self.faceplate=faceplate
+        self.setWindowTitle('Nuevo '+('faceplate' if faceplate else 'pantalla'))
         self.resize(430,300); body=QVBoxLayout(self); form=QFormLayout()
         self.name=QLineEdit(); self.name.setObjectName('documentName')
         self.title=QLineEdit(); self.title.setObjectName('documentTitle')
         self.width=QSpinBox(); self.height=QSpinBox()
         for field in (self.width,self.height): field.setRange(1,10000)
-        self.width.setValue(320 if faceplate else 1280); self.height.setValue(180 if faceplate else 720)
+        from .project_settings import screen_size
+        width,height=(320,180) if faceplate else screen_size(host.project)
+        self.width.setValue(width); self.height.setValue(height)
         for label,field in [('Nombre de archivo',self.name),('Título',self.title),('Ancho (px)',self.width),('Alto (px)',self.height)]: form.addRow(label,field)
         body.addLayout(form); self.error=QLabel(); body.addWidget(self.error)
         buttons=QDialogButtonBox(QDialogButtonBox.StandardButton.Ok|QDialogButtonBox.StandardButton.Cancel)
@@ -36,7 +38,6 @@ class NewDocumentDialog(QDialog):
     def document(self):
         doc=dict(title=self.title.text().strip() or self.name.text().strip(),width=self.width.value(),height=self.height.value(),background='#ffffff',elements=[])
         if self.faceplate: doc['parameters']={}
-        if self.is_layout: doc['layout']=True
         return doc
 
 
