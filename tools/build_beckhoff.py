@@ -36,7 +36,7 @@ def build_project(root, force=False):
         shutil.rmtree(root)
     root.mkdir(parents=True, exist_ok=True)
     if readme is not None:
-        (root / "README.md").write_text(readme, encoding="utf-8")
+        (root / "README.md").write_text(readme, encoding="utf-8", newline="\n")
 
     p = Project(root, dict(schema_version=1, name="Banco de ensayo Beckhoff", startup_screen="banco", palette=PALETTE),
                 {}, [], [], {}, {})

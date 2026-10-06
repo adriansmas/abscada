@@ -26,7 +26,7 @@ class ProjectGit:
         text = ignore.read_text(encoding='utf-8') if ignore.exists() else ''
         for line in ('/runtime/','/.abscada-save-*/','/.abscada-recovery-*/','/.abscada-save.lock','__pycache__/','*.pyc'):
             if line not in text.splitlines(): text += '\n'+line+'\n'
-        ignore.write_text(text,encoding='utf-8')
+        ignore.write_text(text,encoding='utf-8',newline='\n')
         self.commit('Proyecto inicial')
 
     def commit(self, message='Guardar proyecto'):

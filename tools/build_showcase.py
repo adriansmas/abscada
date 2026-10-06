@@ -246,7 +246,7 @@ ctx.write('Sistema.UltimoEvento', 'Banco interno restablecido')
     p.automation=dict(startup=['startup'],tasks=[dict(id='cada_segundo',script='periodic',interval_ms=1000,enabled=True)],timeout_seconds=10)
     assets=root/'assets';assets.mkdir(parents=True,exist_ok=True)
     for state,color in [('off','#8394a5'),('on','#147d75')]:
-        (assets/f'valve-{state}.svg').write_text(f'''<svg xmlns="http://www.w3.org/2000/svg" width="500" height="300" viewBox="0 0 500 300"><rect width="500" height="300" rx="24" fill="#edf3f7"/><path d="M40 150H460" stroke="#b5c4d1" stroke-width="32"/><path d="M160 75L340 225V75L160 225Z" fill="{color}" stroke="#243c50" stroke-width="5"/><path d="M250 150V35M210 35H290" stroke="#243c50" stroke-width="8"/><text x="250" y="278" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#243c50">VÁLVULA · {'ABIERTA' if state=='on' else 'CERRADA'}</text></svg>''',encoding='utf-8')
+        (assets/f'valve-{state}.svg').write_text(f'''<svg xmlns="http://www.w3.org/2000/svg" width="500" height="300" viewBox="0 0 500 300"><rect width="500" height="300" rx="24" fill="#edf3f7"/><path d="M40 150H460" stroke="#b5c4d1" stroke-width="32"/><path d="M160 75L340 225V75L160 225Z" fill="{color}" stroke="#243c50" stroke-width="5"/><path d="M250 150V35M210 35H290" stroke="#243c50" stroke-width="8"/><text x="250" y="278" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#243c50">VÁLVULA · {'ABIERTA' if state=='on' else 'CERRADA'}</text></svg>''',encoding='utf-8',newline='\n')
     from abscada.faceplate_libraries import link
     library=Path(__file__).resolve().parents[1]/'examples/libraries/equipos-1.0.0.abscada-library.json'
     link(p,library,'equipos')
