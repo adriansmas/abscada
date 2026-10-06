@@ -125,10 +125,11 @@
       "y": 60,
       "w": 1380,
       "h": 770,
-      "view": "embalse"
+      "view": "tendencia_2"
     }
   ],
   "on_open": [
     "apertura"
-  ]
+  ],
+  "folder": "Tendencias"
 }

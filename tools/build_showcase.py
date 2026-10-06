@@ -3,6 +3,7 @@ from pathlib import Path
 import argparse
 from abscada.project import Project
 from abscada.project_files import is_project
+from abscada.screen_tree import own_viewers
 from abscada.drawing import set_points
 
 
@@ -63,7 +64,7 @@ def build_project(root):
         e=dict(id=identifier,kind=kind,stroke_color='@Linea',stroke_width=12 if kind=='pipe' else 3);e.update(data);set_points(e,points);doc['elements'].append(e);return e
 
     navigation=[('10_inicio','01 · Recorrido'),('20_internas','02 · Proceso interno'),('21_estados','03 · Estados y mandos'),('22_dibujo','04 · Dibujo e imágenes'),('23_faceplates','05 · Faceplates y ventanas'),('30_siemens','06 · Siemens S7'),('31_modbus','07 · Modbus TCP'),('40_graficas','08 · Gráficas en vivo'),('41_historicos','09 · Histórico diario'),('50_alarmas','10 · Alarmas y ACK'),('51_eventos','11 · Eventos y retorno'),('60_scripts','12 · Scripts y tareas')]
-    p.screens['00_layout']=dict(title='Laboratorio SCADA',width=1360,height=850,layout=True,background='@Fondo',elements=[
+    p.screens['00_layout']=dict(title='Laboratorio SCADA',width=1360,height=850,folder='Estructura',background='@Fondo',elements=[
         dict(id='cabecera',kind='screen_container',x=0,y=0,w=1360,h=80,screen='01_cabecera'),
         dict(id='menu',kind='screen_container',x=0,y=80,w=200,h=770,screen='02_menu'),
         dict(id='contenido',kind='screen_container',x=200,y=80,w=1160,h=770,screen='10_inicio')])
@@ -254,6 +255,8 @@ ctx.write('Sistema.UltimoEvento', 'Banco interno restablecido')
     # Keep the internal instance local and use the published template for Siemens.
     for element in p.screens['23_faceplates']['elements']:
         if element.get('id')=='unit1':element['template']='equipos__unidad'
+    # The trend on 41_historicos started as a copy of 40_graficas: each control owns its configuration.
+    own_viewers(p)
     p.save();return p
 
 

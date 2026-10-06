@@ -7,21 +7,20 @@ from .dialogs import EditorDialog as QDialog
 
 
 class ProjectActions:
-    def new_document(self, faceplate, layout=False):
+    def new_document(self, faceplate, folder=""):
         if not self.editable():
             return
         from .project_dialogs import NewDocumentDialog
-        dialog = NewDocumentDialog(self, faceplate, layout)
+        dialog = NewDocumentDialog(self, faceplate)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
         name = dialog.name.text().strip()
         kind = 'faceplates' if faceplate else 'screens'
         document = dialog.document()
-        if self.mutate(lambda: getattr(self.project, kind).__setitem__(name, document)):
-            self.document_kind, self.document_name = kind, name
+        if folder and not faceplate:
+            document['folder'] = folder
+        if self.tree_mutate(lambda: getattr(self.project, kind).__setitem__(name, document), (kind, name)):
             self.navigate(kind)
-            self.populate_navigation()
-            self.render_scene()
 
     def json_dialog(self, title, data):
         dialog = QDialog(self)

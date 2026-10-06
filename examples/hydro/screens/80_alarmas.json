@@ -111,10 +111,11 @@
       "y": 60,
       "w": 1380,
       "h": 770,
-      "view": "activas"
+      "view": "visor"
     }
   ],
   "on_open": [
     "apertura"
-  ]
+  ],
+  "folder": "Alarmas"
 }

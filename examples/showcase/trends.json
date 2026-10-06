@@ -132,5 +132,72 @@
         "visible": true
       }
     ]
+  },
+  "history": {
+    "title": "Variables internas registradas",
+    "window_seconds": 600,
+    "axes": [
+      {
+        "id": "percent",
+        "title": "Nivel / consigna (%)",
+        "side": "left",
+        "auto": false,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      },
+      {
+        "id": "temperature",
+        "title": "Temperatura (°C)",
+        "side": "right",
+        "auto": true,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      },
+      {
+        "id": "digital",
+        "title": "Marcha",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 1,
+        "visible": false
+      }
+    ],
+    "curves": [
+      {
+        "id": "level",
+        "tag": "Local.Nivel",
+        "axis": "percent",
+        "color": "#147d75",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "Local.Consigna",
+        "axis": "percent",
+        "color": "#3678c8",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "temp",
+        "tag": "Local.Temperatura",
+        "axis": "temperature",
+        "color": "#da982f",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "run",
+        "tag": "Local.Marcha",
+        "axis": "digital",
+        "color": "#8152b4",
+        "width": 1,
+        "visible": false
+      }
+    ]
   }
 }

@@ -2,7 +2,7 @@
   "title": "Laboratorio SCADA",
   "width": 1360,
   "height": 850,
-  "layout": true,
+  "folder": "Estructura",
   "background": "@Fondo",
   "elements": [
     {

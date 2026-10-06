@@ -79,5 +79,6 @@
       "text_color": "@Texto",
       "action": "close_popup"
     }
-  ]
+  ],
+  "folder": "Emergentes"
 }

@@ -15,7 +15,7 @@ def configure(w):
     p.screens['detail'] = dict(width=800,height=500,elements=[
         dict(id='write',kind='button',x=20,y=20,w=160,h=50,text='Escribir',action='set',tag='Level',value=45),
         dict(id='popup',kind='button',x=200,y=20,w=160,h=50,text='Emergente',action='popup',screen='main')])
-    p.screens['layout'] = dict(width=1000,height=700,layout=True,elements=[
+    p.screens['layout'] = dict(width=1000,height=700,elements=[
         dict(id='header',kind='screen_container',x=0,y=0,w=1000,h=100,screen='header'),
         dict(id='content',kind='screen_container',x=0,y=100,w=1000,h=600,screen='main')])
     p.manifest['startup_screen']='layout'
@@ -93,9 +93,12 @@ def test_create_layout_and_add_container_from_palette(operational_studio,monkeyp
         dialog=QApplication.activeModalWidget()
         dialog.name.setText('shell'); dialog.accept()
     QTimer.singleShot(0,create)
-    w.new_document(False,layout=True)
-    assert w.document_name=='shell' and w.document()['layout']
+    w.new_document(False)
+    assert w.document_name=='shell'
     w.add_element('screen_container')
+    # A layout is just a screen with containers.
+    from abscada.screen_tree import is_layout
+    assert is_layout(w.document())
     assert w.scene.selectedItems()[0].element['screen']=='main'
     assert w.container_group.isVisible()
 

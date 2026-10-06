@@ -107,5 +107,22 @@
     ],
     "title": "Alarmas de servicios auxiliares y subestación",
     "mode": "pending"
+  },
+  "visor": {
+    "categories": [],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Alarmas activas y pendientes de reconocer",
+    "mode": "pending"
   }
 }

@@ -185,8 +185,9 @@ def test_inspector_inside_faceplate_offers_own_parameters(studio):
     assert options[0] == "$level" and "Level2" in options
 
 
-def test_display_dialog_edits_manifest_with_undo(studio):
-    from abscada.display_editor import edit_display
+def test_project_settings_edit_operation_windows_with_undo(studio):
+    from PySide6.QtWidgets import QComboBox, QSpinBox
+    from abscada.project_settings import edit_project_settings
     def fill():
         dialog = QApplication.activeModalWidget()
         add = next(b for b in dialog.findChildren(QPushButton) if b.text() == "Añadir ventana")
@@ -195,9 +196,15 @@ def test_display_dialog_edits_manifest_with_undo(studio):
         table.cellWidget(0, 0).setCurrentText("alarms")
         table.cellWidget(0, 1).setCurrentIndex(table.cellWidget(0, 1).findData(2))
         table.cellWidget(0, 2).setCurrentIndex(table.cellWidget(0, 2).findData("fullscreen"))
+        scale = dialog.findChild(QComboBox, "runtimeScale")
+        scale.setCurrentIndex(scale.findData("stretch"))
+        dialog.findChild(QSpinBox, "screenWidth").setValue(1920)
+        dialog.findChild(QSpinBox, "screenHeight").setValue(1080)
         dialog.findChild(QDialogButtonBox).button(QDialogButtonBox.StandardButton.Save).click()
     QTimer.singleShot(0, fill)
-    edit_display(studio)
-    assert studio.project.manifest["display"] == dict(windows=[dict(screen="alarms", monitor=2, mode="fullscreen")])
+    edit_project_settings(studio)
+    assert studio.project.manifest["display"] == dict(main=dict(scale="stretch"),
+                                                      windows=[dict(screen="alarms", monitor=2, mode="fullscreen")])
+    assert studio.project.manifest["screen_defaults"] == dict(width=1920, height=1080)
     studio.undo()
-    assert "display" not in studio.project.manifest
+    assert "display" not in studio.project.manifest and "screen_defaults" not in studio.project.manifest

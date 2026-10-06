@@ -212,11 +212,8 @@ class OperationalEngineering:
         self.alarm_definitions.prepare_dialog = self.configure_alarm_dialog
         self.categories = self.records(lambda: host.project.alarms["categories"], lambda rows: host.project.alarms.__setitem__("categories", rows),
             [("id", "ID"), ("name", "Nombre"), ("color", "Color")], lambda: [text("id", "ID"), text("name", "Nombre"), color_field("#d74c4c")], "Categoría de alarmas")
-        self.alarm_views = self.records(lambda: [dict(v, id=k) for k, v in host.project.alarm_views.items()], self.set_alarm_views,
-            [("id", "ID"), ("title", "Título"), ("mode", "Modo"), ("min_priority", "Prioridad mínima")], self.alarm_view_fields, "Visor de alarmas")
         self.alarms.addTab(self.alarm_definitions, "Alarmas")
         self.alarms.addTab(self.categories, "Categorías")
-        self.alarms.addTab(self.alarm_views, "Visores")
         self.historian = QWidget(); layout = QVBoxLayout(self.historian); layout.setContentsMargins(0, 0, 0, 0)
         row = QHBoxLayout()
         row.addWidget(QLabel("Retención de variables (días)"))
@@ -230,13 +227,7 @@ class OperationalEngineering:
             lambda rows: self.host.project.historian.__setitem__("files", rows),
             [("id", "Fichero"), ("name", "Nombre"), ("interval_ms", "Frecuencia (ms)"), ("variables", "Variables")], self.log_fields, "Fichero de registro")
         layout.addWidget(self.logs)
-        self.trends = self.records(lambda: [dict(id=k, title=v["title"], axes=len(v["axes"]), curves=len(v["curves"]), window_seconds=v.get("window_seconds", 600)) for k, v in host.project.trends.items()], None,
-            [("id", "ID"), ("title", "Título"), ("axes", "Ejes"), ("curves", "Curvas"), ("window_seconds", "Ventana (s)")], lambda: [], "Tendencia")
-        self.trends.edit = self.edit_trend
-        self.trends.delete = self.delete_trend
-        # Delete was connected to the original method; replace that button's connection.
-        buttons = self.trends.findChildren(QPushButton)
-        buttons[-1].clicked.disconnect(); buttons[-1].clicked.connect(self.delete_trend)
+        # Trends and alarm viewers are configured from their control on the screen (configure_viewer).
         self.refresh()
 
     def records(self, *args):
@@ -270,22 +261,22 @@ class OperationalEngineering:
             boolean("ack_required", "Requiere ACK"), boolean("enabled", "Habilitada")]
 
     def alarm_view_fields(self):
-        return [text("id", "ID"), text("title", "Título", "Alarmas"),
+        return [text("title", "Título", "Alarmas"),
             choice("mode", "Vista inicial", [("pending", "Pendientes"), ("active", "Activas"), ("history", "Histórico"), ("events", "Eventos")], "pending"),
             numeric("min_priority", "Prioridad mínima", 1, True),
             ("categories", "Categorías", "multi", [], [(c["id"],c["name"]) for c in self.host.project.alarms["categories"]]),
             ("columns", "Columnas", "multi", DEFAULT_ALARM_COLUMNS, ALARM_COLUMNS), boolean("allow_ack", "Permitir ACK")]
 
-    def set_alarm_views(self, rows):
-        from .operational_config import identifiers
-        identifiers(rows)
-        views = {}
-        for row in rows:
-            row = dict(row); name = row.pop("id")
-            raw = row.get("categories", "")
-            row["categories"] = [c.strip() for c in raw.split(",") if c.strip()] if isinstance(raw, str) else raw
-            views[name] = row
-        self.host.project.alarm_views = views
+    def edit_alarm_view(self, name):
+        """Configuration of one alarm viewer control (each control owns its configuration)."""
+        dialog = RecordDialog(self.host, "Configurar visor de alarmas", self.alarm_view_fields(), self.host.project.alarm_views[name])
+        def accept():
+            data = dialog.data()
+            if self.host.mutate(lambda: self.host.project.alarm_views[name].update(data)):
+                dialog.accept()
+        buttons = dialog.findChild(QDialogButtonBox)
+        buttons.accepted.disconnect(); buttons.accepted.connect(accept)
+        dialog.exec()
 
     def log_fields(self):
         return [text("id", "Fichero", "registro_"+uuid.uuid4().hex[:6]), text("name", "Nombre", "Registro"),
@@ -332,23 +323,15 @@ class OperationalEngineering:
         self.retention.setValue(self.host.project.historian.get("retention_days", 90))
         self.alarm_retention.setValue(self.host.project.alarms.get("retention_days", 365))
 
-    def delete_trend(self):
-        row = self.trends.selected()
-        if row:
-            self.host.mutate(lambda: self.host.project.trends.pop(row["id"]))
-
-    def edit_trend(self, previous):
-        name = previous["id"] if previous else ""
-        original = self.host.project.trends.get(name, dict(title="Tendencia", window_seconds=600,
-            axes=[dict(id="process", title="Proceso", side="left", auto=True, min=0, max=100, visible=True)], curves=[]))
-        draft = copy.deepcopy(original)
+    def edit_trend(self, name):
+        """Configuration of one trend control (each control owns its configuration)."""
+        draft = copy.deepcopy(self.host.project.trends[name])
         dialog = QDialog(self.host); dialog.setWindowTitle("Configurar gráfica"); dialog.resize(880, 570)
         layout = QVBoxLayout(dialog); form = QFormLayout()
-        identifier, title = QLineEdit(name), QLineEdit(draft["title"])
-        identifier.setObjectName("trendId"); title.setObjectName("trendTitle")
-        identifier.setReadOnly(bool(previous))
+        title = QLineEdit(draft["title"])
+        title.setObjectName("trendTitle")
         seconds = QSpinBox(); seconds.setRange(10, 31536000); seconds.setValue(draft.get("window_seconds", 600))
-        for label, widget in (("ID", identifier), ("Título", title), ("Ventana (s)", seconds)):
+        for label, widget in (("Título", title), ("Ventana (s)", seconds)):
             form.addRow(label, widget)
         layout.addLayout(form); tabs = QTabWidget(); layout.addWidget(tabs)
         class DraftHost:
@@ -370,11 +353,8 @@ class OperationalEngineering:
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
         buttons.button(QDialogButtonBox.StandardButton.Save).setText("Aceptar")
         def save():
-            if not previous and identifier.text().strip() in self.host.project.trends:
-                self.host.error("Ya existe una tendencia con ese ID")
-                return
             draft.update(title=title.text().strip(), window_seconds=seconds.value())
-            if self.host.mutate(lambda: self.host.project.trends.__setitem__(identifier.text().strip(), copy.deepcopy(draft))):
+            if self.host.mutate(lambda: self.host.project.trends.__setitem__(name, copy.deepcopy(draft))):
                 dialog.accept()
         buttons.accepted.connect(save); buttons.rejected.connect(dialog.reject); layout.addWidget(buttons)
         dialog.exec()

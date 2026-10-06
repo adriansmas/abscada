@@ -2,7 +2,6 @@
   "title": "CH Valdearenas · Alarmas",
   "width": 1400,
   "height": 830,
-  "layout": true,
   "background": "@Fondo",
   "elements": [
     {
@@ -14,5 +13,6 @@
       "h": 830,
       "screen": "80_alarmas"
     }
-  ]
+  ],
+  "folder": "Estructura"
 }

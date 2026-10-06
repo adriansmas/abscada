@@ -328,5 +328,121 @@
         "visible": true
       }
     ]
+  },
+  "tendencia": {
+    "title": "Producción y nivel",
+    "window_seconds": 1800,
+    "axes": [
+      {
+        "id": "mw",
+        "title": "Potencia (MW)",
+        "side": "left",
+        "auto": false,
+        "min": 0,
+        "max": 22,
+        "visible": true
+      },
+      {
+        "id": "nivel",
+        "title": "Nivel (msnm)",
+        "side": "right",
+        "auto": true,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "g1",
+        "tag": "G1.Potencia",
+        "axis": "mw",
+        "color": "#2b6cb0",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "g2",
+        "tag": "G2.Potencia",
+        "axis": "mw",
+        "color": "#6b46c1",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "total",
+        "tag": "Contador.Potencia",
+        "axis": "mw",
+        "color": "#2e8b57",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "nivel",
+        "tag": "SSCC.NivelEmbalse",
+        "axis": "nivel",
+        "color": "#4f86b8",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  },
+  "tendencia_2": {
+    "title": "Embalse: nivel y caudales",
+    "window_seconds": 3600,
+    "axes": [
+      {
+        "id": "nivel",
+        "title": "Nivel (msnm)",
+        "side": "left",
+        "auto": true,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      },
+      {
+        "id": "q",
+        "title": "Caudal (m³/s)",
+        "side": "right",
+        "auto": true,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "nivel",
+        "tag": "SSCC.NivelEmbalse",
+        "axis": "nivel",
+        "color": "#1f5f99",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "entrada",
+        "tag": "SSCC.CaudalEntrada",
+        "axis": "q",
+        "color": "#2c7a7b",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "salida",
+        "tag": "SSCC.CaudalSalida",
+        "axis": "q",
+        "color": "#c05621",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "aliv",
+        "tag": "SSCC.CaudalAliviadero",
+        "axis": "q",
+        "color": "#e89a1c",
+        "width": 2,
+        "visible": true
+      }
+    ]
   }
 }

@@ -58,6 +58,8 @@ class DrawingInteraction:
             self.scene().clearSelection()
         self.viewport().update()
         self.host.statusBar().showMessage({"pipe":"Tubería", "line":"Línea", "polyline":"Polilínea"}.get(kind,"Selección"))
+        if hasattr(self.host, "select_tool_button"):
+            self.host.select_tool_button.setVisible(bool(kind))
 
     def drawing_position(self, event):
         point = self.host.snap_position(self.mapToScene(event.position().toPoint()))

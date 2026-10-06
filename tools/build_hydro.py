@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from abscada.drawing import set_points  # noqa: E402
 from abscada.project import Project  # noqa: E402
 from abscada.project_files import is_project  # noqa: E402
+from abscada.screen_tree import own_viewers  # noqa: E402
 from hydro_map import COMMON_FIELDS, METER_FIELDS, PORTS, STEPS, TRIP_CAUSES, UNIT_FIELDS  # noqa: E402
 
 PALETTE = {
@@ -332,7 +333,7 @@ def screen(project, key, title, subtitle="", width=SCREEN_W, height=SCREEN_H, ba
 
 
 def build_layout(project):
-    project.screens["00_layout"] = dict(title="CH Valdearenas · SCADA", width=1600, height=900, layout=True,
+    project.screens["00_layout"] = dict(title="CH Valdearenas · SCADA", width=1600, height=900,
                                         background="@Fondo", elements=[
         dict(id="cabecera", kind="screen_container", x=0, y=0, w=1600, h=70, screen="01_cabecera"),
         dict(id="menu", kind="screen_container", x=0, y=70, w=200, h=830, screen="02_menu"),
@@ -835,7 +836,7 @@ def build_alarm_screens(project):
         d.button("ventana", "⧉ Monitor 2", 946, 14, 150, 32, action="popup", screen="05_ventana_alarmas",
                  window=dict(monitor=2, mode="maximized"), font_size=12)
         d.add("alarm_view", "visor", 10, 60, 1380, 770, view=view)
-    project.screens["05_ventana_alarmas"] = dict(title="CH Valdearenas · Alarmas", width=1400, height=830, layout=True,
+    project.screens["05_ventana_alarmas"] = dict(title="CH Valdearenas · Alarmas", width=1400, height=830,
                                                  background="@Fondo", elements=[
         dict(id="contenido", kind="screen_container", x=0, y=0, w=1400, h=830, screen="80_alarmas")])
 
@@ -1119,6 +1120,18 @@ def write_assets(root):
         (assets / f"grupo_{state}_alto.svg").write_text(unit_svg(state, tall=True), encoding="utf-8", newline="\n")
 
 
+# Studio tree: folders by function (runtime ignores them).
+FOLDERS = [("Estructura", ("00_", "01_", "02_", "05_")), ("Proceso", ("10_", "20_", "30_", "31_", "40_", "50_", "60_")),
+           ("Tendencias", ("7",)), ("Alarmas", ("8",)), ("Emergentes", ("95_", "96_")), ("Utilidades", ("90_", "99_"))]
+
+
+def organise(project):
+    for key, document in project.screens.items():
+        document["folder"] = next(folder for folder, prefixes in FOLDERS if key.startswith(prefixes))
+    # A trend shown on two screens needs a configuration per control.
+    own_viewers(project)
+
+
 # ---------------------------------------------------------------------------
 def build_project(root, force=False):
     root = Path(root).resolve()
@@ -1157,6 +1170,7 @@ def build_project(root, force=False):
         if key not in ("00_layout", "01_cabecera", "02_menu", "05_ventana_alarmas") and not data.get("width") < SCREEN_W:
             data["on_open"] = ["apertura"]
     build_operations(project)
+    organise(project)
     project.validate()
     project.save()
     return project

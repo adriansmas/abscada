@@ -78,9 +78,10 @@ class Toolbox(QListWidget):
 
 
 from .variable_forms import VariableForms
+from .project_tree import ProjectTree, ProjectTreeActions
 
 
-class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
+class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, QMainWindow):
     design_mode = True
 
     def __init__(self, project):
@@ -138,7 +139,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         self.build_variables()
         self.build_catalogs()
         self.operational_editor = OperationalEngineering(self)
-        for page in (self.operational_editor.alarms, self.operational_editor.historian, self.operational_editor.trends):
+        for page in (self.operational_editor.alarms, self.operational_editor.historian):
             self.pages.addWidget(page)
         from .automation_editor import AutomationEditor
         self.automation_editor = AutomationEditor(self)
@@ -179,8 +180,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         toolbar.addAction("Versiones…", lambda: VersionDialog(self).exec())
         from .palette_editor import edit_palette
         toolbar.addAction('Paleta…',lambda:edit_palette(self))
-        from .display_editor import edit_display
-        toolbar.addAction('Monitores…',lambda:edit_display(self))
+        from .project_settings import edit_project_settings
+        toolbar.addAction('Ajustes del proyecto…',lambda:edit_project_settings(self))
         from .library_editor import LibraryDialog
         toolbar.addAction('Bibliotecas…',lambda:LibraryDialog(self).exec())
         toolbar.addAction('Revisar',self.review_project)
@@ -242,9 +243,9 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         if key not in {"screens", "faceplates"}:
             self.resource_tabs.setCurrentIndex(0)
         titles = {"screens": "Pantallas", "faceplates": "Faceplates", "variables": "Variables",
-                  "types": "Tipos de datos", "connections": "Conexiones", "diagnostics": "Diagnóstico", "alarms": "Alarmas", "historian": "Registros", "trends": "Gráficas", "automation": "Scripts y tareas"}
+                  "types": "Tipos de datos", "connections": "Conexiones", "diagnostics": "Diagnóstico", "alarms": "Alarmas", "historian": "Registros", "automation": "Scripts y tareas"}
         self.page_title.setText(titles[key])
-        self.pages.setCurrentIndex({"screens": 0, "faceplates": 0, "variables": 1, "types": 2, "connections": 3, "diagnostics": 4, "alarms": 5, "historian": 6, "trends": 7, "automation": 8}[key])
+        self.pages.setCurrentIndex({"screens": 0, "faceplates": 0, "variables": 1, "types": 2, "connections": 3, "diagnostics": 4, "alarms": 5, "historian": 6, "automation": 7}[key])
         if key in {"screens", "faceplates"} and getattr(self.project, key) and self.document_kind != key:
             from .faceplate_libraries import owner
             choices = [name for name in getattr(self.project,key) if key != 'faceplates' or not owner(self.project,name)]
@@ -295,10 +296,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         box.setSpacing(5)
         box.addWidget(label("PROYECTO", "sectionTitle"))
         box.addWidget(self.project_label)
-        self.navigation = QTreeWidget()
-        self.navigation.setHeaderHidden(True)
-        self.navigation.setIndentation(12)
-        self.navigation.setMinimumHeight(150)
+        self.navigation = ProjectTree(self)
         self.navigation.currentItemChanged.connect(self.select_document)
         self.resource_tabs = QTabWidget()
         self.resource_tabs.addTab(self.navigation, "Proyecto")
@@ -313,8 +311,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         create = QToolButton(); create.setText("Nuevo documento")
         create.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         menu = QMenu(create)
-        menu.addAction("Pantalla…", lambda: self.new_document(False))
-        menu.addAction("Layout…", lambda: self.new_document(False, layout=True))
+        menu.addAction("Pantalla…", lambda: self.new_document(False, folder=self.current_folder()))
+        menu.addAction("Carpeta de pantallas…", lambda: self.tree_new_folder(self.current_folder()))
         menu.addAction("Faceplate…", lambda: self.new_document(True))
         create.setMenu(menu); row.addWidget(create); row.addStretch()
         box.addWidget(self.document_buttons)
@@ -356,7 +354,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         splitter.addWidget(self.inspector_panel)
         splitter.setChildrenCollapsible(False)
         splitter.setSizes([850, 310])
-        tools.insertWidget(0, button("Seleccionar", lambda: self.view.set_drawing_tool(None)))
+        # Only while a line / pipe / polyline is being drawn: going back to selection.
+        self.select_tool_button = button("✕ Terminar dibujo (Esc)", lambda: self.view.set_drawing_tool(None))
+        self.select_tool_button.hide()
+        tools.insertWidget(1, self.select_tool_button)
         self.snap_action.toggled.connect(self.set_document_snap)
         order = QToolButton(); order.setText("Orden"); order.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         menu = QMenu(order)
@@ -551,11 +552,12 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         self.binding_fields = {}
         body.addWidget(self.binding_group)
         self.viewer_group = QGroupBox("Visor")
-        viewer_form = QFormLayout(self.viewer_group)
-        self.viewer_field = QComboBox()
-        self.viewer_field.activated.connect(self.auto_apply)
-        viewer_form.addRow("Configuración", self.viewer_field)
-        viewer_form.addRow(button("Configurar…", self.configure_viewer))
+        viewer_form = QVBoxLayout(self.viewer_group)
+        self.viewer_summary = label("")
+        self.viewer_summary.setWordWrap(True)
+        viewer_form.addWidget(self.viewer_summary)
+        self.viewer_button = button("Configurar…", self.configure_viewer)
+        viewer_form.addWidget(self.viewer_button)
         body.addWidget(self.viewer_group)
         self.form_button = button("Aplicar propiedades", self.apply_fields)
         from .dynamic_editor import edit_dynamics
@@ -651,59 +653,31 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         layout.addWidget(self.log)
         self.pages.addWidget(page)
 
-    def populate_navigation(self):
-        from .faceplate_libraries import owner, expected_faces
-        self.navigation.blockSignals(True)
-        self.navigation.clear()
-        for kind, title in (("screens", "Layouts"), ("screens", "Pantallas"), ("faceplates", "Faceplates")):
-            group = QTreeWidgetItem([title])
-            self.navigation.addTopLevelItem(group)
-            for name in getattr(self.project, kind):
-                if kind == 'faceplates' and owner(self.project, name):
-                    continue
-                if kind == "screens" and bool(self.project.screens[name].get("layout")) != (title == "Layouts"):
-                    continue
-                item = QTreeWidgetItem([name])
-                item.setIcon(0, tool_icon("image" if kind == "screens" else "faceplate"))
-                item.setData(0, Qt.ItemDataRole.UserRole, (kind, name))
-                group.addChild(item)
-                if (kind, name) == (self.document_kind, self.document_name):
-                    self.navigation.setCurrentItem(item)
-            group.setExpanded(True)
-        if self.project.libraries:
-            group = QTreeWidgetItem(['Bibliotecas'])
-            self.navigation.addTopLevelItem(group)
-            for alias, entry in self.project.libraries.items():
-                library = QTreeWidgetItem([alias + ' · ' + entry['package']['version']])
-                group.addChild(library)
-                for name in expected_faces(alias, entry['package']):
-                    item = QTreeWidgetItem([name.removeprefix(alias+'__')])
-                    item.setData(0,Qt.ItemDataRole.UserRole,('faceplates',name))
-                    item.setToolTip(0,'Plantilla vinculada · solo lectura: ' + name)
-                    library.addChild(item)
-                library.setExpanded(True)
-            group.setExpanded(True)
-        for key, title in (("variables","Variables"),("types","Tipos de datos"),("connections","Conexiones"),("alarms","Alarmas"),("historian","Registros"),("trends","Gráficas"),("automation","Scripts y tareas"),("diagnostics","Diagnóstico")):
-            item = QTreeWidgetItem([title]); item.setData(0,Qt.ItemDataRole.UserRole,("section",key))
-            self.navigation.addTopLevelItem(item)
-            if self.active_section == key:
-                self.navigation.setCurrentItem(item)
-        self.navigation.blockSignals(False)
-
     def select_document(self, item, previous=None):
         value = item.data(0, Qt.ItemDataRole.UserRole) if item else None
-        if value and value[0] == "section":
+        if not value or value[0] not in {"section", "screens", "faceplates"}:
+            return
+        if value[0] == "section":
             self.navigate(value[1]); return
-        if value:
-            from .faceplate_libraries import owner
-            if value[0] == 'faceplates' and owner(self.project, value[1]):
-                from .library_editor import LibraryDialog
-                LibraryDialog(self).exec()
-                return
-            self.view.set_drawing_tool(None)
-            self.document_kind, self.document_name = value
-            self.navigate(self.document_kind)
-            self.render_scene()
+        from .faceplate_libraries import owner
+        if value[0] == 'faceplates' and owner(self.project, value[1]):
+            from .library_editor import LibraryDialog
+            LibraryDialog(self).exec()
+            return
+        self.view.set_drawing_tool(None)
+        self.document_kind, self.document_name = value
+        self.navigate(self.document_kind)
+        self.render_scene()
+
+    def current_folder(self):
+        """Folder of the selected tree item, where «Nuevo documento» creates screens."""
+        item = self.navigation.currentItem()
+        value = item.data(0, Qt.ItemDataRole.UserRole) if item else None
+        if value and value[0] == "folder":
+            return value[1]
+        if value and value[0] == "screens" and value[1] in self.project.screens:
+            return self.project.screens[value[1]].get("folder", "")
+        return ""
 
     def document(self):
         return getattr(self.project, self.document_kind)[self.document_name]
@@ -731,7 +705,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         self.scene.blockSignals(False)
         self.refresh_layers()
         self.snap_action.blockSignals(True); self.snap_action.setChecked(document.get("snap_to_grid",True)); self.snap_action.blockSignals(False)
-        self.document_label.setText(self.document_name)
+        startup = self.document_kind == "screens" and self.document_name == self.project.manifest["startup_screen"]
+        self.document_label.setText(self.document_name + ("  ▶ pantalla de inicio" if startup else ""))
         if self.view.auto_fit:
             self.view.fit_canvas()
         self.show_properties()
@@ -835,10 +810,17 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         if e["kind"] in PATH_KINDS | SHAPE_KINDS:
             self.drawing_properties.refresh(e)
         self.viewer_group.setVisible(e["kind"] in {"trend", "alarm_view"})
-        self.viewer_field.clear()
-        if e["kind"] in {"trend", "alarm_view"}:
-            self.viewer_field.addItems(list(self.project.trends if e["kind"] == "trend" else self.project.alarm_views))
-            self.viewer_field.setCurrentText(e.get("view", ""))
+        if e["kind"] == "trend":
+            trend = self.project.trends.get(e.get("view"), {})
+            self.viewer_group.setTitle("Gráfica")
+            self.viewer_summary.setText(f"{trend.get('title', '')}\n{len(trend.get('curves', []))} curvas · "
+                                        f"{len(trend.get('axes', []))} ejes · ventana {trend.get('window_seconds', 600)} s")
+            self.viewer_button.setText("Configurar gráfica…")
+        elif e["kind"] == "alarm_view":
+            view = self.project.alarm_views.get(e.get("view"), {})
+            self.viewer_group.setTitle("Visor de alarmas")
+            self.viewer_summary.setText(view.get("title", ""))
+            self.viewer_button.setText("Configurar visor…")
         self.range_group.setVisible(e["kind"] in {"bar", "gauge"})
         self.action_group.setVisible(e["kind"] == "button")
         self.image_group.setVisible(e["kind"] == "image")
@@ -976,8 +958,6 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
                     self.error("Umbral inválido: escribe un número o déjalo vacío")
                     self.show_properties()
                     return
-        if e["kind"] in {"trend", "alarm_view"}:
-            e["view"] = self.viewer_field.currentText()
         if e["kind"] == "button":
             e["action"] = self.action_field.currentData()
             tag = e.get('tag', '')
@@ -1254,11 +1234,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
         if kind == "image":
             e.update(w=200, h=140)
         if kind in {"trend", "alarm_view"}:
-            views = self.project.trends if kind == "trend" else self.project.alarm_views
             if self.document_kind == "faceplates":
                 self.error("Los visores deben colocarse en una pantalla")
                 return
-            e.update(view=e["id"], w=720, h=420)
+            from .screen_tree import new_view_id
+            e.update(view=new_view_id(self.project, kind, e["id"]), w=720, h=420)
         if kind == "faceplate":
             if self.document_kind == "faceplates":
                 self.error("Los faceplates anidados todavía no están disponibles")
@@ -1300,14 +1280,19 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
             return
         element = selected[0].element
         if element["kind"] == "trend":
-            self.operational_editor.edit_trend(dict(id=element["view"]))
+            self.operational_editor.edit_trend(element["view"])
         elif element["kind"] == "alarm_view":
-            self.operational_editor.alarm_views.edit(dict(id=element["view"], **self.project.alarm_views[element["view"]]))
+            self.operational_editor.edit_alarm_view(element["view"])
 
     def delete_element(self):
         ids = {i.element["id"] for i in self.scene.selectedItems()}
         if ids:
-            self.mutate(lambda: self.document().__setitem__("elements", [e for e in self.document()["elements"] if e["id"] not in ids]), selected_ids=[])
+            from .screen_tree import release_viewers
+            def delete():
+                elements = self.document()["elements"]
+                release_viewers(self.project, [e for e in elements if e["id"] in ids])
+                self.document()["elements"] = [e for e in elements if e["id"] not in ids]
+            self.mutate(delete, selected_ids=[])
 
     def duplicate_element(self):
         elements = []
@@ -1318,7 +1303,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, QMainWindow):
             if e.get('group'):e['group']=groups.setdefault(e['group'],'grupo_'+uuid.uuid4().hex[:6])
             elements.append(e)
         if elements:
-            self.mutate(lambda: self.document()["elements"].extend(elements), selected_ids=[e["id"] for e in elements])
+            from .screen_tree import clone_viewers
+            def add():
+                clone_viewers(self.project, elements)
+                self.document()["elements"].extend(elements)
+            self.mutate(add, selected_ids=[e["id"] for e in elements])
 
     def refresh_variables(self, *args):
         role = Qt.ItemDataRole.UserRole

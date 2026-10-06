@@ -125,10 +125,11 @@
       "y": 60,
       "w": 1380,
       "h": 770,
-      "view": "produccion"
+      "view": "tendencia"
     }
   ],
   "on_open": [
     "apertura"
-  ]
+  ],
+  "folder": "Tendencias"
 }
