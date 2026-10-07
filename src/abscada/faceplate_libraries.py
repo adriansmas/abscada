@@ -57,7 +57,7 @@ def validate_package(package):
             raise ValueError('La biblioteca necesita nombre y versión')
     faces, assets = package.get('faceplates'), package.get('assets')
     if not isinstance(faces, dict) or not faces or not isinstance(assets, dict):
-        raise ValueError('La biblioteca necesita faceplates y recursos válidos')
+        raise ValueError('La librería necesita objetos y recursos válidos')
     filenames(faces)
     for name, encoded in assets.items():
         resource_name(name)
@@ -70,6 +70,9 @@ def validate_package(package):
     project = Project(Path.cwd(), dict(name='Library validation', startup_screen='main'), {}, [], [],
                       {'main':dict(width=800,height=600,elements=[])}, copy.deepcopy(faces))
     def asset(name):
+        from .system_library import SYSTEM, asset as system_asset
+        if name.startswith(f'library://{SYSTEM}/'):
+            return system_asset(name.removeprefix(f'library://{SYSTEM}/'))
         resource_name(name)
         if name not in assets:
             raise ValueError('Falta el recurso de biblioteca: ' + name)
@@ -81,7 +84,7 @@ def validate_package(package):
 def export_library(project, names, target, name, version, author='', license=''):
     """Publish a new immutable package. Existing files are never overwritten."""
     if not names or any(n not in project.faceplates for n in names):
-        raise ValueError('Selecciona al menos un faceplate existente')
+        raise ValueError('Selecciona al menos un objeto de librería existente')
     assets = {}
     def capture(source):
         raw = project.asset(source).read_bytes()
@@ -104,11 +107,17 @@ def expected_faces(alias, package):
 
 
 def owner(project, template):
+    """Library a template comes from (linked package or the standard library); None if local."""
+    from .system_library import SYSTEM, is_system
+    if is_system(template):
+        return SYSTEM
     return next((alias for alias, entry in project.libraries.items()
                  if template.startswith(alias+'__') and template[len(alias)+2:] in entry['package']['faceplates']), None)
 
 
 def hydrate(project):
+    from .system_library import inject
+    inject(project)
     if not isinstance(project.libraries, dict):
         raise ValueError('Las bibliotecas deben ser un objeto')
     for alias, entry in project.libraries.items():
@@ -121,13 +130,19 @@ def hydrate(project):
             raise ValueError(f'{alias}: la huella de la biblioteca no coincide')
         for name, document in expected_faces(alias, package).items():
             if name in project.faceplates:
-                raise ValueError('Colisión con un faceplate local: ' + name)
+                raise ValueError('Colisión con un objeto de librería local: ' + name)
             project.faceplates[name] = document
 
 
 def validate_links(project):
+    from .system_library import SYSTEM, check, inject
+    # Projects built in code (not loaded from disk) also see the standard library.
+    inject(project)
+    check(project)
     if not isinstance(project.libraries, dict):
         raise ValueError('Las bibliotecas deben ser un objeto')
+    if SYSTEM in project.libraries:
+        raise ValueError(f'El alias «{SYSTEM}» está reservado a la librería estándar')
     filenames(project.libraries)
     for alias, entry in project.libraries.items():
         identifier(alias)
@@ -160,7 +175,7 @@ def link(project, source, alias, update=False):
     candidate.libraries[alias] = dict(source=str(source), sha256=digest(package), package=package)
     for name, doc in expected_faces(alias, package).items():
         if any(n.casefold() == name.casefold() for n in candidate.faceplates):
-            raise ValueError('Colisión de nombre de faceplate: ' + name)
+            raise ValueError('Colisión de nombre de objeto de librería: ' + name)
         candidate.faceplates[name] = doc
     candidate.validate()  # Checks every existing instance against the new interface.
     project.libraries, project.faceplates = candidate.libraries, candidate.faceplates
@@ -179,6 +194,9 @@ def unlink(project, alias):
 def asset(project, uri):
     global _cache
     alias, separator, name = uri.removeprefix('library://').partition('/')
+    from .system_library import SYSTEM, asset as system_asset
+    if separator and alias == SYSTEM:
+        return system_asset(name)
     if not separator or alias not in project.libraries:
         raise ValueError('Biblioteca de recurso inexistente')
     resource_name(name)

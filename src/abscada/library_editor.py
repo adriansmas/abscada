@@ -12,7 +12,7 @@ class PublishDialog(EditorDialog):
     def __init__(self, host):
         super().__init__(host)
         self.host = host
-        self.setWindowTitle('Publicar biblioteca de faceplates')
+        self.setWindowTitle('Publicar librería')
         self.resize(550, 520)
         layout = QVBoxLayout(self)
         form = QFormLayout()
@@ -55,7 +55,7 @@ class LibraryDialog(EditorDialog):
     def __init__(self, host):
         super().__init__(host)
         self.host = host
-        self.setWindowTitle('Bibliotecas de faceplates')
+        self.setWindowTitle('Librerías externas')
         self.resize(900, 610)
         layout = QVBoxLayout(self)
         self.table = QTableWidget(0, 4)
@@ -109,11 +109,11 @@ class LibraryDialog(EditorDialog):
             rows.append('<tr><td><b>'+escape(alias+'__'+name)+'</b><br>'+escape(doc.get('title',''))+'</td><td>'+parameters+'</td></tr>')
         self.details.setHtml('<h3>'+escape(package['name'])+' · '+escape(package['version'])+'</h3>'
             +'<p>Autor: '+escape(str(package.get('author',''))) +'<br>Licencia: '+escape(str(package.get('license','')))+'</p>'
-            +'<table cellpadding="8"><tr><th align="left">Faceplate</th><th align="left">Parámetros</th></tr>'+''.join(rows)+'</table>')
+            +'<table cellpadding="8"><tr><th align="left">Objeto</th><th align="left">Parámetros</th></tr>'+''.join(rows)+'</table>')
         self.details.setToolTip('SHA-256: '+entry['sha256'])
 
     def source(self, initial=''):
-        return QFileDialog.getOpenFileName(self, 'Biblioteca de faceplates', initial, 'Biblioteca abSCADA (*.json)')[0]
+        return QFileDialog.getOpenFileName(self, 'Librería', initial, 'Biblioteca abSCADA (*.json)')[0]
 
     def apply(self, operation):
         if self.host.mutate(operation):

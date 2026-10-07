@@ -219,7 +219,7 @@ class Project:
             ids = set()
             parameters = document.get("parameters", {}) if name.startswith("faceplate:") else {}
             if not isinstance(parameters,dict) or any(not isinstance(key,str) or not key.strip() or kind not in PRIMITIVES for key,kind in parameters.items()):
-                raise ValueError('Parámetros de faceplate inválidos')
+                raise ValueError('Parámetros de objeto de librería inválidos')
             for element in document["elements"]:
                 if not isinstance(element["id"], str) or not element["id"].strip():
                     raise ValueError("Los elementos necesitan un nombre")
@@ -309,10 +309,10 @@ class Project:
                 if element["kind"] == "faceplate":
                     template = self.faceplates.get(element.get("template"))
                     if template is None or name.startswith("faceplate:"):
-                        raise ValueError("Faceplate inexistente o anidado (no soportado en v1)")
+                        raise ValueError("Objeto de librería inexistente o anidado (no soportado en v1)")
                     bindings = element.get("bindings", {})
                     if set(bindings) != set(template.get("parameters", {})):
-                        raise ValueError("Parámetros del faceplate incompletos")
+                        raise ValueError("Parámetros del objeto de librería incompletos")
                     for parameter, kind in template["parameters"].items():
                         if bindings[parameter] not in tags or tags[bindings[parameter]]["type"] != kind:
                             raise ValueError(f"Tipo incorrecto en parámetro {parameter}")

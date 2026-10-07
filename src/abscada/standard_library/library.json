@@ -1,0 +1,913 @@
+{
+  "schema_version": 1,
+  "name": "Estándar",
+  "version": "1.0.0",
+  "description": "Librería del sistema: símbolos SCADA en SVG y objetos animados. Solo lectura.",
+  "faceplates": {
+    "deposito_vertical": {
+      "title": "Depósito vertical",
+      "folder": "Gráficos/Depósitos",
+      "width": 100.0,
+      "height": 140.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 140.0,
+          "source": "graficos/deposito_vertical.svg"
+        }
+      ]
+    },
+    "deposito_horizontal": {
+      "title": "Depósito horizontal",
+      "folder": "Gráficos/Depósitos",
+      "width": 160.0,
+      "height": 90.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 160.0,
+          "h": 90.0,
+          "source": "graficos/deposito_horizontal.svg"
+        }
+      ]
+    },
+    "silo": {
+      "title": "Silo",
+      "folder": "Gráficos/Depósitos",
+      "width": 100.0,
+      "height": 150.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 150.0,
+          "source": "graficos/silo.svg"
+        }
+      ]
+    },
+    "tolva": {
+      "title": "Tolva",
+      "folder": "Gráficos/Depósitos",
+      "width": 100.0,
+      "height": 110.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 110.0,
+          "source": "graficos/tolva.svg"
+        }
+      ]
+    },
+    "tanque_abierto": {
+      "title": "Tanque abierto",
+      "folder": "Gráficos/Depósitos",
+      "width": 110.0,
+      "height": 110.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 110.0,
+          "h": 110.0,
+          "source": "graficos/tanque_abierto.svg"
+        }
+      ]
+    },
+    "deposito_esferico": {
+      "title": "Depósito esférico",
+      "folder": "Gráficos/Depósitos",
+      "width": 110.0,
+      "height": 120.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 110.0,
+          "h": 120.0,
+          "source": "graficos/deposito_esferico.svg"
+        }
+      ]
+    },
+    "valvula_manual": {
+      "title": "Válvula manual",
+      "folder": "Gráficos/Válvulas",
+      "width": 100.0,
+      "height": 64.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 64.0,
+          "source": "graficos/valvula_manual.svg"
+        }
+      ]
+    },
+    "valvula_motorizada": {
+      "title": "Válvula motorizada",
+      "folder": "Gráficos/Válvulas",
+      "width": 100.0,
+      "height": 64.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 64.0,
+          "source": "graficos/valvula_motorizada.svg"
+        }
+      ]
+    },
+    "valvula_neumatica": {
+      "title": "Válvula neumática",
+      "folder": "Gráficos/Válvulas",
+      "width": 100.0,
+      "height": 64.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 64.0,
+          "source": "graficos/valvula_neumatica.svg"
+        }
+      ]
+    },
+    "valvula_reguladora": {
+      "title": "Válvula reguladora",
+      "folder": "Gráficos/Válvulas",
+      "width": 100.0,
+      "height": 64.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 64.0,
+          "source": "graficos/valvula_reguladora.svg"
+        }
+      ]
+    },
+    "valvula_bola": {
+      "title": "Válvula de bola",
+      "folder": "Gráficos/Válvulas",
+      "width": 100.0,
+      "height": 64.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 64.0,
+          "source": "graficos/valvula_bola.svg"
+        }
+      ]
+    },
+    "valvula_mariposa": {
+      "title": "Válvula de mariposa",
+      "folder": "Gráficos/Válvulas",
+      "width": 100.0,
+      "height": 64.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 64.0,
+          "source": "graficos/valvula_mariposa.svg"
+        }
+      ]
+    },
+    "valvula_retencion": {
+      "title": "Válvula de retención",
+      "folder": "Gráficos/Válvulas",
+      "width": 100.0,
+      "height": 64.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 64.0,
+          "source": "graficos/valvula_retencion.svg"
+        }
+      ]
+    },
+    "valvula_tres_vias": {
+      "title": "Válvula de tres vías",
+      "folder": "Gráficos/Válvulas",
+      "width": 100.0,
+      "height": 90.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 90.0,
+          "source": "graficos/valvula_tres_vias.svg"
+        }
+      ]
+    },
+    "valvula_seguridad": {
+      "title": "Válvula de seguridad",
+      "folder": "Gráficos/Válvulas",
+      "width": 90.0,
+      "height": 100.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 90.0,
+          "h": 100.0,
+          "source": "graficos/valvula_seguridad.svg"
+        }
+      ]
+    },
+    "bomba_centrifuga": {
+      "title": "Bomba centrífuga",
+      "folder": "Gráficos/Bombas y motores",
+      "width": 100.0,
+      "height": 100.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 100.0,
+          "source": "graficos/bomba_centrifuga.svg"
+        }
+      ]
+    },
+    "bomba_volumetrica": {
+      "title": "Bomba volumétrica",
+      "folder": "Gráficos/Bombas y motores",
+      "width": 100.0,
+      "height": 100.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 100.0,
+          "source": "graficos/bomba_volumetrica.svg"
+        }
+      ]
+    },
+    "motor": {
+      "title": "Motor",
+      "folder": "Gráficos/Bombas y motores",
+      "width": 100.0,
+      "height": 100.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 100.0,
+          "source": "graficos/motor.svg"
+        }
+      ]
+    },
+    "ventilador": {
+      "title": "Ventilador",
+      "folder": "Gráficos/Bombas y motores",
+      "width": 100.0,
+      "height": 100.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 100.0,
+          "source": "graficos/ventilador.svg"
+        }
+      ]
+    },
+    "compresor": {
+      "title": "Compresor",
+      "folder": "Gráficos/Bombas y motores",
+      "width": 100.0,
+      "height": 100.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 100.0,
+          "source": "graficos/compresor.svg"
+        }
+      ]
+    },
+    "agitador": {
+      "title": "Agitador",
+      "folder": "Gráficos/Bombas y motores",
+      "width": 80.0,
+      "height": 130.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 80.0,
+          "h": 130.0,
+          "source": "graficos/agitador.svg"
+        }
+      ]
+    },
+    "intercambiador": {
+      "title": "Intercambiador de calor",
+      "folder": "Gráficos/Proceso",
+      "width": 140.0,
+      "height": 80.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 140.0,
+          "h": 80.0,
+          "source": "graficos/intercambiador.svg"
+        }
+      ]
+    },
+    "filtro": {
+      "title": "Filtro",
+      "folder": "Gráficos/Proceso",
+      "width": 90.0,
+      "height": 110.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 90.0,
+          "h": 110.0,
+          "source": "graficos/filtro.svg"
+        }
+      ]
+    },
+    "ciclon": {
+      "title": "Ciclón",
+      "folder": "Gráficos/Proceso",
+      "width": 90.0,
+      "height": 140.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 90.0,
+          "h": 140.0,
+          "source": "graficos/ciclon.svg"
+        }
+      ]
+    },
+    "caldera": {
+      "title": "Caldera",
+      "folder": "Gráficos/Proceso",
+      "width": 110.0,
+      "height": 120.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 110.0,
+          "h": 120.0,
+          "source": "graficos/caldera.svg"
+        }
+      ]
+    },
+    "torre_refrigeracion": {
+      "title": "Torre de refrigeración",
+      "folder": "Gráficos/Proceso",
+      "width": 110.0,
+      "height": 130.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 110.0,
+          "h": 130.0,
+          "source": "graficos/torre_refrigeracion.svg"
+        }
+      ]
+    },
+    "columna": {
+      "title": "Columna",
+      "folder": "Gráficos/Proceso",
+      "width": 70.0,
+      "height": 160.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 70.0,
+          "h": 160.0,
+          "source": "graficos/columna.svg"
+        }
+      ]
+    },
+    "transmisor_nivel": {
+      "title": "Transmisor de nivel",
+      "folder": "Gráficos/Instrumentos",
+      "width": 80.0,
+      "height": 80.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 80.0,
+          "h": 80.0,
+          "source": "graficos/transmisor_nivel.svg"
+        }
+      ]
+    },
+    "transmisor_presion": {
+      "title": "Transmisor de presión",
+      "folder": "Gráficos/Instrumentos",
+      "width": 80.0,
+      "height": 80.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 80.0,
+          "h": 80.0,
+          "source": "graficos/transmisor_presion.svg"
+        }
+      ]
+    },
+    "transmisor_temperatura": {
+      "title": "Transmisor de temperatura",
+      "folder": "Gráficos/Instrumentos",
+      "width": 80.0,
+      "height": 80.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 80.0,
+          "h": 80.0,
+          "source": "graficos/transmisor_temperatura.svg"
+        }
+      ]
+    },
+    "transmisor_caudal": {
+      "title": "Transmisor de caudal",
+      "folder": "Gráficos/Instrumentos",
+      "width": 80.0,
+      "height": 80.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 80.0,
+          "h": 80.0,
+          "source": "graficos/transmisor_caudal.svg"
+        }
+      ]
+    },
+    "transformador": {
+      "title": "Transformador",
+      "folder": "Gráficos/Eléctrico",
+      "width": 80.0,
+      "height": 120.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 80.0,
+          "h": 120.0,
+          "source": "graficos/transformador.svg"
+        }
+      ]
+    },
+    "interruptor": {
+      "title": "Interruptor",
+      "folder": "Gráficos/Eléctrico",
+      "width": 60.0,
+      "height": 60.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 60.0,
+          "h": 60.0,
+          "source": "graficos/interruptor.svg"
+        }
+      ]
+    },
+    "seccionador": {
+      "title": "Seccionador",
+      "folder": "Gráficos/Eléctrico",
+      "width": 60.0,
+      "height": 100.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 60.0,
+          "h": 100.0,
+          "source": "graficos/seccionador.svg"
+        }
+      ]
+    },
+    "generador": {
+      "title": "Generador",
+      "folder": "Gráficos/Eléctrico",
+      "width": 100.0,
+      "height": 100.0,
+      "parameters": {},
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100.0,
+          "h": 100.0,
+          "source": "graficos/generador.svg"
+        }
+      ]
+    },
+    "bomba_estado": {
+      "title": "Bomba con estado",
+      "folder": "Objetos",
+      "width": 100,
+      "height": 100,
+      "parameters": {
+        "marcha": "bool",
+        "fallo": "bool"
+      },
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100,
+          "h": 100,
+          "source": "objetos/bomba_paro.svg",
+          "dynamics": {
+            "states": [
+              {
+                "when": {
+                  "tag": "$fallo",
+                  "op": "eq",
+                  "value": true,
+                  "bad": false
+                },
+                "style": {
+                  "source": "objetos/bomba_fallo.svg"
+                }
+              },
+              {
+                "when": {
+                  "tag": "$marcha",
+                  "op": "eq",
+                  "value": true,
+                  "bad": false
+                },
+                "style": {
+                  "source": "objetos/bomba_marcha.svg"
+                }
+              }
+            ],
+            "bad": {
+              "source": "objetos/bomba_dudoso.svg"
+            }
+          }
+        }
+      ]
+    },
+    "motor_estado": {
+      "title": "Motor con estado",
+      "folder": "Objetos",
+      "width": 100,
+      "height": 100,
+      "parameters": {
+        "marcha": "bool",
+        "fallo": "bool"
+      },
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100,
+          "h": 100,
+          "source": "objetos/motor_paro.svg",
+          "dynamics": {
+            "states": [
+              {
+                "when": {
+                  "tag": "$fallo",
+                  "op": "eq",
+                  "value": true,
+                  "bad": false
+                },
+                "style": {
+                  "source": "objetos/motor_fallo.svg"
+                }
+              },
+              {
+                "when": {
+                  "tag": "$marcha",
+                  "op": "eq",
+                  "value": true,
+                  "bad": false
+                },
+                "style": {
+                  "source": "objetos/motor_marcha.svg"
+                }
+              }
+            ],
+            "bad": {
+              "source": "objetos/motor_dudoso.svg"
+            }
+          }
+        }
+      ]
+    },
+    "ventilador_estado": {
+      "title": "Ventilador con estado",
+      "folder": "Objetos",
+      "width": 100,
+      "height": 100,
+      "parameters": {
+        "marcha": "bool",
+        "fallo": "bool"
+      },
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100,
+          "h": 100,
+          "source": "objetos/ventilador_paro.svg",
+          "dynamics": {
+            "states": [
+              {
+                "when": {
+                  "tag": "$fallo",
+                  "op": "eq",
+                  "value": true,
+                  "bad": false
+                },
+                "style": {
+                  "source": "objetos/ventilador_fallo.svg"
+                }
+              },
+              {
+                "when": {
+                  "tag": "$marcha",
+                  "op": "eq",
+                  "value": true,
+                  "bad": false
+                },
+                "style": {
+                  "source": "objetos/ventilador_marcha.svg"
+                }
+              }
+            ],
+            "bad": {
+              "source": "objetos/ventilador_dudoso.svg"
+            }
+          }
+        }
+      ]
+    },
+    "valvula_estado": {
+      "title": "Válvula abierta / cerrada",
+      "folder": "Objetos",
+      "width": 100,
+      "height": 64,
+      "parameters": {
+        "abierta": "bool"
+      },
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100,
+          "h": 64,
+          "source": "objetos/valvula_paro.svg",
+          "dynamics": {
+            "states": [
+              {
+                "when": {
+                  "tag": "$abierta",
+                  "op": "eq",
+                  "value": true,
+                  "bad": false
+                },
+                "style": {
+                  "source": "objetos/valvula_marcha.svg"
+                }
+              }
+            ],
+            "bad": {
+              "source": "objetos/valvula_dudoso.svg"
+            }
+          }
+        }
+      ]
+    },
+    "interruptor_estado": {
+      "title": "Interruptor abierto / cerrado",
+      "folder": "Objetos",
+      "width": 60,
+      "height": 60,
+      "parameters": {
+        "cerrado": "bool"
+      },
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 60,
+          "h": 60,
+          "source": "objetos/interruptor_marcha.svg",
+          "dynamics": {
+            "states": [
+              {
+                "when": {
+                  "tag": "$cerrado",
+                  "op": "eq",
+                  "value": true,
+                  "bad": false
+                },
+                "style": {
+                  "source": "objetos/interruptor_fallo.svg"
+                }
+              }
+            ],
+            "bad": {
+              "source": "objetos/interruptor_dudoso.svg"
+            }
+          }
+        }
+      ]
+    },
+    "deposito_nivel": {
+      "title": "Depósito con nivel",
+      "folder": "Objetos",
+      "width": 100,
+      "height": 140,
+      "parameters": {
+        "nivel": "float"
+      },
+      "elements": [
+        {
+          "id": "simbolo",
+          "kind": "image",
+          "x": 0,
+          "y": 0,
+          "w": 100,
+          "h": 140,
+          "source": "graficos/deposito_vertical.svg"
+        },
+        {
+          "id": "nivel",
+          "kind": "bar",
+          "x": 24,
+          "y": 30,
+          "w": 52,
+          "h": 88,
+          "tag": "$nivel",
+          "min": 0,
+          "max": 100,
+          "color": "#4f86b8"
+        },
+        {
+          "id": "valor",
+          "kind": "text",
+          "x": 14,
+          "y": 118,
+          "w": 72,
+          "h": 20,
+          "tag": "$nivel",
+          "text": "",
+          "unit": "%",
+          "decimals": 0,
+          "font_size": 11,
+          "bold": true,
+          "text_color": "#2f3b45",
+          "color": "#00000000",
+          "border_color": "#00000000"
+        }
+      ]
+    }
+  }
+}

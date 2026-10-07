@@ -67,11 +67,11 @@ def validate_popup_button(element, project, tags, parameters):
     """
     template = project.faceplates.get(element.get("template"))
     if template is None:
-        raise ValueError("Faceplate emergente inexistente")
+        raise ValueError("Objeto de librería emergente inexistente")
     bindings = element.get("bindings", {})
     expected = template.get("parameters", {})
     if not isinstance(bindings, dict) or set(bindings) != set(expected):
-        raise ValueError("Parámetros del faceplate emergente incompletos")
+        raise ValueError("Parámetros del objeto emergente incompletos")
     for parameter, kind in expected.items():
         source = bindings[parameter]
         if not isinstance(source, str):
@@ -81,7 +81,7 @@ def validate_popup_button(element, project, tags, parameters):
         else:
             actual = tags[source]["type"] if source in tags else None
         if actual != kind:
-            raise ValueError(f"Tipo incorrecto en parámetro {parameter} del faceplate emergente")
+            raise ValueError(f"Tipo incorrecto en parámetro {parameter} del objeto emergente")
     if not isinstance(element.get("title", ""), str):
         raise ValueError("Título de ventana inválido")
 
@@ -92,7 +92,7 @@ def validate_popup_writes(element, project, tags):
     template = project.faceplates[element["template"]]
     for parameter, source in element.get("bindings", {}).items():
         if parameter_writable(template, parameter) and not tags.get(source, {}).get("writable", False):
-            raise ValueError(f"Faceplate emergente: variable de solo lectura {source}")
+            raise ValueError(f"Objeto emergente: variable de solo lectura {source}")
 
 
 def resolve_popup_bindings(child, instance_bindings):

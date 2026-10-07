@@ -272,7 +272,7 @@ def test_opening_a_faceplate_template_preserves_runtime(studio):
     assert studio.document_kind == "faceplates"
     assert studio.document_name == "pump"
     assert studio.runtime_window is current
-    assert studio.page_title.text() == "Faceplates"
+    assert studio.page_title.text() == "Librerías"
 
 
 def test_structures_are_collapsed_groups_and_filter_shows_matching_fields(studio):

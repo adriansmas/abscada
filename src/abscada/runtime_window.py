@@ -168,7 +168,7 @@ class RuntimeWindow(QMainWindow):
         """Faceplate of one equipment in its own window; each equipment gets its own."""
         root = self.owner or self
         if template not in root.project.faceplates:
-            raise ValueError("Faceplate emergente inexistente")
+            raise ValueError("Objeto de librería emergente inexistente")
         bindings = dict(bindings)
         target = dict(faceplate=dict(template=template, bindings=bindings,
                                      title=popup_title(root.project, template, bindings, title)))

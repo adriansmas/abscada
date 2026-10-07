@@ -11,7 +11,7 @@ def validate_layouts(project):
         raise ValueError('Nombre de contenedor reservado: __window__')
     for doc in project.faceplates.values():
         if containers(doc):
-            raise ValueError('Los contenedores se colocan en pantallas o layouts, no en faceplates')
+            raise ValueError('Los contenedores se colocan en pantallas o layouts, no en objetos de librería')
     for name, doc in project.screens.items():
         if not isinstance(doc.get('layout', False), bool):
             raise ValueError('La propiedad layout debe ser booleana')

@@ -33,6 +33,37 @@ class ProjectTree(QTreeWidget):
         else:
             super().keyPressEvent(event)
 
+    def startDrag(self, actions):
+        # A library object can also be dropped on the canvas: it carries its template name.
+        item = self.currentItem()
+        value = item.data(0, ROLE) if item else None
+        if value and value[0] == "faceplates":
+            from PySide6.QtCore import QMimeData
+            from PySide6.QtGui import QDrag
+            from .library_browser import TEMPLATE_MIME
+            mime = QMimeData()
+            mime.setData(TEMPLATE_MIME, value[1].encode("utf-8"))
+            drag = QDrag(self)
+            drag.setMimeData(mime)
+            drag.setPixmap(item.icon(0).pixmap(40, 40))
+            drag.exec(Qt.DropAction.CopyAction | Qt.DropAction.MoveAction, Qt.DropAction.CopyAction)
+            return
+        super().startDrag(actions)
+
+    def dragMoveEvent(self, event):
+        from .library_browser import TEMPLATE_MIME
+        if event.mimeData().hasFormat(TEMPLATE_MIME):
+            event.acceptProposedAction()  # moving an object between library folders
+        else:
+            super().dragMoveEvent(event)
+
+    def dragEnterEvent(self, event):
+        from .library_browser import TEMPLATE_MIME
+        if event.mimeData().hasFormat(TEMPLATE_MIME):
+            event.acceptProposedAction()
+        else:
+            super().dragEnterEvent(event)
+
     def dropEvent(self, event):
         # The project is rebuilt from data after the move, Qt must not move the items itself.
         source, target = self.currentItem(), self.itemAt(event.position().toPoint())
@@ -40,6 +71,20 @@ class ProjectTree(QTreeWidget):
         event.accept()
         if source is not None:
             self.host.tree_drop(source.data(0, ROLE), target.data(0, ROLE) if target else None)
+
+
+def library_folder_of_target(project, value):
+    """Library folder that receives a drop on ``value``; None outside the project's library."""
+    if not value:
+        return None
+    if value[0] == "lfolder":
+        return value[1]
+    if value == ("group", "faceplates"):
+        return ""
+    if value[0] == "faceplates" and value[1] in project.faceplates:
+        from .faceplate_libraries import owner
+        return None if owner(project, value[1]) else project.faceplates[value[1]].get("folder", "")
+    return None
 
 
 def folder_of_target(project, value):
@@ -59,9 +104,11 @@ class ProjectTreeActions:
     """Mixin for Studio's Window."""
 
     def populate_navigation(self):
-        from .faceplate_libraries import owner, expected_faces
+        from .library_browser import fill
         tree = self.navigation
         collapsed = {item.data(0, ROLE) for item in self._tree_items() if not item.isExpanded()}
+        # Read-only libraries are long: closed until the user opens them.
+        opened = {item.data(0, ROLE) for item in self._tree_items() if item.isExpanded()}
         tree.blockSignals(True)
         tree.clear()
         folder_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon)
@@ -92,18 +139,15 @@ class ProjectTreeActions:
                         tool_icon("screen_container" if layout else "image"), tip)
             if name == startup:
                 font = QFont(item.font(0)); font.setBold(True); item.setFont(0, font)
-        faceplates = node(tree, "Faceplates", ("group", "faceplates"))
-        for name in self.project.faceplates:
-            if not owner(self.project, name):
-                node(faceplates, name, ("faceplates", name), tool_icon("faceplate"))
-        if self.project.libraries:
-            group = node(tree, "Bibliotecas", ("group", "libraries"))
-            for alias, entry in self.project.libraries.items():
-                library = node(group, alias + " · " + entry["package"]["version"], ("library", alias))
-                for name in expected_faces(alias, entry["package"]):
-                    node(library, name.removeprefix(alias + "__"), ("faceplates", name), None, "Plantilla vinculada · solo lectura: " + name)
+        libraries = node(tree, "Librerías", ("group", "libraries"),
+                         tip="Objetos reutilizables (símbolos y plantillas de equipo). Arrástralos al lienzo.")
+        fill(self.project, libraries, node, folder_icon)
         for item in self._tree_items():
-            item.setExpanded(item.data(0, ROLE) not in collapsed)
+            value = item.data(0, ROLE)
+            if value and value[0] in {"library", "libfolder"}:
+                item.setExpanded(value in opened)
+            else:
+                item.setExpanded(value not in collapsed)
         tree.blockSignals(False)
 
     def _tree_items(self):
@@ -163,22 +207,40 @@ class ProjectTreeActions:
             start.setEnabled(self.project.manifest.get("startup_screen") != name)
             menu.addSeparator()
             menu.addAction("Eliminar…", lambda: self.tree_delete_screen(name))
-        elif value == ("group", "faceplates"):
-            menu.addAction("Nuevo faceplate…", lambda: self.new_document(True))
-        elif kind == "faceplates" and value[1] in self.project.faceplates and not self.faceplate_is_linked(value[1]):
+        elif value == ("group", "faceplates") or kind == "lfolder":
+            folder = value[1] if kind == "lfolder" else ""
+            menu.addAction("Nuevo objeto de librería…", lambda: self.new_document(True, folder=folder))
+            menu.addAction("Nueva carpeta…", lambda: self.tree_new_folder(folder, "faceplates"))
+            if kind == "lfolder":
+                menu.addSeparator()
+                menu.addAction("Renombrar carpeta…", lambda: self.tree_rename(item))
+                menu.addAction("Eliminar carpeta (su contenido sube un nivel)",
+                               lambda: self.tree_mutate(lambda: screen_tree.delete_folder(self.project, folder, "faceplates")))
+        elif kind == "faceplates" and value[1] in self.project.faceplates:
             name = value[1]
-            menu.addAction("Renombrar…", lambda: self.tree_rename(item))
-            menu.addAction("Duplicar…", lambda: self.tree_duplicate_faceplate(name))
-            menu.addSeparator()
-            menu.addAction("Nuevo faceplate…", lambda: self.new_document(True))
-            menu.addAction("Eliminar…", lambda: self.tree_delete_faceplate(name))
+            if self.document_kind == "screens":
+                menu.addAction("Insertar en la pantalla", lambda: self.insert_library_object(name))
+            if self.faceplate_is_linked(name):
+                menu.addAction("Copiar al proyecto para modificarlo…", lambda: self.tree_duplicate_faceplate(name))
+            else:
+                menu.addAction("Renombrar…", lambda: self.tree_rename(item))
+                menu.addAction("Duplicar…", lambda: self.tree_duplicate_faceplate(name))
+                move = menu.addMenu("Mover a carpeta")
+                current = self.project.faceplates[name].get("folder", "")
+                for path in [""] + screen_tree.folders(self.project, "faceplates"):
+                    action = move.addAction("(raíz de Proyecto)" if not path else "    " * path.count("/") + path.rpartition("/")[2],
+                                            lambda p=path: self.tree_mutate(lambda: screen_tree.move_faceplate(self.project, name, p)))
+                    action.setEnabled(path != current)
+                menu.addSeparator()
+                menu.addAction("Nuevo objeto de librería…", lambda: self.new_document(True, folder=current))
+                menu.addAction("Eliminar…", lambda: self.tree_delete_faceplate(name))
         if not menu.isEmpty():
             menu.exec(position)
 
-    def tree_new_folder(self, parent):
+    def tree_new_folder(self, parent, kind="screens"):
         name = self.ask_text("Nueva carpeta", "Nombre de la carpeta" + (f" dentro de «{parent}»" if parent else ""))
         if name:
-            self.tree_mutate(lambda: screen_tree.add_folder(self.project, parent, name))
+            self.tree_mutate(lambda: screen_tree.add_folder(self.project, parent, name, kind))
 
     def tree_rename(self, item):
         value = item.data(0, ROLE) if item else None
@@ -186,10 +248,11 @@ class ProjectTreeActions:
             return
         if value[0] == "faceplates" and value[1] in self.project.faceplates and not self.faceplate_is_linked(value[1]):
             self.rename_faceplate_from_tree(value[1])
-        elif value[0] == "folder":
+        elif value[0] in {"folder", "lfolder"}:
+            kind = "screens" if value[0] == "folder" else "faceplates"
             name = self.ask_text("Renombrar carpeta", "Nuevo nombre", value[1].rpartition("/")[2])
             if name:
-                self.tree_mutate(lambda: screen_tree.rename_folder(self.project, value[1], name))
+                self.tree_mutate(lambda: screen_tree.rename_folder(self.project, value[1], name, kind))
         elif value[0] == "screens":
             old = value[1]
             new = self.ask_text("Renombrar pantalla", "Nuevo nombre de archivo (letras sin acentos, números, _ y -)", old)
@@ -209,13 +272,15 @@ class ProjectTreeActions:
         return bool(owner(self.project, name))
 
     def rename_faceplate_from_tree(self, old):
-        new = self.ask_text("Renombrar faceplate", "Nuevo nombre (letras sin acentos, números, _ y -)", old)
+        new = self.ask_text("Renombrar objeto de librería", "Nuevo nombre (letras sin acentos, números, _ y -)", old)
         if new and new != old:
             showing = ("faceplates", new) if (self.document_kind, self.document_name) == ("faceplates", old) else None
             self.tree_mutate(lambda: screen_tree.rename_faceplate(self.project, old, new), showing)
 
     def tree_duplicate_faceplate(self, name):
-        new = self.ask_text("Duplicar faceplate", "Nombre de la copia", name + "_copia")
+        linked = self.faceplate_is_linked(name)
+        base = name.split("__", 1)[-1] if linked else name + "_copia"
+        new = self.ask_text("Copiar al proyecto" if linked else "Duplicar objeto de librería", "Nombre de la copia", base)
         if new:
             self.tree_mutate(lambda: screen_tree.duplicate_faceplate(self.project, name, new), ("faceplates", new))
 
@@ -224,7 +289,7 @@ class ProjectTreeActions:
         if used:
             self.error(f"No se puede eliminar «{name}» porque se usa en:\n· " + "\n· ".join(used))
             return
-        if QMessageBox.question(self, "Eliminar faceplate", f"¿Eliminar el faceplate «{name}»? Se puede deshacer con Ctrl+Z.") \
+        if QMessageBox.question(self, "Eliminar objeto de librería", f"¿Eliminar el objeto «{name}»? Se puede deshacer con Ctrl+Z.") \
                 == QMessageBox.StandardButton.Yes:
             self.tree_mutate(lambda: screen_tree.delete_faceplate(self.project, name))
 
@@ -246,6 +311,16 @@ class ProjectTreeActions:
 
     def tree_drop(self, source, target):
         if not self.editable() or not source:
+            return
+        if source[0] in {"lfolder", "faceplates"}:
+            folder = library_folder_of_target(self.project, target)
+            if folder is None:
+                return
+            if source[0] == "faceplates" and not self.faceplate_is_linked(source[1]) \
+                    and self.project.faceplates[source[1]].get("folder", "") != folder:
+                self.tree_mutate(lambda: screen_tree.move_faceplate(self.project, source[1], folder))
+            elif source[0] == "lfolder" and screen_tree.parent_folder(source[1]) != folder:
+                self.tree_mutate(lambda: screen_tree.move_folder(self.project, source[1], folder, "faceplates"))
             return
         folder = folder_of_target(self.project, target)
         if folder is None:
