@@ -31,29 +31,43 @@ class ConditionForm(QWidget):
             previous=self.op.currentData(); self.op.clear()
             for key,label in [('eq',tr('Igual a')),('ne',tr('Distinto de'))]+([('gt',tr('Mayor que')),('ge',tr('Mayor o igual')),('lt',tr('Menor que')),('le',tr('Menor o igual'))] if kind in {'int','float'} else []): self.op.addItem(label,key)
             self.op.setCurrentIndex(max(0,self.op.findData(previous))); self.value.set_kind(kind)
+            # «es igual a» / «es distinto de» say the same for a bool: only «Verdadero / Falso» is asked.
+            form.setRowVisible(self.op,kind!='bool')
+            label=form.labelForField(self.value)
+            if label: label.setText(tr('Cuando sea') if kind=='bool' else tr('Valor'))
         self.tag.currentTextChanged.connect(update); update()
         if value:
             self.tag.setCurrentText(value['tag']); update(); self.op.setCurrentIndex(self.op.findData(value['op']))
-            self.value.set_kind(self.tags[value['tag']]['type'],value['value']); self.bad.setChecked(value.get('bad',False))
+            shown=value['value']
+            if isinstance(shown,bool) and value['op']=='ne': shown=not shown  # «≠ verdadero» is «falso»
+            self.value.set_kind(self.tags[value['tag']]['type'],shown); self.bad.setChecked(value.get('bad',False))
         def enable():
             for control in (self.tag,self.op,self.value,self.bad): control.setEnabled(self.active.isChecked())
         self.active.toggled.connect(enable); enable()
 
     def data(self):
-        return dict(tag=self.tag.currentText(),op=self.op.currentData(),value=self.value.value(),bad=self.bad.isChecked()) if self.active.isChecked() else None
+        return dict(tag=self.tag.currentText(),op='eq' if self.value.kind=='bool' else self.op.currentData(),value=self.value.value(),bad=self.bad.isChecked()) if self.active.isChecked() else None
 
 
 class StyleForm(QWidget):
-    def __init__(self,value=None,kind='button',hint=True):
+    def __init__(self,value=None,kind='button',hint=True,host=None):
         super().__init__(); self.fields={}; form=QFormLayout(self); form.setContentsMargins(0,0,0,0)
+        from .project_text_editor import ProjectTextField
         supported=dynamics.style_keys(kind)
         for key,title in [('color',tr('Fondo')),('text_color',tr('Color del texto')),('border_color',tr('Borde')),('stroke_color',tr('Trazo')),('text',tr('Texto mostrado')),('source',tr('Imagen (ruta del proyecto)'))]:
             if key not in supported: continue
-            field=ColorField(lambda:None) if key in dynamics.COLOR_KEYS else QLineEdit()
-            field.setText((value or {}).get(key,'')); self.fields[key]=field; form.addRow(title,field)
+            field=ColorField(lambda:None) if key in dynamics.COLOR_KEYS else ProjectTextField(host) if key == 'text' else QLineEdit()
+            if isinstance(field, ProjectTextField):
+                field.set_value((value or {}).get(key, ''))
+            else:
+                field.setText((value or {}).get(key, ''))
+            self.fields[key]=field; form.addRow(title,field)
         if hint: form.addRow(QLabel(tr('Vacío: conservar la propiedad del objeto')))
 
-    def data(self): return {key:field.text() for key,field in self.fields.items() if field.text()}
+    def data(self):
+        return {key: field.translated_value() if hasattr(field, 'translated_value') else field.text()
+            for key, field in self.fields.items()
+            if field.text() or isinstance(getattr(field, 'original', None), dict)}
 
 
 class DynamicDialog(EditorDialog):
@@ -78,7 +92,7 @@ class DynamicDialog(EditorDialog):
             group=QGroupBox(title); box=QVBoxLayout(group)
             if hint:
                 note=QLabel(hint); note.setWordWrap(True); note.setObjectName('muted'); box.addWidget(note)
-            field=StyleForm(d.get(key),element['kind'],hint=False); self.styles[key]=field; box.addWidget(field)
+            field=StyleForm(d.get(key),element['kind'],hint=False,host=studio); self.styles[key]=field; box.addWidget(field)
             return group
         page.addWidget(style_group('default','1 · Normal',tr('Apariencia fija en el runtime.')))
         states=QGroupBox(tr('2 · Según el valor de variables')); box=QVBoxLayout(states)
@@ -92,18 +106,23 @@ class DynamicDialog(EditorDialog):
         def refresh():
             self.table.setRowCount(len(self.states))
             for i,state in enumerate(self.states):
-                c=state['when']; self.table.setItem(i,0,QTableWidgetItem(f"{c['tag']} {operators.get(c['op'],c['op'])} {c['value']}")); self.table.setItem(i,1,QTableWidgetItem(' · '.join(f'{k}: {v}' for k,v in state['style'].items())))
+                c=state['when']
+                if isinstance(c['value'],bool):
+                    shown=c['value'] if c['op']=='eq' else not c['value']
+                    text=f"{c['tag']} "+(tr('es verdadero') if shown else tr('es falso'))
+                else: text=f"{c['tag']} {operators.get(c['op'],c['op'])} {c['value']}"
+                self.table.setItem(i,0,QTableWidgetItem(text)); self.table.setItem(i,1,QTableWidgetItem(' · '.join(f'{k}: {v}' for k,v in state['style'].items())))
         def edit(new):
             index=-1 if new else self.table.currentRow()
             if not new and index<0: return
             current={} if new else self.states[index]
             dialog=EditorDialog(self); dialog.setWindowTitle(tr('Estado')); content=QVBoxLayout(dialog)
-            cond=ConditionForm(studio,current.get('when'),False); style=StyleForm(current.get('style'),element['kind'])
+            cond=ConditionForm(studio,current.get('when'),False); style=StyleForm(current.get('style'),element['kind'],host=studio)
             content.addWidget(cond); content.addWidget(style)
             def state(): return dict(when=cond.data(),style=style.data())
             def validate():
                 candidate=copy.deepcopy(element); candidate['dynamics']={'states':[state()]}
-                dynamics.validate(candidate,studio.project.tags(),studio.document().get('parameters',{}),studio.project.manifest.get('palette',{}))
+                dynamics.validate(candidate,studio.project.tags(),studio.document().get('parameters',{}))
             dialog.validator=validate; studio.dialog_buttons(dialog,content)
             if dialog.exec()==EditorDialog.DialogCode.Accepted:
                 if new:self.states.append(state())
@@ -129,7 +148,8 @@ class DynamicDialog(EditorDialog):
             tabs.addTab(scroll,tr('Apariencia'))
         self.visible=ConditionForm(studio,d.get('visible')); tabs.addTab(self.visible,tr('Visibilidad'))
         enabled=QWidget(); form=QVBoxLayout(enabled); self.enabled=ConditionForm(studio,d.get('enabled')); form.addWidget(self.enabled)
-        self.reason=QLineEdit(d.get('disabled_reason','')); self.reason.setPlaceholderText(tr('Motivo de bloqueo (se muestra al pasar el ratón)')); form.addWidget(self.reason); form.addStretch()
+        from .project_text_editor import ProjectTextField
+        self.reason=ProjectTextField(studio,d.get('disabled_reason','')); self.reason.setPlaceholderText(tr('Motivo de bloqueo (se muestra al pasar el ratón)')); form.addWidget(self.reason); form.addStretch()
         tabs.addTab(enabled,tr('Habilitación'))
         self.validator=self.validate; studio.dialog_buttons(self,layout)
 
@@ -137,14 +157,14 @@ class DynamicDialog(EditorDialog):
         d={key:field.data() for key,field in self.styles.items() if field.data()}
         if self.visible.data(): d['visible']=self.visible.data()
         if self.enabled.data(): d['enabled']=self.enabled.data()
-        if self.reason.text(): d['disabled_reason']=self.reason.text()
+        if self.reason.text() or isinstance(self.reason.original, dict): d['disabled_reason']=self.reason.translated_value()
         if self.states:d['states']=copy.deepcopy(self.states)
         result=copy.deepcopy(self.element); result['dynamics']=d
         if self.lamp:result['lamp_colors']={key:field.text() for key,field in self.lamp.items()}
         return result
 
     def validate(self):
-        dynamics.validate(self.data(),self.studio.project.tags(),self.studio.document().get('parameters',{}),self.studio.project.manifest.get('palette',{}))
+        dynamics.validate(self.data(),self.studio.project.tags(),self.studio.document().get('parameters',{}))
 
 
 def edit_dynamics(studio):

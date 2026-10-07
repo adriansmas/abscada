@@ -2,32 +2,14 @@
   "schema_version": 1,
   "name": "La Tolva",
   "startup_screen": "00_layout",
-  "palette": {
-    "Fondo": "#dfe1e2",
-    "Panel": "#eeefef",
-    "Borde": "#b8bdc1",
-    "Texto": "#24292e",
-    "TextoSuave": "#5f676e",
-    "Valor": "#f9f9f9",
-    "Linea": "#6f777e",
-    "Agua": "#4f86b8",
-    "Marcha": "#2e8b57",
-    "Paro": "#9ba2a8",
-    "Disparo": "#d32f2f",
-    "Aviso": "#e89a1c",
-    "Mosto": "#c2872b",
-    "Cerveza": "#d8a23e",
-    "Glicol": "#3c8fa6",
-    "Vapor": "#9a6fb0",
-    "Muerto": "#b3b9be",
-    "Cabecera": "#2b2620",
-    "Menu": "#38312a",
-    "Mando": "#2b6cb0",
-    "Apagado": "#4a4038"
-  },
   "display": {
     "main": {
       "mode": "maximized"
     }
-  }
+  },
+  "languages": [
+    "es",
+    "en"
+  ],
+  "default_language": "es"
 }

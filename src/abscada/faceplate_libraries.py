@@ -32,21 +32,17 @@ def resource_name(name):
         filenames([part])
 
 
-def transform(value, assets, palette=None, alias=None):
+def transform(value, assets, alias=None):
     if isinstance(value, list):
-        return [transform(v, assets, palette, alias) for v in value]
+        return [transform(v, assets, alias) for v in value]
     if not isinstance(value, dict):
         return value
     result = {}
     for key, item in value.items():
         if key == 'source' and isinstance(item, str) and item:
             result[key] = assets(item) if callable(assets) else f'library://{alias}/{item}'
-        elif palette is not None and (key.endswith('color') or key in ('background', 'on', 'off', 'bad')) and isinstance(item, str) and item.startswith('@'):
-            if item[1:] not in palette:
-                raise ValueError(tr('Color de paleta inexistente: ') + item)
-            result[key] = palette[item[1:]]
         else:
-            result[key] = transform(item, assets, palette, alias)
+            result[key] = transform(item, assets, alias)
     return result
 
 
@@ -68,7 +64,8 @@ def validate_package(package):
             raise ValueError(tr('Recurso base64 inválido: ') + name) from exc
     # A library cannot depend on variables, scripts, views or screens in a consumer.
     from .project import Project
-    project = Project(Path.cwd(), dict(name='Library validation', startup_screen='main'), {}, [], [],
+    project = Project(Path.cwd(), dict(name='Library validation', startup_screen='main',
+                      languages=package.get('languages', ['es']), default_language=package.get('default_language', 'es')), {}, [], [],
                       {'main':dict(width=800,height=600,elements=[])}, copy.deepcopy(faces))
     def asset(name):
         from .system_library import SYSTEM, asset as system_asset
@@ -92,8 +89,10 @@ def export_library(project, names, target, name, version, author='', license='')
         key = 'assets/' + hashlib.sha256(raw).hexdigest() + Path(source).suffix.lower()
         assets[key] = base64.b64encode(raw).decode('ascii')
         return key
+    from .project_languages import languages, default_language
     package = dict(schema_version=1, name=name, version=version, author=author, license=license,
-                   faceplates={n:transform(project.faceplates[n], capture, project.manifest.get('palette', {})) for n in names}, assets=assets)
+                   languages=languages(project), default_language=default_language(project),
+                   faceplates={n:transform(project.faceplates[n], capture) for n in names}, assets=assets)
     validate_package(package)
     target = Path(target)
     # Exclusive creation keeps published versions immutable, including from other processes.

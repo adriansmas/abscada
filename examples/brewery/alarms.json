@@ -3,22 +3,34 @@
   "categories": [
     {
       "id": "cocina",
-      "name": "Sala de cocción",
+      "name": {
+        "es": "Sala de cocción",
+        "en": "Brewhouse"
+      },
       "color": "#c2872b"
     },
     {
       "id": "bodega",
-      "name": "Bodega",
+      "name": {
+        "es": "Bodega",
+        "en": "Cellar"
+      },
       "color": "#2b6cb0"
     },
     {
       "id": "servicios",
-      "name": "Servicios",
+      "name": {
+        "es": "Servicios",
+        "en": "Services"
+      },
       "color": "#3c8fa6"
     },
     {
       "id": "sistema",
-      "name": "Sistema SCADA",
+      "name": {
+        "es": "Sistema SCADA",
+        "en": "SCADA system"
+      },
       "color": "#4a5568"
     }
   ],
@@ -29,7 +41,10 @@
       "category": "cocina",
       "condition": "true",
       "threshold": 0,
-      "message": "Macerador fuera de la temperatura del escalón",
+      "message": {
+        "es": "Macerador fuera de la temperatura del escalón",
+        "en": "Mash tun outside step temperature"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -43,7 +58,10 @@
       "category": "cocina",
       "condition": "high",
       "threshold": 60,
-      "message": "Espuma alta en el hervidor",
+      "message": {
+        "es": "Espuma alta en el hervidor",
+        "en": "High kettle foam"
+      },
       "priority": 400,
       "ack_required": false,
       "enabled": true,
@@ -57,7 +75,10 @@
       "category": "cocina",
       "condition": "high",
       "threshold": 80,
-      "message": "Riesgo de desbordamiento del hervidor",
+      "message": {
+        "es": "Riesgo de desbordamiento del hervidor",
+        "en": "Risk of kettle overflow"
+      },
       "priority": 850,
       "ack_required": true,
       "enabled": true,
@@ -71,7 +92,10 @@
       "category": "cocina",
       "condition": "high",
       "threshold": 200,
-      "message": "Lecho filtrante colmatado",
+      "message": {
+        "es": "Lecho filtrante colmatado",
+        "en": "Clogged filter bed"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -85,7 +109,10 @@
       "category": "cocina",
       "condition": "true",
       "threshold": 0,
-      "message": "Mosto a bodega por encima de la temperatura de siembra",
+      "message": {
+        "es": "Mosto a bodega por encima de la temperatura de siembra",
+        "en": "Wort sent to cellar above yeast pitching temperature"
+      },
       "priority": 750,
       "ack_required": true,
       "enabled": true,
@@ -99,7 +126,10 @@
       "category": "cocina",
       "condition": "true",
       "threshold": 0,
-      "message": "La cocción espera una confirmación del operador",
+      "message": {
+        "es": "La cocción espera una confirmación del operador",
+        "en": "Brewing awaits confirmation from the operator"
+      },
       "priority": 300,
       "ack_required": false,
       "enabled": true,
@@ -113,7 +143,10 @@
       "category": "cocina",
       "condition": "true",
       "threshold": 0,
-      "message": "Secuencia de cocción retenida",
+      "message": {
+        "es": "Secuencia de cocción retenida",
+        "en": "Brewing sequence on hold"
+      },
       "priority": 250,
       "ack_required": false,
       "enabled": true,
@@ -127,7 +160,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 1.5,
-      "message": "FV1 · Temperatura por encima de la consigna",
+      "message": {
+        "es": "FV1 · Temperatura por encima de la consigna",
+        "en": "FV1 · Temperature above the setpoint"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -141,7 +177,10 @@
       "category": "bodega",
       "condition": "low",
       "threshold": -1.5,
-      "message": "FV1 · Temperatura por debajo de la consigna",
+      "message": {
+        "es": "FV1 · Temperatura por debajo de la consigna",
+        "en": "FV1 · Temperature below the setpoint"
+      },
       "priority": 500,
       "ack_required": true,
       "enabled": true,
@@ -155,7 +194,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 1.6,
-      "message": "FV1 · Presión de CO₂ alta",
+      "message": {
+        "es": "FV1 · Presión de CO₂ alta",
+        "en": "FV1 · High CO₂ pressure"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -169,7 +211,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 2.2,
-      "message": "FV1 · Presión muy alta: va a abrir la válvula de seguridad",
+      "message": {
+        "es": "FV1 · Presión muy alta: va a abrir la válvula de seguridad",
+        "en": "FV1 · Very high pressure: the safety valve will open"
+      },
       "priority": 1000,
       "ack_required": true,
       "enabled": true,
@@ -183,7 +228,10 @@
       "category": "bodega",
       "condition": "true",
       "threshold": 0,
-      "message": "FV1 · Fermentación parada: la densidad no baja",
+      "message": {
+        "es": "FV1 · Fermentación parada: la densidad no baja",
+        "en": "FV1 · Fermentation stopped: density does not decrease"
+      },
       "priority": 600,
       "ack_required": true,
       "enabled": true,
@@ -197,7 +245,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 5.5,
-      "message": "FV1 · Cerveza lista para envasar",
+      "message": {
+        "es": "FV1 · Cerveza lista para envasar",
+        "en": "FV1 · Beer ready to bottle"
+      },
       "priority": 200,
       "ack_required": false,
       "enabled": true,
@@ -211,7 +262,10 @@
       "category": "bodega",
       "condition": "false",
       "threshold": 0,
-      "message": "FV1 · Temperatura en consigna manual",
+      "message": {
+        "es": "FV1 · Temperatura en consigna manual",
+        "en": "FV1 · Manual setpoint temperature"
+      },
       "priority": 200,
       "ack_required": false,
       "enabled": true,
@@ -225,7 +279,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 1.5,
-      "message": "FV2 · Temperatura por encima de la consigna",
+      "message": {
+        "es": "FV2 · Temperatura por encima de la consigna",
+        "en": "FV2 · Temperature above the setpoint"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -239,7 +296,10 @@
       "category": "bodega",
       "condition": "low",
       "threshold": -1.5,
-      "message": "FV2 · Temperatura por debajo de la consigna",
+      "message": {
+        "es": "FV2 · Temperatura por debajo de la consigna",
+        "en": "FV2 · Temperature below the setpoint"
+      },
       "priority": 500,
       "ack_required": true,
       "enabled": true,
@@ -253,7 +313,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 1.6,
-      "message": "FV2 · Presión de CO₂ alta",
+      "message": {
+        "es": "FV2 · Presión de CO₂ alta",
+        "en": "FV2 · High CO₂ pressure"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -267,7 +330,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 2.2,
-      "message": "FV2 · Presión muy alta: va a abrir la válvula de seguridad",
+      "message": {
+        "es": "FV2 · Presión muy alta: va a abrir la válvula de seguridad",
+        "en": "FV2 · Very high pressure: the safety valve will open"
+      },
       "priority": 1000,
       "ack_required": true,
       "enabled": true,
@@ -281,7 +347,10 @@
       "category": "bodega",
       "condition": "true",
       "threshold": 0,
-      "message": "FV2 · Fermentación parada: la densidad no baja",
+      "message": {
+        "es": "FV2 · Fermentación parada: la densidad no baja",
+        "en": "FV2 · Fermentation stopped: density does not decrease"
+      },
       "priority": 600,
       "ack_required": true,
       "enabled": true,
@@ -295,7 +364,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 5.5,
-      "message": "FV2 · Cerveza lista para envasar",
+      "message": {
+        "es": "FV2 · Cerveza lista para envasar",
+        "en": "FV2 · Beer ready to bottle"
+      },
       "priority": 200,
       "ack_required": false,
       "enabled": true,
@@ -309,7 +381,10 @@
       "category": "bodega",
       "condition": "false",
       "threshold": 0,
-      "message": "FV2 · Temperatura en consigna manual",
+      "message": {
+        "es": "FV2 · Temperatura en consigna manual",
+        "en": "FV2 · Manual setpoint temperature"
+      },
       "priority": 200,
       "ack_required": false,
       "enabled": true,
@@ -323,7 +398,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 1.5,
-      "message": "FV3 · Temperatura por encima de la consigna",
+      "message": {
+        "es": "FV3 · Temperatura por encima de la consigna",
+        "en": "FV3 · Temperature above the setpoint"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -337,7 +415,10 @@
       "category": "bodega",
       "condition": "low",
       "threshold": -1.5,
-      "message": "FV3 · Temperatura por debajo de la consigna",
+      "message": {
+        "es": "FV3 · Temperatura por debajo de la consigna",
+        "en": "FV3 · Temperature below the setpoint"
+      },
       "priority": 500,
       "ack_required": true,
       "enabled": true,
@@ -351,7 +432,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 1.6,
-      "message": "FV3 · Presión de CO₂ alta",
+      "message": {
+        "es": "FV3 · Presión de CO₂ alta",
+        "en": "FV3 · High CO₂ pressure"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -365,7 +449,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 2.2,
-      "message": "FV3 · Presión muy alta: va a abrir la válvula de seguridad",
+      "message": {
+        "es": "FV3 · Presión muy alta: va a abrir la válvula de seguridad",
+        "en": "FV3 · Very high pressure: the safety valve will open"
+      },
       "priority": 1000,
       "ack_required": true,
       "enabled": true,
@@ -379,7 +466,10 @@
       "category": "bodega",
       "condition": "true",
       "threshold": 0,
-      "message": "FV3 · Fermentación parada: la densidad no baja",
+      "message": {
+        "es": "FV3 · Fermentación parada: la densidad no baja",
+        "en": "FV3 · Fermentation stopped: density does not decrease"
+      },
       "priority": 600,
       "ack_required": true,
       "enabled": true,
@@ -393,7 +483,10 @@
       "category": "bodega",
       "condition": "high",
       "threshold": 5.5,
-      "message": "FV3 · Cerveza lista para envasar",
+      "message": {
+        "es": "FV3 · Cerveza lista para envasar",
+        "en": "FV3 · Beer ready to bottle"
+      },
       "priority": 200,
       "ack_required": false,
       "enabled": true,
@@ -407,7 +500,10 @@
       "category": "bodega",
       "condition": "false",
       "threshold": 0,
-      "message": "FV3 · Temperatura en consigna manual",
+      "message": {
+        "es": "FV3 · Temperatura en consigna manual",
+        "en": "FV3 · Manual setpoint temperature"
+      },
       "priority": 200,
       "ack_required": false,
       "enabled": true,
@@ -421,7 +517,10 @@
       "category": "servicios",
       "condition": "low",
       "threshold": 4.0,
-      "message": "Presión de vapor baja",
+      "message": {
+        "es": "Presión de vapor baja",
+        "en": "Low vapor pressure"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -435,7 +534,10 @@
       "category": "servicios",
       "condition": "true",
       "threshold": 0,
-      "message": "Fallo de caldera",
+      "message": {
+        "es": "Fallo de caldera",
+        "en": "Boiler failure"
+      },
       "priority": 900,
       "ack_required": true,
       "enabled": true,
@@ -449,7 +551,10 @@
       "category": "servicios",
       "condition": "true",
       "threshold": 0,
-      "message": "Fallo de la enfriadora de glicol",
+      "message": {
+        "es": "Fallo de la enfriadora de glicol",
+        "en": "Glycol chiller failure"
+      },
       "priority": 900,
       "ack_required": true,
       "enabled": true,
@@ -463,7 +568,10 @@
       "category": "servicios",
       "condition": "high",
       "threshold": 0.0,
-      "message": "Glicol por encima de 0 °C",
+      "message": {
+        "es": "Glicol por encima de 0 °C",
+        "en": "Glycol above 0°C"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -477,7 +585,10 @@
       "category": "servicios",
       "condition": "low",
       "threshold": 40,
-      "message": "Nivel bajo en el depósito de glicol",
+      "message": {
+        "es": "Nivel bajo en el depósito de glicol",
+        "en": "Low level in glycol tank"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -491,7 +602,10 @@
       "category": "servicios",
       "condition": "low",
       "threshold": 10,
-      "message": "Nivel bajo de agua caliente",
+      "message": {
+        "es": "Nivel bajo de agua caliente",
+        "en": "Low hot water level"
+      },
       "priority": 400,
       "ack_required": true,
       "enabled": true,
@@ -505,7 +619,10 @@
       "category": "sistema",
       "condition": "false",
       "threshold": 0,
-      "message": "Sin comunicación con el PLC (OPC UA)",
+      "message": {
+        "es": "Sin comunicación con el PLC (OPC UA)",
+        "en": "No communication with the PLC (OPC UA)"
+      },
       "priority": 950,
       "ack_required": true,
       "enabled": true,

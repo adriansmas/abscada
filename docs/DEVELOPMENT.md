@@ -4,7 +4,7 @@
 
 Python >= 3.11; entorno probado localmente: Windows, Python 3.14.3, PySide6 6.11.2, python-snap7 3.2.0, pytest 9.1.1. `requirements-lock.txt` fija las dependencias principales probadas; no es un lock universal con hashes de todos los paquetes transitivos.
 
-Instalar: `python -m pip install -e '.[dev,s7,modbus]'`. Ejecutar: `python -m abscada examples/demo`. Los ejemplos necesitan el extra S7. Las pruebas arrancan servidores TCP S7 independientes en puertos efímeros; no registran un protocolo de simulación interno. No introducir importaciones Qt en el dominio ni en comunicaciones.
+Instalar: `python -m pip install -e '.[dev,s7,modbus,opcua]'`. Ejecutar: `python -m abscada examples/demo`. Los ejemplos S7 necesitan `s7`, los Modbus necesitan `modbus` y la cervecería requiere `opcua`; ADS no requiere un paquete de transporte adicional. Las pruebas arrancan servidores TCP S7 independientes en puertos efímeros; no registran un protocolo de simulación interno. No introducir importaciones Qt en el dominio ni en comunicaciones.
 
 ## Pruebas
 
@@ -21,7 +21,7 @@ Instalar: `python -m pip install -e '.[dev,s7,modbus]'`. Ejecutar: `python -m ab
 - Runtime en otra ventana: controles, cierre, reinicio y aislamiento del proyecto.
 - Comparación de imágenes del lienzo de Studio antes y después de adquirir valores: el diseño permanece idéntico.
 
-Las pruebas S7 TCP se omiten si falta python-snap7. Qt se necesita para las pruebas de interfaz. El workflow de GitHub cubre Windows/Linux y Python 3.11/3.14; todavía no se ha ejecutado en un repositorio remoto.
+Las pruebas S7 TCP se omiten si falta python-snap7. Qt se necesita para las pruebas de interfaz. El workflow de GitHub cubre Windows/Linux y Python 3.11/3.14. El estado de sus ejecuciones se consulta en GitHub Actions; esta guía no acredita una ejecución remota concreta. macOS no está incluido en esa matriz.
 
 `python tools/capture_demo.py` regenera `docs/editor.png`, `docs/runtime.png` y `docs/editor-runtime-active.png`. Revisar visualmente las capturas cuando cambie el renderizador. No sustituir las pruebas funcionales por una captura. En Windows offscreen se cargan explícitamente las fuentes del sistema.
 
@@ -37,7 +37,7 @@ El registro no ejecuta plugins externos encontrados en archivos del proyecto. No
 
 ## Añadir elementos gráficos
 
-Incorporar el tipo a `KINDS`, validación del proyecto, paleta, renderizador y pruebas. Mantener la representación como datos. Las acciones deben pasar por `Runtime.write`, nunca llamar a una conexión desde un evento Qt.
+Incorporar el tipo a `KINDS`, validación del proyecto, herramientas de dibujo (`graphics.TOOL_NAMES`), renderizador y pruebas. Mantener la representación como datos. Las acciones deben pasar por `Runtime.write`, nunca llamar a una conexión desde un evento Qt.
 
 ## Textos de la aplicación e idiomas
 
@@ -57,7 +57,7 @@ La interfaz se escribe en español, el idioma de origen, y cada texto visible pa
 
 `tests/test_i18n.py` falla si un texto no tiene traducción o si sus marcadores `{…}` no coinciden. Para añadir un idioma, crea `locales/<código>.json` con `--export <código>`, tradúcelo y añade el código a `LANGUAGES`.
 
-Los textos de **los proyectos** (pantallas, alarmas, recetas) no pasan por aquí: son datos del proyecto.
+Los textos de **los proyectos** (pantallas, alarmas y títulos) no pasan por los catálogos de interfaz: son cadenas o mapas por idioma junto a cada propiedad. Véase [STUDIO.md](STUDIO.md). Los nombres de recetas recibidos del PLC siguen siendo datos de proceso. `example_translations.json` sirve únicamente para generar los ocho ejemplos bilingües.
 
 ## Antes de cambiar el formato
 
@@ -91,3 +91,43 @@ No hay que editar nada en GitHub. Si algo falla en CI, la etiqueta ya existe per
 ## Convenciones
 
 Código propio GPL-3.0-or-later. Mantener nombres de API en inglés, mensajes de interfaz y documentación en español. Evitar dependencias nuevas cuando el estándar de Python o Qt ya cubran la necesidad. Usar tipado y pruebas para contratos importantes. No prometer capacidad de producción ni compatibilidad de CPU sin evidencia.
+
+## Arquitectura
+
+Monolito modular con fronteras entre proyecto, adquisición, archivo, scripts y Qt. El núcleo funciona sin interfaz; los adaptadores no conocen pantallas ni widgets.
+
+| Módulos | Responsabilidad |
+| --- | --- |
+| project, project_storage, versioning | Carga/validación, guardado con recuperación y versiones Git |
+| connectors, protocol_definition, modbus, ads, opcua | Transporte y esquemas de conexiones/enlaces, incluido S7 en connectors |
+| runtime | Almacén de muestras, órdenes y trabajador independiente por conexión |
+| operations, alarms, storage, recording | Motor de alarmas y escritores SQLite; consultas separadas |
+| scripting, script_runner | Eventos/tareas serializados, proceso Python y timeout |
+| ui, studio_shell, graphics, graphic_properties | Studio, dibujo e inspectores |
+| runtime_window, screen_container, operation_windows | Ventanas y zonas con un Runtime compartido |
+| project_languages, project_text_editor, runtime_language_ui | Traducciones por texto, CSV y catálogo de Runtime |
+| faceplate_libraries, system_library, legacy_colors | Paquetes, objetos estándar y conversión de colores antiguos |
+
+Cada conexión tiene cliente, cola y agenda propios. Lecturas y escrituras se serializan dentro de ella; todavía no hay lecturas agrupadas. Las muestras contienen value, quality, timestamp y error; su fecha es de recepción en Runtime. good/uncertain/bad no sustituyen una futura marca de última lectura buena.
+
+Una escritura valida tipo, permiso y calidad y pasa por la cola del adaptador. Su Future confirma el transporte, no el estado físico: la lectura posterior actualiza el valor observado. No se reproducen órdenes descartadas al reconectar.
+
+La ventana principal posee Runtime y la copia del proyecto; emergentes y contenedores comparten servicios. Un cambio de zona destruye sus visores, sin reconstruir las zonas hermanas. Studio y Prueba visual usan el renderizador compartido en modos explícitos, sin adquisición.
+
+Operations es el escritor de alarmas/auditoría y programa registros diarios UTC. Los lectores trabajan separados de Qt. El bloqueo por proyecto impide dos runtimes y se libera al caer el proceso. El cierre cancela scripts, detiene adquisición y vacía el archivo antes de liberar recursos.
+
+El guardado usa huellas de disco y un bloqueo exclusivo. Prepara archivos y backups, reemplaza solo cambios y restaura ante E/S; no promete atomicidad multarchivo frente a corte eléctrico. Los scripts son código de confianza, aunque su ejecución aislada permita timeout y cancelación.
+
+## Validación actual
+
+Revisión local del 7 de octubre de 2026: **452 pruebas superadas** con `python -m pytest -q` (301,35 s). Los ocho ejemplos validan, tienen traducciones ES/EN completas y no contienen referencias de color. El catálogo de interfaz tiene 1105/1105 textos traducidos, sin entradas sin uso. Se comprobaron 80 enlaces locales en los 17 Markdown vigentes y se regeneraron las capturas de Studio con `tools/capture_visual_editor.py`.
+
+Las pruebas se ejecutan localmente en Windows con Qt offscreen y servidores TCP de desarrollo. Comprueban transporte S7/Modbus/ADS/OPC UA, autenticación y permisos, alarmas/archivo, scripts, edición Qt, layouts, librerías, idiomas y compatibilidad de colores antiguos.
+
+```bash
+python -m pytest -q
+python tools/i18n_check.py
+python -m abscada examples/brewery --validate
+```
+
+Una ejecución local no acredita el resultado remoto de CI, varios monitores físicos, Linux/macOS, PLC reales, carga sostenida o comportamiento ante corte de alimentación. Los ensayos pendientes se mantienen en [PENDIENTES.md](PENDIENTES.md); no se conservan informes de etapas antiguas como documentación vigente.

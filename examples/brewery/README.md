@@ -190,3 +190,7 @@ Este ejemplo muestra cómo es un SCADA cervecero; no es un sistema certificado.
 .venv\Scripts\python tools/capture_brewery.py           # capturas con datos en vivo en artifacts/brewery
 .venv\Scripts\python -m pytest tests/test_brewery.py    # proyecto, cocción, fermentación, recetas, roles y OPC UA
 ```
+
+## Idiomas y colores
+
+El proyecto incluye español e inglés. Cambia el idioma de edición en Studio y el de operación desde Runtime; las traducciones se guardan junto a cada texto. Cada objeto utiliza colores HEX explícitos, editables en sus propiedades. Véase [la guía de Studio](../../docs/STUDIO.md#idiomas).

@@ -1,6 +1,7 @@
 """Build the documented SCADA feature laboratory in a new project directory."""
 from pathlib import Path
 import argparse
+from abscada.example_languages import bilingual
 from abscada.project import Project
 from abscada.project_files import is_project
 from abscada.screen_tree import own_viewers
@@ -10,8 +11,7 @@ from abscada.drawing import set_points
 def build_project(root):
     root=Path(root).resolve()
     if is_project(root):raise ValueError('El proyecto ya existe; usa otra carpeta para no sobrescribir cambios')
-    palette={'Fondo':'#f4f7fa','Panel':'#ffffff','Texto':'#243c50','Marcha':'#147d75','Paro':'#c64b51','Aviso':'#da982f','S7':'#3678c8','Modbus':'#8152b4','Linea':'#7c94a5'}
-    p=Project(root,dict(schema_version=1,name='Laboratorio SCADA',startup_screen='00_layout',palette=palette),{},[],[],{}, {},manifest_file='laboratorio.abscada')
+    p=Project(root,dict(schema_version=1,name='Laboratorio SCADA',startup_screen='00_layout'),{},[],[],{}, {},manifest_file='laboratorio.abscada')
     p.types={
         'Bomba':{'Marcha':'bool','Caudal':'float','Consigna':'float'},
         'PlantaS7':{'Bomba1':'Bomba','Bomba2':'Bomba','Nivel':'float'},
@@ -43,28 +43,28 @@ def build_project(root):
 
     def elem(doc,kind,identifier,x,y,w,h,**data):
         result=dict(id=identifier,kind=kind,x=x,y=y,w=w,h=h,**data);doc['elements'].append(result);return result
-    def text(doc,identifier,title,x,y,w=500,h=32,**data):return elem(doc,'text',identifier,x,y,w,h,text=title,font_size=16,text_align='left',text_color='@Texto',**data)
+    def text(doc,identifier,title,x,y,w=500,h=32,**data):return elem(doc,'text',identifier,x,y,w,h,text=title,font_size=16,text_align='left',text_color='#243c50',**data)
     def title(doc,name,subtitle):
         e=text(doc,'title',name,30,22,1090,44);e.update(font_size=28,bold=True)
         e=text(doc,'subtitle',subtitle,30,72,1090,48);e.update(font_size=14,text_color='#63768b')
     def page(key,name,subtitle):
-        doc=dict(title=name,width=1160,height=770,background='@Fondo',grid_size=10,show_grid=True,snap_to_grid=True,elements=[],on_open=['screen_open'])
+        doc=dict(title=name,width=1160,height=770,background='#f4f7fa',grid_size=10,show_grid=True,snap_to_grid=True,elements=[],on_open=['screen_open'])
         p.screens[key]=doc;title(doc,name,subtitle);return doc
     def button(doc,identifier,label,x,y,tag=None,action='toggle',w=210,**data):
         result=elem(doc,'button',identifier,x,y,w,42,text=label,action=action,font_size=15,**data)
         if tag:result['tag']=tag
         return result
     def value(doc,identifier,label,tag,x,y,w=260,unit='',kind='text',**data):
-        return elem(doc,kind,identifier,x,y,w,44,text=label,tag=tag,unit=unit,decimals=1,text_align='left',color='#ffffff',text_color='@Texto',**data)
-    def lamp(doc,identifier,tag,x,y):return elem(doc,'lamp',identifier,x,y,44,44,tag=tag,lamp_colors=dict(on='@Marcha',off='#d7e0e9',bad='@Aviso'))
+        return elem(doc,kind,identifier,x,y,w,44,text=label,tag=tag,unit=unit,decimals=1,text_align='left',color='#ffffff',text_color='#243c50',**data)
+    def lamp(doc,identifier,tag,x,y):return elem(doc,'lamp',identifier,x,y,44,44,tag=tag,lamp_colors=dict(on='#147d75',off='#d7e0e9',bad='#da982f'))
     def condition(tag,value,op='eq'):return dict(tag=tag,op=op,value=value,bad=False)
     def nav(doc,key,label,x,y,w=240):return button(doc,'nav_'+key,label,x,y,action='screen',screen=key,target_container='contenido',w=w)
-    def card(doc,identifier,x,y,w,h):return elem(doc,'rectangle',identifier,x,y,w,h,color='@Panel',stroke_color='#dce5ed',stroke_width=1,filled=True,editor_locked=True)
+    def card(doc,identifier,x,y,w,h):return elem(doc,'rectangle',identifier,x,y,w,h,color='#ffffff',stroke_color='#dce5ed',stroke_width=1,filled=True,editor_locked=True)
     def path(doc,kind,identifier,points,**data):
-        e=dict(id=identifier,kind=kind,stroke_color='@Linea',stroke_width=12 if kind=='pipe' else 3);e.update(data);set_points(e,points);doc['elements'].append(e);return e
+        e=dict(id=identifier,kind=kind,stroke_color='#7c94a5',stroke_width=12 if kind=='pipe' else 3);e.update(data);set_points(e,points);doc['elements'].append(e);return e
 
     navigation=[('10_inicio','01 · Recorrido'),('20_internas','02 · Proceso interno'),('21_estados','03 · Estados y mandos'),('22_dibujo','04 · Dibujo e imágenes'),('23_faceplates','05 · Faceplates y ventanas'),('30_siemens','06 · Siemens S7'),('31_modbus','07 · Modbus TCP'),('40_graficas','08 · Gráficas en vivo'),('41_historicos','09 · Histórico diario'),('50_alarmas','10 · Alarmas y ACK'),('51_eventos','11 · Eventos y retorno'),('60_scripts','12 · Scripts y tareas')]
-    p.screens['00_layout']=dict(title='Laboratorio SCADA',width=1360,height=850,folder='Estructura',background='@Fondo',elements=[
+    p.screens['00_layout']=dict(title='Laboratorio SCADA',width=1360,height=850,folder='Estructura',background='#f4f7fa',elements=[
         dict(id='cabecera',kind='screen_container',x=0,y=0,w=1360,h=80,screen='01_cabecera'),
         dict(id='menu',kind='screen_container',x=0,y=80,w=200,h=770,screen='02_menu'),
         dict(id='contenido',kind='screen_container',x=200,y=80,w=1160,h=770,screen='10_inicio')])
@@ -96,11 +96,11 @@ def build_project(root):
     card(d,'process',30,140,640,505);card(d,'controls',695,140,435,505)
     path(d,'pipe','inlet',[[75,330],[190,330],[190,240],[335,240]],arrows='end')
     path(d,'pipe','outlet',[[465,460],[565,460],[565,545],[630,545]],arrows='end')
-    elem(d,'ellipse','pump',115,290,80,80,color='#ffffff',stroke_color='@S7',stroke_width=3,filled=True,group='bomba_local')
+    elem(d,'ellipse','pump',115,290,80,80,color='#ffffff',stroke_color='#3678c8',stroke_width=3,filled=True,group='bomba_local')
     path(d,'line','pump_line',[[128,302],[180,356]],group='bomba_local')
-    elem(d,'rectangle','tank',340,230,130,305,color='#edf3f7',stroke_color='@Linea',stroke_width=3,filled=True)
-    elem(d,'ellipse','tank_top',340,215,130,30,color='#edf3f7',stroke_color='@Linea',stroke_width=3,filled=True)
-    elem(d,'bar','level',360,260,90,248,tag='Local.Nivel',min=0,max=100,dynamics={'states':[dict(when=condition('Local.Nivel',80.,'ge'),style={'color':'@Paro'})],'default':{'color':'@Marcha'},'bad':{'color':'@Aviso'}})
+    elem(d,'rectangle','tank',340,230,130,305,color='#edf3f7',stroke_color='#7c94a5',stroke_width=3,filled=True)
+    elem(d,'ellipse','tank_top',340,215,130,30,color='#edf3f7',stroke_color='#7c94a5',stroke_width=3,filled=True)
+    elem(d,'bar','level',360,260,90,248,tag='Local.Nivel',min=0,max=100,dynamics={'states':[dict(when=condition('Local.Nivel',80.,'ge'),style={'color':'#c64b51'})],'default':{'color':'#147d75'},'bad':{'color':'#da982f'}})
     elem(d,'gauge','temp_gauge',505,150,150,150,tag='Local.Temperatura',min=0,max=60,unit='°C',decimals=1,text='Temperatura',gauge_style='dial',warning=40,alarm=50)
     lamp(d,'running','Local.Marcha',207,305);value(d,'pv','Nivel','Local.Nivel',335,556,280,'%')
     text(d,'tank_label','TK-01',340,166,190,36);value(d,'temp','Temperatura','Local.Temperatura',65,580,250,'°C')
@@ -112,11 +112,11 @@ def build_project(root):
     elem(d,'text_list','run_text',720,482,385,44,tag='Local.Marcha',texts=[{'value':'false','text':'Equipo parado'},{'value':'true','text':'Equipo en marcha'}],default_text='Estado desconocido',color='#ffffff')
     text(d,'use','Doble clic en una entrada para escribir. El nivel > 80 activa una alarma con retardo; los valores se registran cada segundo.',30,675,1090,60)
 
-    d=page('21_estados','Estados, permisos y gestos','Visibilidad, habilitación, colores de paleta, lista de textos y escrituras al pulsar/soltar.')
+    d=page('21_estados','Estados, permisos y gestos','Visibilidad, habilitación, colores por estado, lista de textos y escrituras al pulsar/soltar.')
     for i,name in enumerate(['VISIBILIDAD','PERMISO','PULSACIÓN']):
         card(d,'card'+str(i),30+i*375,145,345,375);e=text(d,'head'+str(i),name,50+i*375,163,300,30);e['bold']=True
     for name,desired in [('MARCHA',True),('PARO',False)]:
-        button(d,name,name,60,230,'Local.Marcha',action='set',value=desired,w=285,color='@Marcha' if desired else '@Paro',text_color='#ffffff',dynamics={'visible':condition('Local.Marcha',not desired)})
+        button(d,name,name,60,230,'Local.Marcha',action='set',value=desired,w=285,color='#147d75' if desired else '#c64b51',text_color='#ffffff',dynamics={'visible':condition('Local.Marcha',not desired)})
     lamp(d,'run_status','Local.Marcha',165,303);text(d,'overlap','Dos botones superpuestos. Solo recibe clic el que corresponde al estado.',55,380,285,95)
     button(d,'permit','Habilitar / bloquear permiso',430,230,'Local.Permiso',w=285)
     button(d,'guarded','Orden con permiso',430,298,'Local.Marcha',w=285,dynamics={'enabled':condition('Local.Permiso',True),'disabled_reason':'El permiso local está desactivado','disabled':{'color':'#d4dce4','text_color':'#63768b'}})
@@ -126,15 +126,15 @@ def build_project(root):
     button(d,'phases','Pulsar: 10 / soltar: 0',805,355,'Local.Orden',action='press_release',press_value=10,release_value=0,w=285)
     value(d,'command','Orden','Local.Orden',805,422,285)
     for i,(label,mode) in enumerate([('Parado',0),('Manual',1),('Automático',2),('Desconocido',9)]):button(d,'mode'+str(i),label,30+i*280,560,'Local.Modo',action='set',value=mode,w=260)
-    elem(d,'text_list','mode_text',30,630,535,62,tag='Local.Modo',texts=[dict(value=str(i),text=t) for i,t in enumerate(['Modo parado','Modo manual','Modo automático'])],default_text='Modo no definido',dynamics={'states':[dict(when=condition('Local.Modo',1),style={'color':'@Aviso','text_color':'#ffffff'}),dict(when=condition('Local.Modo',2),style={'color':'@Marcha','text_color':'#ffffff'})],'default':{'color':'#ffffff'}})
-    text(d,'palette_note','Colores compartidos: @Marcha, @Paro y @Aviso. Cambia la paleta desde Studio y reinicia Runtime para aplicar.',590,625,525,90)
+    elem(d,'text_list','mode_text',30,630,535,62,tag='Local.Modo',texts=[dict(value=str(i),text=t) for i,t in enumerate(['Modo parado','Modo manual','Modo automático'])],default_text='Modo no definido',dynamics={'states':[dict(when=condition('Local.Modo',1),style={'color':'#da982f','text_color':'#ffffff'}),dict(when=condition('Local.Modo',2),style={'color':'#147d75','text_color':'#ffffff'})],'default':{'color':'#ffffff'}})
+    text(d,'colors_note','Cada objeto tiene sus colores: verde para marcha, rojo para paro y ámbar para aviso. Edítalos en sus propiedades.',590,625,525,90)
 
     d=page('22_dibujo','Dibujo, imágenes y capas','Todos los elementos geométricos. En Studio: Objetos → bloqueo, ocultación, grupos y nombre descriptivo.')
-    path(d,'line','line',[[70,200],[470,200]],arrows='both',stroke_color='@S7',stroke_width=4)
-    path(d,'polyline','polyline',[[70,290],[210,240],[350,310],[490,250]],stroke_color='@Modbus',stroke_width=4,stroke_style='dash')
-    path(d,'pipe','pipe',[[75,420],[230,420],[230,350],[480,350]],arrows='end',dynamics={'states':[dict(when=condition('Local.Marcha',True),style={'stroke_color':'@Marcha'})]})
-    elem(d,'rectangle','rect',70,515,170,90,color='@S7',stroke_color='#1c4568',stroke_width=3,filled=True,group='formas')
-    elem(d,'ellipse','ellipse',290,515,170,90,color='@Modbus',stroke_color='#59327f',stroke_width=3,filled=True,group='formas')
+    path(d,'line','line',[[70,200],[470,200]],arrows='both',stroke_color='#3678c8',stroke_width=4)
+    path(d,'polyline','polyline',[[70,290],[210,240],[350,310],[490,250]],stroke_color='#8152b4',stroke_width=4,stroke_style='dash')
+    path(d,'pipe','pipe',[[75,420],[230,420],[230,350],[480,350]],arrows='end',dynamics={'states':[dict(when=condition('Local.Marcha',True),style={'stroke_color':'#147d75'})]})
+    elem(d,'rectangle','rect',70,515,170,90,color='#3678c8',stroke_color='#1c4568',stroke_width=3,filled=True,group='formas')
+    elem(d,'ellipse','ellipse',290,515,170,90,color='#8152b4',stroke_color='#59327f',stroke_width=3,filled=True,group='formas')
     card(d,'image_panel',575,140,550,470)
     elem(d,'image','valve',675,200,350,210,source='assets/valve-off.svg',dynamics={'states':[dict(when=condition('Local.Marcha',True),style={'source':'assets/valve-on.svg'})]})
     button(d,'image_state','Cambiar estado de válvula',690,470,'Local.Marcha',w=320)
@@ -250,6 +250,7 @@ ctx.write('Sistema.UltimoEvento', 'Banco interno restablecido')
     for state,color in [('off','#8394a5'),('on','#147d75')]:
         (assets/f'valve-{state}.svg').write_text(f'''<svg xmlns="http://www.w3.org/2000/svg" width="500" height="300" viewBox="0 0 500 300"><rect width="500" height="300" rx="24" fill="#edf3f7"/><path d="M40 150H460" stroke="#b5c4d1" stroke-width="32"/><path d="M160 75L340 225V75L160 225Z" fill="{color}" stroke="#243c50" stroke-width="5"/><path d="M250 150V35M210 35H290" stroke="#243c50" stroke-width="8"/><text x="250" y="278" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#243c50">VÁLVULA · {'ABIERTA' if state=='on' else 'CERRADA'}</text></svg>''',encoding='utf-8',newline='\n')
     from abscada.faceplate_libraries import link
+    p.manifest.update(languages=['es', 'en'], default_language='es')
     library=Path(__file__).resolve().parents[1]/'examples/libraries/equipos-1.0.0.abscada-library.json'
     link(p,library,'equipos')
     # Keep the internal instance local and use the published template for Siemens.
@@ -257,6 +258,7 @@ ctx.write('Sistema.UltimoEvento', 'Banco interno restablecido')
         if element.get('id')=='unit1':element['template']='equipos__unidad'
     # The trend on 41_historicos started as a copy of 40_graficas: each control owns its configuration.
     own_viewers(p)
+    bilingual(p)
     p.save();return p
 
 

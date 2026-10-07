@@ -1,8 +1,11 @@
 {
-  "title": "Cabecera",
+  "title": {
+    "es": "Cabecera",
+    "en": "Header"
+  },
   "width": 1600,
   "height": 70,
-  "background": "@Cabecera",
+  "background": "#2b2620",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,7 +17,10 @@
       "y": 8,
       "w": 210,
       "h": 28,
-      "text": "LA TOLVA",
+      "text": {
+        "es": "LA TOLVA",
+        "en": "LA TOLVA"
+      },
       "font_size": 20,
       "bold": true,
       "text_color": "#ffffff",
@@ -27,7 +33,10 @@
       "y": 38,
       "w": 220,
       "h": 20,
-      "text": "Microcervecería · cocción 10 hl",
+      "text": {
+        "es": "Microcervecería · cocción 10 hl",
+        "en": "Microbrewery · 10 hl brewing"
+      },
       "font_size": 11,
       "bold": false,
       "text_color": "#c9b9a6",
@@ -40,7 +49,10 @@
       "y": 6,
       "w": 300,
       "h": 18,
-      "text": "SALA DE COCCIÓN",
+      "text": {
+        "es": "SALA DE COCCIÓN",
+        "en": "BREWHOUSE"
+      },
       "font_size": 10,
       "bold": true,
       "text_color": "#c9b9a6",
@@ -57,61 +69,103 @@
       "font_size": 13,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Paro",
-      "border_color": "@Paro",
-      "default_text": "SIN COMUNICACIÓN",
+      "color": "#9ba2a8",
+      "border_color": "#9ba2a8",
+      "default_text": {
+        "es": "SIN COMUNICACIÓN",
+        "en": "NO COMMUNICATION"
+      },
       "texts": [
         {
           "value": "0",
-          "text": "REPOSO"
+          "text": {
+            "es": "REPOSO",
+            "en": "REST"
+          }
         },
         {
           "value": "1",
-          "text": "LLENADO DE AGUA"
+          "text": {
+            "es": "LLENADO DE AGUA",
+            "en": "WATER FILLING"
+          }
         },
         {
           "value": "2",
-          "text": "EMPASTE"
+          "text": {
+            "es": "EMPASTE",
+            "en": "MASH-IN"
+          }
         },
         {
           "value": "3",
-          "text": "ESCALÓN 1 · PROTEICO"
+          "text": {
+            "es": "ESCALÓN 1 · PROTEICO",
+            "en": "STEP 1 · PROTEIN REST"
+          }
         },
         {
           "value": "4",
-          "text": "ESCALÓN 2 · SACARIFICACIÓN"
+          "text": {
+            "es": "ESCALÓN 2 · SACARIFICACIÓN",
+            "en": "STEP 2 · SACCHARIFICATION"
+          }
         },
         {
           "value": "5",
-          "text": "ESCALÓN 3 · MASH-OUT"
+          "text": {
+            "es": "ESCALÓN 3 · MASH-OUT",
+            "en": "STEP 3 · MASH-OUT"
+          }
         },
         {
           "value": "6",
-          "text": "TRASIEGO Y RECIRCULACIÓN"
+          "text": {
+            "es": "TRASIEGO Y RECIRCULACIÓN",
+            "en": "TRANSFER AND RECIRCULATION"
+          }
         },
         {
           "value": "7",
-          "text": "FILTRADO Y LAVADO"
+          "text": {
+            "es": "FILTRADO Y LAVADO",
+            "en": "LAUTERING AND SPARGING"
+          }
         },
         {
           "value": "8",
-          "text": "CALENTAMIENTO A EBULLICIÓN"
+          "text": {
+            "es": "CALENTAMIENTO A EBULLICIÓN",
+            "en": "HEATING TO BOILING"
+          }
         },
         {
           "value": "9",
-          "text": "HERVIDO"
+          "text": {
+            "es": "HERVIDO",
+            "en": "BOILING"
+          }
         },
         {
           "value": "10",
-          "text": "WHIRLPOOL"
+          "text": {
+            "es": "WHIRLPOOL",
+            "en": "WHIRLPOOL"
+          }
         },
         {
           "value": "11",
-          "text": "ENFRIADO Y TRASIEGO A FV"
+          "text": {
+            "es": "ENFRIADO Y TRASIEGO A FV",
+            "en": "COOLING AND TRANSFER TO FV"
+          }
         },
         {
           "value": "12",
-          "text": "LIMPIEZA CIP"
+          "text": {
+            "es": "LIMPIEZA CIP",
+            "en": "CIP CLEANING"
+          }
         }
       ],
       "dynamics": {
@@ -124,8 +178,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "border_color": "@Aviso"
+              "color": "#e89a1c",
+              "border_color": "#e89a1c"
             }
           },
           {
@@ -136,14 +190,14 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "border_color": "@Marcha"
+              "color": "#2e8b57",
+              "border_color": "#2e8b57"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -154,7 +208,10 @@
       "y": 6,
       "w": 90,
       "h": 18,
-      "text": "LOTE",
+      "text": {
+        "es": "LOTE",
+        "en": "LOT"
+      },
       "font_size": 10,
       "bold": true,
       "text_color": "#c9b9a6",
@@ -167,15 +224,18 @@
       "y": 26,
       "w": 90,
       "h": 34,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.Lote",
       "unit": "",
       "decimals": 0,
       "font_size": 18,
       "bold": true,
       "text_align": "left",
-      "color": "@Cabecera",
-      "border_color": "@Cabecera",
+      "color": "#2b2620",
+      "border_color": "#2b2620",
       "text_color": "#ffffff"
     },
     {
@@ -185,7 +245,10 @@
       "y": 6,
       "w": 150,
       "h": 18,
-      "text": "RECETA",
+      "text": {
+        "es": "RECETA",
+        "en": "RECIPE"
+      },
       "font_size": 10,
       "bold": true,
       "text_color": "#c9b9a6",
@@ -198,15 +261,18 @@
       "y": 26,
       "w": 150,
       "h": 34,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.RecetaLote",
       "unit": "",
       "decimals": 0,
       "font_size": 18,
       "bold": true,
       "text_align": "left",
-      "color": "@Cabecera",
-      "border_color": "@Cabecera",
+      "color": "#2b2620",
+      "border_color": "#2b2620",
       "text_color": "#ffffff"
     },
     {
@@ -216,7 +282,10 @@
       "y": 6,
       "w": 120,
       "h": 18,
-      "text": "RESTANTE",
+      "text": {
+        "es": "RESTANTE",
+        "en": "REMAINING"
+      },
       "font_size": 10,
       "bold": true,
       "text_color": "#c9b9a6",
@@ -229,15 +298,18 @@
       "y": 26,
       "w": 120,
       "h": 34,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.TiempoRestante",
       "unit": "min",
       "decimals": 0,
       "font_size": 18,
       "bold": true,
       "text_align": "left",
-      "color": "@Cabecera",
-      "border_color": "@Cabecera",
+      "color": "#2b2620",
+      "border_color": "#2b2620",
       "text_color": "#ffffff"
     },
     {
@@ -247,7 +319,10 @@
       "y": 6,
       "w": 110,
       "h": 18,
-      "text": "GLICOL",
+      "text": {
+        "es": "GLICOL",
+        "en": "GLYCOL"
+      },
       "font_size": 10,
       "bold": true,
       "text_color": "#c9b9a6",
@@ -260,15 +335,18 @@
       "y": 26,
       "w": 110,
       "h": 34,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.TempGlicol",
       "unit": "°C",
       "decimals": 1,
       "font_size": 18,
       "bold": true,
       "text_align": "left",
-      "color": "@Cabecera",
-      "border_color": "@Cabecera",
+      "color": "#2b2620",
+      "border_color": "#2b2620",
       "text_color": "#ffffff"
     },
     {
@@ -278,7 +356,10 @@
       "y": 6,
       "w": 300,
       "h": 18,
-      "text": "ALARMAS DE ÁREA",
+      "text": {
+        "es": "ALARMAS DE ÁREA",
+        "en": "AREA ALARMS"
+      },
       "font_size": 10,
       "bold": true,
       "text_color": "#c9b9a6",
@@ -295,16 +376,22 @@
       "font_size": 11,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Apagado",
-      "border_color": "@Apagado",
+      "color": "#4a4038",
+      "border_color": "#4a4038",
       "texts": [
         {
           "value": "true",
-          "text": "COC."
+          "text": {
+            "es": "COC.",
+            "en": "COC."
+          }
         },
         {
           "value": "false",
-          "text": "COC."
+          "text": {
+            "es": "COC.",
+            "en": "COC."
+          }
         }
       ],
       "dynamics": {
@@ -317,17 +404,20 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       },
-      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+      "description": {
+        "es": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)",
+        "en": "In red if the area has an alarm (COM: no communication with the PLC)"
+      }
     },
     {
       "id": "area1",
@@ -340,16 +430,22 @@
       "font_size": 11,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Apagado",
-      "border_color": "@Apagado",
+      "color": "#4a4038",
+      "border_color": "#4a4038",
       "texts": [
         {
           "value": "true",
-          "text": "FV1"
+          "text": {
+            "es": "FV1",
+            "en": "FV1"
+          }
         },
         {
           "value": "false",
-          "text": "FV1"
+          "text": {
+            "es": "FV1",
+            "en": "FV1"
+          }
         }
       ],
       "dynamics": {
@@ -362,17 +458,20 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       },
-      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+      "description": {
+        "es": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)",
+        "en": "In red if the area has an alarm (COM: no communication with the PLC)"
+      }
     },
     {
       "id": "area2",
@@ -385,16 +484,22 @@
       "font_size": 11,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Apagado",
-      "border_color": "@Apagado",
+      "color": "#4a4038",
+      "border_color": "#4a4038",
       "texts": [
         {
           "value": "true",
-          "text": "FV2"
+          "text": {
+            "es": "FV2",
+            "en": "FV2"
+          }
         },
         {
           "value": "false",
-          "text": "FV2"
+          "text": {
+            "es": "FV2",
+            "en": "FV2"
+          }
         }
       ],
       "dynamics": {
@@ -407,17 +512,20 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       },
-      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+      "description": {
+        "es": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)",
+        "en": "In red if the area has an alarm (COM: no communication with the PLC)"
+      }
     },
     {
       "id": "area3",
@@ -430,16 +538,22 @@
       "font_size": 11,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Apagado",
-      "border_color": "@Apagado",
+      "color": "#4a4038",
+      "border_color": "#4a4038",
       "texts": [
         {
           "value": "true",
-          "text": "FV3"
+          "text": {
+            "es": "FV3",
+            "en": "FV3"
+          }
         },
         {
           "value": "false",
-          "text": "FV3"
+          "text": {
+            "es": "FV3",
+            "en": "FV3"
+          }
         }
       ],
       "dynamics": {
@@ -452,17 +566,20 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       },
-      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+      "description": {
+        "es": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)",
+        "en": "In red if the area has an alarm (COM: no communication with the PLC)"
+      }
     },
     {
       "id": "area4",
@@ -475,16 +592,22 @@
       "font_size": 11,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Apagado",
-      "border_color": "@Apagado",
+      "color": "#4a4038",
+      "border_color": "#4a4038",
       "texts": [
         {
           "value": "true",
-          "text": "SERV."
+          "text": {
+            "es": "SERV.",
+            "en": "SERV."
+          }
         },
         {
           "value": "false",
-          "text": "SERV."
+          "text": {
+            "es": "SERV.",
+            "en": "SERV."
+          }
         }
       ],
       "dynamics": {
@@ -497,17 +620,20 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       },
-      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+      "description": {
+        "es": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)",
+        "en": "In red if the area has an alarm (COM: no communication with the PLC)"
+      }
     },
     {
       "id": "area5",
@@ -520,16 +646,22 @@
       "font_size": 11,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Apagado",
-      "border_color": "@Apagado",
+      "color": "#4a4038",
+      "border_color": "#4a4038",
       "texts": [
         {
           "value": "true",
-          "text": "COM"
+          "text": {
+            "es": "COM",
+            "en": "COM"
+          }
         },
         {
           "value": "false",
-          "text": "COM"
+          "text": {
+            "es": "COM",
+            "en": "COM"
+          }
         }
       ],
       "dynamics": {
@@ -542,17 +674,20 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       },
-      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+      "description": {
+        "es": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)",
+        "en": "In red if the area has an alarm (COM: no communication with the PLC)"
+      }
     },
     {
       "id": "fecha",
@@ -561,12 +696,15 @@
       "y": 8,
       "w": 185,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Sistema.Fecha",
       "font_size": 13,
       "text_align": "right",
-      "color": "@Cabecera",
-      "border_color": "@Cabecera",
+      "color": "#2b2620",
+      "border_color": "#2b2620",
       "text_color": "#c9b9a6"
     },
     {
@@ -576,13 +714,16 @@
       "y": 30,
       "w": 185,
       "h": 32,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Sistema.Hora",
       "font_size": 21,
       "bold": true,
       "text_align": "right",
-      "color": "@Cabecera",
-      "border_color": "@Cabecera",
+      "color": "#2b2620",
+      "border_color": "#2b2620",
       "text_color": "#ffffff"
     }
   ],

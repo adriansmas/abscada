@@ -1,8 +1,11 @@
 {
-  "title": "Laboratorio SCADA",
+  "title": {
+    "es": "Laboratorio SCADA",
+    "en": "SCADA lab"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Laboratorio SCADA",
+      "text": {
+        "es": "Laboratorio SCADA",
+        "en": "SCADA lab"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "Un proyecto completo, dividido por función. Las pantallas de equipos usan conexiones TCP independientes.",
+      "text": {
+        "es": "Un proyecto completo, dividido por función. Las pantallas de equipos usan conexiones TCP independientes.",
+        "en": "A complete project, divided by function. Team displays use separate TCP connections."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -39,7 +48,7 @@
       "y": 140,
       "w": 345,
       "h": 415,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -52,10 +61,13 @@
       "y": 158,
       "w": 305,
       "h": 40,
-      "text": "SIN EQUIPOS",
+      "text": {
+        "es": "SIN EQUIPOS",
+        "en": "NO EQUIPMENT"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -65,10 +77,13 @@
       "y": 210,
       "w": 305,
       "h": 66,
-      "text": "Variables internas, estados visuales, alarmas y scripts.",
+      "text": {
+        "es": "Variables internas, estados visuales, alarmas y scripts.",
+        "en": "Internal variables, visual states, alarms and scripts."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "nav_20_internas",
@@ -77,7 +92,10 @@
       "y": 300,
       "w": 305,
       "h": 42,
-      "text": "02 · Proceso interno",
+      "text": {
+        "es": "02 · Proceso interno",
+        "en": "02 · Internal process"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "20_internas",
@@ -90,7 +108,10 @@
       "y": 356,
       "w": 305,
       "h": 42,
-      "text": "03 · Estados y mandos",
+      "text": {
+        "es": "03 · Estados y mandos",
+        "en": "03 · States and commands"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "21_estados",
@@ -103,7 +124,10 @@
       "y": 412,
       "w": 305,
       "h": 42,
-      "text": "04 · Dibujo e imágenes",
+      "text": {
+        "es": "04 · Dibujo e imágenes",
+        "en": "04 · Drawing and images"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "22_dibujo",
@@ -116,7 +140,10 @@
       "y": 468,
       "w": 305,
       "h": 42,
-      "text": "05 · Faceplates y ventanas",
+      "text": {
+        "es": "05 · Faceplates y ventanas",
+        "en": "05 · Faceplates and windows"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "23_faceplates",
@@ -129,7 +156,7 @@
       "y": 140,
       "w": 345,
       "h": 415,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -142,10 +169,13 @@
       "y": 158,
       "w": 305,
       "h": 40,
-      "text": "COMUNICACIONES",
+      "text": {
+        "es": "COMUNICACIONES",
+        "en": "COMMUNICATIONS"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -155,10 +185,13 @@
       "y": 210,
       "w": 305,
       "h": 66,
-      "text": "S7: DB1 · Modbus: coils y registros. Calidad real de lectura.",
+      "text": {
+        "es": "S7: DB1 · Modbus: coils y registros. Calidad real de lectura.",
+        "en": "S7: DB1 · Modbus: coils and registers. Real reading quality."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "nav_30_siemens",
@@ -167,7 +200,10 @@
       "y": 300,
       "w": 305,
       "h": 42,
-      "text": "06 · Siemens S7",
+      "text": {
+        "es": "06 · Siemens S7",
+        "en": "06 Siemens S7"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "30_siemens",
@@ -180,7 +216,10 @@
       "y": 356,
       "w": 305,
       "h": 42,
-      "text": "07 · Modbus TCP",
+      "text": {
+        "es": "07 · Modbus TCP",
+        "en": "07 Modbus TCP"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "31_modbus",
@@ -193,7 +232,7 @@
       "y": 140,
       "w": 345,
       "h": 415,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -206,10 +245,13 @@
       "y": 158,
       "w": 305,
       "h": 40,
-      "text": "DATOS Y OPERACIÓN",
+      "text": {
+        "es": "DATOS Y OPERACIÓN",
+        "en": "DATA AND OPERATION"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -219,10 +261,13 @@
       "y": 210,
       "w": 305,
       "h": 66,
-      "text": "Curvas, archivos diarios, reconocimiento y eventos.",
+      "text": {
+        "es": "Curvas, archivos diarios, reconocimiento y eventos.",
+        "en": "Curves, daily files, recognition and events."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "nav_40_graficas",
@@ -231,7 +276,10 @@
       "y": 300,
       "w": 305,
       "h": 42,
-      "text": "08 · Gráficas en vivo",
+      "text": {
+        "es": "08 · Gráficas en vivo",
+        "en": "08 · Live graphics"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "40_graficas",
@@ -244,7 +292,10 @@
       "y": 356,
       "w": 305,
       "h": 42,
-      "text": "09 · Histórico diario",
+      "text": {
+        "es": "09 · Histórico diario",
+        "en": "09 · Daily history"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "41_historicos",
@@ -257,7 +308,10 @@
       "y": 412,
       "w": 305,
       "h": 42,
-      "text": "10 · Alarmas y ACK",
+      "text": {
+        "es": "10 · Alarmas y ACK",
+        "en": "10 · Alarms and ACK"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "50_alarmas",
@@ -270,7 +324,10 @@
       "y": 468,
       "w": 305,
       "h": 42,
-      "text": "11 · Eventos y retorno",
+      "text": {
+        "es": "11 · Eventos y retorno",
+        "en": "11 · Events and return"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "51_eventos",
@@ -283,10 +340,13 @@
       "y": 588,
       "w": 1090,
       "h": 62,
-      "text": "Empieza en «Proceso interno». Activa la señal local para generar curvas; las variables PLC nunca se sustituyen por valores locales.",
+      "text": {
+        "es": "Empieza en «Proceso interno». Activa la señal local para generar curvas; las variables PLC nunca se sustituyen por valores locales.",
+        "en": "Start at “Internal process”. Activate the local signal to generate curves; PLC variables are never replaced by local values."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "nav_60_scripts",
@@ -295,7 +355,10 @@
       "y": 682,
       "w": 280,
       "h": 42,
-      "text": "Ver scripts y tareas",
+      "text": {
+        "es": "Ver scripts y tareas",
+        "en": "View scripts and tasks"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "60_scripts",
@@ -308,7 +371,10 @@
       "y": 682,
       "w": 280,
       "h": 42,
-      "text": "Configuración modal",
+      "text": {
+        "es": "Configuración modal",
+        "en": "Modal configuration"
+      },
       "action": "popup",
       "font_size": 15,
       "screen": "90_ajustes",
@@ -321,7 +387,10 @@
       "y": 682,
       "w": 280,
       "h": 42,
-      "text": "Pantalla completa",
+      "text": {
+        "es": "Pantalla completa",
+        "en": "Full screen"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "92_completa",

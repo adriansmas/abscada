@@ -130,6 +130,17 @@ def edit_security(studio):
             if form.exec() == QDialog.DialogCode.Accepted:
                 run(lambda: store.set_roles(name, form.roles(), current_policy()))
 
+    def change_language():
+        name = selected()
+        if not name:
+            return
+        codes = [''] + project.manifest.get('languages', ['es'])
+        current = store.find(name).get('language', '')
+        chosen, accepted = QInputDialog.getItem(dialog, tr('Idioma del usuario'), tr('Idioma (vacío: puesto)'), codes,
+                                               codes.index(current) if current in codes else 0, False)
+        if accepted:
+            run(lambda: store.set_language(name, chosen, codes))
+
     def toggle_disabled():
         name = selected()
         if name:
@@ -142,7 +153,7 @@ def edit_security(studio):
 
     row = QHBoxLayout(); box.addLayout(row)
     for title, callback in ((tr("Nuevo usuario…"), new_account), (tr("Restablecer contraseña…"), reset_password),
-                            (tr("Roles…"), change_roles), (tr("Activar / desactivar"), toggle_disabled), (tr("Eliminar"), delete)):
+                            (tr("Roles…"), change_roles), (tr("Idioma…"), change_language), (tr("Activar / desactivar"), toggle_disabled), (tr("Eliminar"), delete)):
         button = QPushButton(title); button.clicked.connect(callback); row.addWidget(button)
     row.addStretch()
     tabs.addTab(page, tr("Cuentas"))

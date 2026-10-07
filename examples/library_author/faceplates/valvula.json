@@ -1,5 +1,8 @@
 {
-  "title": "Válvula con mando",
+  "title": {
+    "es": "Válvula con mando",
+    "en": "Valve with control"
+  },
   "width": 450,
   "height": 280,
   "parameters": {
@@ -37,7 +40,10 @@
       "y": 220,
       "w": 330,
       "h": 44,
-      "text": "Abrir / cerrar",
+      "text": {
+        "es": "Abrir / cerrar",
+        "en": "Open/close"
+      },
       "tag": "$run",
       "action": "toggle"
     }

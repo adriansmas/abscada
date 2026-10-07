@@ -79,7 +79,6 @@ def build_menus(studio):
     """Every command lives in a menu; the tool bar keeps only what is used all the time."""
     from .help_dialogs import SimulatorsDialog, about, open_log_folder
     from .library_editor import LibraryDialog
-    from .palette_editor import edit_palette
     from .project_dialogs import VersionDialog
     from .project_settings import edit_project_settings
 
@@ -115,9 +114,10 @@ def build_menus(studio):
         edit.addAction(canvas_action)
 
     project = bar.addMenu(tr("&Proyecto"))
+    from .project_text_editor import ProjectTextsDialog
+    action(project, tr('Textos del proyecto…'), lambda: ProjectTextsDialog(studio).exec())
     action(project, tr("Ajustes del proyecto…"), lambda: edit_project_settings(studio))
-    action(project, tr("Paleta de colores…"), lambda: edit_palette(studio))
-    action(project, tr("Librerías externas…"), lambda: LibraryDialog(studio).exec())
+    action(project, tr("Importar librería externa…"), lambda: LibraryDialog(studio).exec())
     project.addSeparator()
     from .security_editor import certificates_dialog, edit_opcua_server, edit_security
     action(project, tr("Usuarios y roles…"), lambda: edit_security(studio))

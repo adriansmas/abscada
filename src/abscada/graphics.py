@@ -11,7 +11,7 @@ from .drawing import PATH_KINDS, SHAPE_KINDS, world_points, set_points
 from .vector_graphics import element_path, paint_vector, DrawingInteraction
 from .i18n import tr
 
-PALETTE = {"text": tr("Texto"), "lamp": tr("Piloto"), "button": tr("Botón"),
+TOOL_NAMES = {"text": tr("Texto"), "lamp": tr("Piloto"), "button": tr("Botón"),
            "input": tr("Entrada"), "bar": tr("Barra"), "gauge": tr("Indicador"), "image": tr("Imagen"), "faceplate": tr("Objeto de librería"),
            "trend": tr("Tendencia"), "alarm_view": tr("Alarmas"), "line": tr("Línea"), "polyline": tr("Polilínea"),
            "pipe": tr("Tubería"), "rectangle": tr("Rectángulo"), "ellipse": tr("Elipse"), "text_list": tr("Lista de textos"), "screen_container": tr("Contenedor de pantalla")}
@@ -83,15 +83,14 @@ def svg_renderer(path):
     return _SVG[key]
 
 
-def effective_color(host,value):
-    from .dynamics import resolve_color
-    return resolve_color(value,host.project.manifest.get('palette',{}))
-
-
 def draw_element(painter, e, host, rect=None):
     rect = rect or QRectF(0, 0, e["w"], e["h"])
     from .dynamics import effective
-    e=effective(e,host.samples,host.project.manifest.get('palette',{}),host.design_mode)
+    e=effective(e,host.samples,host.design_mode)
+    from .project_languages import localized, default_language, resolve
+    code = getattr(host, 'editing_language', None) if host.design_mode else getattr(getattr(host, 'runtime', None), 'language', None)
+    code = code or default_language(host.project)
+    e = localized(e, code, default_language(host.project))
     kind = e["kind"]
     if kind in PATH_KINDS | SHAPE_KINDS:
         paint_vector(painter, e, rect)
@@ -112,7 +111,7 @@ def draw_element(painter, e, host, rect=None):
     if kind == "screen_container":
         if design:
             document = host.project.screens.get(e.get("screen"))
-            painter.fillRect(rect, QColor(effective_color(host,document.get("background", "#ffffff")) if document else "#ffffff"))
+            painter.fillRect(rect, QColor(document.get("background", "#ffffff") if document else "#ffffff"))
             if document:
                 painter.save()
                 painter.setClipRect(rect)
@@ -132,7 +131,7 @@ def draw_element(painter, e, host, rect=None):
         template = host.project.faceplates.get(e.get("template"))
         # Symbols without a background (most library objects) are drawn as themselves, without a frame.
         if not template or "background" in template:
-            painter.setBrush(QColor(effective_color(host,template.get("background", "#f8fafc")) if template else "#f8fafc"))
+            painter.setBrush(QColor(template.get("background", "#f8fafc") if template else "#f8fafc"))
             painter.drawRoundedRect(rect, 8, 8)
         if template:
             painter.save()
@@ -151,7 +150,7 @@ def draw_element(painter, e, host, rect=None):
         painter.setBrush(QColor("#ffffff")); painter.drawRoundedRect(rect, 5, 5)
         painter.setPen(QColor("#506176"))
         views = host.project.trends if kind == "trend" else host.project.alarm_views
-        title = views.get(e.get("view"), {}).get("title", PALETTE[kind])
+        title = resolve(views.get(e.get("view"), {}).get("title", TOOL_NAMES[kind]), code, default_language(host.project))
         painter.drawText(rect.adjusted(14, 8, -14, -rect.height()+42), title)
         painter.setPen(QPen(QColor("#dde5ed"), 1))
         for y in range(55, int(rect.height())-15, 35):
@@ -221,7 +220,7 @@ def draw_element(painter, e, host, rect=None):
         painter.drawRoundedRect(rect.adjusted(1, 1, -1, -1), 5, 5)
     elif "color" in e or e.get("tag"):
         painter.drawRoundedRect(rect, 5, 5)
-    text = display_text(e, sample, design=design) if kind == "text_list" and not e.get('_text_override') else e.get("text", PALETTE[kind])
+    text = display_text(e, sample, design=design) if kind == "text_list" and not e.get('_text_override') else e.get("text", TOOL_NAMES[kind])
     if e.get("tag") and kind in ("text", "input"):
         if design:
             display = "—"
@@ -264,7 +263,7 @@ class CanvasScene(QGraphicsScene):
             document = self.host.screen_document()
         else:
             document = self.host.project.screens[self.host.document_name]
-        painter.fillRect(bounds, QColor(effective_color(self.host,document.get("background", "#ffffff"))))
+        painter.fillRect(bounds, QColor(document.get("background", "#ffffff")))
         if self.grid and document.get("show_grid", True):
             rect = rect.intersected(bounds)
             painter.setPen(QPen(QColor("#e3e9f0"), 1))
@@ -291,6 +290,20 @@ class CanvasView(DrawingInteraction, QGraphicsView):
         self.setAcceptDrops(host.design_mode)
         self.setDragMode(QGraphicsView.DragMode.RubberBandDrag if host.design_mode else QGraphicsView.DragMode.NoDrag)
         self.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
+
+    def contextMenuEvent(self, event):
+        # Design only: right click on an element (or on the empty sheet) offers its commands.
+        if not self.host.design_mode or self.drawing_tool:
+            super().contextMenuEvent(event)
+            return
+        item = self.itemAt(event.pos())
+        while item is not None and not hasattr(item, "element"):
+            item = item.parentItem()
+        if item is not None and not item.isSelected():
+            self.scene().clearSelection()
+            item.setSelected(True)
+        self.host.canvas_menu(event.globalPos())
+        event.accept()
 
     def fit_canvas(self):
         self.auto_fit = True
@@ -421,9 +434,11 @@ class ElementItem(QGraphicsObject):
         self.setEnabled(enabled)
         self.setOpacity(1 if enabled or self.element.get("dynamics",{}).get("disabled") else .55)
         sample=self.host.samples.get(self.element.get('tag'))
-        detail=self.element.get('tag',self.element['id'])
-        if sample and sample.quality!='good': detail+=tr(' · Último valor; calidad ')+{'bad':'mala','uncertain':'incierta'}.get(sample.quality,sample.quality)
-        if not enabled: detail+=' · '+self.element.get('dynamics',{}).get('disabled_reason',tr('No se cumple el permiso de operación'))
+        from .project_languages import resolve, default_language
+        code = getattr(getattr(self.host, 'runtime', None), 'language', default_language(self.host.project))
+        detail=resolve(self.element.get('tooltip', self.element.get('tag',self.element['id'])), code, default_language(self.host.project))
+        if sample and sample.quality!='good': detail+=tr(' · Último valor; calidad ')+{'bad':tr('Mala'),'uncertain':tr('Incierta')}.get(sample.quality,sample.quality)
+        if not enabled: detail+=' · '+resolve(self.element.get('dynamics',{}).get('disabled_reason',tr('No se cumple el permiso de operación')), code, default_language(self.host.project))
         self.setToolTip(detail)
         self.update()
 

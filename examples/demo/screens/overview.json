@@ -9,7 +9,10 @@
       "y": 25,
       "w": 940,
       "h": 60,
-      "text": "CONTROL DE PROCESO",
+      "text": {
+        "es": "CONTROL DE PROCESO",
+        "en": "PROCESS CONTROL"
+      },
       "color": "#163e5d"
     },
     {
@@ -59,7 +62,10 @@
       "w": 185,
       "h": 48,
       "tag": "TankLevel",
-      "text": "Nivel",
+      "text": {
+        "es": "Nivel",
+        "en": "Level"
+      },
       "unit": "%"
     },
     {
@@ -70,7 +76,10 @@
       "w": 715,
       "h": 48,
       "tag": "Operator",
-      "text": "Operador:"
+      "text": {
+        "es": "Operador:",
+        "en": "Operator:"
+      }
     }
   ]
 }

@@ -1,8 +1,11 @@
 {
-  "title": "Panel del instructor · simulación",
+  "title": {
+    "es": "Panel del instructor · simulación",
+    "en": "Instructor panel · simulation"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dfe1e2",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "PANEL DEL INSTRUCTOR · SIMULACIÓN",
+      "text": {
+        "es": "PANEL DEL INSTRUCTOR · SIMULACIÓN",
+        "en": "INSTRUCTOR PANEL · SIMULATION"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Solo para formación: inyecta averías en el PLC simulado (abscada --simulador cerveceria)",
+      "text": {
+        "es": "Solo para formación: inyecta averías en el PLC simulado (abscada --simulador cerveceria)",
+        "en": "Training only: inject faults into the simulated PLC (abscada --simulador cerveceria)"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -41,7 +50,7 @@
       "w": 1380,
       "h": 40,
       "color": "#fff4dc",
-      "stroke_color": "@Aviso",
+      "stroke_color": "#e89a1c",
       "stroke_width": 2
     },
     {
@@ -51,7 +60,10 @@
       "y": 68,
       "w": 1350,
       "h": 24,
-      "text": "MODO FORMACIÓN · las órdenes de esta pantalla activan averías simuladas. Desactívalas para volver a la normalidad.",
+      "text": {
+        "es": "MODO FORMACIÓN · las órdenes de esta pantalla activan averías simuladas. Desactívalas para volver a la normalidad.",
+        "en": "TRAINING MODE · the orders on this screen activate simulated breakdowns. Disable them to return to normal."
+      },
       "font_size": 14,
       "bold": true,
       "text_color": "#7a4b00",
@@ -64,8 +76,8 @@
       "y": 110,
       "w": 450,
       "h": 300,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -77,10 +89,13 @@
       "y": 116,
       "w": 426,
       "h": 20,
-      "text": "SALA DE COCCIÓN",
+      "text": {
+        "es": "SALA DE COCCIÓN",
+        "en": "BREWHOUSE"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -96,17 +111,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -116,14 +140,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -134,13 +158,16 @@
       "y": 146,
       "w": 310,
       "h": 30,
-      "text": "Espuma en el hervor",
+      "text": {
+        "es": "Espuma en el hervor",
+        "en": "foam in the boil"
+      },
       "tag": "Cocina.SimEspuma",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -150,10 +177,13 @@
       "y": 180,
       "w": 310,
       "h": 48,
-      "text": "La espuma sube en el hervido: aviso al 60 %, alarma al 80 % y el PLC baja el vapor.",
+      "text": {
+        "es": "La espuma sube en el hervido: aviso al 60 %, alarma al 80 % y el PLC baja el vapor.",
+        "en": "The foam rises during boiling: warning at 60%, alarm at 80% and the PLC lowers the steam."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -169,17 +199,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -189,14 +228,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -207,13 +246,16 @@
       "y": 246,
       "w": 310,
       "h": 30,
-      "text": "Lecho filtrante colmatado",
+      "text": {
+        "es": "Lecho filtrante colmatado",
+        "en": "Clogged filter bed"
+      },
       "tag": "Cocina.SimLechoColmatado",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -223,10 +265,13 @@
       "y": 280,
       "w": 310,
       "h": 48,
-      "text": "Sube la presión del lecho: los rastrillos no bastan, cae el caudal y salta la alarma a 200 mbar.",
+      "text": {
+        "es": "Sube la presión del lecho: los rastrillos no bastan, cae el caudal y salta la alarma a 200 mbar.",
+        "en": "The bed pressure rises: the rakes are not enough, the flow rate drops and the alarm goes off at 200 mbar."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -236,8 +281,8 @@
       "y": 420,
       "w": 450,
       "h": 410,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -249,10 +294,13 @@
       "y": 426,
       "w": 426,
       "h": 20,
-      "text": "SERVICIOS",
+      "text": {
+        "es": "SERVICIOS",
+        "en": "SERVICES"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -268,17 +316,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -288,14 +345,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -306,13 +363,16 @@
       "y": 456,
       "w": 310,
       "h": 30,
-      "text": "Fallo de caldera",
+      "text": {
+        "es": "Fallo de caldera",
+        "en": "Boiler failure"
+      },
       "tag": "Servicios.SimFalloCaldera",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -322,10 +382,13 @@
       "y": 490,
       "w": 310,
       "h": 48,
-      "text": "Cae la presión de vapor: los escalones y el hervido se detienen. No se pueden iniciar lotes.",
+      "text": {
+        "es": "Cae la presión de vapor: los escalones y el hervido se detienen. No se pueden iniciar lotes.",
+        "en": "Steam pressure drops: stepping and boiling stops. Batches cannot be started."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -341,17 +404,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -361,14 +433,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -379,13 +451,16 @@
       "y": 556,
       "w": 310,
       "h": 30,
-      "text": "Fallo de la enfriadora de glicol",
+      "text": {
+        "es": "Fallo de la enfriadora de glicol",
+        "en": "Glycol chiller failure"
+      },
       "tag": "Servicios.SimFalloEnfriadora",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -395,10 +470,13 @@
       "y": 590,
       "w": 310,
       "h": 48,
-      "text": "El glicol se calienta: los fermentadores se desvían y el mosto llega caliente a bodega.",
+      "text": {
+        "es": "El glicol se calienta: los fermentadores se desvían y el mosto llega caliente a bodega.",
+        "en": "The glycol is heated: the fermenters are diverted and the wort arrives hot at the cellar."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -414,17 +492,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -434,14 +521,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -452,13 +539,16 @@
       "y": 656,
       "w": 310,
       "h": 30,
-      "text": "Fuga de glicol",
+      "text": {
+        "es": "Fuga de glicol",
+        "en": "glycol leak"
+      },
       "tag": "Servicios.SimFugaGlicol",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -468,10 +558,13 @@
       "y": 690,
       "w": 310,
       "h": 48,
-      "text": "Baja el nivel del depósito: alarma al 40 %, la enfriadora se protege al 20 %.",
+      "text": {
+        "es": "Baja el nivel del depósito: alarma al 40 %, la enfriadora se protege al 20 %.",
+        "en": "Lowers the tank level: alarm at 40%, the chiller is protected at 20%."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -481,8 +574,8 @@
       "y": 110,
       "w": 300,
       "h": 400,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -494,10 +587,13 @@
       "y": 116,
       "w": 276,
       "h": 20,
-      "text": "FV1",
+      "text": {
+        "es": "FV1",
+        "en": "FV1"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -513,17 +609,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -533,14 +638,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -551,13 +656,16 @@
       "y": 146,
       "w": 168,
       "h": 30,
-      "text": "Válvula de glicol atascada",
+      "text": {
+        "es": "Válvula de glicol atascada",
+        "en": "Stuck glycol valve"
+      },
       "tag": "FV1.SimValvulaAtascada",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -567,10 +675,13 @@
       "y": 180,
       "w": 168,
       "h": 48,
-      "text": "Se queda cerrada: la temperatura sube con la fermentación.",
+      "text": {
+        "es": "Se queda cerrada: la temperatura sube con la fermentación.",
+        "en": "It remains closed: the temperature rises with fermentation."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -586,17 +697,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -606,14 +726,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -624,13 +744,16 @@
       "y": 266,
       "w": 168,
       "h": 30,
-      "text": "Válvula de presión bloqueada",
+      "text": {
+        "es": "Válvula de presión bloqueada",
+        "en": "Locked pressure valve"
+      },
       "tag": "FV1.SimSobrepresion",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -640,10 +763,13 @@
       "y": 300,
       "w": 168,
       "h": 48,
-      "text": "El CO₂ no sale: alarma a 1,6 bar y válvula de seguridad a 2,5 bar.",
+      "text": {
+        "es": "El CO₂ no sale: alarma a 1,6 bar y válvula de seguridad a 2,5 bar.",
+        "en": "The CO₂ does not come out: alarm at 1.6 bar and safety valve at 2.5 bar."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -659,17 +785,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -679,14 +814,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -697,13 +832,16 @@
       "y": 386,
       "w": 168,
       "h": 30,
-      "text": "Levadura inactiva",
+      "text": {
+        "es": "Levadura inactiva",
+        "en": "inactive yeast"
+      },
       "tag": "FV1.SimFermentacionParada",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -713,10 +851,13 @@
       "y": 420,
       "w": 168,
       "h": 48,
-      "text": "La densidad deja de bajar: alarma de fermentación parada al cabo de un día.",
+      "text": {
+        "es": "La densidad deja de bajar: alarma de fermentación parada al cabo de un día.",
+        "en": "Density stops dropping: fermentation alarm stopped after one day."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -726,8 +867,8 @@
       "y": 110,
       "w": 300,
       "h": 400,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -739,10 +880,13 @@
       "y": 116,
       "w": 276,
       "h": 20,
-      "text": "FV2",
+      "text": {
+        "es": "FV2",
+        "en": "FV2"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -758,17 +902,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -778,14 +931,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -796,13 +949,16 @@
       "y": 146,
       "w": 168,
       "h": 30,
-      "text": "Válvula de glicol atascada",
+      "text": {
+        "es": "Válvula de glicol atascada",
+        "en": "Stuck glycol valve"
+      },
       "tag": "FV2.SimValvulaAtascada",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -812,10 +968,13 @@
       "y": 180,
       "w": 168,
       "h": 48,
-      "text": "Se queda cerrada: la temperatura sube con la fermentación.",
+      "text": {
+        "es": "Se queda cerrada: la temperatura sube con la fermentación.",
+        "en": "It remains closed: the temperature rises with fermentation."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -831,17 +990,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -851,14 +1019,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -869,13 +1037,16 @@
       "y": 266,
       "w": 168,
       "h": 30,
-      "text": "Válvula de presión bloqueada",
+      "text": {
+        "es": "Válvula de presión bloqueada",
+        "en": "Locked pressure valve"
+      },
       "tag": "FV2.SimSobrepresion",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -885,10 +1056,13 @@
       "y": 300,
       "w": 168,
       "h": 48,
-      "text": "El CO₂ no sale: alarma a 1,6 bar y válvula de seguridad a 2,5 bar.",
+      "text": {
+        "es": "El CO₂ no sale: alarma a 1,6 bar y válvula de seguridad a 2,5 bar.",
+        "en": "The CO₂ does not come out: alarm at 1.6 bar and safety valve at 2.5 bar."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -904,17 +1078,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -924,14 +1107,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -942,13 +1125,16 @@
       "y": 386,
       "w": 168,
       "h": 30,
-      "text": "Levadura inactiva",
+      "text": {
+        "es": "Levadura inactiva",
+        "en": "inactive yeast"
+      },
       "tag": "FV2.SimFermentacionParada",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -958,10 +1144,13 @@
       "y": 420,
       "w": 168,
       "h": 48,
-      "text": "La densidad deja de bajar: alarma de fermentación parada al cabo de un día.",
+      "text": {
+        "es": "La densidad deja de bajar: alarma de fermentación parada al cabo de un día.",
+        "en": "Density stops dropping: fermentation alarm stopped after one day."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -971,8 +1160,8 @@
       "y": 110,
       "w": 300,
       "h": 400,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -984,10 +1173,13 @@
       "y": 116,
       "w": 276,
       "h": 20,
-      "text": "FV3",
+      "text": {
+        "es": "FV3",
+        "en": "FV3"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1003,17 +1195,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -1023,14 +1224,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1041,13 +1242,16 @@
       "y": 146,
       "w": 168,
       "h": 30,
-      "text": "Válvula de glicol atascada",
+      "text": {
+        "es": "Válvula de glicol atascada",
+        "en": "Stuck glycol valve"
+      },
       "tag": "FV3.SimValvulaAtascada",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -1057,10 +1261,13 @@
       "y": 180,
       "w": 168,
       "h": 48,
-      "text": "Se queda cerrada: la temperatura sube con la fermentación.",
+      "text": {
+        "es": "Se queda cerrada: la temperatura sube con la fermentación.",
+        "en": "It remains closed: the temperature rises with fermentation."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1076,17 +1283,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -1096,14 +1312,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1114,13 +1330,16 @@
       "y": 266,
       "w": 168,
       "h": 30,
-      "text": "Válvula de presión bloqueada",
+      "text": {
+        "es": "Válvula de presión bloqueada",
+        "en": "Locked pressure valve"
+      },
       "tag": "FV3.SimSobrepresion",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -1130,10 +1349,13 @@
       "y": 300,
       "w": 168,
       "h": 48,
-      "text": "El CO₂ no sale: alarma a 1,6 bar y válvula de seguridad a 2,5 bar.",
+      "text": {
+        "es": "El CO₂ no sale: alarma a 1,6 bar y válvula de seguridad a 2,5 bar.",
+        "en": "The CO₂ does not come out: alarm at 1.6 bar and safety valve at 2.5 bar."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1149,17 +1371,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVA"
+          "text": {
+            "es": "ACTIVA",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9ba2a8",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9ba2a8",
       "dynamics": {
         "states": [
           {
@@ -1169,14 +1400,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1187,13 +1418,16 @@
       "y": 386,
       "w": 168,
       "h": 30,
-      "text": "Levadura inactiva",
+      "text": {
+        "es": "Levadura inactiva",
+        "en": "inactive yeast"
+      },
       "tag": "FV3.SimFermentacionParada",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -1203,10 +1437,13 @@
       "y": 420,
       "w": 168,
       "h": 48,
-      "text": "La densidad deja de bajar: alarma de fermentación parada al cabo de un día.",
+      "text": {
+        "es": "La densidad deja de bajar: alarma de fermentación parada al cabo de un día.",
+        "en": "Density stops dropping: fermentation alarm stopped after one day."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1216,8 +1453,8 @@
       "y": 520,
       "w": 920,
       "h": 310,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -1229,10 +1466,13 @@
       "y": 526,
       "w": 896,
       "h": 20,
-      "text": "EJERCICIO RECOMENDADO",
+      "text": {
+        "es": "EJERCICIO RECOMENDADO",
+        "en": "RECOMMENDED EXERCISE"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1242,10 +1482,13 @@
       "y": 556,
       "w": 890,
       "h": 40,
-      "text": "1. Inicia sesión como operador. En «Sala de cocción» elige la receta Tostada, el FV3 e INICIAR LOTE.",
+      "text": {
+        "es": "1. Inicia sesión como operador. En «Sala de cocción» elige la receta Tostada, el FV3 e INICIAR LOTE.",
+        "en": "1. Log in as an operator. In “Brewhouse”, choose recipe Tostada, FV3 and START BATCH."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1255,10 +1498,13 @@
       "y": 600,
       "w": 890,
       "h": 40,
-      "text": "2. Confirma la malta en el empaste y los lúpulos en el hervido cuando lo pida el aviso.",
+      "text": {
+        "es": "2. Confirma la malta en el empaste y los lúpulos en el hervido cuando lo pida el aviso.",
+        "en": "2. Confirm the malt in the mash and the hops in the boil when prompted by the notice."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1268,10 +1514,13 @@
       "y": 644,
       "w": 890,
       "h": 40,
-      "text": "3. Activa «Espuma en el hervor» durante el hervido: reconoce la alarma y mira cómo el PLC baja el vapor.",
+      "text": {
+        "es": "3. Activa «Espuma en el hervor» durante el hervido: reconoce la alarma y mira cómo el PLC baja el vapor.",
+        "en": "3. Activate “Foam on Boil” during boiling: Acknowledge the alarm and watch the PLC lower the steam."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1281,10 +1530,13 @@
       "y": 688,
       "w": 890,
       "h": 40,
-      "text": "4. Con el lote en el FV3, activa «Fallo de la enfriadora»: sigue en Bodega cómo se desvían las temperaturas.",
+      "text": {
+        "es": "4. Con el lote en el FV3, activa «Fallo de la enfriadora»: sigue en Bodega cómo se desvían las temperaturas.",
+        "en": "4. With the batch in the FV3, activate “Chiller Failure”: follow in the Cellar how the temperatures deviate."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1294,10 +1546,13 @@
       "y": 732,
       "w": 890,
       "h": 40,
-      "text": "5. Inicia sesión como operador e intenta guardar una receta: no puedes. Hazlo como maestro cervecero.",
+      "text": {
+        "es": "5. Inicia sesión como operador e intenta guardar una receta: no puedes. Hazlo como maestro cervecero.",
+        "en": "5. Log in as an operator and try to save a recipe: you can't. Do it as a brewmaster."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1307,10 +1562,13 @@
       "y": 776,
       "w": 890,
       "h": 40,
-      "text": "6. Cuando el FV2 esté «Listo para envasar», abre su «Mando…» y trasiégalo para dejarlo libre.",
+      "text": {
+        "es": "6. Cuando el FV2 esté «Listo para envasar», abre su «Mando…» y trasiégalo para dejarlo libre.",
+        "en": "6. When the FV2 is “Ready to pack”, open its “Control…” and move it to clear it."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     }
   ],

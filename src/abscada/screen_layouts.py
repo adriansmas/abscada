@@ -18,6 +18,8 @@ def validate_layouts(project):
             raise ValueError(tr('La propiedad layout debe ser booleana'))
         for element in containers(doc):
             target = element.get('screen', '')
+            if target == '':
+                continue  # a zone still without content: the layout can be designed first
             if target not in project.screens:
                 raise ValueError(tr("{name}: pantalla del contenedor inexistente", name=name))
             if target == name or containers(project.screens[target]):

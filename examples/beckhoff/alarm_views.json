@@ -1,6 +1,9 @@
 {
   "activas": {
-    "title": "Alarmas del banco",
+    "title": {
+      "es": "Alarmas del banco",
+      "en": "Bank alarms"
+    },
     "categories": [],
     "min_priority": 1,
     "mode": "pending",

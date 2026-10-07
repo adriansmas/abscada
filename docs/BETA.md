@@ -8,7 +8,7 @@ Gracias por probar abSCADA. Es un SCADA de escritorio libre en desarrollo: lo qu
 2. Ejecuta `abscada.exe`.
 3. La primera vez, Windows puede mostrar **«Windows protegió su PC»**, porque el programa aún no está firmado. Pulsa **Más información → Ejecutar de todos modos**.
 
-Tus proyectos y los ejemplos que abras se guardan en `Documentos\abSCADA`. La carpeta del programa no se modifica.
+Los ejemplos abiertos desde la pantalla inicial se copian a `Documentos\abSCADA`. Los proyectos se guardan en la carpeta que elijas. La carpeta del programa no se modifica.
 
 ## Primeros pasos (15 minutos)
 
@@ -19,7 +19,7 @@ Tus proyectos y los ejemplos que abras se guardan en `Documentos\abSCADA`. La ca
 5. Cierra el runtime, cambia algo en una pantalla de Studio, guarda (Ctrl+S) y vuelve a abrir el runtime.
 6. Crea un **Nuevo proyecto** desde cero: una variable interna, un botón y un indicador.
 
-Los PLC simulados también se arrancan y detienen desde **Simuladores…**, en la barra de Studio.
+Los PLC simulados también se arrancan y detienen desde **Herramientas → Simuladores de PLC…**.
 
 ## Qué nos interesa especialmente
 
@@ -42,6 +42,6 @@ Envíalo por correo o, si tienes acceso, como *issue* en el repositorio de GitHu
 ## Limitaciones conocidas de esta beta
 
 - Usuarios y roles desactivados por defecto: actívalos en Proyecto → Usuarios y roles (el ejemplo de la cervecería los trae activados con cuentas de demostración).
-- Comunicación con S7, Modbus TCP y Beckhoff ADS probada con simuladores, todavía no con PLC físicos.
+- Comunicación con S7, Modbus TCP, Beckhoff ADS y OPC UA probada con simuladores, todavía no con PLC físicos.
 - Los tiempos del ejemplo hidroeléctrico están comprimidos a propósito: un arranque dura unos 40 s.
 - abSCADA **no es un sistema de seguridad**: no lo uses para controlar equipos reales sin las protecciones propias del PLC.

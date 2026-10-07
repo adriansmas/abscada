@@ -63,7 +63,7 @@ def grab_modal(app, name, tab=None, after=None):
 def demo_screen(project):
     """A screen built only from the standard library, linked to brewery variables."""
     elements = [dict(id="titulo", kind="text", x=20, y=14, w=900, h=34, text="Objetos de la librería estándar",
-                     font_size=20, bold=True, text_color="@Texto")]
+                     font_size=20, bold=True, text_color="#24292e")]
     animated = [("bomba", "estandar__bomba_estado", dict(marcha="Servicios.Caldera", fallo="Servicios.FalloCaldera")),
                 ("motor", "estandar__motor_estado", dict(marcha="Cocina.AgitadorMT", fallo="Cocina.FueraTemperaturaMT")),
                 ("ventilador", "estandar__ventilador_estado", dict(marcha="Servicios.Enfriadora", fallo="Servicios.FalloEnfriadora")),
@@ -76,7 +76,7 @@ def demo_screen(project):
         elements.append(dict(id=key, kind="faceplate", x=x, y=80, w=fp["width"], h=fp["height"], template=template,
                              bindings=bindings))
         elements.append(dict(id=key + "_t", kind="text", x=x - 10, y=230, w=fp["width"] + 20, h=22, text=key.capitalize(),
-                             font_size=12, text_align="center", text_color="@TextoSuave"))
+                             font_size=12, text_align="center", text_color="#5f676e"))
         x += fp["width"] + 50
     statics = ["deposito_vertical", "silo", "valvula_motorizada", "valvula_tres_vias", "bomba_centrifuga", "compresor",
                "intercambiador", "caldera", "columna", "transmisor_nivel", "transmisor_temperatura", "transformador"]
@@ -88,8 +88,8 @@ def demo_screen(project):
         cy = 300 + (i // 6) * 170
         elements.append(dict(id=name, kind="faceplate", x=cx, y=cy, w=w, h=h, template="estandar__" + name, bindings={}))
         elements.append(dict(id=name + "_t", kind="text", x=cx - 30, y=cy + 100, w=150, h=22,
-                             text=name.replace("_", " "), font_size=11, text_align="center", text_color="@TextoSuave"))
-    project.screens[DEMO] = dict(title="Objetos estándar", width=1000, height=660, background="@Fondo", grid_size=10,
+                             text=name.replace("_", " "), font_size=11, text_align="center", text_color="#5f676e"))
+    project.screens[DEMO] = dict(title="Objetos estándar", width=1000, height=660, background="#dfe1e2", grid_size=10,
                                  show_grid=False, snap_to_grid=True, elements=elements, folder="Proceso")
 
 

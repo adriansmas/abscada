@@ -1,11 +1,17 @@
 {
   "local": {
-    "title": "Variables internas registradas",
+    "title": {
+      "es": "Variables internas registradas",
+      "en": "Registered internal variables"
+    },
     "window_seconds": 600,
     "axes": [
       {
         "id": "percent",
-        "title": "Nivel / consigna (%)",
+        "title": {
+          "es": "Nivel / consigna (%)",
+          "en": "Level / setpoint (%)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -14,7 +20,10 @@
       },
       {
         "id": "temperature",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "right",
         "auto": true,
         "min": 0,
@@ -23,7 +32,10 @@
       },
       {
         "id": "digital",
-        "title": "Marcha",
+        "title": {
+          "es": "Marcha",
+          "en": "Running"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -67,12 +79,18 @@
     ]
   },
   "online_only": {
-    "title": "Señal en vivo sin registro",
+    "title": {
+      "es": "Señal en vivo sin registro",
+      "en": "Live signal without registration"
+    },
     "window_seconds": 120,
     "axes": [
       {
         "id": "y",
-        "title": "Señal local",
+        "title": {
+          "es": "Señal local",
+          "en": "Local signal"
+        },
         "side": "left",
         "auto": true,
         "min": -1,
@@ -92,12 +110,18 @@
     ]
   },
   "equipment": {
-    "title": "S7 y Modbus en el mismo visor",
+    "title": {
+      "es": "S7 y Modbus en el mismo visor",
+      "en": "S7 and Modbus on the same display"
+    },
     "window_seconds": 600,
     "axes": [
       {
         "id": "flow",
-        "title": "Caudal S7",
+        "title": {
+          "es": "Caudal S7",
+          "en": "S7 Flow"
+        },
         "side": "left",
         "auto": true,
         "min": 0,
@@ -106,7 +130,10 @@
       },
       {
         "id": "temp",
-        "title": "Temperatura Modbus",
+        "title": {
+          "es": "Temperatura Modbus",
+          "en": "Modbus Temperature"
+        },
         "side": "right",
         "auto": true,
         "min": 0,
@@ -134,12 +161,18 @@
     ]
   },
   "history": {
-    "title": "Variables internas registradas",
+    "title": {
+      "es": "Variables internas registradas",
+      "en": "Registered internal variables"
+    },
     "window_seconds": 600,
     "axes": [
       {
         "id": "percent",
-        "title": "Nivel / consigna (%)",
+        "title": {
+          "es": "Nivel / consigna (%)",
+          "en": "Level / setpoint (%)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -148,7 +181,10 @@
       },
       {
         "id": "temperature",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "right",
         "auto": true,
         "min": 0,
@@ -157,7 +193,10 @@
       },
       {
         "id": "digital",
-        "title": "Marcha",
+        "title": {
+          "es": "Marcha",
+          "en": "Running"
+        },
         "side": "right",
         "auto": false,
         "min": 0,

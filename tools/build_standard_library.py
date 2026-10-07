@@ -330,6 +330,9 @@ def main():
     library = dict(schema_version=1, name="Estándar", version="1.0.0",
                    description="Librería del sistema: símbolos SCADA en SVG y objetos animados. Solo lectura.",
                    faceplates=templates)
+    from abscada.example_languages import CATALOG, translate_document
+    translate_document(library, json.loads(CATALOG.read_text(encoding='utf-8')))
+    library.update(languages=['es', 'en'], default_language='es')
     (OUT / "library.json").write_text(json.dumps(library, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"{OUT}: {len(GRAPHICS)} gráficos, {len(templates) - len(GRAPHICS)} objetos animados")
 

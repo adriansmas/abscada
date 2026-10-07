@@ -1,8 +1,11 @@
 {
-  "title": "Modbus TCP · cuatro áreas",
+  "title": {
+    "es": "Modbus TCP · cuatro áreas",
+    "en": "Modbus TCP four areas"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Modbus TCP · cuatro áreas",
+      "text": {
+        "es": "Modbus TCP · cuatro áreas",
+        "en": "Modbus TCP four areas"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "Modbus_Laboratorio · 127.0.0.1:1502 · Unit ID 1 · adquisición cada 500 ms · offsets base 0.",
+      "text": {
+        "es": "Modbus_Laboratorio · 127.0.0.1:1502 · Unit ID 1 · adquisición cada 500 ms · offsets base 0.",
+        "en": "Modbus_Laboratorio · 127.0.0.1:1502 · Unit ID 1 · acquisition every 500 ms · base offsets 0."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -39,7 +48,7 @@
       "y": 145,
       "w": 530,
       "h": 145,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -52,10 +61,13 @@
       "y": 155,
       "w": 490,
       "h": 30,
-      "text": "Coil 0",
+      "text": {
+        "es": "Coil 0",
+        "en": "Coil 0"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "lamp0",
@@ -66,9 +78,9 @@
       "h": 44,
       "tag": "Modbus.Habilitar",
       "lamp_colors": {
-        "on": "@Marcha",
+        "on": "#147d75",
         "off": "#d7e0e9",
-        "bad": "@Aviso"
+        "bad": "#da982f"
       }
     },
     {
@@ -78,7 +90,10 @@
       "y": 201,
       "w": 400,
       "h": 42,
-      "text": "Habilitar / deshabilitar",
+      "text": {
+        "es": "Habilitar / deshabilitar",
+        "en": "Enable/disable"
+      },
       "action": "toggle",
       "font_size": 15,
       "tag": "Modbus.Habilitar"
@@ -90,10 +105,13 @@
       "y": 251,
       "w": 495,
       "h": 29,
-      "text": "coils[0]",
+      "text": {
+        "es": "coils[0]",
+        "en": "coils[0]"
+      },
       "font_size": 13,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "card1",
@@ -102,7 +120,7 @@
       "y": 145,
       "w": 530,
       "h": 145,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -115,10 +133,13 @@
       "y": 155,
       "w": 490,
       "h": 30,
-      "text": "Discrete input 0",
+      "text": {
+        "es": "Discrete input 0",
+        "en": "Discrete input 0"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "lamp1",
@@ -129,9 +150,9 @@
       "h": 44,
       "tag": "Modbus.Listo",
       "lamp_colors": {
-        "on": "@Marcha",
+        "on": "#147d75",
         "off": "#d7e0e9",
-        "bad": "@Aviso"
+        "bad": "#da982f"
       }
     },
     {
@@ -141,10 +162,13 @@
       "y": 251,
       "w": 495,
       "h": 29,
-      "text": "discrete_inputs[0]",
+      "text": {
+        "es": "discrete_inputs[0]",
+        "en": "discrete_inputs[0]"
+      },
       "font_size": 13,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "card2",
@@ -153,7 +177,7 @@
       "y": 315,
       "w": 530,
       "h": 145,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -166,10 +190,13 @@
       "y": 325,
       "w": 490,
       "h": 30,
-      "text": "Consigna REAL",
+      "text": {
+        "es": "Consigna REAL",
+        "en": "REAL setpoint"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "value2",
@@ -178,13 +205,16 @@
       "y": 367,
       "w": 490,
       "h": 44,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Modbus.Consigna",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "address2",
@@ -193,10 +223,13 @@
       "y": 421,
       "w": 495,
       "h": 29,
-      "text": "holding_registers[0..1] · float32 ABCD",
+      "text": {
+        "es": "holding_registers[0..1] · float32 ABCD",
+        "en": "holding_registers[0..1] · float32 ABCD"
+      },
       "font_size": 13,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "card3",
@@ -205,7 +238,7 @@
       "y": 315,
       "w": 530,
       "h": 145,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -218,10 +251,13 @@
       "y": 325,
       "w": 490,
       "h": 30,
-      "text": "Temperatura REAL",
+      "text": {
+        "es": "Temperatura REAL",
+        "en": "ACTUAL temperature"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "value3",
@@ -230,13 +266,16 @@
       "y": 367,
       "w": 490,
       "h": 44,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Modbus.Temperatura",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "address3",
@@ -245,10 +284,13 @@
       "y": 421,
       "w": 495,
       "h": 29,
-      "text": "input_registers[0..1] · float32 ABCD",
+      "text": {
+        "es": "input_registers[0..1] · float32 ABCD",
+        "en": "input_registers[0..1] · float32 ABCD"
+      },
       "font_size": 13,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "card4",
@@ -257,7 +299,7 @@
       "y": 485,
       "w": 530,
       "h": 145,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -270,10 +312,13 @@
       "y": 495,
       "w": 490,
       "h": 30,
-      "text": "Contador DINT",
+      "text": {
+        "es": "Contador DINT",
+        "en": "DINT Counter"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "value4",
@@ -282,13 +327,16 @@
       "y": 537,
       "w": 490,
       "h": 44,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Modbus.Contador",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "address4",
@@ -297,10 +345,13 @@
       "y": 591,
       "w": 495,
       "h": 29,
-      "text": "input_registers[2..3] · uint32 ABCD",
+      "text": {
+        "es": "input_registers[2..3] · uint32 ABCD",
+        "en": "input_registers[2..3] · uint32 ABCD"
+      },
       "font_size": 13,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "card5",
@@ -309,7 +360,7 @@
       "y": 485,
       "w": 530,
       "h": 145,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -322,10 +373,13 @@
       "y": 495,
       "w": 490,
       "h": 30,
-      "text": "Modo UINT",
+      "text": {
+        "es": "Modo UINT",
+        "en": "UINT mode"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "value5",
@@ -334,13 +388,16 @@
       "y": 537,
       "w": 490,
       "h": 44,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Modbus.Modo",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "address5",
@@ -349,10 +406,13 @@
       "y": 591,
       "w": 495,
       "h": 29,
-      "text": "holding_registers[2] · uint16",
+      "text": {
+        "es": "holding_registers[2] · uint16",
+        "en": "holding_registers[2] · uint16"
+      },
       "font_size": 13,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "quality",
@@ -361,13 +421,16 @@
       "y": 685,
       "w": 1090,
       "h": 44,
-      "text": "Modbus",
+      "text": {
+        "es": "Modbus",
+        "en": "Modbus"
+      },
       "tag": "Sistema.Modbus",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     }
   ],
   "on_open": [

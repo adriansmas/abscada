@@ -1,9 +1,12 @@
 {
-  "title": "Laboratorio SCADA",
+  "title": {
+    "es": "Laboratorio SCADA",
+    "en": "SCADA lab"
+  },
   "width": 1360,
   "height": 850,
   "folder": "Estructura",
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "elements": [
     {
       "id": "cabecera",

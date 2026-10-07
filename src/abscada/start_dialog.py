@@ -80,7 +80,7 @@ def ask_new_project(parent):
     title, ok = QInputDialog.getText(parent, tr("Nuevo proyecto"), tr("Título del proyecto"), text=Path(manifest_file).stem)
     if not ok or not title.strip():
         return None
-    project = Project(folder, dict(schema_version=1, name=title.strip(), startup_screen="main"),
+    project = Project(folder, dict(schema_version=1, name=title.strip(), startup_screen="main", languages=['es'], default_language='es'),
                       {}, [], [], {"main": dict(width=1280, height=720, elements=[])}, {}, manifest_file=manifest_file)
     project.save()
     return project.manifest_path

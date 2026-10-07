@@ -10,6 +10,7 @@ from PySide6.QtGui import QColor
 from .operational_config import OPERATORS, ALARM_COLUMNS, DEFAULT_ALARM_COLUMNS
 from .dialogs import EditorDialog as QDialog
 from .i18n import tr
+from .project_languages import resolve, default_language
 
 
 def control(kind, value, options=()):
@@ -77,8 +78,11 @@ class RecordDialog(QDialog):
         layout = QVBoxLayout(self)
         form = QFormLayout()
         data = data or {}
+        from .project_text_editor import ProjectTextField
         for key, label, kind, default, options in fields:
-            widget = control(kind, data.get(key, default), options)
+            from .project_languages import TEXT_KEYS
+            translatable = key in TEXT_KEYS or (key == 'name' and 'color' in {f[0] for f in fields})
+            widget = ProjectTextField(parent, data.get(key, default)) if kind == 'text' and translatable else control(kind, data.get(key, default), options)
             widget.setObjectName("field_"+key)
             if isinstance(widget, ColorControl):
                 widget.input.setObjectName("field_"+key)
@@ -91,7 +95,7 @@ class RecordDialog(QDialog):
         layout.addWidget(buttons)
 
     def data(self):
-        return {key: value(widget) for key, widget in self.fields.items()}
+        return {key: widget.translated_value() if hasattr(widget, 'translated_value') else value(widget) for key, widget in self.fields.items()}
 
 
 class RecordsPage(QWidget):
@@ -139,7 +143,10 @@ class RecordsPage(QWidget):
         self.table.setRowCount(len(self.rows))
         for index, row in enumerate(self.rows):
             for column, (key, _) in enumerate(self.columns):
-                val = row.get(key, "")
+                val = row.get(key, '')
+                if isinstance(val, dict):
+                    from .project_languages import resolve, default_language
+                    val = resolve(val, getattr(self.host, 'editing_language', default_language(self.host.project)), default_language(self.host.project))
                 translated = {"cyclic":tr("Cíclico"),"change":tr("Por cambio"),"left":tr("Izquierda"),"right":tr("Derecha"),
                     "pending":tr("Pendientes"),"active":tr("Activas"),"history":tr("Histórico"),"events":tr("Eventos")}
                 if key=="condition":
@@ -331,13 +338,16 @@ class OperationalEngineering:
         draft = copy.deepcopy(self.host.project.trends[name])
         dialog = QDialog(self.host); dialog.setWindowTitle(tr("Configurar gráfica")); dialog.resize(880, 570)
         layout = QVBoxLayout(dialog); form = QFormLayout()
-        title = QLineEdit(draft["title"])
+        from .project_text_editor import ProjectTextField
+        title = ProjectTextField(self.host, draft['title'])
         title.setObjectName("trendTitle")
         seconds = QSpinBox(); seconds.setRange(10, 31536000); seconds.setValue(draft.get("window_seconds", 600))
         for label, widget in ((tr("Título"), title), (tr("Ventana (s)"), seconds)):
             form.addRow(label, widget)
         layout.addLayout(form); tabs = QTabWidget(); layout.addWidget(tabs)
         class DraftHost:
+            project = self.host.project
+            editing_language = self.host.editing_language
             def mutate(inner, callback):
                 callback(); axes.refresh(); curves.refresh(); return True
         holder = DraftHost()
@@ -348,7 +358,7 @@ class OperationalEngineering:
         curves = RecordsPage(holder, lambda: draft["curves"], lambda rows: draft.__setitem__("curves", rows),
             [("id", "ID"), ("tag", tr("Variable")), ("axis", tr("Eje")), ("color", tr("Color")), ("width", tr("Grosor")), ("visible", tr("Visible"))],
             lambda: [text("id", "ID", "curve_"+uuid.uuid4().hex[:6]), choice("tag", tr("Variable"), self.tags({"int", "float", "bool"})),
-                choice("axis", tr("Eje"), [(a["id"], a.get("title", a["id"])) for a in draft["axes"]]), color_field(),
+                choice("axis", tr("Eje"), [(a["id"], resolve(a.get('title', a['id']), self.host.editing_language, default_language(self.host.project))) for a in draft["axes"]]), color_field(),
                 numeric("width", tr("Grosor"), 2), boolean("visible", tr("Visible"))], tr("Curva"))
         # Draft dialogs are parented to their QWidget page, not the draft controller.
         axes.host = curves.host = holder
@@ -356,7 +366,7 @@ class OperationalEngineering:
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
         buttons.button(QDialogButtonBox.StandardButton.Save).setText(tr("Aceptar"))
         def save():
-            draft.update(title=title.text().strip(), window_seconds=seconds.value())
+            draft.update(title=title.translated_value(), window_seconds=seconds.value())
             if self.host.mutate(lambda: self.host.project.trends.__setitem__(name, copy.deepcopy(draft))):
                 dialog.accept()
         buttons.accepted.connect(save); buttons.rejected.connect(dialog.reject); layout.addWidget(buttons)

@@ -1,4 +1,10 @@
-# Registros, gráficas y alarmas
+# Guía de operación y scripts
+
+## Mandos y sesión
+
+Todas las ventanas comparten comunicaciones, idioma, sesión, alarmas y registros. El cambio de idioma usa el selector común o un botón del proyecto y no reinicia adquisición. Con seguridad activada, inicia sesión para mandos, consignas, scripts de botón y ACK; el reconocimiento queda a nombre del usuario. Los permisos por control se configuran en el proyecto. Con seguridad desactivada, el nombre del actor introducido libremente no acredita identidad.
+
+Las acciones momentary y press_release solicitan liberación al soltar fuera, perder foco/captura, navegar, cerrar, ocultarse el control o perder habilitación. La mala calidad cancela el gesto. Antes de cerrar comunicaciones se espera hasta dos segundos por las liberaciones pendientes y se informa de fallos. No se reproducen al reconectar: pérdida de red, cierre forzado o corte eléctrico pueden impedir liberar. El PLC debe implementar el tiempo máximo y los permisos de esa orden.
 
 ## Uso en Studio
 
@@ -6,15 +12,15 @@
 
 **Alarmas → Alarmas:** definir ID, mensaje, variable, categoría, condición, umbral, histéresis, prioridad (1000 es la más alta), retardo de entrada/salida, ACK obligatorio y habilitación. La selección de variable adapta las condiciones digitales o numéricas. Los cambios pasan por validación y deshacer/rehacer; se guardan con Ctrl+S.
 
-**Alarmas → Visores:** definir título, modo inicial, categorías permitidas, prioridad mínima, columnas iniciales y disponibilidad del ACK. No seleccionar categorías permite mostrar todas. Este filtro y el permiso del control son configuración de interfaz, no un sistema de autorización de usuarios.
+**Control Alarmas → Configurar…:** definir título, modo inicial, categorías permitidas, prioridad mínima, columnas iniciales y disponibilidad del ACK. No seleccionar categorías permite mostrar todas. Este filtro y el permiso del control son configuración de interfaz, no un sistema de autorización de usuarios.
 
 **Registros:** crear ficheros con ID, nombre, frecuencia común en milisegundos y variables incluidas. En **Variables**, el desplegable **Registro** de cada hoja permite elegir un fichero o Ninguno. Cambiarlo mueve la variable; nunca queda registrada en dos ficheros. Las estructuras conservan sus campos agrupados. El diálogo del fichero permite revisar sus variables. La retención de datos y de alarmas se configura en días.
 
-**Pantallas:** añadir un control **Tendencia** o **Alarmas** desde la paleta. No requiere crear una configuración antes: cada nuevo control recibe una propia. Seleccionarlo y pulsar **Configurar…** en el inspector, o hacer doble clic, abre sus ajustes. El selector permite reutilizar configuraciones existentes. **Gráficas** y **Alarmas → Visores** son catálogos de esas configuraciones, no tareas de registro.
+**Pantallas:** añadir un control **Tendencia** o **Alarmas** desde las herramientas de dibujo. No requiere crear una configuración antes: cada nuevo control recibe una propia. Seleccionarlo y pulsar **Configurar…** en el inspector, o hacer doble clic, abre sus ajustes. El selector permite reutilizar configuraciones existentes. Las configuraciones se guardan en `trends.json` y `alarm_views.json`; se editan desde sus controles, sin sección Gráficas ni pestaña Visores. No son tareas de registro.
 
 En una gráfica se eligen variables numéricas o bool, colores, grosores y ejes. Se admiten de 1 a 8 ejes con escala, lado y visibilidad configurables. Mostrar una variable en tiempo real no requiere asignarle un registro. Consultar su pasado requiere que se haya registrado durante ese periodo.
 
-Runtime contiene únicamente la pantalla diseñada: no crea pestañas, barras de navegación ni visores automáticamente. Un botón con acción **Abrir pantalla** y destino elegido en el inspector permite navegar. El ejemplo plant tiene botones de navegación que forman parte de sus pantallas. Studio muestra representaciones de diseño sin valores en vivo.
+El área de proceso del runtime contiene la pantalla diseñada; la aplicación aporta controles comunes de sesión, idioma y diagnóstico, pero no crea navegación de proceso ni visores automáticamente. Un botón con acción **Abrir pantalla** y destino elegido en el inspector permite navegar. El ejemplo plant tiene botones de navegación que forman parte de sus pantallas. Studio muestra representaciones de diseño sin valores en vivo.
 
 Los visores se colocan directamente en pantallas, con un mínimo de 400 × 280; todavía no se admiten dentro de faceplates. Copia SQLite permite seleccionar el archivo de alarmas o un fichero diario y utiliza el mecanismo online de SQLite, incluyendo datos confirmados en WAL.
 
@@ -31,7 +37,7 @@ Se registra una **ocurrencia** por activación y un **evento** por transición. 
 | Retornada · pendiente ACK | Inactiva | Pendiente |
 | Cerrada | Inactiva | Reconocida o no requiere ACK |
 
-ACK registra fecha, operador y comentario; no escribe un bit al PLC, no cambia el valor de la variable y no elimina la condición. Se admiten ACK individual, selección múltiple y ACK de las filas visibles. Una repetición del ACK es idempotente: no añade otro evento. Las ocurrencias guardan mensaje/categoría/prioridad/variable de su configuración original para que editar una definición no reescriba el pasado.
+ACK registra fecha, operador y comentario; no escribe un bit al PLC, no cambia el valor de la variable y no elimina la condición. Se admiten ACK individual, selección múltiple y ACK de las filas visibles. Una repetición del ACK es idempotente: no añade otro evento. Las ocurrencias guardan mensaje/categoría/prioridad/variable de su configuración original. El visor resuelve los textos de alarma y categoría a partir de su identificador y la definición actual en el idioma del runtime; si la definición ya no existe, usa el respaldo guardado. La presentación puede cambiar con las traducciones, mientras las fechas y transiciones históricas se conservan.
 
 Las condiciones digitales son true/false. Las numéricas son high (≥), low (≤), igual y distinto. En high se activa al alcanzar el umbral y retorna por debajo de umbral menos histéresis. En low se activa al bajar al umbral y retorna por encima de umbral más histéresis. Igual/distinto comparan exactamente y no utilizan histéresis. Para flotantes suele ser preferible high/low.
 
@@ -112,3 +118,63 @@ Los proyectos antiguos con registros por variable se convierten en memoria a fic
 
 - [Siemens: data logging](https://docs.tia.siemens.cloud/r/en-us/v21/configuring-tags-rt-unified/logging-tags-rt-unified/basics-rt-unified/basics-of-data-logging-rt-unified): registro de variables y controles de visualización.
 - [AVEVA Edge: logging and trending](https://engage.aveva.com/edge-hmi-event-logging-traceability.html): configuración de registro y visualización.
+
+## Scripts Python y tareas
+
+`ctx.language` devuelve el idioma actual del proyecto. `ctx.set_language("en")` solicita un cambio a un idioma declarado; se aplica al terminar correctamente el script. Véase [Idiomas del proyecto](STUDIO.md).
+
+En Studio, Scripts y tareas reúne el editor Python, los eventos de inicio, las tareas cíclicas y las últimas ejecuciones. El editor tiene resaltado, números de línea, sangrado automático y comprobación de sintaxis. Las fuentes se guardan como `scripts/<nombre>.py`, editables desde VS Code. El botón Comprobar valida sin ejecutar.
+
+### Eventos
+
+- Eventos de inicio… selecciona los scripts que se ejecutan una vez al arrancar el runtime. Las comunicaciones ya se han iniciado, pero puede no haber todavía una lectura válida del PLC.
+- Sin seleccionar objetos, Al abrir pantalla… configura los scripts de ese documento. Se ejecutan al abrirlo en una ventana o contenedor y al navegar a él. Volver a enfocar una emergente ya abierta no repite el evento. La apertura de un layout dispara primero su evento y después los de sus pantallas iniciales.
+- Un botón puede usar Acción → Ejecutar script. Recibe como contexto la pantalla donde se pulsó, incluida una pantalla alojada en un contenedor.
+- Tareas cíclicas permite nombre, script, periodo en milisegundos y activación. El primer disparo llega tras el periodo configurado, no al arrancar. Usa un evento de inicio si también necesitas ejecución inmediata.
+
+Studio no ejecuta scripts de proceso. El runtime utiliza la copia de fuentes y configuración tomada al arrancar. Reinícialo para ejecutar cambios nuevos. El modo headless ejecuta inicio y tareas; no genera aperturas de pantalla.
+
+### API
+
+```python
+# Instantánea coherente tomada al empezar esta ejecución.
+if ctx.quality("Pump1.running") == "good":
+    running = ctx.read("Pump1.running")
+    print(f"Bomba 1: {running}")
+
+# Estado por script, compartido por sus distintos eventos, durante este runtime.
+ctx.state["executions"] = ctx.state.get("executions", 0) + 1
+print(ctx.event, ctx.screen, ctx.state["executions"])
+```
+
+`ctx.read(nombre)` devuelve el valor y rechaza lecturas cuya calidad no sea good. `ctx.quality(nombre)` devuelve good, uncertain o bad. Ambas rechazan variables inexistentes. `ctx.event` es startup, screen_open, button o task:<id>. `ctx.screen` está vacío para inicio y tareas.
+
+`ctx.write(nombre, valor)` solicita una escritura. Ejemplo: `ctx.write("Pump1.setpoint", 50.0)`. Se recogen hasta 1000 solicitudes y se validan al terminar correctamente el script. Si hay una excepción, sus solicitudes y cambios de estado se descartan. Se comprueban tipo, acceso de escritura y calidad de la variable enlazada antes de aplicar. Las escrituras PLC se envían por la cola habitual de su conexión; el retorno del script no confirma que el PLC las haya aceptado. Consultar el diagnóstico de comunicación y la lectura posterior. Las escrituras de un script no constituyen una transacción entre PLC distintos.
+
+`ctx.state` debe contener datos JSON serializables y se reinicia al detener/iniciar el runtime. `print()` y las excepciones aparecen en Ejecuciones (hasta 500 resultados, salida limitada a los últimos 16000 caracteres por ejecución). No es un registro persistente de auditoría de scripts.
+
+### Ejecución y límites
+
+Los eventos y tareas se serializan en un servicio independiente de Qt y de la adquisición. Cada ejecución usa un proceso Python nuevo. El límite configurable es de 0,1 a 300 segundos, por defecto 10. Al excederlo se termina ese proceso y se registra un error; el servicio continúa. La parada del runtime cancela la ejecución activa y descarta eventos pendientes. La cola admite 128 eventos; al llenarse se registra el descarte.
+
+Los scripts de inicio se ejecutan en el orden configurado antes de atender aperturas de pantalla, botones o tareas. Los primeros plazos de las tareas comienzan después de terminar esa inicialización. Los fallos de un script se registran y el servicio continúa con el siguiente.
+
+Las tareas no se solapan ni acumulan recuperaciones de periodos perdidos: el siguiente plazo se calcula desde el final de la ejecución. Son tareas periódicas de aplicación, no planificación de tiempo real ni calendarios diarios/semanales. Un script lento retrasa otros scripts, pero no bloquea Qt ni la adquisición. La captura normal de salida conserva un búfer limitado durante la ejecución, sin acumular todo el texto impreso.
+
+Los scripts son código Python de confianza del proyecto: tienen los permisos del usuario, pueden importar las bibliotecas instaladas y trabajar con archivos. El proceso separado permite cancelación; no es una sandbox de seguridad ni limita toda la memoria o los subprocesos que el propio script decida crear. El directorio de trabajo es la carpeta del proyecto. La API ctx no expone widgets ni clientes PLC. Para datos propios usa `runtime/`, excluido de las versiones Git.
+
+`examples/plant` incluye inicio, apertura de pantalla y una tarea de calidad de comunicación cada cinco segundos. Los scripts de este ejemplo no escriben al PLC ni fabrican valores. Otros ejemplos incluyen tareas sobre variables internas; no se sustituyen lecturas PLC por datos locales.
+
+### Archivos
+
+```json
+{
+  "startup": ["startup"],
+  "timeout_seconds": 10,
+  "tasks": [
+    {"id":"quality","script":"check_quality","interval_ms":5000,"enabled":true}
+  ]
+}
+```
+
+Se guarda en `automation.json`. Una pantalla añade `"on_open":["screen_open"]`. Un botón añade `"action":"script", "script":"nombre"`. Los proyectos anteriores cargan con configuración vacía. Las referencias y sintaxis se validan al guardar y al iniciar el runtime.

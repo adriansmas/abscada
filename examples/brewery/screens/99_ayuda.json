@@ -1,5 +1,8 @@
 {
-  "title": "Ayuda de operación",
+  "title": {
+    "es": "Ayuda de operación",
+    "en": "Operation help"
+  },
   "width": 760,
   "height": 560,
   "background": "#ffffff",
@@ -14,10 +17,13 @@
       "y": 18,
       "w": 700,
       "h": 30,
-      "text": "LA TOLVA · AYUDA RÁPIDA",
+      "text": {
+        "es": "LA TOLVA · AYUDA RÁPIDA",
+        "en": "LA TOLVA · QUICK HELP"
+      },
       "font_size": 18,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 62,
       "w": 712,
       "h": 44,
-      "text": "• Sin sesión todo es de solo lectura. Inicia sesión en la barra de estado inferior.",
+      "text": {
+        "es": "• Sin sesión todo es de solo lectura. Inicia sesión en la barra de estado inferior.",
+        "en": "• Without a session everything is read-only. Sign in in the status bar below."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -40,10 +49,13 @@
       "y": 110,
       "w": 712,
       "h": 44,
-      "text": "• Sala de cocción: receta, fermentador de destino, INICIAR, RETENER / REANUDAR y ABORTAR.",
+      "text": {
+        "es": "• Sala de cocción: receta, fermentador de destino, INICIAR, RETENER / REANUDAR y ABORTAR.",
+        "en": "• Brewhouse: Recipe, Target Fermenter, START, HOLD/RESUME, and ABORT."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -53,10 +65,13 @@
       "y": 158,
       "w": 712,
       "h": 44,
-      "text": "• Los avisos ámbar piden una acción manual (malta, lúpulo): hazla y pulsa CONFIRMAR.",
+      "text": {
+        "es": "• Los avisos ámbar piden una acción manual (malta, lúpulo): hazla y pulsa CONFIRMAR.",
+        "en": "• Amber prompts ask for manual action (malt, hops): do it and press CONFIRM."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -66,10 +81,13 @@
       "y": 206,
       "w": 712,
       "h": 44,
-      "text": "• Bodega: cada fermentador sigue la receta copiada al iniciar el lote; «Mando…» abre su ventana.",
+      "text": {
+        "es": "• Bodega: cada fermentador sigue la receta copiada al iniciar el lote; «Mando…» abre su ventana.",
+        "en": "• Cellar: each fermenter follows the recipe copied when starting the batch; “Command…” opens his window."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -79,10 +97,13 @@
       "y": 254,
       "w": 712,
       "h": 44,
-      "text": "• Recetas: cualquiera puede consultarlas; solo el maestro cervecero las modifica y guarda.",
+      "text": {
+        "es": "• Recetas: cualquiera puede consultarlas; solo el maestro cervecero las modifica y guarda.",
+        "en": "• Recipes: anyone can consult them; only the brewmaster modifies and saves them."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -92,10 +113,13 @@
       "y": 302,
       "w": 712,
       "h": 44,
-      "text": "• Alarmas: reconocer queda registrado con tu usuario. Filtros e histórico en CSV.",
+      "text": {
+        "es": "• Alarmas: reconocer queda registrado con tu usuario. Filtros e histórico en CSV.",
+        "en": "• Alarms: recognize is registered with your user. Filters and history in CSV."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -105,10 +129,13 @@
       "y": 350,
       "w": 712,
       "h": 44,
-      "text": "• El PLC habla OPC UA cifrado: la primera vez hay que confiar en su certificado.",
+      "text": {
+        "es": "• El PLC habla OPC UA cifrado: la primera vez hay que confiar en su certificado.",
+        "en": "• The PLC speaks OPC UA encryption: the first time you have to trust its certificate."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -118,10 +145,13 @@
       "y": 398,
       "w": 712,
       "h": 44,
-      "text": "• El propio SCADA publica sus variables por OPC UA en el puerto 4850 (rol Cliente MES).",
+      "text": {
+        "es": "• El propio SCADA publica sus variables por OPC UA en el puerto 4850 (rol Cliente MES).",
+        "en": "• The SCADA itself publishes its variables through OPC UA on port 4850 (MES Client role)."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -131,10 +161,13 @@
       "y": 446,
       "w": 712,
       "h": 44,
-      "text": "• Simulación: abscada --simulador cerveceria.",
+      "text": {
+        "es": "• Simulación: abscada --simulador cerveceria.",
+        "en": "• Simulation: abscada --simulador cerveceria."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -144,12 +177,15 @@
       "y": 500,
       "w": 176,
       "h": 40,
-      "text": "Cerrar",
+      "text": {
+        "es": "Cerrar",
+        "en": "Close"
+      },
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "action": "close_popup"
     }
   ],

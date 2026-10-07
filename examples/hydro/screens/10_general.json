@@ -1,8 +1,11 @@
 {
-  "title": "Vista general de la central",
+  "title": {
+    "es": "Vista general de la central",
+    "en": "General view of the plant"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dde1e4",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "VISTA GENERAL DE LA CENTRAL",
+      "text": {
+        "es": "VISTA GENERAL DE LA CENTRAL",
+        "en": "GENERAL VIEW OF THE CENTER"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Embalse → toma → tubería forzada → 2 grupos Francis → transformadores → línea de 66 kV",
+      "text": {
+        "es": "Embalse → toma → tubería forzada → 2 grupos Francis → transformadores → línea de 66 kV",
+        "en": "Reservoir → intake → penstock → 2 Francis units → transformers → 66 kV line"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -40,8 +49,8 @@
       "y": 60,
       "w": 1380,
       "h": 410,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -54,7 +63,7 @@
       "w": 330,
       "h": 300,
       "color": "#ffffff",
-      "stroke_color": "@Borde",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1
     },
     {
@@ -67,7 +76,7 @@
       "tag": "SSCC.NivelEmbalse",
       "min": 795,
       "max": 818,
-      "color": "@Agua",
+      "color": "#4f86b8",
       "dynamics": {
         "states": [
           {
@@ -78,7 +87,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo"
+              "color": "#d32f2f"
             }
           },
           {
@@ -89,7 +98,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso"
+              "color": "#e89a1c"
             }
           }
         ]
@@ -111,10 +120,13 @@
       "y": 70,
       "w": 200,
       "h": 22,
-      "text": "EMBALSE",
+      "text": {
+        "es": "EMBALSE",
+        "en": "RESERVOIR"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -124,19 +136,22 @@
       "y": 92,
       "w": 160,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.NivelEmbalse",
       "unit": "msnm",
       "decimals": 2,
       "font_size": 15,
       "text_align": "left",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -147,19 +162,22 @@
       "y": 92,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.Volumen",
       "unit": "hm³",
       "decimals": 2,
       "font_size": 14,
       "text_align": "left",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -172,9 +190,9 @@
       "h": 18,
       "tag": "SSCC.CompuertaTomaAbierta",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Disparo",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#d32f2f",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -184,10 +202,13 @@
       "y": 372,
       "w": 60,
       "h": 18,
-      "text": "Toma",
+      "text": {
+        "es": "Toma",
+        "en": "Take"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -197,7 +218,7 @@
       "y": 390,
       "w": 790,
       "h": 50,
-      "stroke_color": "@Agua",
+      "stroke_color": "#4f86b8",
       "stroke_width": 12,
       "points": [
         [
@@ -225,10 +246,13 @@
       "y": 400,
       "w": 200,
       "h": 20,
-      "text": "Tubería forzada Ø2,2 m",
+      "text": {
+        "es": "Tubería forzada Ø2,2 m",
+        "en": "Penstock Ø2.2 m"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -238,19 +262,22 @@
       "y": 448,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.PresionTuberia",
       "unit": "bar",
       "decimals": 2,
       "font_size": 12,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -261,7 +288,7 @@
       "y": 104,
       "w": 98,
       "h": 226,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 6,
       "stroke_style": "dash",
       "arrows": "end",
@@ -275,7 +302,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Agua"
+              "stroke_color": "#4f86b8"
             }
           }
         ]
@@ -306,10 +333,13 @@
       "y": 120,
       "w": 120,
       "h": 20,
-      "text": "Aliviadero",
+      "text": {
+        "es": "Aliviadero",
+        "en": "Spillway"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -319,19 +349,22 @@
       "y": 142,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.CaudalAliviadero",
       "unit": "m³/s",
       "decimals": 1,
       "font_size": 12,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -342,9 +375,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
+              "color": "#e89a1c",
               "text_color": "#ffffff",
-              "border_color": "@Aviso"
+              "border_color": "#e89a1c"
             }
           }
         ]
@@ -357,7 +390,7 @@
       "y": 400,
       "w": 1,
       "h": 40,
-      "stroke_color": "@Agua",
+      "stroke_color": "#4f86b8",
       "stroke_width": 10,
       "points": [
         [
@@ -377,10 +410,13 @@
       "y": 72,
       "w": 290,
       "h": 22,
-      "text": "GRUPO 1",
+      "text": {
+        "es": "GRUPO 1",
+        "en": "unit 1"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -450,11 +486,14 @@
       "y": 344,
       "w": 150,
       "h": 34,
-      "text": "Detalle G1 →",
+      "text": {
+        "es": "Detalle G1 →",
+        "en": "Detail G1 →"
+      },
       "font_size": 13,
       "bold": true,
-      "color": "@Mando",
-      "border_color": "@Mando",
+      "color": "#2b6cb0",
+      "border_color": "#2b6cb0",
       "text_color": "#ffffff",
       "action": "screen",
       "screen": "30_grupo1",
@@ -467,7 +506,7 @@
       "y": 400,
       "w": 1,
       "h": 40,
-      "stroke_color": "@Agua",
+      "stroke_color": "#4f86b8",
       "stroke_width": 10,
       "points": [
         [
@@ -487,10 +526,13 @@
       "y": 72,
       "w": 290,
       "h": 22,
-      "text": "GRUPO 2",
+      "text": {
+        "es": "GRUPO 2",
+        "en": "unit 2"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -560,11 +602,14 @@
       "y": 344,
       "w": 150,
       "h": 34,
-      "text": "Detalle G2 →",
+      "text": {
+        "es": "Detalle G2 →",
+        "en": "Detail G2 →"
+      },
       "font_size": 13,
       "bold": true,
-      "color": "@Mando",
-      "border_color": "@Mando",
+      "color": "#2b6cb0",
+      "border_color": "#2b6cb0",
       "text_color": "#ffffff",
       "action": "screen",
       "screen": "31_grupo2",
@@ -577,7 +622,7 @@
       "y": 440,
       "w": 130,
       "h": 1,
-      "stroke_color": "@Agua",
+      "stroke_color": "#4f86b8",
       "stroke_width": 6,
       "arrows": "end",
       "points": [
@@ -598,10 +643,13 @@
       "y": 410,
       "w": 160,
       "h": 20,
-      "text": "Río / canal de desagüe",
+      "text": {
+        "es": "Río / canal de desagüe",
+        "en": "River/drain canal"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -611,8 +659,8 @@
       "y": 476,
       "w": 223,
       "h": 64,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -624,10 +672,13 @@
       "y": 481,
       "w": 200,
       "h": 18,
-      "text": "POTENCIA PLANTA",
+      "text": {
+        "es": "POTENCIA PLANTA",
+        "en": "PLANT POWER"
+      },
       "font_size": 10,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -637,16 +688,19 @@
       "y": 500,
       "w": 207,
       "h": 34,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Sistema.PotenciaTotal",
       "unit": "MW",
       "decimals": 2,
       "font_size": 20,
       "bold": true,
       "text_align": "left",
-      "color": "@Panel",
-      "border_color": "@Panel",
-      "text_color": "@Texto"
+      "color": "#eceef0",
+      "border_color": "#eceef0",
+      "text_color": "#1f2a33"
     },
     {
       "id": "kpi1",
@@ -655,8 +709,8 @@
       "y": 476,
       "w": 223,
       "h": 64,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -668,10 +722,13 @@
       "y": 481,
       "w": 200,
       "h": 18,
-      "text": "ENERGÍA HOY",
+      "text": {
+        "es": "ENERGÍA HOY",
+        "en": "ENERGY TODAY"
+      },
       "font_size": 10,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -681,16 +738,19 @@
       "y": 500,
       "w": 207,
       "h": 34,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Sistema.EnergiaHoy",
       "unit": "MWh",
       "decimals": 1,
       "font_size": 20,
       "bold": true,
       "text_align": "left",
-      "color": "@Panel",
-      "border_color": "@Panel",
-      "text_color": "@Texto"
+      "color": "#eceef0",
+      "border_color": "#eceef0",
+      "text_color": "#1f2a33"
     },
     {
       "id": "kpi2",
@@ -699,8 +759,8 @@
       "y": 476,
       "w": 223,
       "h": 64,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -712,10 +772,13 @@
       "y": 481,
       "w": 200,
       "h": 18,
-      "text": "CAUDAL TURBINADO",
+      "text": {
+        "es": "CAUDAL TURBINADO",
+        "en": "TURBINED FLOW"
+      },
       "font_size": 10,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -725,16 +788,19 @@
       "y": 500,
       "w": 207,
       "h": 34,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Sistema.CaudalTurbinado",
       "unit": "m³/s",
       "decimals": 2,
       "font_size": 20,
       "bold": true,
       "text_align": "left",
-      "color": "@Panel",
-      "border_color": "@Panel",
-      "text_color": "@Texto"
+      "color": "#eceef0",
+      "border_color": "#eceef0",
+      "text_color": "#1f2a33"
     },
     {
       "id": "kpi3",
@@ -743,8 +809,8 @@
       "y": 476,
       "w": 223,
       "h": 64,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -756,10 +822,13 @@
       "y": 481,
       "w": 200,
       "h": 18,
-      "text": "CAUDAL DE ENTRADA",
+      "text": {
+        "es": "CAUDAL DE ENTRADA",
+        "en": "INPUT FLOW"
+      },
       "font_size": 10,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -769,16 +838,19 @@
       "y": 500,
       "w": 207,
       "h": 34,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.CaudalEntrada",
       "unit": "m³/s",
       "decimals": 1,
       "font_size": 20,
       "bold": true,
       "text_align": "left",
-      "color": "@Panel",
-      "border_color": "@Panel",
-      "text_color": "@Texto"
+      "color": "#eceef0",
+      "border_color": "#eceef0",
+      "text_color": "#1f2a33"
     },
     {
       "id": "kpi4",
@@ -787,8 +859,8 @@
       "y": 476,
       "w": 223,
       "h": 64,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -800,10 +872,13 @@
       "y": 481,
       "w": 200,
       "h": 18,
-      "text": "SALTO BRUTO",
+      "text": {
+        "es": "SALTO BRUTO",
+        "en": "GROSS JUMP"
+      },
       "font_size": 10,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -813,16 +888,19 @@
       "y": 500,
       "w": 207,
       "h": 34,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.SaltoBruto",
       "unit": "m",
       "decimals": 2,
       "font_size": 20,
       "bold": true,
       "text_align": "left",
-      "color": "@Panel",
-      "border_color": "@Panel",
-      "text_color": "@Texto"
+      "color": "#eceef0",
+      "border_color": "#eceef0",
+      "text_color": "#1f2a33"
     },
     {
       "id": "kpi5",
@@ -831,8 +909,8 @@
       "y": 476,
       "w": 223,
       "h": 64,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -844,10 +922,13 @@
       "y": 481,
       "w": 200,
       "h": 18,
-      "text": "FRECUENCIA RED",
+      "text": {
+        "es": "FRECUENCIA RED",
+        "en": "NETWORK FREQUENCY"
+      },
       "font_size": 10,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -857,16 +938,19 @@
       "y": 500,
       "w": 207,
       "h": 34,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.FrecuenciaRed",
       "unit": "Hz",
       "decimals": 3,
       "font_size": 20,
       "bold": true,
       "text_align": "left",
-      "color": "@Panel",
-      "border_color": "@Panel",
-      "text_color": "@Texto"
+      "color": "#eceef0",
+      "border_color": "#eceef0",
+      "text_color": "#1f2a33"
     },
     {
       "id": "alarmas",

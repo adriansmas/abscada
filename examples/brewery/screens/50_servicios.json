@@ -1,8 +1,11 @@
 {
-  "title": "Servicios",
+  "title": {
+    "es": "Servicios",
+    "en": "Services"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dfe1e2",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "SERVICIOS",
+      "text": {
+        "es": "SERVICIOS",
+        "en": "SERVICES"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Agua caliente, vapor, glicol y agua fría del enfriador de mosto",
+      "text": {
+        "es": "Agua caliente, vapor, glicol y agua fría del enfriador de mosto",
+        "en": "Hot water, steam, glycol and cold water from the wort chiller"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -40,8 +49,8 @@
       "y": 60,
       "w": 340,
       "h": 400,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -53,10 +62,13 @@
       "y": 66,
       "w": 316,
       "h": 20,
-      "text": "DEPÓSITO DE AGUA CALIENTE (HLT)",
+      "text": {
+        "es": "DEPÓSITO DE AGUA CALIENTE (HLT)",
+        "en": "HOT WATER TANK (HLT)"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -66,10 +78,13 @@
       "y": 96,
       "w": 140,
       "h": 20,
-      "text": "30 hl",
+      "text": {
+        "es": "30 hl",
+        "en": "30 hl"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -80,7 +95,7 @@
       "w": 100,
       "h": 240,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -93,7 +108,7 @@
       "tag": "Servicios.NivelHLT",
       "min": 0,
       "max": 30,
-      "color": "@Agua",
+      "color": "#4f86b8",
       "dynamics": {}
     },
     {
@@ -103,19 +118,22 @@
       "y": 364,
       "w": 100,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.NivelHLT",
       "unit": "hl",
       "decimals": 1,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -126,19 +144,22 @@
       "y": 390,
       "w": 100,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.TempHLT",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -149,10 +170,13 @@
       "y": 133,
       "w": 80,
       "h": 22,
-      "text": "Consigna",
+      "text": {
+        "es": "Consigna",
+        "en": "Setpoint"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -162,15 +186,18 @@
       "y": 130,
       "w": 90,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.ConsignaHLT",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "dynamics": {}
     },
@@ -181,10 +208,13 @@
       "y": 176,
       "w": 176,
       "h": 80,
-      "text": "Se rellena con agua de red por debajo de 15 hl. Calienta con vapor.",
+      "text": {
+        "es": "Se rellena con agua de red por debajo de 15 hl. Calienta con vapor.",
+        "en": "It is filled with tap water below 15 hl. Heat with steam."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -194,8 +224,8 @@
       "y": 60,
       "w": 340,
       "h": 400,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -207,10 +237,13 @@
       "y": 66,
       "w": 316,
       "h": 20,
-      "text": "GENERADOR DE VAPOR",
+      "text": {
+        "es": "GENERADOR DE VAPOR",
+        "en": "STEAM GENERATOR"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -225,7 +258,10 @@
       "max": 8,
       "unit": "bar",
       "decimals": 1,
-      "text": "Vapor",
+      "text": {
+        "es": "Vapor",
+        "en": "Steam"
+      },
       "gauge_style": "dial",
       "warning": 7,
       "alarm": 7.5,
@@ -239,7 +275,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo"
+              "color": "#d32f2f"
             }
           }
         ]
@@ -254,9 +290,9 @@
       "h": 20,
       "tag": "Servicios.Caldera",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -266,10 +302,13 @@
       "y": 341,
       "w": 272,
       "h": 22,
-      "text": "Caldera en marcha",
+      "text": {
+        "es": "Caldera en marcha",
+        "en": "boiler running"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -281,9 +320,9 @@
       "h": 20,
       "tag": "Servicios.FalloCaldera",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -293,10 +332,13 @@
       "y": 371,
       "w": 272,
       "h": 22,
-      "text": "Fallo de caldera",
+      "text": {
+        "es": "Fallo de caldera",
+        "en": "Boiler failure"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -306,10 +348,13 @@
       "y": 402,
       "w": 300,
       "h": 40,
-      "text": "Por debajo de 4 bar la cocina no puede iniciar lotes.",
+      "text": {
+        "es": "Por debajo de 4 bar la cocina no puede iniciar lotes.",
+        "en": "Below 4 bar the kitchen cannot start batches."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -319,8 +364,8 @@
       "y": 60,
       "w": 680,
       "h": 400,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -332,10 +377,13 @@
       "y": 66,
       "w": 656,
       "h": 20,
-      "text": "GLICOL Y AGUA FRÍA",
+      "text": {
+        "es": "GLICOL Y AGUA FRÍA",
+        "en": "GLYCOL AND COLD WATER"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -346,7 +394,7 @@
       "w": 90,
       "h": 240,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -359,7 +407,7 @@
       "tag": "Servicios.NivelGlicol",
       "min": 0,
       "max": 100,
-      "color": "@Glicol",
+      "color": "#3c8fa6",
       "dynamics": {
         "states": [
           {
@@ -370,7 +418,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo"
+              "color": "#d32f2f"
             }
           },
           {
@@ -381,7 +429,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso"
+              "color": "#e89a1c"
             }
           }
         ]
@@ -394,10 +442,13 @@
       "y": 86,
       "w": 110,
       "h": 20,
-      "text": "Depósito",
+      "text": {
+        "es": "Depósito",
+        "en": "Deposit"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -407,19 +458,22 @@
       "y": 356,
       "w": 90,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.NivelGlicol",
       "unit": "%",
       "decimals": 0,
       "font_size": 14,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -430,9 +484,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           },
           {
@@ -443,9 +497,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
+              "color": "#e89a1c",
               "text_color": "#ffffff",
-              "border_color": "@Aviso"
+              "border_color": "#e89a1c"
             }
           }
         ]
@@ -458,10 +512,13 @@
       "y": 113,
       "w": 364,
       "h": 22,
-      "text": "Temperatura de glicol",
+      "text": {
+        "es": "Temperatura de glicol",
+        "en": "glycol temperature"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -471,19 +528,22 @@
       "y": 110,
       "w": 130,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.TempGlicol",
       "unit": "°C",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -494,9 +554,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           }
         ]
@@ -509,10 +569,13 @@
       "y": 149,
       "w": 364,
       "h": 22,
-      "text": "Agua fría del enfriador",
+      "text": {
+        "es": "Agua fría del enfriador",
+        "en": "Cold water from the cooler"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -522,19 +585,22 @@
       "y": 146,
       "w": 130,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.TempAguaFria",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -545,10 +611,13 @@
       "y": 185,
       "w": 364,
       "h": 22,
-      "text": "Consigna de glicol",
+      "text": {
+        "es": "Consigna de glicol",
+        "en": "Glycol setpoint"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -558,15 +627,18 @@
       "y": 182,
       "w": 130,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.ConsignaGlicol",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "dynamics": {}
     },
@@ -579,9 +651,9 @@
       "h": 20,
       "tag": "Servicios.Enfriadora",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -591,10 +663,13 @@
       "y": 231,
       "w": 272,
       "h": 22,
-      "text": "Enfriadora en marcha",
+      "text": {
+        "es": "Enfriadora en marcha",
+        "en": "Chiller running"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -606,9 +681,9 @@
       "h": 20,
       "tag": "Servicios.FalloEnfriadora",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -618,10 +693,13 @@
       "y": 259,
       "w": 472,
       "h": 22,
-      "text": "Fallo de enfriadora (o nivel de glicol < 20 %)",
+      "text": {
+        "es": "Fallo de enfriadora (o nivel de glicol < 20 %)",
+        "en": "Chiller failure (or glycol level < 20%)"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -631,10 +709,13 @@
       "y": 296,
       "w": 500,
       "h": 80,
-      "text": "El glicol enfría las camisas de los fermentadores y el agua fría del enfriador de mosto. Si se calienta, los fermentadores pierden la consigna y el mosto llega caliente a bodega.",
+      "text": {
+        "es": "El glicol enfría las camisas de los fermentadores y el agua fría del enfriador de mosto. Si se calienta, los fermentadores pierden la consigna y el mosto llega caliente a bodega.",
+        "en": "The glycol cools the jackets of the fermenters and the cold water of the wort chiller. If it heats up, the fermenters lose the setpoint and the wort arrives hot at the cellar."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {

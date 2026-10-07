@@ -1,5 +1,8 @@
 {
-  "title": "Banco de pruebas de la biblioteca",
+  "title": {
+    "es": "Banco de pruebas de la biblioteca",
+    "en": "Library Test Bank"
+  },
   "width": 1100,
   "height": 550,
   "background": "#f4f7fa",
@@ -11,7 +14,10 @@
       "y": 20,
       "w": 1040,
       "h": 55,
-      "text": "Biblioteca de equipos · banco de pruebas",
+      "text": {
+        "es": "Biblioteca de equipos · banco de pruebas",
+        "en": "Equipment library · test bench"
+      },
       "font_size": 28
     },
     {

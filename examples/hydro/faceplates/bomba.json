@@ -1,8 +1,11 @@
 {
-  "title": "Bomba",
+  "title": {
+    "es": "Bomba",
+    "en": "Bomb"
+  },
   "width": 50,
   "height": 50,
-  "background": "@Panel",
+  "background": "#eceef0",
   "parameters": {
     "marcha": "bool",
     "fallo": "bool"
@@ -15,8 +18,8 @@
       "y": 3,
       "w": 44,
       "h": 44,
-      "color": "@Paro",
-      "stroke_color": "@Texto",
+      "color": "#9aa3ab",
+      "stroke_color": "#1f2a33",
       "stroke_width": 2,
       "dynamics": {
         "states": [
@@ -28,7 +31,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo"
+              "color": "#d32f2f"
             }
           },
           {
@@ -39,12 +42,12 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha"
+              "color": "#2e8b57"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso"
+          "color": "#e89a1c"
         }
       }
     },

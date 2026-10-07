@@ -1,8 +1,11 @@
 {
-  "title": "Bomba",
+  "title": {
+    "es": "Bomba",
+    "en": "Bomb"
+  },
   "width": 360,
   "height": 230,
-  "background": "@Panel",
+  "background": "#eceef0",
   "parameters": {
     "marcha": "bool",
     "fallo": "bool"
@@ -15,8 +18,8 @@
       "y": 16,
       "w": 80,
       "h": 80,
-      "color": "@Paro",
-      "stroke_color": "@Texto",
+      "color": "#9aa3ab",
+      "stroke_color": "#1f2a33",
       "stroke_width": 3,
       "dynamics": {
         "states": [
@@ -28,7 +31,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo"
+              "color": "#d32f2f"
             }
           },
           {
@@ -39,12 +42,12 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha"
+              "color": "#2e8b57"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso"
+          "color": "#e89a1c"
         }
       }
     },
@@ -89,17 +92,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "EN MARCHA"
+          "text": {
+            "es": "EN MARCHA",
+            "en": "ON THE GO"
+          }
         },
         {
           "value": "false",
-          "text": "PARADA"
+          "text": {
+            "es": "PARADA",
+            "en": "STOP"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -109,14 +121,14 @@
               "value": true
             },
             "style": {
-              "color": "@Marcha",
-              "border_color": "@Marcha"
+              "color": "#2e8b57",
+              "border_color": "#2e8b57"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -133,17 +145,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "FALLO"
+          "text": {
+            "es": "FALLO",
+            "en": "FAILURE"
+          }
         },
         {
           "value": "false",
-          "text": "SIN FALLO"
+          "text": {
+            "es": "SIN FALLO",
+            "en": "WITHOUT FAILURE"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -153,14 +174,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -171,10 +192,13 @@
       "y": 112,
       "w": 328,
       "h": 48,
-      "text": "Arranque y parada automáticos por el PLC (nivel o presión). Sin mando desde el SCADA.",
+      "text": {
+        "es": "Arranque y parada automáticos por el PLC (nivel o presión). Sin mando desde el SCADA.",
+        "en": "Automatic start and stop by the PLC (level or pressure). Without control from the SCADA."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -184,12 +208,15 @@
       "y": 176,
       "w": 120,
       "h": 38,
-      "text": "Cerrar",
+      "text": {
+        "es": "Cerrar",
+        "en": "Close"
+      },
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "action": "close_popup"
     }
   ]

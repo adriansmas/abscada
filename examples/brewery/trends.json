@@ -1,11 +1,17 @@
 {
   "coccion": {
-    "title": "Maceración y hervido",
+    "title": {
+      "es": "Maceración y hervido",
+      "en": "Maceration and boiling"
+    },
     "window_seconds": 600,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -14,7 +20,10 @@
       },
       {
         "id": "hl",
-        "title": "Nivel (hl)",
+        "title": {
+          "es": "Nivel (hl)",
+          "en": "Level (hl)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -58,12 +67,18 @@
     ]
   },
   "servicios": {
-    "title": "Vapor, agua caliente y glicol",
+    "title": {
+      "es": "Vapor, agua caliente y glicol",
+      "en": "Steam, hot water and glycol"
+    },
     "window_seconds": 900,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": true,
         "min": 0,
@@ -72,7 +87,10 @@
       },
       {
         "id": "b",
-        "title": "Presión (bar)",
+        "title": {
+          "es": "Presión (bar)",
+          "en": "Pressure (bar)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -116,12 +134,18 @@
     ]
   },
   "perfil_receta": {
-    "title": "Último lote: temperatura de maceración",
+    "title": {
+      "es": "Último lote: temperatura de maceración",
+      "en": "Last batch: maceration temperature"
+    },
     "window_seconds": 600,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": 40,
@@ -149,12 +173,18 @@
     ]
   },
   "fermentacion_fv1": {
-    "title": "FV1: curva de fermentación",
+    "title": {
+      "es": "FV1: curva de fermentación",
+      "en": "FV1: fermentation curve"
+    },
     "window_seconds": 1800,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": -2,
@@ -163,7 +193,10 @@
       },
       {
         "id": "p",
-        "title": "Densidad (°P) · presión (bar)",
+        "title": {
+          "es": "Densidad (°P) · presión (bar)",
+          "en": "Density (°P) · pressure (bar)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -207,12 +240,18 @@
     ]
   },
   "fermentacion_fv2": {
-    "title": "FV2: curva de fermentación",
+    "title": {
+      "es": "FV2: curva de fermentación",
+      "en": "FV2: fermentation curve"
+    },
     "window_seconds": 1800,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": -2,
@@ -221,7 +260,10 @@
       },
       {
         "id": "p",
-        "title": "Densidad (°P) · presión (bar)",
+        "title": {
+          "es": "Densidad (°P) · presión (bar)",
+          "en": "Density (°P) · pressure (bar)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -265,12 +307,18 @@
     ]
   },
   "fermentacion_fv3": {
-    "title": "FV3: curva de fermentación",
+    "title": {
+      "es": "FV3: curva de fermentación",
+      "en": "FV3: fermentation curve"
+    },
     "window_seconds": 1800,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": -2,
@@ -279,7 +327,10 @@
       },
       {
         "id": "p",
-        "title": "Densidad (°P) · presión (bar)",
+        "title": {
+          "es": "Densidad (°P) · presión (bar)",
+          "en": "Density (°P) · pressure (bar)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -323,12 +374,18 @@
     ]
   },
   "tendencia": {
-    "title": "Maceración y hervido",
+    "title": {
+      "es": "Maceración y hervido",
+      "en": "Maceration and boiling"
+    },
     "window_seconds": 600,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -337,7 +394,10 @@
       },
       {
         "id": "hl",
-        "title": "Nivel (hl)",
+        "title": {
+          "es": "Nivel (hl)",
+          "en": "Level (hl)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -381,12 +441,18 @@
     ]
   },
   "tendencia_2": {
-    "title": "FV1: curva de fermentación",
+    "title": {
+      "es": "FV1: curva de fermentación",
+      "en": "FV1: fermentation curve"
+    },
     "window_seconds": 1800,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": -2,
@@ -395,7 +461,10 @@
       },
       {
         "id": "p",
-        "title": "Densidad (°P) · presión (bar)",
+        "title": {
+          "es": "Densidad (°P) · presión (bar)",
+          "en": "Density (°P) · pressure (bar)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -439,12 +508,18 @@
     ]
   },
   "tendencia_3": {
-    "title": "FV2: curva de fermentación",
+    "title": {
+      "es": "FV2: curva de fermentación",
+      "en": "FV2: fermentation curve"
+    },
     "window_seconds": 1800,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": -2,
@@ -453,7 +528,10 @@
       },
       {
         "id": "p",
-        "title": "Densidad (°P) · presión (bar)",
+        "title": {
+          "es": "Densidad (°P) · presión (bar)",
+          "en": "Density (°P) · pressure (bar)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -497,12 +575,18 @@
     ]
   },
   "tendencia_4": {
-    "title": "FV3: curva de fermentación",
+    "title": {
+      "es": "FV3: curva de fermentación",
+      "en": "FV3: fermentation curve"
+    },
     "window_seconds": 1800,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": -2,
@@ -511,7 +595,10 @@
       },
       {
         "id": "p",
-        "title": "Densidad (°P) · presión (bar)",
+        "title": {
+          "es": "Densidad (°P) · presión (bar)",
+          "en": "Density (°P) · pressure (bar)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -555,12 +642,18 @@
     ]
   },
   "tendencia_5": {
-    "title": "Vapor, agua caliente y glicol",
+    "title": {
+      "es": "Vapor, agua caliente y glicol",
+      "en": "Steam, hot water and glycol"
+    },
     "window_seconds": 900,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": true,
         "min": 0,
@@ -569,7 +662,10 @@
       },
       {
         "id": "b",
-        "title": "Presión (bar)",
+        "title": {
+          "es": "Presión (bar)",
+          "en": "Pressure (bar)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,

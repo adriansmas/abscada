@@ -1,8 +1,11 @@
 {
-  "title": "Servicios auxiliares",
+  "title": {
+    "es": "Servicios auxiliares",
+    "en": "Ancillary services"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dde1e4",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "SERVICIOS AUXILIARES",
+      "text": {
+        "es": "SERVICIOS AUXILIARES",
+        "en": "AUXILIARY SERVICES"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Grupos oleohidráulicos, refrigeración, drenaje, aire comprimido, corriente continua y 400 V",
+      "text": {
+        "es": "Grupos oleohidráulicos, refrigeración, drenaje, aire comprimido, corriente continua y 400 V",
+        "en": "Oleohydraulic units, refrigeration, drainage, compressed air, direct current and 400 V"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -40,8 +49,8 @@
       "y": 60,
       "w": 335,
       "h": 370,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -53,10 +62,13 @@
       "y": 66,
       "w": 311,
       "h": 20,
-      "text": "OLEOHIDRÁULICO Y REFRIGERACIÓN G1",
+      "text": {
+        "es": "OLEOHIDRÁULICO Y REFRIGERACIÓN G1",
+        "en": "OLEOHYDRAULIC AND REFRIGERATION G1"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -71,7 +83,10 @@
       "max": 80,
       "unit": "bar",
       "decimals": 1,
-      "text": "Acumulador",
+      "text": {
+        "es": "Acumulador",
+        "en": "Accumulator"
+      },
       "gauge_style": "dial",
       "warning": 66,
       "alarm": 72,
@@ -86,7 +101,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo"
+              "color": "#d32f2f"
             }
           }
         ]
@@ -99,19 +114,22 @@
       "y": 100,
       "w": 120,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G1.PresionOleo",
       "unit": "bar",
       "decimals": 1,
       "font_size": 16,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -122,9 +140,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           },
           {
@@ -135,9 +153,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
+              "color": "#e89a1c",
               "text_color": "#ffffff",
-              "border_color": "@Aviso"
+              "border_color": "#e89a1c"
             }
           }
         ]
@@ -163,10 +181,13 @@
       "y": 146,
       "w": 76,
       "h": 50,
-      "text": "Bomba de aceite\n56 / 63 bar",
+      "text": {
+        "es": "Bomba de aceite\n56 / 63 bar",
+        "en": "Oil pump\n56 / 63 bar"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -176,10 +197,13 @@
       "y": 210,
       "w": 130,
       "h": 40,
-      "text": "Alarma 52 bar\nDisparo 45 bar",
+      "text": {
+        "es": "Alarma 52 bar\nDisparo 45 bar",
+        "en": "Alarm 52 bar\nTrip 45 bar"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -189,10 +213,13 @@
       "y": 337,
       "w": 184,
       "h": 22,
-      "text": "Caudal refrigeración",
+      "text": {
+        "es": "Caudal refrigeración",
+        "en": "Cooling flow"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -202,19 +229,22 @@
       "y": 334,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G1.CaudalRefrigeracion",
       "unit": "l/s",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -227,9 +257,9 @@
       "h": 20,
       "tag": "G1.FalloRefrigeracion",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -239,10 +269,13 @@
       "y": 373,
       "w": 272,
       "h": 22,
-      "text": "Fallo de refrigeración",
+      "text": {
+        "es": "Fallo de refrigeración",
+        "en": "Cooling failure"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -254,9 +287,9 @@
       "h": 20,
       "tag": "G1.Refrigeracion",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -266,10 +299,13 @@
       "y": 399,
       "w": 272,
       "h": 22,
-      "text": "Bombas de refrigeración",
+      "text": {
+        "es": "Bombas de refrigeración",
+        "en": "Cooling pumps"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -279,8 +315,8 @@
       "y": 60,
       "w": 335,
       "h": 370,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -292,10 +328,13 @@
       "y": 66,
       "w": 311,
       "h": 20,
-      "text": "OLEOHIDRÁULICO Y REFRIGERACIÓN G2",
+      "text": {
+        "es": "OLEOHIDRÁULICO Y REFRIGERACIÓN G2",
+        "en": "OLEOHYDRAULIC AND REFRIGERATION G2"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -310,7 +349,10 @@
       "max": 80,
       "unit": "bar",
       "decimals": 1,
-      "text": "Acumulador",
+      "text": {
+        "es": "Acumulador",
+        "en": "Accumulator"
+      },
       "gauge_style": "dial",
       "warning": 66,
       "alarm": 72,
@@ -325,7 +367,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo"
+              "color": "#d32f2f"
             }
           }
         ]
@@ -338,19 +380,22 @@
       "y": 100,
       "w": 120,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G2.PresionOleo",
       "unit": "bar",
       "decimals": 1,
       "font_size": 16,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -361,9 +406,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           },
           {
@@ -374,9 +419,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
+              "color": "#e89a1c",
               "text_color": "#ffffff",
-              "border_color": "@Aviso"
+              "border_color": "#e89a1c"
             }
           }
         ]
@@ -402,10 +447,13 @@
       "y": 146,
       "w": 76,
       "h": 50,
-      "text": "Bomba de aceite\n56 / 63 bar",
+      "text": {
+        "es": "Bomba de aceite\n56 / 63 bar",
+        "en": "Oil pump\n56 / 63 bar"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -415,10 +463,13 @@
       "y": 210,
       "w": 130,
       "h": 40,
-      "text": "Alarma 52 bar\nDisparo 45 bar",
+      "text": {
+        "es": "Alarma 52 bar\nDisparo 45 bar",
+        "en": "Alarm 52 bar\nTrip 45 bar"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -428,10 +479,13 @@
       "y": 337,
       "w": 184,
       "h": 22,
-      "text": "Caudal refrigeración",
+      "text": {
+        "es": "Caudal refrigeración",
+        "en": "Cooling flow"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -441,19 +495,22 @@
       "y": 334,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G2.CaudalRefrigeracion",
       "unit": "l/s",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -466,9 +523,9 @@
       "h": 20,
       "tag": "G2.FalloRefrigeracion",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -478,10 +535,13 @@
       "y": 373,
       "w": 272,
       "h": 22,
-      "text": "Fallo de refrigeración",
+      "text": {
+        "es": "Fallo de refrigeración",
+        "en": "Cooling failure"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -493,9 +553,9 @@
       "h": 20,
       "tag": "G2.Refrigeracion",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -505,10 +565,13 @@
       "y": 399,
       "w": 272,
       "h": 22,
-      "text": "Bombas de refrigeración",
+      "text": {
+        "es": "Bombas de refrigeración",
+        "en": "Cooling pumps"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -518,8 +581,8 @@
       "y": 60,
       "w": 340,
       "h": 370,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -531,10 +594,13 @@
       "y": 66,
       "w": 316,
       "h": 20,
-      "text": "POZO DE DRENAJE DE LA CENTRAL",
+      "text": {
+        "es": "POZO DE DRENAJE DE LA CENTRAL",
+        "en": "PLANT DRAINAGE WELL"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -545,7 +611,7 @@
       "w": 90,
       "h": 260,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6c7882",
       "stroke_width": 2
     },
     {
@@ -558,7 +624,7 @@
       "tag": "SSCC.NivelPozo",
       "min": 0,
       "max": 100,
-      "color": "@Agua",
+      "color": "#4f86b8",
       "dynamics": {
         "states": [
           {
@@ -569,7 +635,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo"
+              "color": "#d32f2f"
             }
           }
         ]
@@ -582,19 +648,22 @@
       "y": 366,
       "w": 90,
       "h": 28,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.NivelPozo",
       "unit": "%",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -605,9 +674,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           }
         ]
@@ -633,10 +702,13 @@
       "y": 112,
       "w": 140,
       "h": 20,
-      "text": "Bomba 1 (principal)",
+      "text": {
+        "es": "Bomba 1 (principal)",
+        "en": "Pump 1 (main)"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -646,10 +718,13 @@
       "y": 134,
       "w": 140,
       "h": 36,
-      "text": "Arranque / parada 60 / 20 %",
+      "text": {
+        "es": "Arranque / parada 60 / 20 %",
+        "en": "Start / stop 60 / 20%"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -672,10 +747,13 @@
       "y": 232,
       "w": 140,
       "h": 20,
-      "text": "Bomba 2 (reserva)",
+      "text": {
+        "es": "Bomba 2 (reserva)",
+        "en": "Pump 2 (reserve)"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -685,10 +763,13 @@
       "y": 254,
       "w": 140,
       "h": 36,
-      "text": "Arranque / parada 78 / 30 %",
+      "text": {
+        "es": "Arranque / parada 78 / 30 %",
+        "en": "Start / stop 78 / 30%"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -698,10 +779,13 @@
       "y": 366,
       "w": 200,
       "h": 22,
-      "text": "Alarma de nivel alto: 80 %",
+      "text": {
+        "es": "Alarma de nivel alto: 80 %",
+        "en": "High level alarm: 80%"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -711,8 +795,8 @@
       "y": 60,
       "w": 340,
       "h": 180,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -724,10 +808,13 @@
       "y": 66,
       "w": 316,
       "h": 20,
-      "text": "AIRE COMPRIMIDO (FRENOS)",
+      "text": {
+        "es": "AIRE COMPRIMIDO (FRENOS)",
+        "en": "COMPRESSED AIR (BRAKES)"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -750,10 +837,13 @@
       "y": 98,
       "w": 250,
       "h": 44,
-      "text": "Compresor\narranca 7 · para 8 bar",
+      "text": {
+        "es": "Compresor\narranca 7 · para 8 bar",
+        "en": "Compressor\nstarts 7 · for 8 bar"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -763,10 +853,13 @@
       "y": 169,
       "w": 184,
       "h": 22,
-      "text": "Presión calderín",
+      "text": {
+        "es": "Presión calderín",
+        "en": "Boiler pressure"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -776,19 +869,22 @@
       "y": 166,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.PresionAire",
       "unit": "bar",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -799,9 +895,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
+              "color": "#e89a1c",
               "text_color": "#ffffff",
-              "border_color": "@Aviso"
+              "border_color": "#e89a1c"
             }
           }
         ]
@@ -814,10 +910,13 @@
       "y": 202,
       "w": 300,
       "h": 20,
-      "text": "Alarma de presión baja: 6 bar",
+      "text": {
+        "es": "Alarma de presión baja: 6 bar",
+        "en": "Low pressure alarm: 6 bar"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -827,8 +926,8 @@
       "y": 250,
       "w": 340,
       "h": 180,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -840,10 +939,13 @@
       "y": 256,
       "w": 316,
       "h": 20,
-      "text": "CORRIENTE CONTINUA 125 V",
+      "text": {
+        "es": "CORRIENTE CONTINUA 125 V",
+        "en": "DIRECT CURRENT 125 V"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -855,9 +957,9 @@
       "h": 20,
       "tag": "SSCC.CargadorOk",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Disparo",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#d32f2f",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -867,10 +969,13 @@
       "y": 285,
       "w": 272,
       "h": 22,
-      "text": "Rectificador-cargador",
+      "text": {
+        "es": "Rectificador-cargador",
+        "en": "Rectifier-charger"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -880,10 +985,13 @@
       "y": 321,
       "w": 184,
       "h": 22,
-      "text": "Tensión de baterías",
+      "text": {
+        "es": "Tensión de baterías",
+        "en": "Battery voltage"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -893,19 +1001,22 @@
       "y": 318,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.TensionBaterias",
       "unit": "V",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -916,9 +1027,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           },
           {
@@ -929,9 +1040,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
+              "color": "#e89a1c",
               "text_color": "#ffffff",
-              "border_color": "@Aviso"
+              "border_color": "#e89a1c"
             }
           }
         ]
@@ -944,10 +1055,13 @@
       "y": 354,
       "w": 300,
       "h": 40,
-      "text": "Batería de plomo 60 elementos · alarma 110 V · crítica 105 V",
+      "text": {
+        "es": "Batería de plomo 60 elementos · alarma 110 V · crítica 105 V",
+        "en": "Lead battery 60 elements · alarm 110 V · critical 105 V"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -957,8 +1071,8 @@
       "y": 440,
       "w": 690,
       "h": 170,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -970,10 +1084,13 @@
       "y": 446,
       "w": 666,
       "h": 20,
-      "text": "SERVICIOS AUXILIARES DE CORRIENTE ALTERNA 400 V",
+      "text": {
+        "es": "SERVICIOS AUXILIARES DE CORRIENTE ALTERNA 400 V",
+        "en": "AUXILIARY SERVICES OF ALTERNATE CURRENT 400 V"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -985,9 +1102,9 @@
       "h": 20,
       "tag": "SSCC.TrafoAuxOk",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Disparo",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#d32f2f",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -997,10 +1114,13 @@
       "y": 477,
       "w": 312,
       "h": 22,
-      "text": "Transformador de servicios auxiliares",
+      "text": {
+        "es": "Transformador de servicios auxiliares",
+        "en": "Auxiliary services transformer"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1012,9 +1132,9 @@
       "h": 20,
       "tag": "SSCC.GrupoDiesel",
       "lamp_colors": {
-        "on": "@Aviso",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#e89a1c",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1024,10 +1144,13 @@
       "y": 507,
       "w": 312,
       "h": 22,
-      "text": "Grupo diésel de emergencia",
+      "text": {
+        "es": "Grupo diésel de emergencia",
+        "en": "Emergency diesel unit"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1037,10 +1160,13 @@
       "y": 543,
       "w": 214,
       "h": 22,
-      "text": "Tensión barras 400 V",
+      "text": {
+        "es": "Tensión barras 400 V",
+        "en": "Bar voltage 400 V"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1050,19 +1176,22 @@
       "y": 540,
       "w": 120,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.Tension400V",
       "unit": "V",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -1073,9 +1202,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           }
         ]
@@ -1088,10 +1217,13 @@
       "y": 474,
       "w": 280,
       "h": 110,
-      "text": "Ante pérdida de red, el diésel arranca a los 3 s y recupera la barra de 400 V para los auxiliares esenciales.",
+      "text": {
+        "es": "Ante pérdida de red, el diésel arranca a los 3 s y recupera la barra de 400 V para los auxiliares esenciales.",
+        "en": "In the event of a power loss, the diesel starts after 3 seconds and recovers the 400 V bar for the essential auxiliaries."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -1101,8 +1233,8 @@
       "y": 620,
       "w": 690,
       "h": 210,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -1114,10 +1246,13 @@
       "y": 626,
       "w": 666,
       "h": 20,
-      "text": "ALARMAS POR ÁREA (CALCULADAS EN LOS PLC)",
+      "text": {
+        "es": "ALARMAS POR ÁREA (CALCULADAS EN LOS PLC)",
+        "en": "ALARMS BY AREA (CACULATED IN THE PLC)"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -1129,9 +1264,9 @@
       "h": 20,
       "tag": "G1.AlarmaGrupo",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1141,10 +1276,13 @@
       "y": 657,
       "w": 272,
       "h": 22,
-      "text": "Grupo 1",
+      "text": {
+        "es": "Grupo 1",
+        "en": "unit 1"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1156,9 +1294,9 @@
       "h": 20,
       "tag": "G2.AlarmaGrupo",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1168,10 +1306,13 @@
       "y": 657,
       "w": 272,
       "h": 22,
-      "text": "Grupo 2",
+      "text": {
+        "es": "Grupo 2",
+        "en": "unit 2"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1183,9 +1324,9 @@
       "h": 20,
       "tag": "SSCC.AlarmaPresa",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1195,10 +1336,13 @@
       "y": 691,
       "w": 272,
       "h": 22,
-      "text": "Presa y embalse",
+      "text": {
+        "es": "Presa y embalse",
+        "en": "Dam and reservoir"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1210,9 +1354,9 @@
       "h": 20,
       "tag": "SSCC.AlarmaSubestacion",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1222,10 +1366,13 @@
       "y": 691,
       "w": 272,
       "h": 22,
-      "text": "Subestación 66 kV",
+      "text": {
+        "es": "Subestación 66 kV",
+        "en": "66 kV substation"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1237,9 +1384,9 @@
       "h": 20,
       "tag": "SSCC.AlarmaAuxiliares",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1249,10 +1396,13 @@
       "y": 725,
       "w": 272,
       "h": 22,
-      "text": "Servicios auxiliares",
+      "text": {
+        "es": "Servicios auxiliares",
+        "en": "Ancillary services"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1262,10 +1412,13 @@
       "y": 770,
       "w": 640,
       "h": 40,
-      "text": "La cabecera muestra este mismo resumen en todas las pantallas.",
+      "text": {
+        "es": "La cabecera muestra este mismo resumen en todas las pantallas.",
+        "en": "The header shows this same summary on all screens."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -1284,14 +1437,20 @@
       "y": 146,
       "w": 50,
       "h": 50,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "action": "faceplate_popup",
       "template": "bomba_detalle",
       "bindings": {
         "marcha": "G1.BombaOleo",
         "fallo": "G1.FalloBombaOleo"
       },
-      "title": "Bomba de aceite G1",
+      "title": {
+        "es": "Bomba de aceite G1",
+        "en": "G1 oil pump"
+      },
       "color": "#00000000",
       "border_color": "#00000000"
     },
@@ -1302,14 +1461,20 @@
       "y": 146,
       "w": 50,
       "h": 50,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "action": "faceplate_popup",
       "template": "bomba_detalle",
       "bindings": {
         "marcha": "G2.BombaOleo",
         "fallo": "G2.FalloBombaOleo"
       },
-      "title": "Bomba de aceite G2",
+      "title": {
+        "es": "Bomba de aceite G2",
+        "en": "G2 oil pump"
+      },
       "color": "#00000000",
       "border_color": "#00000000"
     },
@@ -1320,14 +1485,20 @@
       "y": 110,
       "w": 50,
       "h": 50,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "action": "faceplate_popup",
       "template": "bomba_detalle",
       "bindings": {
         "marcha": "SSCC.BombaDrenaje1",
         "fallo": "SSCC.FalloDrenaje"
       },
-      "title": "Bomba de drenaje 1",
+      "title": {
+        "es": "Bomba de drenaje 1",
+        "en": "Drain pump 1"
+      },
       "color": "#00000000",
       "border_color": "#00000000"
     },
@@ -1338,14 +1509,20 @@
       "y": 230,
       "w": 50,
       "h": 50,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "action": "faceplate_popup",
       "template": "bomba_detalle",
       "bindings": {
         "marcha": "SSCC.BombaDrenaje2",
         "fallo": "SSCC.FalloDrenaje"
       },
-      "title": "Bomba de drenaje 2",
+      "title": {
+        "es": "Bomba de drenaje 2",
+        "en": "Drain pump 2"
+      },
       "color": "#00000000",
       "border_color": "#00000000"
     },
@@ -1356,14 +1533,20 @@
       "y": 96,
       "w": 50,
       "h": 50,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "action": "faceplate_popup",
       "template": "bomba_detalle",
       "bindings": {
         "marcha": "SSCC.Compresor",
         "fallo": "SSCC.FalloCompresor"
       },
-      "title": "Compresor de aire",
+      "title": {
+        "es": "Compresor de aire",
+        "en": "air compressor"
+      },
       "color": "#00000000",
       "border_color": "#00000000"
     }

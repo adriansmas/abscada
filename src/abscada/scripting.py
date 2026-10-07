@@ -110,6 +110,7 @@ class ScriptService:
 
     def execute(self, name, event, screen):
         request = dict(source=self.project.scripts[name], filename=f'scripts/{name}.py', event=event,
+                       language=self.runtime.language, languages=self.project.manifest.get('languages', ['es']),
                        screen=screen, state=self.state.get(name, {}),
                        samples={n:dict(value=s.value,quality=s.quality) for n,s in self.runtime.snapshot().items()})
         flags = subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
@@ -143,8 +144,13 @@ class ScriptService:
                 coerce(value, definition['type'])
                 if definition.get('binding') and self.runtime.snapshot()[tag].quality != 'good':
                     raise ValueError(tr("{tag}: lectura no válida", tag=tag))
+            change = result.get('language_change')
+            if change is not None and change not in self.project.manifest.get('languages', ['es']):
+                raise ValueError('Idioma de proyecto desconocido')
             for tag, value in result['actions']:
                 self.runtime.write(tag, value)
+            if change is not None:
+                self.runtime.set_language(change)
             self.state[name] = result['state']
             self.log(name, 'ok', result.get('output', '') or event)
         except Exception as exc:

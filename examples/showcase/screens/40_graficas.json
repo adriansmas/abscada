@@ -1,8 +1,11 @@
 {
-  "title": "Gráficas en vivo",
+  "title": {
+    "es": "Gráficas en vivo",
+    "en": "Live graphics"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Gráficas en vivo",
+      "text": {
+        "es": "Gráficas en vivo",
+        "en": "Live graphics"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "Curvas registradas y no registradas. Activa la señal local o arranca los servidores externos para observar cambios.",
+      "text": {
+        "es": "Curvas registradas y no registradas. Activa la señal local o arranca los servidores externos para observar cambios.",
+        "en": "Registered and unregistered curves. Activate the local signal or start the external servers to observe changes."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -48,7 +57,10 @@
       "y": 704,
       "w": 300,
       "h": 42,
-      "text": "Activar / parar señal local",
+      "text": {
+        "es": "Activar / parar señal local",
+        "en": "Activate/stop local signal"
+      },
       "action": "toggle",
       "font_size": 15,
       "tag": "Local.Generador"
@@ -60,7 +72,10 @@
       "y": 704,
       "w": 320,
       "h": 42,
-      "text": "Abrir curva sin registro",
+      "text": {
+        "es": "Abrir curva sin registro",
+        "en": "Open curve without registration"
+      },
       "action": "popup",
       "font_size": 15,
       "screen": "93_sin_registro"
@@ -72,7 +87,10 @@
       "y": 704,
       "w": 390,
       "h": 42,
-      "text": "Abrir curva S7 + Modbus",
+      "text": {
+        "es": "Abrir curva S7 + Modbus",
+        "en": "Open curve S7 + Modbus"
+      },
       "action": "popup",
       "font_size": 15,
       "screen": "94_equipos"

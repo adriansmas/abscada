@@ -15,6 +15,11 @@ from abscada.project import Project  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def pump_events():
+    for _ in range(3):
+        QApplication.processEvents()
+
+
 @pytest.fixture
 def window(tmp_path):
     QApplication.instance() or QApplication([])
@@ -114,12 +119,11 @@ def test_variable_filter_is_explicit_and_new_variables_are_shown(window, monkeyp
     window.navigate("variables")
     window.filter.setText("zzz")
     assert window.filter_notice.isVisible() and "0 de" in window.filter_notice.text()
-    def create(index, duplicate=None):
-        window.mutate(lambda: window.project.variables.append(dict(name="NuevaVariable", type="float", initial=0.0)))
-    monkeypatch.setattr(window, "variable_form", create)
     window.add_variable()
     assert window.filter.text() == "" and not window.filter_notice.isVisible()
-    assert window.table.currentItem().data(0, Qt.ItemDataRole.UserRole) == "NuevaVariable"
+    window.new_variable_field.setText("NuevaVariable"); window.new_variable_field.editingFinished.emit()
+    pump_events()
+    assert window.project.variables[-1]["name"] == "NuevaVariable"
 
 
 def test_unsaved_changes_are_visible_until_saved(window):

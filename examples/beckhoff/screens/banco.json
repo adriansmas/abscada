@@ -1,8 +1,11 @@
 {
-  "title": "Banco de ensayo",
+  "title": {
+    "es": "Banco de ensayo",
+    "en": "Test bench"
+  },
   "width": 1280,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#dde1e4",
   "elements": [
     {
       "id": "titulo",
@@ -11,10 +14,13 @@
       "y": 12,
       "w": 700,
       "h": 32,
-      "text": "BANCO DE ENSAYO DE MOTOR",
+      "text": {
+        "es": "BANCO DE ENSAYO DE MOTOR",
+        "en": "ENGINE TEST BENCH"
+      },
       "font_size": 22,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -24,10 +30,13 @@
       "y": 44,
       "w": 900,
       "h": 20,
-      "text": "Beckhoff CX · TwinCAT 3 · ADS sobre TCP 48898 · puerto 851 · símbolos MAIN.* y GVL.*",
+      "text": {
+        "es": "Beckhoff CX · TwinCAT 3 · ADS sobre TCP 48898 · puerto 851 · símbolos MAIN.* y GVL.*",
+        "en": "Beckhoff CX · TwinCAT 3 · ADS over TCP 48898 · port 851 · MAIN.* and GVL.* symbols"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Suave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -37,8 +46,8 @@
       "y": 76,
       "w": 770,
       "h": 300,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -50,10 +59,13 @@
       "y": 84,
       "w": 742,
       "h": 20,
-      "text": "INSTRUMENTOS",
+      "text": {
+        "es": "INSTRUMENTOS",
+        "en": "INSTRUMENTS"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@Suave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -68,7 +80,10 @@
       "max": 3000,
       "unit": "rpm",
       "decimals": 0,
-      "text": "Velocidad del eje",
+      "text": {
+        "es": "Velocidad del eje",
+        "en": "Spindle speed"
+      },
       "gauge_style": "semi",
       "warning": 2500,
       "alarm": 2800
@@ -85,7 +100,10 @@
       "max": 8,
       "unit": "bar",
       "decimals": 2,
-      "text": "Presión de aceite",
+      "text": {
+        "es": "Presión de aceite",
+        "en": "oil pressure"
+      },
       "gauge_style": "dial",
       "warning": 6,
       "alarm": 7
@@ -102,7 +120,10 @@
       "max": 120,
       "unit": "°C",
       "decimals": 1,
-      "text": "Devanado",
+      "text": {
+        "es": "Devanado",
+        "en": "Winding"
+      },
       "gauge_style": "thermometer",
       "warning": 75,
       "alarm": 85,
@@ -115,8 +136,8 @@
       "y": 76,
       "w": 454,
       "h": 300,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -128,10 +149,13 @@
       "y": 84,
       "w": 426,
       "h": 20,
-      "text": "MANDO",
+      "text": {
+        "es": "MANDO",
+        "en": "COMMAND"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@Suave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -141,13 +165,16 @@
       "y": 110,
       "w": 422,
       "h": 40,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Banco.Estado",
       "font_size": 18,
       "bold": true,
       "text_align": "center",
-      "color": "@Paro",
-      "border_color": "@Paro",
+      "color": "#9aa3ab",
+      "border_color": "#9aa3ab",
       "text_color": "#ffffff",
       "dynamics": {
         "states": [
@@ -159,8 +186,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "border_color": "@Marcha"
+              "color": "#2e8b57",
+              "border_color": "#2e8b57"
             }
           },
           {
@@ -171,14 +198,14 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "border_color": "@Aviso"
+              "color": "#e89a1c",
+              "border_color": "#e89a1c"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -189,14 +216,17 @@
       "y": 164,
       "w": 205,
       "h": 42,
-      "text": "MARCHA",
+      "text": {
+        "es": "MARCHA",
+        "en": "MARCH"
+      },
       "tag": "Banco.Marcha",
       "action": "set",
       "value": true,
       "font_size": 14,
       "bold": true,
-      "color": "@Marcha",
-      "border_color": "@Marcha",
+      "color": "#2e8b57",
+      "border_color": "#2e8b57",
       "text_color": "#ffffff",
       "dynamics": {
         "enabled": {
@@ -210,7 +240,10 @@
           "text_color": "#8a949d",
           "border_color": "#c3c9ce"
         },
-        "disabled_reason": "El motor ya está en marcha"
+        "disabled_reason": {
+          "es": "El motor ya está en marcha",
+          "en": "The engine is already running"
+        }
       }
     },
     {
@@ -220,14 +253,17 @@
       "y": 164,
       "w": 205,
       "h": 42,
-      "text": "PARO",
+      "text": {
+        "es": "PARO",
+        "en": "STOP"
+      },
       "tag": "Banco.Marcha",
       "action": "set",
       "value": false,
       "font_size": 14,
       "bold": true,
-      "color": "@Alarma",
-      "border_color": "@Alarma",
+      "color": "#d32f2f",
+      "border_color": "#d32f2f",
       "text_color": "#ffffff",
       "dynamics": {
         "enabled": {
@@ -241,7 +277,10 @@
           "text_color": "#8a949d",
           "border_color": "#c3c9ce"
         },
-        "disabled_reason": "El motor ya está parado"
+        "disabled_reason": {
+          "es": "El motor ya está parado",
+          "en": "The engine is already stopped"
+        }
       }
     },
     {
@@ -251,10 +290,13 @@
       "y": 222,
       "w": 230,
       "h": 26,
-      "text": "Consigna de velocidad",
+      "text": {
+        "es": "Consigna de velocidad",
+        "en": "Speed setpoint"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -264,7 +306,10 @@
       "y": 218,
       "w": 180,
       "h": 32,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Banco.Consigna",
       "unit": "rpm",
       "decimals": 0,
@@ -272,8 +317,8 @@
       "bold": true,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando"
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0"
     },
     {
       "id": "modo_t",
@@ -282,10 +327,13 @@
       "y": 266,
       "w": 100,
       "h": 26,
-      "text": "Modo",
+      "text": {
+        "es": "Modo",
+        "en": "Mode"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -299,23 +347,35 @@
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "texts": [
         {
           "value": "0",
-          "text": "Manual"
+          "text": {
+            "es": "Manual",
+            "en": "Manual"
+          }
         },
         {
           "value": "1",
-          "text": "Automático"
+          "text": {
+            "es": "Automático",
+            "en": "Automatic"
+          }
         },
         {
           "value": "2",
-          "text": "Mantenimiento"
+          "text": {
+            "es": "Mantenimiento",
+            "en": "Maintenance"
+          }
         }
       ],
-      "default_text": "—"
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      }
     },
     {
       "id": "modo0",
@@ -324,14 +384,17 @@
       "y": 304,
       "w": 70,
       "h": 30,
-      "text": "Manual",
+      "text": {
+        "es": "Manual",
+        "en": "Manual"
+      },
       "tag": "Banco.Modo",
       "action": "set",
       "value": 0,
       "font_size": 12,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando"
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0"
     },
     {
       "id": "modo1",
@@ -340,14 +403,17 @@
       "y": 304,
       "w": 70,
       "h": 30,
-      "text": "Auto",
+      "text": {
+        "es": "Auto",
+        "en": "Auto"
+      },
       "tag": "Banco.Modo",
       "action": "set",
       "value": 1,
       "font_size": 12,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando"
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0"
     },
     {
       "id": "modo2",
@@ -356,14 +422,17 @@
       "y": 304,
       "w": 70,
       "h": 30,
-      "text": "Mant.",
+      "text": {
+        "es": "Mant.",
+        "en": "Maint."
+      },
       "tag": "Banco.Modo",
       "action": "set",
       "value": 2,
       "font_size": 12,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando"
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0"
     },
     {
       "id": "ciclos_t",
@@ -372,10 +441,13 @@
       "y": 304,
       "w": 70,
       "h": 30,
-      "text": "Ciclos",
+      "text": {
+        "es": "Ciclos",
+        "en": "Cycles"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -385,13 +457,16 @@
       "y": 304,
       "w": 114,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Banco.Ciclos",
       "font_size": 14,
       "text_align": "right",
       "color": "#f8f9fa",
-      "border_color": "@Borde",
-      "text_color": "@Texto"
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33"
     },
     {
       "id": "alarma",
@@ -402,9 +477,9 @@
       "h": 26,
       "tag": "Banco.AlarmaTemperatura",
       "lamp_colors": {
-        "on": "@Alarma",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -414,10 +489,13 @@
       "y": 342,
       "w": 390,
       "h": 26,
-      "text": "Alarma de temperatura (calculada en el PLC)",
+      "text": {
+        "es": "Alarma de temperatura (calculada en el PLC)",
+        "en": "Temperature alarm (calculated in the PLC)"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {

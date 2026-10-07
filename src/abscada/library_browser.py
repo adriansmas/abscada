@@ -23,7 +23,8 @@ def sections(project):
     local = [(doc.get("folder", ""), name, name) for name, doc in project.faceplates.items() if not owner(project, name)]
     result = [(tr("Proyecto"), ("group", "faceplates"),
                tr("Objetos de este proyecto: se editan y se ordenan en carpetas (clic derecho)"), local)]
-    standard = [(doc.get("folder", ""), name, doc.get("title", name)) for name, doc in _templates().items()]
+    from .system_library import title as system_title
+    standard = [(doc.get("folder", ""), name, system_title(name)) for name, doc in _templates().items()]
     result.append((tr("Estándar (sistema)"), ("library", SYSTEM),
                    tr("Librería del sistema, de solo lectura. Arrastra un objeto al lienzo para usarlo; "
                    "«Copiar al proyecto» para modificarlo."), standard))

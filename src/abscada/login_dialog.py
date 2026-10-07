@@ -1,8 +1,10 @@
 """Operator login and first-login password change for the runtime."""
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QFormLayout, QLabel, QLineEdit, QVBoxLayout
 from .i18n import tr
+from .runtime_language_ui import runtime_ui
 
 
+@runtime_ui
 class LoginDialog(QDialog):
     def __init__(self, runtime, parent=None, reason=""):
         super().__init__(parent)

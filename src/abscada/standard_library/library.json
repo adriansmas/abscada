@@ -2,10 +2,16 @@
   "schema_version": 1,
   "name": "Estándar",
   "version": "1.0.0",
-  "description": "Librería del sistema: símbolos SCADA en SVG y objetos animados. Solo lectura.",
+  "description": {
+    "es": "Librería del sistema: símbolos SCADA en SVG y objetos animados. Solo lectura.",
+    "en": "System library: SVG SCADA symbols and animated objects. Read only."
+  },
   "faceplates": {
     "deposito_vertical": {
-      "title": "Depósito vertical",
+      "title": {
+        "es": "Depósito vertical",
+        "en": "Vertical tank"
+      },
       "folder": "Gráficos/Depósitos",
       "width": 100.0,
       "height": 140.0,
@@ -23,7 +29,10 @@
       ]
     },
     "deposito_horizontal": {
-      "title": "Depósito horizontal",
+      "title": {
+        "es": "Depósito horizontal",
+        "en": "Horizontal tank"
+      },
       "folder": "Gráficos/Depósitos",
       "width": 160.0,
       "height": 90.0,
@@ -41,7 +50,10 @@
       ]
     },
     "silo": {
-      "title": "Silo",
+      "title": {
+        "es": "Silo",
+        "en": "Silo"
+      },
       "folder": "Gráficos/Depósitos",
       "width": 100.0,
       "height": 150.0,
@@ -59,7 +71,10 @@
       ]
     },
     "tolva": {
-      "title": "Tolva",
+      "title": {
+        "es": "Tolva",
+        "en": "Hopper"
+      },
       "folder": "Gráficos/Depósitos",
       "width": 100.0,
       "height": 110.0,
@@ -77,7 +92,10 @@
       ]
     },
     "tanque_abierto": {
-      "title": "Tanque abierto",
+      "title": {
+        "es": "Tanque abierto",
+        "en": "open tank"
+      },
       "folder": "Gráficos/Depósitos",
       "width": 110.0,
       "height": 110.0,
@@ -95,7 +113,10 @@
       ]
     },
     "deposito_esferico": {
-      "title": "Depósito esférico",
+      "title": {
+        "es": "Depósito esférico",
+        "en": "Spherical tank"
+      },
       "folder": "Gráficos/Depósitos",
       "width": 110.0,
       "height": 120.0,
@@ -113,7 +134,10 @@
       ]
     },
     "valvula_manual": {
-      "title": "Válvula manual",
+      "title": {
+        "es": "Válvula manual",
+        "en": "manual valve"
+      },
       "folder": "Gráficos/Válvulas",
       "width": 100.0,
       "height": 64.0,
@@ -131,7 +155,10 @@
       ]
     },
     "valvula_motorizada": {
-      "title": "Válvula motorizada",
+      "title": {
+        "es": "Válvula motorizada",
+        "en": "motorized valve"
+      },
       "folder": "Gráficos/Válvulas",
       "width": 100.0,
       "height": 64.0,
@@ -149,7 +176,10 @@
       ]
     },
     "valvula_neumatica": {
-      "title": "Válvula neumática",
+      "title": {
+        "es": "Válvula neumática",
+        "en": "pneumatic valve"
+      },
       "folder": "Gráficos/Válvulas",
       "width": 100.0,
       "height": 64.0,
@@ -167,7 +197,10 @@
       ]
     },
     "valvula_reguladora": {
-      "title": "Válvula reguladora",
+      "title": {
+        "es": "Válvula reguladora",
+        "en": "Regulating valve"
+      },
       "folder": "Gráficos/Válvulas",
       "width": 100.0,
       "height": 64.0,
@@ -185,7 +218,10 @@
       ]
     },
     "valvula_bola": {
-      "title": "Válvula de bola",
+      "title": {
+        "es": "Válvula de bola",
+        "en": "ball valve"
+      },
       "folder": "Gráficos/Válvulas",
       "width": 100.0,
       "height": 64.0,
@@ -203,7 +239,10 @@
       ]
     },
     "valvula_mariposa": {
-      "title": "Válvula de mariposa",
+      "title": {
+        "es": "Válvula de mariposa",
+        "en": "butterfly valve"
+      },
       "folder": "Gráficos/Válvulas",
       "width": 100.0,
       "height": 64.0,
@@ -221,7 +260,10 @@
       ]
     },
     "valvula_retencion": {
-      "title": "Válvula de retención",
+      "title": {
+        "es": "Válvula de retención",
+        "en": "Check valve"
+      },
       "folder": "Gráficos/Válvulas",
       "width": 100.0,
       "height": 64.0,
@@ -239,7 +281,10 @@
       ]
     },
     "valvula_tres_vias": {
-      "title": "Válvula de tres vías",
+      "title": {
+        "es": "Válvula de tres vías",
+        "en": "three way valve"
+      },
       "folder": "Gráficos/Válvulas",
       "width": 100.0,
       "height": 90.0,
@@ -257,7 +302,10 @@
       ]
     },
     "valvula_seguridad": {
-      "title": "Válvula de seguridad",
+      "title": {
+        "es": "Válvula de seguridad",
+        "en": "Safety valve"
+      },
       "folder": "Gráficos/Válvulas",
       "width": 90.0,
       "height": 100.0,
@@ -275,7 +323,10 @@
       ]
     },
     "bomba_centrifuga": {
-      "title": "Bomba centrífuga",
+      "title": {
+        "es": "Bomba centrífuga",
+        "en": "centrifugal pump"
+      },
       "folder": "Gráficos/Bombas y motores",
       "width": 100.0,
       "height": 100.0,
@@ -293,7 +344,10 @@
       ]
     },
     "bomba_volumetrica": {
-      "title": "Bomba volumétrica",
+      "title": {
+        "es": "Bomba volumétrica",
+        "en": "Volumetric pump"
+      },
       "folder": "Gráficos/Bombas y motores",
       "width": 100.0,
       "height": 100.0,
@@ -311,7 +365,10 @@
       ]
     },
     "motor": {
-      "title": "Motor",
+      "title": {
+        "es": "Motor",
+        "en": "Engine"
+      },
       "folder": "Gráficos/Bombas y motores",
       "width": 100.0,
       "height": 100.0,
@@ -329,7 +386,10 @@
       ]
     },
     "ventilador": {
-      "title": "Ventilador",
+      "title": {
+        "es": "Ventilador",
+        "en": "fan"
+      },
       "folder": "Gráficos/Bombas y motores",
       "width": 100.0,
       "height": 100.0,
@@ -347,7 +407,10 @@
       ]
     },
     "compresor": {
-      "title": "Compresor",
+      "title": {
+        "es": "Compresor",
+        "en": "Compressor"
+      },
       "folder": "Gráficos/Bombas y motores",
       "width": 100.0,
       "height": 100.0,
@@ -365,7 +428,10 @@
       ]
     },
     "agitador": {
-      "title": "Agitador",
+      "title": {
+        "es": "Agitador",
+        "en": "Stirrer"
+      },
       "folder": "Gráficos/Bombas y motores",
       "width": 80.0,
       "height": 130.0,
@@ -383,7 +449,10 @@
       ]
     },
     "intercambiador": {
-      "title": "Intercambiador de calor",
+      "title": {
+        "es": "Intercambiador de calor",
+        "en": "heat exchanger"
+      },
       "folder": "Gráficos/Proceso",
       "width": 140.0,
       "height": 80.0,
@@ -401,7 +470,10 @@
       ]
     },
     "filtro": {
-      "title": "Filtro",
+      "title": {
+        "es": "Filtro",
+        "en": "Filter"
+      },
       "folder": "Gráficos/Proceso",
       "width": 90.0,
       "height": 110.0,
@@ -419,7 +491,10 @@
       ]
     },
     "ciclon": {
-      "title": "Ciclón",
+      "title": {
+        "es": "Ciclón",
+        "en": "Cyclone"
+      },
       "folder": "Gráficos/Proceso",
       "width": 90.0,
       "height": 140.0,
@@ -437,7 +512,10 @@
       ]
     },
     "caldera": {
-      "title": "Caldera",
+      "title": {
+        "es": "Caldera",
+        "en": "boiler"
+      },
       "folder": "Gráficos/Proceso",
       "width": 110.0,
       "height": 120.0,
@@ -455,7 +533,10 @@
       ]
     },
     "torre_refrigeracion": {
-      "title": "Torre de refrigeración",
+      "title": {
+        "es": "Torre de refrigeración",
+        "en": "cooling tower"
+      },
       "folder": "Gráficos/Proceso",
       "width": 110.0,
       "height": 130.0,
@@ -473,7 +554,10 @@
       ]
     },
     "columna": {
-      "title": "Columna",
+      "title": {
+        "es": "Columna",
+        "en": "Column"
+      },
       "folder": "Gráficos/Proceso",
       "width": 70.0,
       "height": 160.0,
@@ -491,7 +575,10 @@
       ]
     },
     "transmisor_nivel": {
-      "title": "Transmisor de nivel",
+      "title": {
+        "es": "Transmisor de nivel",
+        "en": "Level transmitter"
+      },
       "folder": "Gráficos/Instrumentos",
       "width": 80.0,
       "height": 80.0,
@@ -509,7 +596,10 @@
       ]
     },
     "transmisor_presion": {
-      "title": "Transmisor de presión",
+      "title": {
+        "es": "Transmisor de presión",
+        "en": "pressure transmitter"
+      },
       "folder": "Gráficos/Instrumentos",
       "width": 80.0,
       "height": 80.0,
@@ -527,7 +617,10 @@
       ]
     },
     "transmisor_temperatura": {
-      "title": "Transmisor de temperatura",
+      "title": {
+        "es": "Transmisor de temperatura",
+        "en": "Temperature transmitter"
+      },
       "folder": "Gráficos/Instrumentos",
       "width": 80.0,
       "height": 80.0,
@@ -545,7 +638,10 @@
       ]
     },
     "transmisor_caudal": {
-      "title": "Transmisor de caudal",
+      "title": {
+        "es": "Transmisor de caudal",
+        "en": "Flow transmitter"
+      },
       "folder": "Gráficos/Instrumentos",
       "width": 80.0,
       "height": 80.0,
@@ -563,7 +659,10 @@
       ]
     },
     "transformador": {
-      "title": "Transformador",
+      "title": {
+        "es": "Transformador",
+        "en": "Transformer"
+      },
       "folder": "Gráficos/Eléctrico",
       "width": 80.0,
       "height": 120.0,
@@ -581,7 +680,10 @@
       ]
     },
     "interruptor": {
-      "title": "Interruptor",
+      "title": {
+        "es": "Interruptor",
+        "en": "switch"
+      },
       "folder": "Gráficos/Eléctrico",
       "width": 60.0,
       "height": 60.0,
@@ -599,7 +701,10 @@
       ]
     },
     "seccionador": {
-      "title": "Seccionador",
+      "title": {
+        "es": "Seccionador",
+        "en": "Disconnector"
+      },
       "folder": "Gráficos/Eléctrico",
       "width": 60.0,
       "height": 100.0,
@@ -617,7 +722,10 @@
       ]
     },
     "generador": {
-      "title": "Generador",
+      "title": {
+        "es": "Generador",
+        "en": "Generator"
+      },
       "folder": "Gráficos/Eléctrico",
       "width": 100.0,
       "height": 100.0,
@@ -635,7 +743,10 @@
       ]
     },
     "bomba_estado": {
-      "title": "Bomba con estado",
+      "title": {
+        "es": "Bomba con estado",
+        "en": "Stateful bomb"
+      },
       "folder": "Objetos",
       "width": 100,
       "height": 100,
@@ -685,7 +796,10 @@
       ]
     },
     "motor_estado": {
-      "title": "Motor con estado",
+      "title": {
+        "es": "Motor con estado",
+        "en": "Stateful motor"
+      },
       "folder": "Objetos",
       "width": 100,
       "height": 100,
@@ -735,7 +849,10 @@
       ]
     },
     "ventilador_estado": {
-      "title": "Ventilador con estado",
+      "title": {
+        "es": "Ventilador con estado",
+        "en": "Stateful fan"
+      },
       "folder": "Objetos",
       "width": 100,
       "height": 100,
@@ -785,7 +902,10 @@
       ]
     },
     "valvula_estado": {
-      "title": "Válvula abierta / cerrada",
+      "title": {
+        "es": "Válvula abierta / cerrada",
+        "en": "Valve open/close"
+      },
       "folder": "Objetos",
       "width": 100,
       "height": 64,
@@ -823,7 +943,10 @@
       ]
     },
     "interruptor_estado": {
-      "title": "Interruptor abierto / cerrado",
+      "title": {
+        "es": "Interruptor abierto / cerrado",
+        "en": "Open/close switch"
+      },
       "folder": "Objetos",
       "width": 60,
       "height": 60,
@@ -861,7 +984,10 @@
       ]
     },
     "deposito_nivel": {
-      "title": "Depósito con nivel",
+      "title": {
+        "es": "Depósito con nivel",
+        "en": "Tank with level"
+      },
       "folder": "Objetos",
       "width": 100,
       "height": 140,
@@ -898,7 +1024,10 @@
           "w": 72,
           "h": 20,
           "tag": "$nivel",
-          "text": "",
+          "text": {
+            "es": "",
+            "en": ""
+          },
           "unit": "%",
           "decimals": 0,
           "font_size": 11,
@@ -909,5 +1038,10 @@
         }
       ]
     }
-  }
+  },
+  "languages": [
+    "es",
+    "en"
+  ],
+  "default_language": "es"
 }

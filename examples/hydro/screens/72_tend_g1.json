@@ -1,8 +1,11 @@
 {
-  "title": "Tendencias · Térmico G1",
+  "title": {
+    "es": "Tendencias · Térmico G1",
+    "en": "Trends Thermal G1"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dde1e4",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "TENDENCIAS · TÉRMICO G1",
+      "text": {
+        "es": "TENDENCIAS · TÉRMICO G1",
+        "en": "TRENDS · THERMAL G1"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Tiempo real e histórico · zoom, cursor y exportación CSV",
+      "text": {
+        "es": "Tiempo real e histórico · zoom, cursor y exportación CSV",
+        "en": "Real and historical time · zoom, cursor and CSV export"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -40,12 +49,15 @@
       "y": 14,
       "w": 88,
       "h": 32,
-      "text": "Producción",
+      "text": {
+        "es": "Producción",
+        "en": "Production"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "70_tend_produccion",
       "target_container": "contenido"
@@ -57,12 +69,15 @@
       "y": 14,
       "w": 88,
       "h": 32,
-      "text": "Embalse",
+      "text": {
+        "es": "Embalse",
+        "en": "Reservoir"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "71_tend_embalse",
       "target_container": "contenido"
@@ -74,11 +89,14 @@
       "y": 14,
       "w": 88,
       "h": 32,
-      "text": "Térmico G1",
+      "text": {
+        "es": "Térmico G1",
+        "en": "Thermal G1"
+      },
       "font_size": 12,
       "bold": true,
-      "color": "@Mando",
-      "border_color": "@Mando",
+      "color": "#2b6cb0",
+      "border_color": "#2b6cb0",
       "text_color": "#ffffff",
       "action": "screen",
       "screen": "72_tend_g1",
@@ -91,12 +109,15 @@
       "y": 14,
       "w": 88,
       "h": 32,
-      "text": "Térmico G2",
+      "text": {
+        "es": "Térmico G2",
+        "en": "Thermal G2"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "73_tend_g2",
       "target_container": "contenido"
@@ -108,12 +129,15 @@
       "y": 14,
       "w": 88,
       "h": 32,
-      "text": "Eléctrico",
+      "text": {
+        "es": "Eléctrico",
+        "en": "Electric"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "74_tend_electrico",
       "target_container": "contenido"

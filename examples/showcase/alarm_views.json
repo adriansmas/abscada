@@ -1,6 +1,9 @@
 {
   "pending": {
-    "title": "Alarmas pendientes",
+    "title": {
+      "es": "Alarmas pendientes",
+      "en": "Pending alarms"
+    },
     "categories": [],
     "min_priority": 1,
     "mode": "pending",
@@ -17,7 +20,10 @@
     ]
   },
   "history": {
-    "title": "Histórico de alarmas",
+    "title": {
+      "es": "Histórico de alarmas",
+      "en": "Alarm history"
+    },
     "categories": [],
     "min_priority": 1,
     "mode": "history",
@@ -34,7 +40,10 @@
     ]
   },
   "events": {
-    "title": "Eventos de alarma",
+    "title": {
+      "es": "Eventos de alarma",
+      "en": "Alarm events"
+    },
     "categories": [],
     "min_priority": 1,
     "mode": "events",

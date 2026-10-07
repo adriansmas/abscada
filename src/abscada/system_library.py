@@ -49,7 +49,36 @@ def inject(project):
     """Make the standard objects available to a project (in memory only)."""
     for name, document in _templates().items():
         if name not in project.faceplates:
-            project.faceplates[name] = copy.deepcopy(document)
+            project.faceplates[name] = project_template(project, document)
+        else:
+            from .project_languages import localized
+            # A legacy, unmodified system object can acquire inline translations
+            # when its project first declares languages.
+            if project.faceplates[name] == localized(document, 'es', 'es'):
+                project.faceplates[name] = project_template(project, document)
+
+
+def project_template(project, document):
+    from .project_languages import languages, default_language, TEXT_KEYS, resolve
+    result = copy.deepcopy(document)
+    def walk(value):
+        if isinstance(value, dict):
+            for key, child in value.items():
+                if key in TEXT_KEYS and isinstance(child, dict):
+                    if 'languages' not in project.manifest:
+                        value[key] = resolve(child, 'es', 'es')
+                    else:
+                        value[key] = {code: child[code] for code in languages(project) if code in child}
+                        default = default_language(project)
+                        if default not in value[key]:
+                            value[key][default] = resolve(child, default, 'es')
+                else:
+                    walk(child)
+        elif isinstance(value, list):
+            for child in value:
+                walk(child)
+    walk(result)
+    return result
 
 
 def check(project):
@@ -58,7 +87,7 @@ def check(project):
         if name.startswith(PREFIX):
             if name not in _templates():
                 raise ValueError(tr("El prefijo «{PREFIX}» está reservado a la librería estándar: {name}", PREFIX=PREFIX, name=name))
-            if document != _templates()[name]:
+            if document != project_template(project, _templates()[name]):
                 raise ValueError(tr("{name}: objeto de la librería estándar, de solo lectura", name=name))
 
 
@@ -72,4 +101,6 @@ def asset(relative):
 
 
 def title(name):
-    return _templates()[name].get("title", name.removeprefix(PREFIX))
+    from .project_languages import resolve
+    from .i18n import language
+    return resolve(_templates()[name].get("title", name.removeprefix(PREFIX)), language(), 'es')

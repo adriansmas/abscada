@@ -1,8 +1,11 @@
 {
-  "title": "Sala de cocción",
+  "title": {
+    "es": "Sala de cocción",
+    "en": "Brewhouse"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dfe1e2",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "SALA DE COCCIÓN",
+      "text": {
+        "es": "SALA DE COCCIÓN",
+        "en": "BREWHOUSE"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Macerador, cuba filtro, hervidor-whirlpool y enfriador · secuencia por receta (1 min de receta = 1 s)",
+      "text": {
+        "es": "Macerador, cuba filtro, hervidor-whirlpool y enfriador · secuencia por receta (1 min de receta = 1 s)",
+        "en": "Mash tun, lauter tun, kettle/whirlpool and wort cooler · recipe sequence (1 recipe minute = 1 s)"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -44,61 +53,103 @@
       "font_size": 16,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Paro",
-      "border_color": "@Paro",
-      "default_text": "SIN COMUNICACIÓN",
+      "color": "#9ba2a8",
+      "border_color": "#9ba2a8",
+      "default_text": {
+        "es": "SIN COMUNICACIÓN",
+        "en": "NO COMMUNICATION"
+      },
       "texts": [
         {
           "value": "0",
-          "text": "REPOSO"
+          "text": {
+            "es": "REPOSO",
+            "en": "REST"
+          }
         },
         {
           "value": "1",
-          "text": "LLENADO DE AGUA"
+          "text": {
+            "es": "LLENADO DE AGUA",
+            "en": "WATER FILLING"
+          }
         },
         {
           "value": "2",
-          "text": "EMPASTE"
+          "text": {
+            "es": "EMPASTE",
+            "en": "MASH-IN"
+          }
         },
         {
           "value": "3",
-          "text": "ESCALÓN 1 · PROTEICO"
+          "text": {
+            "es": "ESCALÓN 1 · PROTEICO",
+            "en": "STEP 1 · PROTEIN REST"
+          }
         },
         {
           "value": "4",
-          "text": "ESCALÓN 2 · SACARIFICACIÓN"
+          "text": {
+            "es": "ESCALÓN 2 · SACARIFICACIÓN",
+            "en": "STEP 2 · SACCHARIFICATION"
+          }
         },
         {
           "value": "5",
-          "text": "ESCALÓN 3 · MASH-OUT"
+          "text": {
+            "es": "ESCALÓN 3 · MASH-OUT",
+            "en": "STEP 3 · MASH-OUT"
+          }
         },
         {
           "value": "6",
-          "text": "TRASIEGO Y RECIRCULACIÓN"
+          "text": {
+            "es": "TRASIEGO Y RECIRCULACIÓN",
+            "en": "TRANSFER AND RECIRCULATION"
+          }
         },
         {
           "value": "7",
-          "text": "FILTRADO Y LAVADO"
+          "text": {
+            "es": "FILTRADO Y LAVADO",
+            "en": "LAUTERING AND SPARGING"
+          }
         },
         {
           "value": "8",
-          "text": "CALENTAMIENTO A EBULLICIÓN"
+          "text": {
+            "es": "CALENTAMIENTO A EBULLICIÓN",
+            "en": "HEATING TO BOILING"
+          }
         },
         {
           "value": "9",
-          "text": "HERVIDO"
+          "text": {
+            "es": "HERVIDO",
+            "en": "BOILING"
+          }
         },
         {
           "value": "10",
-          "text": "WHIRLPOOL"
+          "text": {
+            "es": "WHIRLPOOL",
+            "en": "WHIRLPOOL"
+          }
         },
         {
           "value": "11",
-          "text": "ENFRIADO Y TRASIEGO A FV"
+          "text": {
+            "es": "ENFRIADO Y TRASIEGO A FV",
+            "en": "COOLING AND TRANSFER TO FV"
+          }
         },
         {
           "value": "12",
-          "text": "LIMPIEZA CIP"
+          "text": {
+            "es": "LIMPIEZA CIP",
+            "en": "CIP CLEANING"
+          }
         }
       ],
       "dynamics": {
@@ -111,8 +162,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "border_color": "@Aviso"
+              "color": "#e89a1c",
+              "border_color": "#e89a1c"
             }
           },
           {
@@ -123,14 +174,14 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "border_color": "@Marcha"
+              "color": "#2e8b57",
+              "border_color": "#2e8b57"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -141,8 +192,8 @@
       "y": 60,
       "w": 900,
       "h": 470,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -154,10 +205,13 @@
       "y": 106,
       "w": 120,
       "h": 20,
-      "text": "Agua caliente",
+      "text": {
+        "es": "Agua caliente",
+        "en": "hot water"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -168,7 +222,7 @@
       "w": 80,
       "h": 200,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -181,7 +235,7 @@
       "tag": "Servicios.NivelHLT",
       "min": 0,
       "max": 30,
-      "color": "@Agua",
+      "color": "#4f86b8",
       "dynamics": {}
     },
     {
@@ -191,19 +245,22 @@
       "y": 334,
       "w": 80,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.NivelHLT",
       "unit": "hl",
       "decimals": 1,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -214,19 +271,22 @@
       "y": 360,
       "w": 80,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.TempHLT",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -237,10 +297,13 @@
       "y": 106,
       "w": 150,
       "h": 20,
-      "text": "Macerador",
+      "text": {
+        "es": "Macerador",
+        "en": "Mash tun"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -251,7 +314,7 @@
       "w": 110,
       "h": 200,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -264,7 +327,7 @@
       "tag": "Cocina.NivelMT",
       "min": 0,
       "max": 12,
-      "color": "@Mosto",
+      "color": "#c2872b",
       "dynamics": {}
     },
     {
@@ -274,19 +337,22 @@
       "y": 334,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.NivelMT",
       "unit": "hl",
       "decimals": 1,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -297,19 +363,22 @@
       "y": 360,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.TempMT",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -320,10 +389,13 @@
       "y": 106,
       "w": 150,
       "h": 20,
-      "text": "Cuba filtro",
+      "text": {
+        "es": "Cuba filtro",
+        "en": "Lauter tun"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -334,7 +406,7 @@
       "w": 110,
       "h": 200,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -347,7 +419,7 @@
       "tag": "Cocina.NivelLT",
       "min": 0,
       "max": 14,
-      "color": "@Mosto",
+      "color": "#c2872b",
       "dynamics": {}
     },
     {
@@ -357,19 +429,22 @@
       "y": 334,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.NivelLT",
       "unit": "hl",
       "decimals": 1,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -380,10 +455,13 @@
       "y": 106,
       "w": 150,
       "h": 20,
-      "text": "Hervidor / whirlpool",
+      "text": {
+        "es": "Hervidor / whirlpool",
+        "en": "Kettle / whirlpool"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -394,7 +472,7 @@
       "w": 110,
       "h": 200,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -407,7 +485,7 @@
       "tag": "Cocina.NivelBK",
       "min": 0,
       "max": 14,
-      "color": "@Mosto",
+      "color": "#c2872b",
       "dynamics": {}
     },
     {
@@ -417,19 +495,22 @@
       "y": 334,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.NivelBK",
       "unit": "hl",
       "decimals": 1,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -440,19 +521,22 @@
       "y": 360,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.TempBK",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -463,7 +547,7 @@
       "y": 146,
       "w": 90,
       "h": 1,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 7,
       "arrows": "end",
       "dynamics": {
@@ -476,7 +560,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Agua"
+              "stroke_color": "#4f86b8"
             }
           }
         ]
@@ -499,7 +583,7 @@
       "y": 96,
       "w": 335,
       "h": 40,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 5,
       "arrows": "end",
       "dynamics": {
@@ -512,7 +596,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Agua"
+              "stroke_color": "#4f86b8"
             }
           }
         ]
@@ -547,7 +631,7 @@
       "y": 316,
       "w": 80,
       "h": 1,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 7,
       "arrows": "end",
       "dynamics": {
@@ -560,7 +644,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Mosto"
+              "stroke_color": "#c2872b"
             }
           }
         ]
@@ -583,7 +667,7 @@
       "y": 316,
       "w": 80,
       "h": 1,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 7,
       "arrows": "end",
       "dynamics": {
@@ -596,7 +680,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Mosto"
+              "stroke_color": "#c2872b"
             }
           }
         ]
@@ -620,7 +704,7 @@
       "w": 54,
       "h": 120,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -630,7 +714,7 @@
       "y": 176,
       "w": 1,
       "h": 108,
-      "stroke_color": "@Glicol",
+      "stroke_color": "#3c8fa6",
       "stroke_width": 2,
       "points": [
         [
@@ -650,7 +734,7 @@
       "y": 176,
       "w": 1,
       "h": 108,
-      "stroke_color": "@Glicol",
+      "stroke_color": "#3c8fa6",
       "stroke_width": 2,
       "points": [
         [
@@ -670,7 +754,7 @@
       "y": 176,
       "w": 1,
       "h": 108,
-      "stroke_color": "@Glicol",
+      "stroke_color": "#3c8fa6",
       "stroke_width": 2,
       "points": [
         [
@@ -690,7 +774,7 @@
       "y": 176,
       "w": 1,
       "h": 108,
-      "stroke_color": "@Glicol",
+      "stroke_color": "#3c8fa6",
       "stroke_width": 2,
       "points": [
         [
@@ -710,7 +794,7 @@
       "y": 176,
       "w": 1,
       "h": 108,
-      "stroke_color": "@Glicol",
+      "stroke_color": "#3c8fa6",
       "stroke_width": 2,
       "points": [
         [
@@ -730,10 +814,13 @@
       "y": 144,
       "w": 94,
       "h": 20,
-      "text": "Enfriador",
+      "text": {
+        "es": "Enfriador",
+        "en": "Cooler"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -743,19 +830,22 @@
       "y": 300,
       "w": 82,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.TempMostoSalida",
       "unit": "°C",
       "decimals": 1,
       "font_size": 13,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -766,7 +856,7 @@
       "y": 230,
       "w": 90,
       "h": 86,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 7,
       "arrows": "end",
       "dynamics": {
@@ -779,7 +869,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Mosto"
+              "stroke_color": "#c2872b"
             }
           }
         ]
@@ -810,7 +900,7 @@
       "y": 230,
       "w": 46,
       "h": 1,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 7,
       "arrows": "end",
       "dynamics": {
@@ -823,7 +913,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Cerveza"
+              "stroke_color": "#d8a23e"
             }
           }
         ]
@@ -846,10 +936,13 @@
       "y": 204,
       "w": 80,
       "h": 20,
-      "text": "→ bodega",
+      "text": {
+        "es": "→ bodega",
+        "en": "→ cellar"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -859,7 +952,7 @@
       "y": 392,
       "w": 1,
       "h": 30,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 4,
       "arrows": "end",
       "dynamics": {
@@ -872,7 +965,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Vapor"
+              "stroke_color": "#9a6fb0"
             }
           }
         ]
@@ -895,7 +988,7 @@
       "y": 392,
       "w": 1,
       "h": 30,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 4,
       "arrows": "end",
       "dynamics": {
@@ -908,7 +1001,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Vapor"
+              "stroke_color": "#9a6fb0"
             }
           }
         ]
@@ -931,10 +1024,13 @@
       "y": 402,
       "w": 60,
       "h": 18,
-      "text": "vapor",
+      "text": {
+        "es": "vapor",
+        "en": "steam"
+      },
       "font_size": 10,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -944,10 +1040,13 @@
       "y": 402,
       "w": 60,
       "h": 18,
-      "text": "vapor",
+      "text": {
+        "es": "vapor",
+        "en": "steam"
+      },
       "font_size": 10,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -959,9 +1058,9 @@
       "h": 18,
       "tag": "Cocina.AgitadorMT",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -971,10 +1070,13 @@
       "y": 416,
       "w": 90,
       "h": 22,
-      "text": "Agitador",
+      "text": {
+        "es": "Agitador",
+        "en": "Stirrer"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -986,9 +1088,9 @@
       "h": 18,
       "tag": "Cocina.Rastrillos",
       "lamp_colors": {
-        "on": "@Aviso",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#e89a1c",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -998,10 +1100,13 @@
       "y": 416,
       "w": 90,
       "h": 22,
-      "text": "Rastrillos",
+      "text": {
+        "es": "Rastrillos",
+        "en": "Rakes"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1011,10 +1116,13 @@
       "y": 445,
       "w": 74,
       "h": 22,
-      "text": "Lecho",
+      "text": {
+        "es": "Lecho",
+        "en": "Bedding"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1024,19 +1132,22 @@
       "y": 442,
       "w": 100,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.PresionLecho",
       "unit": "mbar",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -1047,9 +1158,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           },
           {
@@ -1060,9 +1171,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
+              "color": "#e89a1c",
               "text_color": "#ffffff",
-              "border_color": "@Aviso"
+              "border_color": "#e89a1c"
             }
           }
         ]
@@ -1075,10 +1186,13 @@
       "y": 477,
       "w": 74,
       "h": 22,
-      "text": "Filtrado",
+      "text": {
+        "es": "Filtrado",
+        "en": "Filtering"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1088,19 +1202,22 @@
       "y": 474,
       "w": 100,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.CaudalFiltrado",
       "unit": "hl/h",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1111,10 +1228,13 @@
       "y": 130,
       "w": 70,
       "h": 20,
-      "text": "Espuma",
+      "text": {
+        "es": "Espuma",
+        "en": "foam"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "center"
     },
     {
@@ -1127,7 +1247,7 @@
       "tag": "Cocina.NivelEspuma",
       "min": 0,
       "max": 100,
-      "color": "@Cerveza",
+      "color": "#d8a23e",
       "dynamics": {
         "states": [
           {
@@ -1138,7 +1258,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo"
+              "color": "#d32f2f"
             }
           },
           {
@@ -1149,7 +1269,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso"
+              "color": "#e89a1c"
             }
           }
         ]
@@ -1162,19 +1282,22 @@
       "y": 316,
       "w": 64,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.NivelEspuma",
       "unit": "%",
       "decimals": 0,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -1185,9 +1308,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           }
         ]
@@ -1202,9 +1325,9 @@
       "h": 18,
       "tag": "Cocina.Ebullicion",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1214,10 +1337,13 @@
       "y": 416,
       "w": 90,
       "h": 22,
-      "text": "Ebullición",
+      "text": {
+        "es": "Ebullición",
+        "en": "Boiling"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1227,10 +1353,13 @@
       "y": 445,
       "w": 68,
       "h": 22,
-      "text": "Trasiego",
+      "text": {
+        "es": "Trasiego",
+        "en": "Transfer"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1240,19 +1369,22 @@
       "y": 442,
       "w": 70,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.CaudalTrasiego",
       "unit": "hl/h",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1263,10 +1395,13 @@
       "y": 445,
       "w": 74,
       "h": 22,
-      "text": "Vapor",
+      "text": {
+        "es": "Vapor",
+        "en": "Steam"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1276,19 +1411,22 @@
       "y": 442,
       "w": 100,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.VaporMT",
       "unit": "%",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1299,10 +1437,13 @@
       "y": 477,
       "w": 58,
       "h": 22,
-      "text": "Vapor",
+      "text": {
+        "es": "Vapor",
+        "en": "Steam"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1312,19 +1453,22 @@
       "y": 474,
       "w": 86,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.VaporBK",
       "unit": "%",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1337,9 +1481,9 @@
       "h": 18,
       "tag": "Cocina.FueraTemperaturaMT",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1349,10 +1493,13 @@
       "y": 476,
       "w": 150,
       "h": 22,
-      "text": "Fuera de escalón",
+      "text": {
+        "es": "Fuera de escalón",
+        "en": "Out of step"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1364,9 +1511,9 @@
       "h": 20,
       "tag": "Cocina.SiembraCaliente",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1376,10 +1523,13 @@
       "y": 479,
       "w": 122,
       "h": 22,
-      "text": "Siembra caliente",
+      "text": {
+        "es": "Siembra caliente",
+        "en": "hot sowing"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1389,8 +1539,8 @@
       "y": 60,
       "w": 470,
       "h": 470,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -1402,10 +1552,13 @@
       "y": 66,
       "w": 446,
       "h": 20,
-      "text": "SECUENCIA DE COCCIÓN",
+      "text": {
+        "es": "SECUENCIA DE COCCIÓN",
+        "en": "BREWING SEQUENCE"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1416,7 +1569,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -1428,8 +1581,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -1451,8 +1604,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -1465,10 +1618,13 @@
       "y": 90,
       "w": 400,
       "h": 20,
-      "text": "1. Llenado de agua",
+      "text": {
+        "es": "1. Llenado de agua",
+        "en": "1. Filling with water"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1479,7 +1635,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -1491,8 +1647,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -1514,8 +1670,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -1528,10 +1684,13 @@
       "y": 114,
       "w": 400,
       "h": 20,
-      "text": "2. Empaste",
+      "text": {
+        "es": "2. Empaste",
+        "en": "2. Mash-in"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1542,7 +1701,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -1554,8 +1713,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -1577,8 +1736,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -1591,10 +1750,13 @@
       "y": 138,
       "w": 400,
       "h": 20,
-      "text": "3. Escalón 1 · proteico",
+      "text": {
+        "es": "3. Escalón 1 · proteico",
+        "en": "3. Step 1 · protein"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1605,7 +1767,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -1617,8 +1779,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -1640,8 +1802,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -1654,10 +1816,13 @@
       "y": 162,
       "w": 400,
       "h": 20,
-      "text": "4. Escalón 2 · sacarificación",
+      "text": {
+        "es": "4. Escalón 2 · sacarificación",
+        "en": "4. Step 2 · saccharification"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1668,7 +1833,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -1680,8 +1845,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -1703,8 +1868,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -1717,10 +1882,13 @@
       "y": 186,
       "w": 400,
       "h": 20,
-      "text": "5. Escalón 3 · mash-out",
+      "text": {
+        "es": "5. Escalón 3 · mash-out",
+        "en": "5. Step 3 · mash-out"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1731,7 +1899,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -1743,8 +1911,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -1766,8 +1934,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -1780,10 +1948,13 @@
       "y": 210,
       "w": 400,
       "h": 20,
-      "text": "6. Trasiego y recirculación",
+      "text": {
+        "es": "6. Trasiego y recirculación",
+        "en": "6. Transfer and recirculation"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1794,7 +1965,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -1806,8 +1977,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -1829,8 +2000,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -1843,10 +2014,13 @@
       "y": 234,
       "w": 400,
       "h": 20,
-      "text": "7. Filtrado y lavado",
+      "text": {
+        "es": "7. Filtrado y lavado",
+        "en": "7. Filtering and washing"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1857,7 +2031,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -1869,8 +2043,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -1892,8 +2066,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -1906,10 +2080,13 @@
       "y": 258,
       "w": 400,
       "h": 20,
-      "text": "8. Calentamiento a ebullición",
+      "text": {
+        "es": "8. Calentamiento a ebullición",
+        "en": "8. Heating to boiling"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1920,7 +2097,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -1932,8 +2109,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -1955,8 +2132,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -1969,10 +2146,13 @@
       "y": 282,
       "w": 400,
       "h": 20,
-      "text": "9. Hervido",
+      "text": {
+        "es": "9. Hervido",
+        "en": "9. Boiled"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1983,7 +2163,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -1995,8 +2175,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -2018,8 +2198,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -2032,10 +2212,13 @@
       "y": 306,
       "w": 400,
       "h": 20,
-      "text": "10. Whirlpool",
+      "text": {
+        "es": "10. Whirlpool",
+        "en": "10. Whirlpool"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -2046,7 +2229,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -2058,8 +2241,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -2081,8 +2264,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -2095,10 +2278,13 @@
       "y": 330,
       "w": 400,
       "h": 20,
-      "text": "11. Enfriado y trasiego a FV",
+      "text": {
+        "es": "11. Enfriado y trasiego a FV",
+        "en": "11. Cooled and racked to FV"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -2109,7 +2295,7 @@
       "w": 13,
       "h": 13,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -2121,8 +2307,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "stroke_color": "@Aviso"
+              "color": "#e89a1c",
+              "stroke_color": "#e89a1c"
             }
           },
           {
@@ -2144,8 +2330,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "stroke_color": "@Marcha"
+              "color": "#2e8b57",
+              "stroke_color": "#2e8b57"
             }
           }
         ]
@@ -2158,10 +2344,13 @@
       "y": 354,
       "w": 400,
       "h": 20,
-      "text": "12. Limpieza CIP",
+      "text": {
+        "es": "12. Limpieza CIP",
+        "en": "12. CIP cleaning"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -2171,10 +2360,13 @@
       "y": 395,
       "w": 302,
       "h": 22,
-      "text": "Consigna del paso",
+      "text": {
+        "es": "Consigna del paso",
+        "en": "Step setpoint"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -2184,19 +2376,22 @@
       "y": 392,
       "w": 130,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.ConsignaActual",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -2207,10 +2402,13 @@
       "y": 427,
       "w": 302,
       "h": 22,
-      "text": "Tiempo en el paso",
+      "text": {
+        "es": "Tiempo en el paso",
+        "en": "Time in step"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -2220,19 +2418,22 @@
       "y": 424,
       "w": 130,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.TiempoPaso",
       "unit": "min",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -2243,10 +2444,13 @@
       "y": 459,
       "w": 302,
       "h": 22,
-      "text": "Tiempo restante",
+      "text": {
+        "es": "Tiempo restante",
+        "en": "Remaining time"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -2256,19 +2460,22 @@
       "y": 456,
       "w": 130,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.TiempoRestante",
       "unit": "min",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -2285,17 +2492,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "SECUENCIA RETENIDA"
+          "text": {
+            "es": "SECUENCIA RETENIDA",
+            "en": "SEQUENCE ON HOLD"
+          }
         },
         {
           "value": "false",
-          "text": "SECUENCIA EN AUTOMÁTICO"
+          "text": {
+            "es": "SECUENCIA EN AUTOMÁTICO",
+            "en": "AUTOMATIC SEQUENCE"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Linea",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#6f777e",
       "text_color": "#ffffff",
-      "border_color": "@Linea",
+      "border_color": "#6f777e",
       "dynamics": {
         "states": [
           {
@@ -2305,14 +2521,14 @@
               "value": true
             },
             "style": {
-              "color": "@Aviso",
-              "border_color": "@Aviso"
+              "color": "#e89a1c",
+              "border_color": "#e89a1c"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -2323,8 +2539,8 @@
       "y": 540,
       "w": 560,
       "h": 290,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -2336,10 +2552,13 @@
       "y": 546,
       "w": 536,
       "h": 20,
-      "text": "PREPARAR Y MANDAR EL LOTE",
+      "text": {
+        "es": "PREPARAR Y MANDAR EL LOTE",
+        "en": "PREPARE AND SEND THE BATCH"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -2349,10 +2568,13 @@
       "y": 572,
       "w": 120,
       "h": 20,
-      "text": "Receta",
+      "text": {
+        "es": "Receta",
+        "en": "Recipe"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -2362,14 +2584,17 @@
       "y": 594,
       "w": 220,
       "h": 28,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Nombre1",
       "font_size": 12,
       "bold": true,
       "text_align": "left",
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "states": [
           {
@@ -2380,8 +2605,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
-              "border_color": "@Mando",
+              "color": "#2b6cb0",
+              "border_color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -2395,13 +2620,19 @@
       "y": 594,
       "w": 220,
       "h": 28,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.RecetaSeleccionada",
       "action": "set",
       "value": 1,
       "color": "#00000000",
       "border_color": "#00000000",
-      "description": "Elegir la receta 1 para el próximo lote"
+      "description": {
+        "es": "Elegir la receta 1 para el próximo lote",
+        "en": "Choose recipe 1 for the next batch"
+      }
     },
     {
       "id": "rec2_n",
@@ -2410,14 +2641,17 @@
       "y": 626,
       "w": 220,
       "h": 28,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Nombre2",
       "font_size": 12,
       "bold": true,
       "text_align": "left",
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "states": [
           {
@@ -2428,8 +2662,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
-              "border_color": "@Mando",
+              "color": "#2b6cb0",
+              "border_color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -2443,13 +2677,19 @@
       "y": 626,
       "w": 220,
       "h": 28,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.RecetaSeleccionada",
       "action": "set",
       "value": 2,
       "color": "#00000000",
       "border_color": "#00000000",
-      "description": "Elegir la receta 2 para el próximo lote"
+      "description": {
+        "es": "Elegir la receta 2 para el próximo lote",
+        "en": "Choose recipe 2 for the next batch"
+      }
     },
     {
       "id": "rec3_n",
@@ -2458,14 +2698,17 @@
       "y": 658,
       "w": 220,
       "h": 28,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Nombre3",
       "font_size": 12,
       "bold": true,
       "text_align": "left",
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "states": [
           {
@@ -2476,8 +2719,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
-              "border_color": "@Mando",
+              "color": "#2b6cb0",
+              "border_color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -2491,13 +2734,19 @@
       "y": 658,
       "w": 220,
       "h": 28,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.RecetaSeleccionada",
       "action": "set",
       "value": 3,
       "color": "#00000000",
       "border_color": "#00000000",
-      "description": "Elegir la receta 3 para el próximo lote"
+      "description": {
+        "es": "Elegir la receta 3 para el próximo lote",
+        "en": "Choose recipe 3 for the next batch"
+      }
     },
     {
       "id": "rec4_n",
@@ -2506,14 +2755,17 @@
       "y": 690,
       "w": 220,
       "h": 28,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Nombre4",
       "font_size": 12,
       "bold": true,
       "text_align": "left",
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "states": [
           {
@@ -2524,8 +2776,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
-              "border_color": "@Mando",
+              "color": "#2b6cb0",
+              "border_color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -2539,13 +2791,19 @@
       "y": 690,
       "w": 220,
       "h": 28,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.RecetaSeleccionada",
       "action": "set",
       "value": 4,
       "color": "#00000000",
       "border_color": "#00000000",
-      "description": "Elegir la receta 4 para el próximo lote"
+      "description": {
+        "es": "Elegir la receta 4 para el próximo lote",
+        "en": "Choose recipe 4 for the next batch"
+      }
     },
     {
       "id": "fv_t",
@@ -2554,10 +2812,13 @@
       "y": 572,
       "w": 200,
       "h": 20,
-      "text": "Fermentador de destino",
+      "text": {
+        "es": "Fermentador de destino",
+        "en": "Target Fermenter"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -2567,15 +2828,18 @@
       "y": 594,
       "w": 90,
       "h": 28,
-      "text": "FV1",
+      "text": {
+        "es": "FV1",
+        "en": "FV1"
+      },
       "tag": "Cocina.FVDestino",
       "action": "set",
       "value": 1,
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "dynamics": {
         "states": [
           {
@@ -2586,7 +2850,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
+              "color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -2603,38 +2867,62 @@
       "tag": "FV1.Fase",
       "font_size": 11,
       "bold": true,
-      "text_color": "@Texto",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "default_text": "—",
+      "text_color": "#24292e",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "texts": [
         {
           "value": "0",
-          "text": "Libre"
+          "text": {
+            "es": "Libre",
+            "en": "Free"
+          }
         },
         {
           "value": "1",
-          "text": "Llenado"
+          "text": {
+            "es": "Llenado",
+            "en": "Filling"
+          }
         },
         {
           "value": "2",
-          "text": "Fermentación"
+          "text": {
+            "es": "Fermentación",
+            "en": "Fermentation"
+          }
         },
         {
           "value": "3",
-          "text": "Reposo de diacetilo"
+          "text": {
+            "es": "Reposo de diacetilo",
+            "en": "Diacetyl rest"
+          }
         },
         {
           "value": "4",
-          "text": "Enfriamiento (cold crash)"
+          "text": {
+            "es": "Enfriamiento (cold crash)",
+            "en": "Cooling (cold crash)"
+          }
         },
         {
           "value": "5",
-          "text": "Guarda"
+          "text": {
+            "es": "Guarda",
+            "en": "Save"
+          }
         },
         {
           "value": "6",
-          "text": "Listo para envasar"
+          "text": {
+            "es": "Listo para envasar",
+            "en": "Ready to pack"
+          }
         }
       ]
     },
@@ -2645,15 +2933,18 @@
       "y": 626,
       "w": 90,
       "h": 28,
-      "text": "FV2",
+      "text": {
+        "es": "FV2",
+        "en": "FV2"
+      },
       "tag": "Cocina.FVDestino",
       "action": "set",
       "value": 2,
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "dynamics": {
         "states": [
           {
@@ -2664,7 +2955,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
+              "color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -2681,38 +2972,62 @@
       "tag": "FV2.Fase",
       "font_size": 11,
       "bold": true,
-      "text_color": "@Texto",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "default_text": "—",
+      "text_color": "#24292e",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "texts": [
         {
           "value": "0",
-          "text": "Libre"
+          "text": {
+            "es": "Libre",
+            "en": "Free"
+          }
         },
         {
           "value": "1",
-          "text": "Llenado"
+          "text": {
+            "es": "Llenado",
+            "en": "Filling"
+          }
         },
         {
           "value": "2",
-          "text": "Fermentación"
+          "text": {
+            "es": "Fermentación",
+            "en": "Fermentation"
+          }
         },
         {
           "value": "3",
-          "text": "Reposo de diacetilo"
+          "text": {
+            "es": "Reposo de diacetilo",
+            "en": "Diacetyl rest"
+          }
         },
         {
           "value": "4",
-          "text": "Enfriamiento (cold crash)"
+          "text": {
+            "es": "Enfriamiento (cold crash)",
+            "en": "Cooling (cold crash)"
+          }
         },
         {
           "value": "5",
-          "text": "Guarda"
+          "text": {
+            "es": "Guarda",
+            "en": "Save"
+          }
         },
         {
           "value": "6",
-          "text": "Listo para envasar"
+          "text": {
+            "es": "Listo para envasar",
+            "en": "Ready to pack"
+          }
         }
       ]
     },
@@ -2723,15 +3038,18 @@
       "y": 658,
       "w": 90,
       "h": 28,
-      "text": "FV3",
+      "text": {
+        "es": "FV3",
+        "en": "FV3"
+      },
       "tag": "Cocina.FVDestino",
       "action": "set",
       "value": 3,
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "dynamics": {
         "states": [
           {
@@ -2742,7 +3060,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
+              "color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -2759,38 +3077,62 @@
       "tag": "FV3.Fase",
       "font_size": 11,
       "bold": true,
-      "text_color": "@Texto",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "default_text": "—",
+      "text_color": "#24292e",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "texts": [
         {
           "value": "0",
-          "text": "Libre"
+          "text": {
+            "es": "Libre",
+            "en": "Free"
+          }
         },
         {
           "value": "1",
-          "text": "Llenado"
+          "text": {
+            "es": "Llenado",
+            "en": "Filling"
+          }
         },
         {
           "value": "2",
-          "text": "Fermentación"
+          "text": {
+            "es": "Fermentación",
+            "en": "Fermentation"
+          }
         },
         {
           "value": "3",
-          "text": "Reposo de diacetilo"
+          "text": {
+            "es": "Reposo de diacetilo",
+            "en": "Diacetyl rest"
+          }
         },
         {
           "value": "4",
-          "text": "Enfriamiento (cold crash)"
+          "text": {
+            "es": "Enfriamiento (cold crash)",
+            "en": "Cooling (cold crash)"
+          }
         },
         {
           "value": "5",
-          "text": "Guarda"
+          "text": {
+            "es": "Guarda",
+            "en": "Save"
+          }
         },
         {
           "value": "6",
-          "text": "Listo para envasar"
+          "text": {
+            "es": "Listo para envasar",
+            "en": "Ready to pack"
+          }
         }
       ]
     },
@@ -2801,14 +3143,17 @@
       "y": 728,
       "w": 170,
       "h": 42,
-      "text": "INICIAR LOTE",
+      "text": {
+        "es": "INICIAR LOTE",
+        "en": "START BATCH"
+      },
       "tag": "Cocina.OrdenIniciar",
       "action": "set",
       "value": true,
       "font_size": 13,
       "bold": true,
-      "color": "@Marcha",
-      "border_color": "@Marcha",
+      "color": "#2e8b57",
+      "border_color": "#2e8b57",
       "text_color": "#ffffff",
       "dynamics": {
         "enabled": {
@@ -2822,7 +3167,10 @@
           "text_color": "#8a949d",
           "border_color": "#c3c9ce"
         },
-        "disabled_reason": "Cocina ocupada, fermentador de destino lleno o servicios no preparados"
+        "disabled_reason": {
+          "es": "Cocina ocupada, fermentador de destino lleno o servicios no preparados",
+          "en": "Busy kitchen, full destination fermenter or unprepared services"
+        }
       }
     },
     {
@@ -2832,14 +3180,17 @@
       "y": 728,
       "w": 110,
       "h": 42,
-      "text": "RETENER",
+      "text": {
+        "es": "RETENER",
+        "en": "HOLD"
+      },
       "tag": "Cocina.OrdenRetener",
       "action": "set",
       "value": true,
       "font_size": 13,
       "bold": true,
-      "color": "@Aviso",
-      "border_color": "@Aviso",
+      "color": "#e89a1c",
+      "border_color": "#e89a1c",
       "text_color": "#ffffff",
       "dynamics": {
         "enabled": {
@@ -2853,7 +3204,10 @@
           "text_color": "#8a949d",
           "border_color": "#c3c9ce"
         },
-        "disabled_reason": "No hay cocción en marcha"
+        "disabled_reason": {
+          "es": "No hay cocción en marcha",
+          "en": "No brewing in progress"
+        }
       }
     },
     {
@@ -2863,14 +3217,17 @@
       "y": 728,
       "w": 110,
       "h": 42,
-      "text": "REANUDAR",
+      "text": {
+        "es": "REANUDAR",
+        "en": "RESUME"
+      },
       "tag": "Cocina.OrdenReanudar",
       "action": "set",
       "value": true,
       "font_size": 13,
       "bold": true,
-      "color": "@Mando",
-      "border_color": "@Mando",
+      "color": "#2b6cb0",
+      "border_color": "#2b6cb0",
       "text_color": "#ffffff",
       "dynamics": {
         "enabled": {
@@ -2884,7 +3241,10 @@
           "text_color": "#8a949d",
           "border_color": "#c3c9ce"
         },
-        "disabled_reason": "La secuencia no está retenida"
+        "disabled_reason": {
+          "es": "La secuencia no está retenida",
+          "en": "The sequence is not retained"
+        }
       }
     },
     {
@@ -2894,10 +3254,13 @@
       "y": 728,
       "w": 110,
       "h": 42,
-      "text": "ABORTAR",
+      "text": {
+        "es": "ABORTAR",
+        "en": "ABORT"
+      },
       "font_size": 13,
       "bold": true,
-      "color": "@Disparo",
+      "color": "#d32f2f",
       "border_color": "#8e1c1c",
       "text_color": "#ffffff",
       "action": "popup",
@@ -2913,9 +3276,9 @@
       "h": 20,
       "tag": "Cocina.ListoIniciar",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -2925,10 +3288,13 @@
       "y": 783,
       "w": 272,
       "h": 22,
-      "text": "Listo para iniciar",
+      "text": {
+        "es": "Listo para iniciar",
+        "en": "Ready to start"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -2938,10 +3304,13 @@
       "y": 804,
       "w": 530,
       "h": 20,
-      "text": "Requiere fermentador libre, vapor > 4 bar y agua caliente ≥ 70 °C.",
+      "text": {
+        "es": "Requiere fermentador libre, vapor > 4 bar y agua caliente ≥ 70 °C.",
+        "en": "Requires free fermenter, steam > 4 bar and hot water ≥ 70 °C."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -2951,8 +3320,8 @@
       "y": 540,
       "w": 400,
       "h": 150,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -2964,10 +3333,13 @@
       "y": 546,
       "w": 376,
       "h": 20,
-      "text": "AVISO AL OPERADOR",
+      "text": {
+        "es": "AVISO AL OPERADOR",
+        "en": "NOTICE TO THE OPERATOR"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -2980,26 +3352,41 @@
       "tag": "Cocina.Aviso",
       "font_size": 14,
       "bold": true,
-      "text_color": "@Texto",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "default_text": "—",
+      "text_color": "#24292e",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "texts": [
         {
           "value": "0",
-          "text": "Sin avisos"
+          "text": {
+            "es": "Sin avisos",
+            "en": "No notices"
+          }
         },
         {
           "value": "1",
-          "text": "Añade la malta al macerador y confirma"
+          "text": {
+            "es": "Añade la malta al macerador y confirma",
+            "en": "Add the malt to the mash tun and confirm"
+          }
         },
         {
           "value": "2",
-          "text": "Añade el lúpulo de amargor y confirma"
+          "text": {
+            "es": "Añade el lúpulo de amargor y confirma",
+            "en": "Add the bittering hops and confirm"
+          }
         },
         {
           "value": "3",
-          "text": "Añade el lúpulo aromático y confirma"
+          "text": {
+            "es": "Añade el lúpulo aromático y confirma",
+            "en": "Add the aromatic hops and confirm"
+          }
         }
       ],
       "dynamics": {
@@ -3012,8 +3399,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "border_color": "@Aviso",
+              "color": "#e89a1c",
+              "border_color": "#e89a1c",
               "text_color": "#ffffff"
             }
           }
@@ -3027,14 +3414,17 @@
       "y": 632,
       "w": 368,
       "h": 44,
-      "text": "CONFIRMAR",
+      "text": {
+        "es": "CONFIRMAR",
+        "en": "CONFIRM"
+      },
       "tag": "Cocina.OrdenConfirmar",
       "action": "set",
       "value": true,
       "font_size": 13,
       "bold": true,
-      "color": "@Marcha",
-      "border_color": "@Marcha",
+      "color": "#2e8b57",
+      "border_color": "#2e8b57",
       "text_color": "#ffffff",
       "dynamics": {
         "enabled": {
@@ -3048,7 +3438,10 @@
           "text_color": "#8a949d",
           "border_color": "#c3c9ce"
         },
-        "disabled_reason": "No hay nada que confirmar"
+        "disabled_reason": {
+          "es": "No hay nada que confirmar",
+          "en": "There is nothing to confirm"
+        }
       }
     },
     {
@@ -3058,8 +3451,8 @@
       "y": 700,
       "w": 400,
       "h": 130,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -3071,10 +3464,13 @@
       "y": 706,
       "w": 376,
       "h": 20,
-      "text": "LOTE EN LA COCINA",
+      "text": {
+        "es": "LOTE EN LA COCINA",
+        "en": "LOT IN THE KITCHEN"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -3084,10 +3480,13 @@
       "y": 733,
       "w": 212,
       "h": 22,
-      "text": "Lote",
+      "text": {
+        "es": "Lote",
+        "en": "Lot"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -3097,19 +3496,22 @@
       "y": 730,
       "w": 150,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.Lote",
       "unit": "",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -3120,10 +3522,13 @@
       "y": 765,
       "w": 212,
       "h": 22,
-      "text": "Receta",
+      "text": {
+        "es": "Receta",
+        "en": "Recipe"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -3133,19 +3538,22 @@
       "y": 762,
       "w": 150,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.RecetaLote",
       "unit": "",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -3156,10 +3564,13 @@
       "y": 797,
       "w": 212,
       "h": 22,
-      "text": "Densidad del mosto",
+      "text": {
+        "es": "Densidad del mosto",
+        "en": "Wort gravity"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -3169,19 +3580,22 @@
       "y": 794,
       "w": 150,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.DensidadMosto",
       "unit": "°P",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },

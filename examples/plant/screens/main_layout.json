@@ -1,5 +1,8 @@
 {
-  "title": "Estación de bombeo",
+  "title": {
+    "es": "Estación de bombeo",
+    "en": "pumping station"
+  },
   "folder": "Estructura",
   "width": 1200,
   "height": 730,

@@ -1,11 +1,17 @@
 {
   "produccion": {
-    "title": "Producción y nivel",
+    "title": {
+      "es": "Producción y nivel",
+      "en": "Production and level"
+    },
     "window_seconds": 1800,
     "axes": [
       {
         "id": "mw",
-        "title": "Potencia (MW)",
+        "title": {
+          "es": "Potencia (MW)",
+          "en": "Power (MW)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -14,7 +20,10 @@
       },
       {
         "id": "nivel",
-        "title": "Nivel (msnm)",
+        "title": {
+          "es": "Nivel (msnm)",
+          "en": "Level (masl)"
+        },
         "side": "right",
         "auto": true,
         "min": 0,
@@ -58,12 +67,18 @@
     ]
   },
   "embalse": {
-    "title": "Embalse: nivel y caudales",
+    "title": {
+      "es": "Embalse: nivel y caudales",
+      "en": "Reservoir: level and flows"
+    },
     "window_seconds": 3600,
     "axes": [
       {
         "id": "nivel",
-        "title": "Nivel (msnm)",
+        "title": {
+          "es": "Nivel (msnm)",
+          "en": "Level (masl)"
+        },
         "side": "left",
         "auto": true,
         "min": 0,
@@ -72,7 +87,10 @@
       },
       {
         "id": "q",
-        "title": "Caudal (m³/s)",
+        "title": {
+          "es": "Caudal (m³/s)",
+          "en": "Flow rate (m³/s)"
+        },
         "side": "right",
         "auto": true,
         "min": 0,
@@ -116,12 +134,18 @@
     ]
   },
   "electrico": {
-    "title": "Tensión y frecuencia de los generadores",
+    "title": {
+      "es": "Tensión y frecuencia de los generadores",
+      "en": "Generator voltage and frequency"
+    },
     "window_seconds": 900,
     "axes": [
       {
         "id": "kv",
-        "title": "Tensión (kV)",
+        "title": {
+          "es": "Tensión (kV)",
+          "en": "Voltage (kV)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -130,7 +154,10 @@
       },
       {
         "id": "hz",
-        "title": "Frecuencia (Hz)",
+        "title": {
+          "es": "Frecuencia (Hz)",
+          "en": "Frequency (Hz)"
+        },
         "side": "right",
         "auto": false,
         "min": 48,
@@ -182,12 +209,18 @@
     ]
   },
   "termico_g1": {
-    "title": "Grupo 1: temperaturas y vibración",
+    "title": {
+      "es": "Grupo 1: temperaturas y vibración",
+      "en": "unit 1: temperatures and vibration"
+    },
     "window_seconds": 900,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -196,7 +229,10 @@
       },
       {
         "id": "v",
-        "title": "Vibración (mm/s)",
+        "title": {
+          "es": "Vibración (mm/s)",
+          "en": "Vibration (mm/s)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -256,12 +292,18 @@
     ]
   },
   "termico_g2": {
-    "title": "Grupo 2: temperaturas y vibración",
+    "title": {
+      "es": "Grupo 2: temperaturas y vibración",
+      "en": "unit 2: temperatures and vibration"
+    },
     "window_seconds": 900,
     "axes": [
       {
         "id": "c",
-        "title": "Temperatura (°C)",
+        "title": {
+          "es": "Temperatura (°C)",
+          "en": "Temperature (°C)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -270,7 +312,10 @@
       },
       {
         "id": "v",
-        "title": "Vibración (mm/s)",
+        "title": {
+          "es": "Vibración (mm/s)",
+          "en": "Vibration (mm/s)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,
@@ -330,12 +375,18 @@
     ]
   },
   "tendencia": {
-    "title": "Producción y nivel",
+    "title": {
+      "es": "Producción y nivel",
+      "en": "Production and level"
+    },
     "window_seconds": 1800,
     "axes": [
       {
         "id": "mw",
-        "title": "Potencia (MW)",
+        "title": {
+          "es": "Potencia (MW)",
+          "en": "Power (MW)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -344,7 +395,10 @@
       },
       {
         "id": "nivel",
-        "title": "Nivel (msnm)",
+        "title": {
+          "es": "Nivel (msnm)",
+          "en": "Level (masl)"
+        },
         "side": "right",
         "auto": true,
         "min": 0,
@@ -388,12 +442,18 @@
     ]
   },
   "tendencia_2": {
-    "title": "Embalse: nivel y caudales",
+    "title": {
+      "es": "Embalse: nivel y caudales",
+      "en": "Reservoir: level and flows"
+    },
     "window_seconds": 3600,
     "axes": [
       {
         "id": "nivel",
-        "title": "Nivel (msnm)",
+        "title": {
+          "es": "Nivel (msnm)",
+          "en": "Level (masl)"
+        },
         "side": "left",
         "auto": true,
         "min": 0,
@@ -402,7 +462,10 @@
       },
       {
         "id": "q",
-        "title": "Caudal (m³/s)",
+        "title": {
+          "es": "Caudal (m³/s)",
+          "en": "Flow rate (m³/s)"
+        },
         "side": "right",
         "auto": true,
         "min": 0,

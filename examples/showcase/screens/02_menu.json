@@ -1,5 +1,8 @@
 {
-  "title": "Navegación compartida",
+  "title": {
+    "es": "Navegación compartida",
+    "en": "Shared browsing"
+  },
   "width": 200,
   "height": 770,
   "background": "#ffffff",
@@ -11,7 +14,10 @@
       "y": 15,
       "w": 180,
       "h": 42,
-      "text": "01 · Recorrido",
+      "text": {
+        "es": "01 · Recorrido",
+        "en": "01 · Tour"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "10_inicio",
@@ -24,7 +30,10 @@
       "y": 60,
       "w": 180,
       "h": 42,
-      "text": "02 · Proceso interno",
+      "text": {
+        "es": "02 · Proceso interno",
+        "en": "02 · Internal process"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "20_internas",
@@ -37,7 +46,10 @@
       "y": 105,
       "w": 180,
       "h": 42,
-      "text": "03 · Estados y mandos",
+      "text": {
+        "es": "03 · Estados y mandos",
+        "en": "03 · States and commands"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "21_estados",
@@ -50,7 +62,10 @@
       "y": 150,
       "w": 180,
       "h": 42,
-      "text": "04 · Dibujo e imágenes",
+      "text": {
+        "es": "04 · Dibujo e imágenes",
+        "en": "04 · Drawing and images"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "22_dibujo",
@@ -63,7 +78,10 @@
       "y": 195,
       "w": 180,
       "h": 42,
-      "text": "05 · Faceplates y ventanas",
+      "text": {
+        "es": "05 · Faceplates y ventanas",
+        "en": "05 · Faceplates and windows"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "23_faceplates",
@@ -76,7 +94,10 @@
       "y": 240,
       "w": 180,
       "h": 42,
-      "text": "06 · Siemens S7",
+      "text": {
+        "es": "06 · Siemens S7",
+        "en": "06 Siemens S7"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "30_siemens",
@@ -89,7 +110,10 @@
       "y": 285,
       "w": 180,
       "h": 42,
-      "text": "07 · Modbus TCP",
+      "text": {
+        "es": "07 · Modbus TCP",
+        "en": "07 Modbus TCP"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "31_modbus",
@@ -102,7 +126,10 @@
       "y": 330,
       "w": 180,
       "h": 42,
-      "text": "08 · Gráficas en vivo",
+      "text": {
+        "es": "08 · Gráficas en vivo",
+        "en": "08 · Live graphics"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "40_graficas",
@@ -115,7 +142,10 @@
       "y": 375,
       "w": 180,
       "h": 42,
-      "text": "09 · Histórico diario",
+      "text": {
+        "es": "09 · Histórico diario",
+        "en": "09 · Daily history"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "41_historicos",
@@ -128,7 +158,10 @@
       "y": 420,
       "w": 180,
       "h": 42,
-      "text": "10 · Alarmas y ACK",
+      "text": {
+        "es": "10 · Alarmas y ACK",
+        "en": "10 · Alarms and ACK"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "50_alarmas",
@@ -141,7 +174,10 @@
       "y": 465,
       "w": 180,
       "h": 42,
-      "text": "11 · Eventos y retorno",
+      "text": {
+        "es": "11 · Eventos y retorno",
+        "en": "11 · Events and return"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "51_eventos",
@@ -154,7 +190,10 @@
       "y": 510,
       "w": 180,
       "h": 42,
-      "text": "12 · Scripts y tareas",
+      "text": {
+        "es": "12 · Scripts y tareas",
+        "en": "12 · Scripts and tasks"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "60_scripts",
@@ -167,10 +206,13 @@
       "y": 562,
       "w": 172,
       "h": 26,
-      "text": "COMUNICACIONES",
+      "text": {
+        "es": "COMUNICACIONES",
+        "en": "COMMUNICATIONS"
+      },
       "font_size": 12,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "status_0",
@@ -179,10 +221,13 @@
       "y": 592,
       "w": 176,
       "h": 50,
-      "text": "S7",
+      "text": {
+        "es": "S7",
+        "en": "S7"
+      },
       "font_size": 12,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "tag": "Sistema.S7"
     },
     {
@@ -192,10 +237,13 @@
       "y": 651,
       "w": 176,
       "h": 50,
-      "text": "Modbus",
+      "text": {
+        "es": "Modbus",
+        "en": "Modbus"
+      },
       "font_size": 12,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "tag": "Sistema.Modbus"
     },
     {
@@ -205,7 +253,10 @@
       "y": 716,
       "w": 180,
       "h": 42,
-      "text": "Mapa y ayuda",
+      "text": {
+        "es": "Mapa y ayuda",
+        "en": "Map and help"
+      },
       "action": "popup",
       "font_size": 15,
       "screen": "91_ayuda"

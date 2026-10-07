@@ -1,175 +1,90 @@
 # abSCADA
 
-SCADA de escritorio libre **GPL-3.0-or-later**, construido con Python y PySide6. Studio para diseñar proyectos y Runtime para operarlos en una ventana independiente, con comunicación Siemens S7, Modbus TCP, Beckhoff TwinCAT ADS y OPC UA cifrado, usuarios y roles, alarmas persistentes, históricos SQLite y tendencias con varios ejes. Los proyectos son archivos JSON legibles y editables desde VS Code.
+SCADA de escritorio libre **GPL-3.0-or-later**, construido con Python y PySide6. Studio diseña proyectos y Runtime los opera en otra ventana, con Siemens S7, Modbus TCP, Beckhoff TwinCAT ADS y OPC UA, usuarios y roles, alarmas persistentes, históricos SQLite y tendencias. Los proyectos son JSON abiertos con un manifiesto `.abscada`.
 
-![Studio: composición de pantallas](docs/editor-layout.png)
+## Instalar desde el código
 
-![Runtime con cabecera común](docs/runtime-layout.png)
+Requiere Git, Python **3.11 o posterior** y una sesión gráfica.
 
-## Instalación
+```bash
+git clone https://github.com/adriansmas/abscada.git
+cd abscada
+```
 
-Desde la raíz del repositorio, con Python 3.11 o posterior:
+En Windows, desde PowerShell:
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\python -m pip install -e ".[dev,s7,modbus,opcua]"
-.venv\Scripts\python -m abscada examples/plant
+.venv\Scripts\python -m abscada
 ```
 
-En Linux:
+En macOS o Linux:
 
 ```bash
+python3 --version
 python3 -m venv .venv
 .venv/bin/python -m pip install -e '.[dev,s7,modbus,opcua]'
-.venv/bin/python -m abscada examples/plant
+.venv/bin/python -m abscada
 ```
 
-Qt necesita una sesión gráfica y las bibliotecas de sistema correspondientes a la distribución. En CI se utiliza `QT_QPA_PLATFORM=offscreen`. Verificado localmente en Windows con Python 3.14.3; la ejecución en Linux está pendiente. El workflow incluido ejecuta la misma suite en ambos sistemas cuando el repositorio se publique en GitHub.
+Comprueba que `python3` sea 3.11 o posterior. Linux necesita las bibliotecas de sistema de Qt. Verificado localmente en Windows; falta validar la interfaz y los protocolos en Linux y macOS. CI configura Windows/Linux, Python 3.11/3.14; no incluye macOS. Una clonación solo incluye lo publicado en GitHub, no cambios locales pendientes.
 
-## Ejecutable para Windows (beta)
+## Probar un proyecto
 
-```powershell
-.venv\Scripts\python -m pip install -e ".[s7,modbus]" pyinstaller
-.venv\Scripts\python packaging/build_exe.py
+Sin argumentos se abre la pantalla de inicio. Elige un ejemplo y **Arrancar también su PLC simulado**: trabajarás sobre una copia en Documentos. En Studio pulsa **Abrir runtime**. Los simuladores también se gestionan desde **Herramientas → Simuladores de PLC…**.
+
+Para abrir un proyecto directamente, con el Python de tu entorno:
+
+```bash
+python -m abscada examples/brewery
+python -m abscada examples/brewery --runtime
 ```
 
-Genera `dist/abSCADA/abscada.exe` y `dist/abSCADA-<versión>-windows.zip`. El mismo proceso se ejecuta en GitHub Actions: **Actions → Windows build → Run workflow**, o al subir una etiqueta `v*`, que publica además una *release*. La guía para quien prueba la beta está en [docs/BETA.md](docs/BETA.md).
+El primer comando abre Studio; el segundo, solo Runtime. Si no has activado el entorno, sustituye `python` por `.venv/bin/python` en macOS/Linux o `.venv\Scripts\python` en Windows. En PowerShell puedes usar `./run.ps1 examples/brewery`.
 
-Los proyectos se abren desde su archivo `.abscada`. Sin argumentos se muestra una pantalla de inicio con proyectos recientes y ejemplos; `abscada --simulador hydro|cerveceria|ads|laboratorio|s7` arranca un PLC simulado.
+| Ejemplo | Qué permite probar |
+| --- | --- |
+| `examples/demo` y `examples/s7` | Controles básicos y comunicación S7 con `python -m abscada --simulador s7` |
+| `examples/plant` | Bombeo, layouts, ventanas, alarmas, registros y scripts sobre S7 |
+| [Laboratorio](examples/showcase/README.md) | Variables internas, estados, dibujo, librerías y S7/Modbus |
+| [Central hidroeléctrica](examples/hydro/README.md) | Secuencias, protecciones, tres PLC S7, contador Modbus y varios monitores |
+| [Cervecería La Tolva](examples/brewery/README.md) | Recetas en el PLC, fermentación, OPC UA cifrado, usuarios y roles |
+| [Banco Beckhoff](examples/beckhoff/README.md) | Comunicación ADS sin instalar TwinCAT en el puesto SCADA |
+| [Autoría de equipos](examples/library_author/README.md) | Crear, publicar y actualizar objetos de librería |
 
-## Diseñar y ejecutar
+Los ocho proyectos incluyen español e inglés y colores HEX explícitos por objeto. La cervecería tiene botones ES/EN y cuentas de demostración documentadas en su guía. Su primera conexión requiere aceptar el certificado del PLC simulado después de comprobar su huella.
 
-La [especificación de bibliotecas](docs/LIBRARY_AUTHORING_SPEC.md) detalla controles, propiedades y criterios de adaptación desde WinCC Unified.
+Studio muestra diseño sin valores de proceso; Runtime usa una copia del proyecto. Guardar no cambia una ejecución abierta: reinicia para aplicar el diseño nuevo. Las conexiones sin PLC o simulador marcan calidad mala y conservan el último valor; no inventan lecturas.
 
-**Librerías:** la sección **Librerías** de Studio reúne los objetos reutilizables. La del **proyecto** se ordena en carpetas; la **estándar** viene con la aplicación (35 símbolos SVG y objetos animados de bomba, motor, ventilador, válvula, interruptor y depósito con nivel) y es de solo lectura; las **externas** se vinculan con un alias y una versión desde **Proyecto → Librerías externas…**. Los objetos se arrastran al lienzo o se eligen con un buscador. Consulta la [guía de librerías](docs/FACEPLATE_LIBRARIES.md) y el proyecto de autoría `examples/library_author`.
-
-**Usuarios y roles:** con **Proyecto → Usuarios y roles** el runtime arranca sin sesión y pide usuario para mandos, consignas, scripts y reconocimiento de alarmas. Los roles combinan permisos (`operate`, `acknowledge`, `recipes`, `manage_users`, `opcua`) y cada control puede exigir uno concreto. Roles, cuentas (solo huellas scrypt), contraseñas de conexión y certificados OPC UA se guardan en el proyecto. Consulta [formato de proyecto](docs/PROJECT_FORMAT.md#usuarios-y-roles) y [bastionado](docs/HARDENING.md).
-
-**OPC UA:** cliente con firma y cifrado por defecto y confianza explícita de certificados, y servidor propio que publica las variables del proyecto con inicio de sesión de abSCADA y escrituras auditadas. Consulta [protocolos](docs/PROTOCOLS.md).
-
-**Ejemplo completo:** [Laboratorio SCADA](examples/showcase/README.md), con 21 pantallas, variables internas, S7 y Modbus, todos los controles gráficos, faceplates, emergentes, alarmas, registros e históricos. Abre con `.\run.ps1 examples/showcase`. Su guía incluye los mapas PLC y las herramientas externas de prueba.
-
-**Ejemplo industrial:** [CH Valdearenas](examples/hydro/README.md), SCADA de una central hidroeléctrica con dos grupos Francis de 10 MW: 23 pantallas, 173 variables, 3 PLC S7 y un contador Modbus, secuencias de arranque/parada, protecciones, unifilar de 66 kV, 43 alarmas, control de planta y ventanas de mando y alarmas para varios monitores. Arranca el simulador con `tools/hydro_plc.py` y abre `.\run.ps1 examples/hydro`.
-
-**Ejemplo por lotes:** [La Tolva](examples/brewery/README.md), SCADA de una microcervecería de 10 hl: cocción en 12 pasos por recetas, tres fermentadores con su curva de fermentación, servicios y panel del instructor. Lee el PLC por OPC UA cifrado, publica sus datos con el servidor OPC UA propio y trae usuarios y roles activados (solo el maestro cervecero modifica recetas). Arranca el simulador con `abscada --simulador cerveceria` y abre `.\run.ps1 examples/brewery`.
-
-**Beckhoff TwinCAT ADS:** cliente ADS propio, sin TwinCAT en el PC del SCADA. Acceso por símbolo (`MAIN.rVelocidad`) o por grupo:offset. Ejemplo en [examples/beckhoff](examples/beckhoff/README.md), que se prueba con `python -m abscada.ads_simulator`.
-
-**Indicador analógico:** control `gauge` con esfera de 240°, semicírculo o termómetro, y zonas de aviso y alarma.
-
-**Nuevo documento** ofrece Pantalla, Layout y Objeto de librería con nombre, título y dimensiones. **Guardar proyecto / Ctrl+S** guarda el conjunto. **Versiones…** activa el historial Git local; después cada guardado con cambios crea una versión. Consulta [creación y guardado](docs/PROJECT_WORKFLOW.md).
-
-**Scripts y tareas** permite Python de inicio, apertura de pantalla, botones y tareas periódicas, con límite de ejecución y diagnóstico. Las fuentes permanecen en archivos `.py`. Consulta [la API y los eventos](docs/SCRIPTING.md).
-
-1. Abre la demo en **abSCADA Studio**. La etiqueta **MODO DISEÑO** siempre permanece visible.
-2. El explorador **Proyecto** reúne pantallas y librerías. **Objetos** permite seleccionar elementos de la pantalla, incluso cuando se solapan. Las herramientas de dibujo están debajo.
-3. Las propiedades permanecen visibles. Sin selección se editan título, dimensiones, fondo, pantalla inicial y cuadrícula. Con un objeto seleccionado se editan sus propiedades. El primer clic selecciona; una pulsación posterior permite mover. Los ocho tiradores cambian el tamaño.
-4. **Línea** se dibuja con dos clics. **Polilínea** y **Tubería** se dibujan por puntos; Enter, doble clic o botón derecho terminan el trazado. Esc cancela. Los vértices se arrastran o se editan desde el inspector. Hay color, grosor, estilo, flechas, rectángulos y elipses.
-5. Usa **Orden**, **Alinear**, **Duplicar**, **Eliminar**, deshacer/rehacer, Ctrl+rueda, zoom porcentual y botón central para recorrer el lienzo. Las flechas mueven 1 px; Shift+flecha utiliza el paso de cuadrícula. Guarda con Ctrl+S. Doble clic en un objeto de librería abre su plantilla; sus parámetros se editan desde **Ajustes avanzados…**.
-6. En **Variables**, **Tipos de datos** y **Conexiones**, usa los formularios para crear o editar definiciones. Las estructuras aparecen como grupos desplegables, incluidas las anidadas. El filtro abre los grupos con coincidencias. Usa **Enlace…** en cualquier campo para elegir conexión, ubicación, valor inicial y acceso sin JSON. Al crear una estructura, su valor inicial completo todavía se introduce como objeto JSON; después se edita por campos mediante formularios.
-7. Pulsa **Abrir runtime**. Se abre otra ventana con la pantalla de operación, sin herramientas de ingeniería. Pulsa los botones o haz doble clic en una entrada para escribir valores.
-8. Studio sigue abierto y permite continuar editando. Su lienzo no recibe valores iniciales ni valores en vivo: muestra marcadores `—` y pilotos neutros. Runtime utiliza una copia del proyecto tomada al iniciarlo; los cambios de diseño se verán después de cerrarlo y volverlo a abrir.
-9. Cerrar la ventana Runtime detiene comunicaciones y cierra sus ventanas emergentes. **Mostrar runtime** en Studio enfoca la ejecución existente sin crear otra. Cerrar Studio también detiene su runtime.
-
-**Layouts:** Nuevo documento → Layout crea una composición. Añade contenedores de pantalla, asigna sus nombres, dimensiones y pantalla inicial. Los botones de Abrir pantalla permiten seleccionar Abrir en → nombre del contenedor, Zona actual o Ventana completa. `examples/plant` inicia `main_layout`: `common_header` permanece arriba mientras `contenido` cambia entre proceso, equipos, gráficas y alarmas. Consulta [el editor de pantallas](docs/SCREEN_EDITOR.md) para el funcionamiento y los límites de composición.
-
-Para abrir solo la operación, sin Studio:
-
-```powershell
-.venv\Scripts\python -m abscada examples/plant --runtime
-```
-
-El runtime no incluye simulador interno ni generación de valores. La Prueba visual es una previsualización aislada que no crea un runtime ni usa comunicaciones. Los proyectos de ejemplo usan Siemens S7 TCP y requieren un PLC disponible o el servidor de desarrollo ejecutado por separado. Sin conexión, las variables enlazadas se marcan bad y conservan su último valor; no se generan lecturas ficticias.
-
-## PLC, DB y variables
-
-Una **conexión** identifica el PLC: nombre, IP, rack, slot y puerto. El **DB se define en el enlace de cada variable**, no como un único DB de la conexión. La misma conexión puede usar varios DB. Las variables locales no llevan conexión ni dirección.
-
-| Variable | PLC / conexión | Dirección PLC | Tipo |
-| --- | --- | --- | --- |
-| Motor.running | PLC_Principal | %DB1.DBX0.0 | bool |
-| Motor.speed | PLC_Principal | %DB1.DBW2 | int |
-| Tank.level | PLC_Principal | %DB2.DBD4 | float |
-
-En **Variables**, despliega la estructura y pulsa **Enlace…** en el campo. El formulario permite seleccionar conexión, DB, byte, codificación y bit para BOOL. La columna Ubicación resume el enlace; los proyectos anteriores con direcciones de texto siguen siendo válidos. `%DB1.DBW0` es un entero de 16 bits en el DB1, byte 0. `%DB1.DBD4` usa 32 bits: REAL para variables float y DINT para variables int. Se admite mayúsculas o minúsculas y el prefijo `%` es opcional. Los nombres SCADA no son nombres simbólicos del programa PLC: el adaptador Siemens actual solo admite acceso absoluto a bloques DB.
-
-## Arranque con PLC de desarrollo
-
-En una primera terminal:
-
-```powershell
-.venv\Scripts\python -m abscada.s7_simulator
-```
-
-En una segunda:
-
-```powershell
-.venv\Scripts\python -m abscada examples/s7
-```
-
-El servidor escucha exclusivamente en `127.0.0.1:1102`. Abre **Conexiones** para ver la configuración. `examples/demo` y `examples/s7` usan el mismo mapa DB y la misma conexión S7 a localhost:1102. Para un PLC físico, cambia IP, rack, slot, puerto y direcciones según el equipo. Ver [conexiones S7](docs/S7.md) para preparar un PLC físico.
-
-## Herramientas
-
-```powershell
-.venv\Scripts\python -m abscada examples/plant --validate
-.venv\Scripts\python -m abscada examples/plant --headless --seconds 5
-.venv\Scripts\python -m pytest -q
-.venv\Scripts\python tools/capture_demo.py
-```
+![Studio: composición de pantallas](docs/editor-layout.png)
 
 ## Documentación
 
-- [Análisis y arquitectura](docs/ARCHITECTURE.md): decisiones, dependencias y extensiones.
-- [Formato de proyecto](docs/PROJECT_FORMAT.md): tipos, enlaces, componentes y persistencia.
-- [Siemens S7](docs/S7.md): mapa de memoria, configuración y límites.
-- [Desarrollo y validación](docs/DEVELOPMENT.md): pruebas y flujo de contribución.
-- [Resultados de validación](docs/VALIDATION.md): evidencia local y verificaciones pendientes.
-- [Hoja de ruta](docs/ROADMAP.md): evolución hacia un SCADA más completo.
+| Necesito… | Leer |
+| --- | --- |
+| Diseñar, usar librerías, traducir y guardar | [Guía de Studio](docs/STUDIO.md) |
+| Operar alarmas, históricos, gráficas y scripts | [Guía de operación](docs/OPERATIONS.md) |
+| Editar JSON o crear paquetes de librería | [Referencia de formato](docs/PROJECT_FORMAT.md) |
+| Configurar PLC y direcciones | [Protocolos](docs/PROTOCOLS.md) |
+| Desarrollar, probar o publicar | [Desarrollo](docs/DEVELOPMENT.md) |
+| Saber qué falta | [Pendientes](docs/PENDIENTES.md) |
+| Preparar una instalación protegida | [Bastionado](docs/HARDENING.md) |
+| Revisar amenazas y el proceso de seguridad | [Desarrollo seguro](docs/SECURITY_DEVELOPMENT.md) |
 
-## Alcance actual
+La [guía breve de la beta](docs/BETA.md) acompaña al ejecutable Windows. [CHANGELOG.md](CHANGELOG.md) recoge cambios por versión y [SECURITY.md](SECURITY.md) el procedimiento de comunicación de vulnerabilidades.
 
-Incluye Studio y Runtime separados, caja de herramientas visible con clic y arrastrar/soltar, inspector de propiedades, cuadrícula, selección múltiple, duplicado/eliminación, deshacer/rehacer, zoom, redimensionado, librerías de objetos con carpetas y librería estándar, formularios para variables/tipos/conexiones, condiciones y estados visuales, S7 DB, Modbus TCP, TwinCAT ADS y OPC UA, y usuarios con roles y auditoría. El núcleo de adquisición sigue funcionando sin GUI.
+## Ejecutable Windows
 
-Scripts y tareas permite eventos de inicio, apertura de pantalla, botones y tareas periódicas en Python. Siguen pendientes los objetos de librería anidados, el instalador y la validación con un PLC físico. La nueva interfaz no implica que la adquisición a gran escala o el uso industrial estén validados.
+```powershell
+.venv\Scripts\python -m pip install -e ".[s7,modbus,opcua]" pyinstaller
+.venv\Scripts\python packaging/build_exe.py
+```
 
-## Licencia
+Genera `dist/abSCADA/abscada.exe` y un ZIP con versión. La publicación mediante etiquetas `v*` se describe en Desarrollo. El ejecutable aún no tiene firma Authenticode ni instalador.
 
-El código propio se distribuye bajo **GNU GPL versión 3 o posterior**. Consulta [LICENSE](LICENSE). Las dependencias conservan sus respectivas licencias; PySide6/Qt y python-snap7 no se relicencian por este proyecto. La licencia del motor no decide automáticamente la licencia de los proyectos de usuario ni de sus imágenes. No se incorporan código ni recursos de AVEVA.
+## Límites y licencia
 
-La interfaz mantiene nombres de campos, herramientas, estados de conexión y errores. Las instrucciones de uso están en esta documentación, no en banners dentro del editor.
+Faltan validación con PLC físicos, carga sostenida, suscripciones OPC UA, notificaciones ADS, objetos de librería anidados, redundancia y un gestor genérico de recetas. Los scripts Python son código de confianza; su proceso separado no es una sandbox. abSCADA no sustituye las protecciones ni funciones de seguridad del PLC.
 
-## Modbus TCP y protocolos futuros
-
-En Conexiones, selecciona **Modbus TCP** y configura host, puerto TCP, Unit ID, timeout y ciclo. En Variables → Enlace, selecciona esa conexión: el formulario muestra área, offset base 0, codificación y orden de bytes/registros. Holding Register 40001 de un manual corresponde al offset 0 del área holding registers; consulta la convención del fabricante. Coils son BOOL; discrete inputs e input registers son de solo lectura. No hay simulación interna.
-
-Cada conexión tiene un trabajador, cliente, cola de escritura, ciclo y reconexión independientes. La adquisición se ejecuta fuera de Qt. El ciclo es un objetivo; la duración de las peticiones limita la frecuencia alcanzable.
-
-El diseño para ampliar protocolos, incluyendo OPC UA y TwinCAT ADS, está descrito en [docs/PROTOCOLS.md](docs/PROTOCOLS.md). Esos dos protocolos todavía no están implementados.
-
-## Funciones operativas (0.4)
-
-El arranque sin argumentos y `./run.ps1` abren `examples/plant`, un proyecto que abre el layout `main_layout`, con cabecera compartida y el esquema de bombeo `process_design` en su contenedor, con alarmas de nivel/caudal, siete variables registradas, una tendencia de tres curvas con dos ejes y pantallas con visores incrustados. `examples/demo` y `examples/s7` conservan sus ejemplos básicos. Todos usan comunicación TCP externa, sin simulación interna.
-
-- **Alarmas:** categorías y colores, prioridad, condición digital/numérica, umbral, histéresis, retardos, ACK, entrada/salida/reconocimiento y comentario de operador. Visores de pendientes, activas, histórico y eventos, con filtros, columnas configurables y CSV.
-- **Registros:** ficheros con variables y frecuencia común. Cada variable pertenece a uno o ninguno. Rotación diaria en SQLite, retención configurable, calidad y fechas de adquisición/registro.
-- **Tendencias:** curvas por variable, color/grosor, eje asociado, hasta ocho ejes, escalas fijas/automáticas, visibilidad independiente de curvas/ejes, cursor, zoom, consulta temporal y exportación de datos originales.
-- **Persistencia:** alarmas y auditoría en `runtime/scada.sqlite3`; variables en `runtime/records/<registro>/AAAA-MM-DD.sqlite3`. Consultas entre días, WAL, escritores separados de PLC/Qt y recuperación de alarmas pendientes al reiniciar.
-
-En **Registros** configura ficheros y frecuencias. En **Variables**, el desplegable **Registro** asigna cada variable. Añade **Tendencia** o **Alarmas** a una pantalla y pulsa **Configurar…** en sus propiedades. Las gráficas muestran tiempo real sin registro o históricos de días anteriores. Runtime muestra solo la pantalla diseñada; los botones con acción **Abrir pantalla** definen la navegación.
-
-![Tendencias en Runtime](docs/runtime-trends.png)
-
-La guía de uso y los detalles de persistencia están en [OPERATIONS.md](docs/OPERATIONS.md). Todavía están pendientes autenticación/roles, redundancia, alarmas PLC nativas, shelving y validación de carga y equipos físicos.
-
-La guía del editor y sus gestos está en [SCREEN_EDITOR.md](docs/SCREEN_EDITOR.md).
-
-
-## Ingeniería visual y estados
-
-**Condiciones y estados** configura visibilidad, habilitación y apariencia sin Python ni JSON. Hay colores de piloto por estado, paleta compartida con HEX/RGB, mandos momentáneos y valores al pulsar/soltar. La selección múltiple ofrece propiedades comunes; Objetos permite bloqueo, ocultación de diseño y grupos.
-
-**Prueba visual** permite revisar valores y calidad sin conectar equipos. Los formularios conservan el borrador cuando hay errores, aceptan decimales con coma y crean estructuras anidadas campo a campo. **Revisar** localiza mandos incompletos y propiedades desconocidas.
-
-- [Ejercicio de marcha/paro y guía de estados visuales](docs/VISUAL_STATES.md).
-- [Resolución de los 16 puntos del informe de producto](docs/FERNANDO_REVIEW_RESOLUTION.md).
+Código propio [GPL-3.0-or-later](LICENSE). Las dependencias y recursos de terceros mantienen sus licencias; la licencia del motor no determina automáticamente la de los proyectos de usuario. No se incorporan código ni recursos de AVEVA.

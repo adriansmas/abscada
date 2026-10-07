@@ -1,5 +1,8 @@
 {
-  "title": "Unidad reutilizable",
+  "title": {
+    "es": "Unidad reutilizable",
+    "en": "Reusable unit"
+  },
   "width": 500,
   "height": 260,
   "background": "#ffffff",
@@ -16,10 +19,13 @@
       "y": 12,
       "w": 465,
       "h": 32,
-      "text": "UNIDAD PARAMETRIZADA",
+      "text": {
+        "es": "UNIDAD PARAMETRIZADA",
+        "en": "PARAMETERIZED UNIT"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "lamp",
@@ -30,9 +36,9 @@
       "h": 44,
       "tag": "$run",
       "lamp_colors": {
-        "on": "@Marcha",
+        "on": "#147d75",
         "off": "#d7e0e9",
-        "bad": "@Aviso"
+        "bad": "#da982f"
       }
     },
     {
@@ -42,13 +48,16 @@
       "y": 59,
       "w": 390,
       "h": 44,
-      "text": "PV",
+      "text": {
+        "es": "PV",
+        "en": "PV"
+      },
       "tag": "$pv",
       "unit": "u",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "sp",
@@ -57,13 +66,16 @@
       "y": 121,
       "w": 450,
       "h": 44,
-      "text": "SP",
+      "text": {
+        "es": "SP",
+        "en": "SP"
+      },
       "tag": "$sp",
       "unit": "u",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "command",
@@ -72,7 +84,10 @@
       "y": 190,
       "w": 280,
       "h": 42,
-      "text": "Marcha / paro",
+      "text": {
+        "es": "Marcha / paro",
+        "en": "Start/stop"
+      },
       "action": "toggle",
       "font_size": 15,
       "tag": "$run"
@@ -88,14 +103,23 @@
       "texts": [
         {
           "value": "true",
-          "text": "MARCHA"
+          "text": {
+            "es": "MARCHA",
+            "en": "MARCH"
+          }
         },
         {
           "value": "false",
-          "text": "PARADO"
+          "text": {
+            "es": "PARADO",
+            "en": "STOPPED"
+          }
         }
       ],
-      "default_text": "—"
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      }
     }
   ]
 }

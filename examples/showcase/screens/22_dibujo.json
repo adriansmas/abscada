@@ -1,8 +1,11 @@
 {
-  "title": "Dibujo, imágenes y capas",
+  "title": {
+    "es": "Dibujo, imágenes y capas",
+    "en": "Drawing, images and layers"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Dibujo, imágenes y capas",
+      "text": {
+        "es": "Dibujo, imágenes y capas",
+        "en": "Drawing, images and layers"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "Todos los elementos geométricos. En Studio: Objetos → bloqueo, ocultación, grupos y nombre descriptivo.",
+      "text": {
+        "es": "Todos los elementos geométricos. En Studio: Objetos → bloqueo, ocultación, grupos y nombre descriptivo.",
+        "en": "All geometric elements. In Studio: Objects → blocking, hiding, units and friendly name."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -35,7 +44,7 @@
     {
       "id": "line",
       "kind": "line",
-      "stroke_color": "@S7",
+      "stroke_color": "#3678c8",
       "stroke_width": 4,
       "arrows": "both",
       "x": 70,
@@ -56,7 +65,7 @@
     {
       "id": "polyline",
       "kind": "polyline",
-      "stroke_color": "@Modbus",
+      "stroke_color": "#8152b4",
       "stroke_width": 4,
       "stroke_style": "dash",
       "x": 70,
@@ -85,7 +94,7 @@
     {
       "id": "pipe",
       "kind": "pipe",
-      "stroke_color": "@Linea",
+      "stroke_color": "#7c94a5",
       "stroke_width": 12,
       "arrows": "end",
       "dynamics": {
@@ -98,7 +107,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Marcha"
+              "stroke_color": "#147d75"
             }
           }
         ]
@@ -133,7 +142,7 @@
       "y": 515,
       "w": 170,
       "h": 90,
-      "color": "@S7",
+      "color": "#3678c8",
       "stroke_color": "#1c4568",
       "stroke_width": 3,
       "filled": true,
@@ -146,7 +155,7 @@
       "y": 515,
       "w": 170,
       "h": 90,
-      "color": "@Modbus",
+      "color": "#8152b4",
       "stroke_color": "#59327f",
       "stroke_width": 3,
       "filled": true,
@@ -159,7 +168,7 @@
       "y": 140,
       "w": 550,
       "h": 470,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -196,7 +205,10 @@
       "y": 470,
       "w": 320,
       "h": 42,
-      "text": "Cambiar estado de válvula",
+      "text": {
+        "es": "Cambiar estado de válvula",
+        "en": "Change valve status"
+      },
       "action": "toggle",
       "font_size": 15,
       "tag": "Local.Marcha"
@@ -208,10 +220,13 @@
       "y": 550,
       "w": 410,
       "h": 38,
-      "text": "Imagen SVG que cambia por condición",
+      "text": {
+        "es": "Imagen SVG que cambia por condición",
+        "en": "SVG image that changes by condition"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "hidden_example",
@@ -220,10 +235,16 @@
       "y": 655,
       "w": 1000,
       "h": 42,
-      "text": "Este texto está oculto solo en diseño; sí aparece en Runtime.",
+      "text": {
+        "es": "Este texto está oculto solo en diseño; sí aparece en Runtime.",
+        "en": "This text is hidden in layout only; it does appear in Runtime."
+      },
       "font_size": 16,
       "editor_hidden": true,
-      "description": "Ejemplo de ocultación exclusiva de Studio"
+      "description": {
+        "es": "Ejemplo de ocultación exclusiva de Studio",
+        "en": "Studio Exclusive Hiding Example"
+      }
     }
   ],
   "on_open": [

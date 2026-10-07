@@ -1,5 +1,8 @@
 {
-  "title": "Ajustes de bombeo",
+  "title": {
+    "es": "Ajustes de bombeo",
+    "en": "Pump settings"
+  },
   "width": 480,
   "height": 340,
   "background": "#f4f7fa",
@@ -11,7 +14,10 @@
       "y": 18,
       "w": 420,
       "h": 40,
-      "text": "Ajustes de bombeo",
+      "text": {
+        "es": "Ajustes de bombeo",
+        "en": "Pump settings"
+      },
       "font_size": 24,
       "bold": true,
       "text_align": "left",
@@ -24,7 +30,10 @@
       "y": 90,
       "w": 230,
       "h": 36,
-      "text": "Bomba 1 · Consigna",
+      "text": {
+        "es": "Bomba 1 · Consigna",
+        "en": "Pump 1 · Setpoint"
+      },
       "font_size": 16,
       "text_align": "left"
     },
@@ -38,7 +47,10 @@
       "tag": "Pump1.setpoint",
       "unit": "m³/h",
       "decimals": 1,
-      "text": ""
+      "text": {
+        "es": "",
+        "en": ""
+      }
     },
     {
       "id": "pump2_label",
@@ -47,7 +59,10 @@
       "y": 150,
       "w": 230,
       "h": 36,
-      "text": "Bomba 2 · Consigna",
+      "text": {
+        "es": "Bomba 2 · Consigna",
+        "en": "Pump 2 · Setpoint"
+      },
       "font_size": 16,
       "text_align": "left"
     },
@@ -61,7 +76,10 @@
       "tag": "Pump2.setpoint",
       "unit": "m³/h",
       "decimals": 1,
-      "text": ""
+      "text": {
+        "es": "",
+        "en": ""
+      }
     },
     {
       "id": "close",
@@ -70,7 +88,10 @@
       "y": 275,
       "w": 140,
       "h": 38,
-      "text": "Cerrar",
+      "text": {
+        "es": "Cerrar",
+        "en": "Close"
+      },
       "action": "close_popup"
     },
     {
@@ -85,14 +106,23 @@
       "texts": [
         {
           "value": "0",
-          "text": "Bomba 1 · Parada"
+          "text": {
+            "es": "Bomba 1 · Parada",
+            "en": "Pump 1 · Stop"
+          }
         },
         {
           "value": "1",
-          "text": "Bomba 1 · En marcha"
+          "text": {
+            "es": "Bomba 1 · En marcha",
+            "en": "Pump 1 · Running"
+          }
         }
       ],
-      "default_text": "—"
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      }
     },
     {
       "id": "pump2_state",
@@ -106,14 +136,23 @@
       "texts": [
         {
           "value": "0",
-          "text": "Bomba 2 · Parada"
+          "text": {
+            "es": "Bomba 2 · Parada",
+            "en": "Pump 2 · Stop"
+          }
         },
         {
           "value": "1",
-          "text": "Bomba 2 · En marcha"
+          "text": {
+            "es": "Bomba 2 · En marcha",
+            "en": "Pump 2 · Running"
+          }
         }
       ],
-      "default_text": "—"
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      }
     }
   ],
   "on_open": [

@@ -157,7 +157,7 @@ def test_modal_dialog_fields_readable_then_released(operational_studio):
     from PySide6.QtCore import QTimer,QCoreApplication,QEvent
     from abscada.project_dialogs import NewDocumentDialog
     dialog=NewDocumentDialog(operational_studio)
-    dialog.name.setText('new_screen')
+    dialog.title.setText('new_screen')
     QTimer.singleShot(0,dialog.accept)
     dialog.exec()
     assert dialog.document()['title']=='new_screen'

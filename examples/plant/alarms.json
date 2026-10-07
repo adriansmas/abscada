@@ -3,19 +3,28 @@
   "categories": [
     {
       "id": "process",
-      "name": "Proceso",
+      "name": {
+        "es": "Proceso",
+        "en": "Process"
+      },
       "color": "#d74c4c"
     },
     {
       "id": "equipment",
-      "name": "Equipos",
+      "name": {
+        "es": "Equipos",
+        "en": "Teams"
+      },
       "color": "#d79832"
     }
   ],
   "items": [
     {
       "id": "tank_high",
-      "message": "Nivel alto del depósito",
+      "message": {
+        "es": "Nivel alto del depósito",
+        "en": "High tank level"
+      },
       "tag": "TankLevel",
       "category": "process",
       "condition": "high",
@@ -29,7 +38,10 @@
     },
     {
       "id": "tank_low",
-      "message": "Nivel bajo del depósito",
+      "message": {
+        "es": "Nivel bajo del depósito",
+        "en": "Low tank level"
+      },
       "tag": "TankLevel",
       "category": "process",
       "condition": "low",
@@ -43,7 +55,10 @@
     },
     {
       "id": "pump_flow_high",
-      "message": "Caudal alto en bomba 1",
+      "message": {
+        "es": "Caudal alto en bomba 1",
+        "en": "High flow rate in pump 1"
+      },
       "tag": "Pump1.flow",
       "category": "equipment",
       "condition": "high",

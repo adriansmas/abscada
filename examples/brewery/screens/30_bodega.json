@@ -1,8 +1,11 @@
 {
-  "title": "Bodega · fermentación y guarda",
+  "title": {
+    "es": "Bodega · fermentación y guarda",
+    "en": "Cellar · fermentation and storage"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dfe1e2",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "BODEGA · FERMENTACIÓN Y GUARDA",
+      "text": {
+        "es": "BODEGA · FERMENTACIÓN Y GUARDA",
+        "en": "CELLAR · FERMENTATION AND AGEING"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Las fases siguen la receta copiada al iniciar el lote (1 día de fermentación = 1 min) · «Mando…» abre cada fermentador",
+      "text": {
+        "es": "Las fases siguen la receta copiada al iniciar el lote (1 día de fermentación = 1 min) · «Mando…» abre cada fermentador",
+        "en": "The phases follow the recipe copied when starting the batch (1 day of fermentation = 1 min) · “Command…” opens each fermenter"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -40,10 +49,13 @@
       "y": 64,
       "w": 300,
       "h": 20,
-      "text": "FV1 · cilindrocónico 12 hl",
+      "text": {
+        "es": "FV1 · cilindrocónico 12 hl",
+        "en": "FV1 · cylindroconical 12 hl"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -81,8 +93,8 @@
       "y": 86,
       "w": 130,
       "h": 236,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -94,10 +106,13 @@
       "y": 92,
       "w": 110,
       "h": 18,
-      "text": "GLICOL",
+      "text": {
+        "es": "GLICOL",
+        "en": "GLYCOL"
+      },
       "font_size": 10,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -110,7 +125,7 @@
       "tag": "FV1.ValvulaGlicol",
       "min": 0,
       "max": 100,
-      "color": "@Glicol",
+      "color": "#3c8fa6",
       "dynamics": {}
     },
     {
@@ -120,19 +135,22 @@
       "y": 240,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "FV1.ValvulaGlicol",
       "unit": "%",
       "decimals": 0,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -145,9 +163,9 @@
       "h": 20,
       "tag": "FV1.FermentacionParada",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -157,10 +175,13 @@
       "y": 271,
       "w": 92,
       "h": 22,
-      "text": "Parada",
+      "text": {
+        "es": "Parada",
+        "en": "Stop"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -173,18 +194,27 @@
       "tag": "FV1.Automatico",
       "font_size": 10,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "texts": [
         {
           "value": "true",
-          "text": "RECETA"
+          "text": {
+            "es": "RECETA",
+            "en": "RECIPE"
+          }
         },
         {
           "value": "false",
-          "text": "MANUAL"
+          "text": {
+            "es": "MANUAL",
+            "en": "MANUAL"
+          }
         }
       ],
-      "default_text": "—",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "dynamics": {
         "states": [
           {
@@ -195,7 +225,7 @@
               "bad": false
             },
             "style": {
-              "text_color": "@Aviso"
+              "text_color": "#e89a1c"
             }
           }
         ]
@@ -217,10 +247,13 @@
       "y": 64,
       "w": 300,
       "h": 20,
-      "text": "FV2 · cilindrocónico 12 hl",
+      "text": {
+        "es": "FV2 · cilindrocónico 12 hl",
+        "en": "FV2 · cylindroconical 12 hl"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -258,8 +291,8 @@
       "y": 86,
       "w": 130,
       "h": 236,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -271,10 +304,13 @@
       "y": 92,
       "w": 110,
       "h": 18,
-      "text": "GLICOL",
+      "text": {
+        "es": "GLICOL",
+        "en": "GLYCOL"
+      },
       "font_size": 10,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -287,7 +323,7 @@
       "tag": "FV2.ValvulaGlicol",
       "min": 0,
       "max": 100,
-      "color": "@Glicol",
+      "color": "#3c8fa6",
       "dynamics": {}
     },
     {
@@ -297,19 +333,22 @@
       "y": 240,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "FV2.ValvulaGlicol",
       "unit": "%",
       "decimals": 0,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -322,9 +361,9 @@
       "h": 20,
       "tag": "FV2.FermentacionParada",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -334,10 +373,13 @@
       "y": 271,
       "w": 92,
       "h": 22,
-      "text": "Parada",
+      "text": {
+        "es": "Parada",
+        "en": "Stop"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -350,18 +392,27 @@
       "tag": "FV2.Automatico",
       "font_size": 10,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "texts": [
         {
           "value": "true",
-          "text": "RECETA"
+          "text": {
+            "es": "RECETA",
+            "en": "RECIPE"
+          }
         },
         {
           "value": "false",
-          "text": "MANUAL"
+          "text": {
+            "es": "MANUAL",
+            "en": "MANUAL"
+          }
         }
       ],
-      "default_text": "—",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "dynamics": {
         "states": [
           {
@@ -372,7 +423,7 @@
               "bad": false
             },
             "style": {
-              "text_color": "@Aviso"
+              "text_color": "#e89a1c"
             }
           }
         ]
@@ -394,10 +445,13 @@
       "y": 64,
       "w": 300,
       "h": 20,
-      "text": "FV3 · cilindrocónico 12 hl",
+      "text": {
+        "es": "FV3 · cilindrocónico 12 hl",
+        "en": "FV3 · cylindroconical 12 hl"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -435,8 +489,8 @@
       "y": 86,
       "w": 130,
       "h": 236,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -448,10 +502,13 @@
       "y": 92,
       "w": 110,
       "h": 18,
-      "text": "GLICOL",
+      "text": {
+        "es": "GLICOL",
+        "en": "GLYCOL"
+      },
       "font_size": 10,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -464,7 +521,7 @@
       "tag": "FV3.ValvulaGlicol",
       "min": 0,
       "max": 100,
-      "color": "@Glicol",
+      "color": "#3c8fa6",
       "dynamics": {}
     },
     {
@@ -474,19 +531,22 @@
       "y": 240,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "FV3.ValvulaGlicol",
       "unit": "%",
       "decimals": 0,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -499,9 +559,9 @@
       "h": 20,
       "tag": "FV3.FermentacionParada",
       "lamp_colors": {
-        "on": "@Disparo",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#d32f2f",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -511,10 +571,13 @@
       "y": 271,
       "w": 92,
       "h": 22,
-      "text": "Parada",
+      "text": {
+        "es": "Parada",
+        "en": "Stop"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -527,18 +590,27 @@
       "tag": "FV3.Automatico",
       "font_size": 10,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "texts": [
         {
           "value": "true",
-          "text": "RECETA"
+          "text": {
+            "es": "RECETA",
+            "en": "RECIPE"
+          }
         },
         {
           "value": "false",
-          "text": "MANUAL"
+          "text": {
+            "es": "MANUAL",
+            "en": "MANUAL"
+          }
         }
       ],
-      "default_text": "—",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "dynamics": {
         "states": [
           {
@@ -549,7 +621,7 @@
               "bad": false
             },
             "style": {
-              "text_color": "@Aviso"
+              "text_color": "#e89a1c"
             }
           }
         ]

@@ -1,8 +1,11 @@
 {
-  "title": "Resumen de grupo",
+  "title": {
+    "es": "Resumen de grupo",
+    "en": "unit Summary"
+  },
   "width": 290,
   "height": 214,
-  "background": "@Panel",
+  "background": "#eceef0",
   "parameters": {
     "paso": "int",
     "potencia": "float",
@@ -27,11 +30,14 @@
       "y": 10,
       "w": 74,
       "h": 32,
-      "text": "Mando…",
+      "text": {
+        "es": "Mando…",
+        "en": "Command…"
+      },
       "font_size": 12,
       "bold": true,
-      "color": "@Mando",
-      "border_color": "@Mando",
+      "color": "#2b6cb0",
+      "border_color": "#2b6cb0",
       "text_color": "#ffffff",
       "action": "faceplate_popup",
       "template": "mando_grupo",
@@ -59,55 +65,91 @@
       "font_size": 12,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Paro",
-      "border_color": "@Paro",
+      "color": "#9aa3ab",
+      "border_color": "#9aa3ab",
       "texts": [
         {
           "value": "0",
-          "text": "PARADO"
+          "text": {
+            "es": "PARADO",
+            "en": "STOPPED"
+          }
         },
         {
           "value": "1",
-          "text": "ARRANQUE DE AUXILIARES"
+          "text": {
+            "es": "ARRANQUE DE AUXILIARES",
+            "en": "AUXILIARY START"
+          }
         },
         {
           "value": "2",
-          "text": "APERTURA VÁLVULA DE ENTRADA"
+          "text": {
+            "es": "APERTURA VÁLVULA DE ENTRADA",
+            "en": "INLET VALVE OPENING"
+          }
         },
         {
           "value": "3",
-          "text": "ACELERACIÓN"
+          "text": {
+            "es": "ACELERACIÓN",
+            "en": "ACCELERATION"
+          }
         },
         {
           "value": "4",
-          "text": "EXCITACIÓN"
+          "text": {
+            "es": "EXCITACIÓN",
+            "en": "EXCITATION"
+          }
         },
         {
           "value": "5",
-          "text": "SINCRONIZACIÓN"
+          "text": {
+            "es": "SINCRONIZACIÓN",
+            "en": "SYNCHRONIZATION"
+          }
         },
         {
           "value": "6",
-          "text": "EN CARGA"
+          "text": {
+            "es": "EN CARGA",
+            "en": "ON LOAD"
+          }
         },
         {
           "value": "7",
-          "text": "DESCARGA"
+          "text": {
+            "es": "DESCARGA",
+            "en": "DOWNLOAD"
+          }
         },
         {
           "value": "8",
-          "text": "DESACOPLAMIENTO"
+          "text": {
+            "es": "DESACOPLAMIENTO",
+            "en": "DECOUPLING"
+          }
         },
         {
           "value": "9",
-          "text": "CIERRE Y FRENADO"
+          "text": {
+            "es": "CIERRE Y FRENADO",
+            "en": "CLOSING AND BRAKING"
+          }
         },
         {
           "value": "10",
-          "text": "DISPARO · BLOQUEO 86"
+          "text": {
+            "es": "DISPARO · BLOQUEO 86",
+            "en": "SHOOT · BLOCK 86"
+          }
         }
       ],
-      "default_text": "—",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "dynamics": {
         "states": [
           {
@@ -118,8 +160,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           },
           {
@@ -130,8 +172,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "border_color": "@Marcha"
+              "color": "#2e8b57",
+              "border_color": "#2e8b57"
             }
           },
           {
@@ -142,14 +184,14 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "border_color": "@Aviso"
+              "color": "#e89a1c",
+              "border_color": "#e89a1c"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -160,10 +202,13 @@
       "y": 55,
       "w": 134,
       "h": 22,
-      "text": "Potencia",
+      "text": {
+        "es": "Potencia",
+        "en": "Power"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -173,19 +218,22 @@
       "y": 52,
       "w": 130,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$potencia",
       "unit": "MW",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -196,10 +244,13 @@
       "y": 86,
       "w": 134,
       "h": 22,
-      "text": "Consigna P",
+      "text": {
+        "es": "Consigna P",
+        "en": "Setpoint P"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -209,19 +260,22 @@
       "y": 83,
       "w": 130,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$consigna",
       "unit": "MW",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -232,10 +286,13 @@
       "y": 117,
       "w": 134,
       "h": 22,
-      "text": "Velocidad",
+      "text": {
+        "es": "Velocidad",
+        "en": "Speed"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -245,19 +302,22 @@
       "y": 114,
       "w": 130,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$velocidad",
       "unit": "%",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -268,10 +328,13 @@
       "y": 148,
       "w": 134,
       "h": 22,
-      "text": "Caudal",
+      "text": {
+        "es": "Caudal",
+        "en": "Flow"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -281,19 +344,22 @@
       "y": 145,
       "w": 130,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$caudal",
       "unit": "m³/s",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -306,9 +372,9 @@
       "h": 16,
       "tag": "$acoplado",
       "lamp_colors": {
-        "on": "@Cerrado",
-        "off": "@Abierto",
-        "bad": "@Aviso"
+        "on": "#c62828",
+        "off": "#2e7d32",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -318,10 +384,13 @@
       "y": 179,
       "w": 50,
       "h": 22,
-      "text": "52G",
+      "text": {
+        "es": "52G",
+        "en": "52G"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -334,18 +403,27 @@
       "tag": "$remoto",
       "font_size": 11,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "texts": [
         {
           "value": "true",
-          "text": "REMOTO"
+          "text": {
+            "es": "REMOTO",
+            "en": "REMOTE"
+          }
         },
         {
           "value": "false",
-          "text": "LOCAL"
+          "text": {
+            "es": "LOCAL",
+            "en": "LOCAL"
+          }
         }
       ],
-      "default_text": "—",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "dynamics": {
         "states": [
           {
@@ -356,7 +434,7 @@
               "bad": false
             },
             "style": {
-              "text_color": "@Aviso"
+              "text_color": "#e89a1c"
             }
           }
         ]
@@ -373,19 +451,28 @@
       "font_size": 11,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Paro",
-      "border_color": "@Paro",
+      "color": "#9aa3ab",
+      "border_color": "#9aa3ab",
       "texts": [
         {
           "value": "true",
-          "text": "ALARMA"
+          "text": {
+            "es": "ALARMA",
+            "en": "ALARM"
+          }
         },
         {
           "value": "false",
-          "text": "SIN ALARMA"
+          "text": {
+            "es": "SIN ALARMA",
+            "en": "NO ALARM"
+          }
         }
       ],
-      "default_text": "—",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "dynamics": {
         "states": [
           {
@@ -396,8 +483,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ]

@@ -75,7 +75,7 @@ def test_properties_persist_and_history_restores(studio):
     window.undo()
     assert window.project.screens["overview"]["elements"][0]["w"] == 940
     window.redo()
-    assert window.project.screens["overview"]["elements"][0]["text"] == "Edited header"
+    assert window.project.screens["overview"]["elements"][0]["text"] == {"es": "Edited header", "en": "PROCESS CONTROL"}
     window.save_project()
     assert Project.load(window.project.root).screens["overview"]["elements"][0]["w"] == 900
 
@@ -175,7 +175,7 @@ def test_navigation_and_filtering(studio):
     studio.navigate("variables")
     assert studio.pages.currentIndex() == 1
     studio.filter.setText("Pump1")
-    assert studio.table.topLevelItemCount() == 1
+    assert studio.table.topLevelItemCount() == 2  # plus the row for a new variable
     assert studio.table.topLevelItem(0).childCount() == 3
     assert studio.table.topLevelItem(0).isExpanded()
     studio.navigate("connections")
@@ -277,7 +277,7 @@ def test_opening_a_faceplate_template_preserves_runtime(studio):
 
 def test_structures_are_collapsed_groups_and_filter_shows_matching_fields(studio):
     tree = studio.table
-    assert tree.topLevelItemCount() == 4
+    assert tree.topLevelItemCount() == 5  # plus the row for a new variable
     pump = tree.topLevelItem(0)
     assert pump.text(0) == "Pump1"
     assert pump.childCount() == 3
@@ -286,7 +286,7 @@ def test_structures_are_collapsed_groups_and_filter_shows_matching_fields(studio
     studio.refresh_variables()
     assert tree.topLevelItem(0).isExpanded()
     studio.filter.setText("Pump1.flow")
-    assert tree.topLevelItemCount() == 1
+    assert tree.topLevelItemCount() == 2  # plus the row for a new variable
     assert tree.topLevelItem(0).childCount() == 1
     assert tree.topLevelItem(0).child(0).text(0) == "flow"
     assert tree.topLevelItem(0).isExpanded()
