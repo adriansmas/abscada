@@ -113,7 +113,5 @@ QPushButton#unsavedBadge { background: #fff4e0; color: #8a5200; border: 1px soli
 QPushButton#unsavedBadge:hover { background: #ffe9c2; }
 QLabel#filterNotice { background: #fff8e6; border: 1px solid #f0d9a0; border-radius: 4px; padding: 6px 10px; color: #6b4b00; }
 QLineEdit#searchField { border-radius: 14px; padding: 4px 10px; background: #f6f8fb; }
-QToolButton#createButton { background: #147d75; color: white; font-weight: 600; border-radius: 4px; padding: 3px 9px; }
-QToolButton#createButton:hover { background: #0f6963; }
 QToolButton#linkButton { color: #506176; font-size: 12px; }
 """

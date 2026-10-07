@@ -1,8 +1,11 @@
 {
-  "title": "Alarmas · Eventos",
+  "title": {
+    "es": "Alarmas · Eventos",
+    "en": "Alarms Events"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dfe1e2",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "ALARMAS · EVENTOS",
+      "text": {
+        "es": "ALARMAS · EVENTOS",
+        "en": "ALARMS · EVENTS"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Reconocer exige sesión con el permiso «Reconocer alarmas» · el registro guarda quién hizo cada cosa",
+      "text": {
+        "es": "Reconocer exige sesión con el permiso «Reconocer alarmas» · el registro guarda quién hizo cada cosa",
+        "en": "Acknowledge requires a session with the “Acknowledge alarms” permission · the log saves who did what"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -40,12 +49,15 @@
       "y": 14,
       "w": 90,
       "h": 32,
-      "text": "Activas",
+      "text": {
+        "es": "Activas",
+        "en": "Active"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "80_alarmas",
       "target_container": "contenido"
@@ -57,12 +69,15 @@
       "y": 14,
       "w": 90,
       "h": 32,
-      "text": "Histórico",
+      "text": {
+        "es": "Histórico",
+        "en": "History"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "81_alarmas_historico",
       "target_container": "contenido"
@@ -74,11 +89,14 @@
       "y": 14,
       "w": 90,
       "h": 32,
-      "text": "Eventos",
+      "text": {
+        "es": "Eventos",
+        "en": "Events"
+      },
       "font_size": 12,
       "bold": true,
-      "color": "@Mando",
-      "border_color": "@Mando",
+      "color": "#2b6cb0",
+      "border_color": "#2b6cb0",
       "text_color": "#ffffff",
       "action": "screen",
       "screen": "82_alarmas_eventos",

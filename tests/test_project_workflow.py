@@ -10,12 +10,12 @@ from test_operational_ui import operational_studio, operational_project
 def test_new_screen_dialog_dimensions_and_single_save(operational_studio):
     w=operational_studio
     def create():
-        d=QApplication.activeModalWidget();d.name.setText('sensors');d.title.setText('Sensores')
+        d=QApplication.activeModalWidget();d.title.setText('Sensores')
         d.width.setValue(900);d.height.setValue(450);d.accept()
     QTimer.singleShot(0,create);w.new_document(False)
     assert w.document()['width']==900 and w.document()['title']=='Sensores'
     assert w.save_project()
-    assert Project.load(w.project.root).screens['sensors']['height']==450
+    assert Project.load(w.project.root).screens['Sensores']['height']==450
 
 
 def test_save_rolls_back_io_failure_and_removes_deleted_sources(operational_project,monkeypatch):

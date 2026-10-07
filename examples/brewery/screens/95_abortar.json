@@ -1,5 +1,8 @@
 {
-  "title": "Confirmar aborto de la cocción",
+  "title": {
+    "es": "Confirmar aborto de la cocción",
+    "en": "Confirm brewing abort"
+  },
   "width": 520,
   "height": 260,
   "background": "#fbeaea",
@@ -14,10 +17,13 @@
       "y": 20,
       "w": 60,
       "h": 60,
-      "text": "⚠",
+      "text": {
+        "es": "⚠",
+        "en": "⚠"
+      },
       "font_size": 40,
       "bold": true,
-      "text_color": "@Disparo",
+      "text_color": "#d32f2f",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 22,
       "w": 410,
       "h": 40,
-      "text": "¿Abortar el lote en curso?",
+      "text": {
+        "es": "¿Abortar el lote en curso?",
+        "en": "Abort the current batch?"
+      },
       "font_size": 17,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -40,10 +49,13 @@
       "y": 66,
       "w": 410,
       "h": 80,
-      "text": "El mosto de la sala de cocción, y el del fermentador si se estaba trasegando, va a desagüe. No se puede deshacer.",
+      "text": {
+        "es": "El mosto de la sala de cocción, y el del fermentador si se estaba trasegando, va a desagüe. No se puede deshacer.",
+        "en": "The wort from the brewhouse, and from the fermenter if it was being racked, goes into the drain. It can't be undone."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -53,14 +65,17 @@
       "y": 170,
       "w": 220,
       "h": 46,
-      "text": "ABORTAR LOTE",
+      "text": {
+        "es": "ABORTAR LOTE",
+        "en": "ABORT BATCH"
+      },
       "tag": "Cocina.OrdenAbortar",
       "action": "set",
       "value": true,
       "font_size": 13,
       "bold": true,
-      "color": "@Disparo",
-      "border_color": "@Disparo",
+      "color": "#d32f2f",
+      "border_color": "#d32f2f",
       "text_color": "#ffffff",
       "dynamics": {}
     },
@@ -71,12 +86,15 @@
       "y": 170,
       "w": 170,
       "h": 46,
-      "text": "Cerrar",
+      "text": {
+        "es": "Cerrar",
+        "en": "Close"
+      },
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "action": "close_popup"
     }
   ],

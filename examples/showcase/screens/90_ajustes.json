@@ -1,8 +1,11 @@
 {
-  "title": "Configuración local",
+  "title": {
+    "es": "Configuración local",
+    "en": "Local configuration"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Configuración local",
+      "text": {
+        "es": "Configuración local",
+        "en": "Local configuration"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "La misma variable se actualiza en la pantalla principal y en esta ventana.",
+      "text": {
+        "es": "La misma variable se actualiza en la pantalla principal y en esta ventana.",
+        "en": "The same variable is updated on the main screen and in this window."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -39,13 +48,16 @@
       "y": 150,
       "w": 1040,
       "h": 44,
-      "text": "Operador",
+      "text": {
+        "es": "Operador",
+        "en": "Operator"
+      },
       "tag": "Sistema.Operador",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "setting1",
@@ -54,13 +66,16 @@
       "y": 250,
       "w": 1040,
       "h": 44,
-      "text": "Lote",
+      "text": {
+        "es": "Lote",
+        "en": "Lot"
+      },
       "tag": "Local.Texto",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "setting2",
@@ -69,13 +84,16 @@
       "y": 350,
       "w": 1040,
       "h": 44,
-      "text": "Consigna",
+      "text": {
+        "es": "Consigna",
+        "en": "Setpoint"
+      },
       "tag": "Local.Consigna",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "setting3",
@@ -84,13 +102,16 @@
       "y": 450,
       "w": 1040,
       "h": 44,
-      "text": "Temperatura",
+      "text": {
+        "es": "Temperatura",
+        "en": "Temperature"
+      },
       "tag": "Local.Temperatura",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "close",
@@ -99,7 +120,10 @@
       "y": 650,
       "w": 330,
       "h": 42,
-      "text": "Cerrar ajustes",
+      "text": {
+        "es": "Cerrar ajustes",
+        "en": "Close settings"
+      },
       "action": "close_popup",
       "font_size": 15
     }

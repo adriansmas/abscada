@@ -3,32 +3,50 @@
   "categories": [
     {
       "id": "g1",
-      "name": "Grupo 1",
+      "name": {
+        "es": "Grupo 1",
+        "en": "unit 1"
+      },
       "color": "#2b6cb0"
     },
     {
       "id": "g2",
-      "name": "Grupo 2",
+      "name": {
+        "es": "Grupo 2",
+        "en": "unit 2"
+      },
       "color": "#6b46c1"
     },
     {
       "id": "presa",
-      "name": "Presa y embalse",
+      "name": {
+        "es": "Presa y embalse",
+        "en": "Dam and reservoir"
+      },
       "color": "#2c7a7b"
     },
     {
       "id": "subestacion",
-      "name": "Subestación 66 kV",
+      "name": {
+        "es": "Subestación 66 kV",
+        "en": "66 kV substation"
+      },
       "color": "#c05621"
     },
     {
       "id": "sscc",
-      "name": "Servicios auxiliares",
+      "name": {
+        "es": "Servicios auxiliares",
+        "en": "Ancillary services"
+      },
       "color": "#718096"
     },
     {
       "id": "sistema",
-      "name": "Sistema SCADA",
+      "name": {
+        "es": "Sistema SCADA",
+        "en": "SCADA system"
+      },
       "color": "#4a5568"
     }
   ],
@@ -39,7 +57,10 @@
       "category": "g1",
       "condition": "true",
       "threshold": 0,
-      "message": "G1 · Disparo del grupo · bloqueo 86",
+      "message": {
+        "es": "G1 · Disparo del grupo · bloqueo 86",
+        "en": "G1 · unit trip · lock 86"
+      },
       "priority": 1000,
       "ack_required": true,
       "enabled": true,
@@ -53,7 +74,10 @@
       "category": "g1",
       "condition": "high",
       "threshold": 70,
-      "message": "G1 · Temperatura alta cojinete guía superior",
+      "message": {
+        "es": "G1 · Temperatura alta cojinete guía superior",
+        "en": "G1 · Upper guide bearing high temperature"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -67,7 +91,10 @@
       "category": "g1",
       "condition": "high",
       "threshold": 75,
-      "message": "G1 · Temperatura alta cojinete de empuje",
+      "message": {
+        "es": "G1 · Temperatura alta cojinete de empuje",
+        "en": "G1 High temperature thrust bearing"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -81,7 +108,10 @@
       "category": "g1",
       "condition": "high",
       "threshold": 70,
-      "message": "G1 · Temperatura alta cojinete guía turbina",
+      "message": {
+        "es": "G1 · Temperatura alta cojinete guía turbina",
+        "en": "G1 · Turbine guide bearing high temperature"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -95,7 +125,10 @@
       "category": "g1",
       "condition": "high",
       "threshold": 110,
-      "message": "G1 · Temperatura alta devanado estator",
+      "message": {
+        "es": "G1 · Temperatura alta devanado estator",
+        "en": "G1 · High stator winding temperature"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -109,7 +142,10 @@
       "category": "g1",
       "condition": "high",
       "threshold": 4.5,
-      "message": "G1 · Vibración alta en cojinete guía",
+      "message": {
+        "es": "G1 · Vibración alta en cojinete guía",
+        "en": "G1 · High vibration in guide bearing"
+      },
       "priority": 600,
       "ack_required": true,
       "enabled": true,
@@ -123,7 +159,10 @@
       "category": "g1",
       "condition": "low",
       "threshold": 52,
-      "message": "G1 · Presión baja grupo oleohidráulico",
+      "message": {
+        "es": "G1 · Presión baja grupo oleohidráulico",
+        "en": "G1 · Low pressure oleohydraulic unit"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -137,7 +176,10 @@
       "category": "g1",
       "condition": "true",
       "threshold": 0,
-      "message": "G1 · Fallo de agua de refrigeración",
+      "message": {
+        "es": "G1 · Fallo de agua de refrigeración",
+        "en": "G1 Cooling water failure"
+      },
       "priority": 750,
       "ack_required": true,
       "enabled": true,
@@ -151,7 +193,10 @@
       "category": "g1",
       "condition": "true",
       "threshold": 0,
-      "message": "G1 · Bomba de aceite en marcha sin recuperar presión",
+      "message": {
+        "es": "G1 · Bomba de aceite en marcha sin recuperar presión",
+        "en": "G1 · Oil pump running without recovering pressure"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -165,7 +210,10 @@
       "category": "g1",
       "condition": "true",
       "threshold": 0,
-      "message": "G1 · Funcionamiento en zona rugosa",
+      "message": {
+        "es": "G1 · Funcionamiento en zona rugosa",
+        "en": "G1 · Operation in rough area"
+      },
       "priority": 250,
       "ack_required": false,
       "enabled": true,
@@ -179,7 +227,10 @@
       "category": "g1",
       "condition": "false",
       "threshold": 0,
-      "message": "G1 · Grupo en mando local",
+      "message": {
+        "es": "G1 · Grupo en mando local",
+        "en": "G1 · unit in local command"
+      },
       "priority": 200,
       "ack_required": false,
       "enabled": true,
@@ -193,7 +244,10 @@
       "category": "sistema",
       "condition": "false",
       "threshold": 0,
-      "message": "Fallo de comunicación con PLC Grupo 1",
+      "message": {
+        "es": "Fallo de comunicación con PLC Grupo 1",
+        "en": "Communication failure with PLC unit 1"
+      },
       "priority": 900,
       "ack_required": true,
       "enabled": true,
@@ -207,7 +261,10 @@
       "category": "g2",
       "condition": "true",
       "threshold": 0,
-      "message": "G2 · Disparo del grupo · bloqueo 86",
+      "message": {
+        "es": "G2 · Disparo del grupo · bloqueo 86",
+        "en": "G2 · unit trip · lock 86"
+      },
       "priority": 1000,
       "ack_required": true,
       "enabled": true,
@@ -221,7 +278,10 @@
       "category": "g2",
       "condition": "high",
       "threshold": 70,
-      "message": "G2 · Temperatura alta cojinete guía superior",
+      "message": {
+        "es": "G2 · Temperatura alta cojinete guía superior",
+        "en": "G2 · Upper guide bearing high temperature"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -235,7 +295,10 @@
       "category": "g2",
       "condition": "high",
       "threshold": 75,
-      "message": "G2 · Temperatura alta cojinete de empuje",
+      "message": {
+        "es": "G2 · Temperatura alta cojinete de empuje",
+        "en": "G2 High temperature thrust bearing"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -249,7 +312,10 @@
       "category": "g2",
       "condition": "high",
       "threshold": 70,
-      "message": "G2 · Temperatura alta cojinete guía turbina",
+      "message": {
+        "es": "G2 · Temperatura alta cojinete guía turbina",
+        "en": "G2 · High temperature turbine guide bearing"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -263,7 +329,10 @@
       "category": "g2",
       "condition": "high",
       "threshold": 110,
-      "message": "G2 · Temperatura alta devanado estator",
+      "message": {
+        "es": "G2 · Temperatura alta devanado estator",
+        "en": "G2 · High stator winding temperature"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -277,7 +346,10 @@
       "category": "g2",
       "condition": "high",
       "threshold": 4.5,
-      "message": "G2 · Vibración alta en cojinete guía",
+      "message": {
+        "es": "G2 · Vibración alta en cojinete guía",
+        "en": "G2 · High vibration in guide bearing"
+      },
       "priority": 600,
       "ack_required": true,
       "enabled": true,
@@ -291,7 +363,10 @@
       "category": "g2",
       "condition": "low",
       "threshold": 52,
-      "message": "G2 · Presión baja grupo oleohidráulico",
+      "message": {
+        "es": "G2 · Presión baja grupo oleohidráulico",
+        "en": "G2 · Low pressure oleohydraulic unit"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -305,7 +380,10 @@
       "category": "g2",
       "condition": "true",
       "threshold": 0,
-      "message": "G2 · Fallo de agua de refrigeración",
+      "message": {
+        "es": "G2 · Fallo de agua de refrigeración",
+        "en": "G2 Cooling water failure"
+      },
       "priority": 750,
       "ack_required": true,
       "enabled": true,
@@ -319,7 +397,10 @@
       "category": "g2",
       "condition": "true",
       "threshold": 0,
-      "message": "G2 · Bomba de aceite en marcha sin recuperar presión",
+      "message": {
+        "es": "G2 · Bomba de aceite en marcha sin recuperar presión",
+        "en": "G2 · Oil pump running without recovering pressure"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -333,7 +414,10 @@
       "category": "g2",
       "condition": "true",
       "threshold": 0,
-      "message": "G2 · Funcionamiento en zona rugosa",
+      "message": {
+        "es": "G2 · Funcionamiento en zona rugosa",
+        "en": "G2 · Operation in rough area"
+      },
       "priority": 250,
       "ack_required": false,
       "enabled": true,
@@ -347,7 +431,10 @@
       "category": "g2",
       "condition": "false",
       "threshold": 0,
-      "message": "G2 · Grupo en mando local",
+      "message": {
+        "es": "G2 · Grupo en mando local",
+        "en": "G2 · unit in local command"
+      },
       "priority": 200,
       "ack_required": false,
       "enabled": true,
@@ -361,7 +448,10 @@
       "category": "sistema",
       "condition": "false",
       "threshold": 0,
-      "message": "Fallo de comunicación con PLC Grupo 2",
+      "message": {
+        "es": "Fallo de comunicación con PLC Grupo 2",
+        "en": "Communication failure with PLC unit 2"
+      },
       "priority": 900,
       "ack_required": true,
       "enabled": true,
@@ -375,7 +465,10 @@
       "category": "presa",
       "condition": "high",
       "threshold": 814.5,
-      "message": "Nivel de embalse alto (814,50)",
+      "message": {
+        "es": "Nivel de embalse alto (814,50)",
+        "en": "High reservoir level (814.50)"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -389,7 +482,10 @@
       "category": "presa",
       "condition": "high",
       "threshold": 815.0,
-      "message": "Nivel máximo normal superado (815,00)",
+      "message": {
+        "es": "Nivel máximo normal superado (815,00)",
+        "en": "Normal maximum level exceeded (815.00)"
+      },
       "priority": 900,
       "ack_required": true,
       "enabled": true,
@@ -403,7 +499,10 @@
       "category": "presa",
       "condition": "low",
       "threshold": 802.0,
-      "message": "Nivel de embalse bajo (802,00)",
+      "message": {
+        "es": "Nivel de embalse bajo (802,00)",
+        "en": "Low reservoir level (802.00)"
+      },
       "priority": 600,
       "ack_required": true,
       "enabled": true,
@@ -417,7 +516,10 @@
       "category": "presa",
       "condition": "high",
       "threshold": 60.0,
-      "message": "Caudal de entrada de avenida > 60 m³/s",
+      "message": {
+        "es": "Caudal de entrada de avenida > 60 m³/s",
+        "en": "Flood inlet flow > 60 m³/s"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -431,7 +533,10 @@
       "category": "presa",
       "condition": "high",
       "threshold": 1.0,
-      "message": "Aliviadero vertiendo",
+      "message": {
+        "es": "Aliviadero vertiendo",
+        "en": "spillway pouring"
+      },
       "priority": 300,
       "ack_required": false,
       "enabled": true,
@@ -445,7 +550,10 @@
       "category": "presa",
       "condition": "true",
       "threshold": 0,
-      "message": "Compuerta de toma cerrada",
+      "message": {
+        "es": "Compuerta de toma cerrada",
+        "en": "Intake gate closed"
+      },
       "priority": 400,
       "ack_required": true,
       "enabled": true,
@@ -459,7 +567,10 @@
       "category": "subestacion",
       "condition": "false",
       "threshold": 0,
-      "message": "Pérdida de tensión en red 66 kV",
+      "message": {
+        "es": "Pérdida de tensión en red 66 kV",
+        "en": "Loss of network voltage 66 kV"
+      },
       "priority": 1000,
       "ack_required": true,
       "enabled": true,
@@ -473,7 +584,10 @@
       "category": "subestacion",
       "condition": "false",
       "threshold": 0,
-      "message": "Interruptor de línea 52L abierto",
+      "message": {
+        "es": "Interruptor de línea 52L abierto",
+        "en": "52L line switch open"
+      },
       "priority": 900,
       "ack_required": true,
       "enabled": true,
@@ -487,7 +601,10 @@
       "category": "subestacion",
       "condition": "low",
       "threshold": 49.8,
-      "message": "Frecuencia de red baja",
+      "message": {
+        "es": "Frecuencia de red baja",
+        "en": "Low mains frequency"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -501,7 +618,10 @@
       "category": "sscc",
       "condition": "false",
       "threshold": 0,
-      "message": "Fallo de rectificador-cargador 125 Vcc",
+      "message": {
+        "es": "Fallo de rectificador-cargador 125 Vcc",
+        "en": "125 Vdc rectifier-charger failure"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -515,7 +635,10 @@
       "category": "sscc",
       "condition": "low",
       "threshold": 110,
-      "message": "Tensión de baterías baja",
+      "message": {
+        "es": "Tensión de baterías baja",
+        "en": "Low battery voltage"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -529,7 +652,10 @@
       "category": "sscc",
       "condition": "high",
       "threshold": 80,
-      "message": "Nivel alto en pozo de drenaje",
+      "message": {
+        "es": "Nivel alto en pozo de drenaje",
+        "en": "High level in drainage well"
+      },
       "priority": 600,
       "ack_required": true,
       "enabled": true,
@@ -543,7 +669,10 @@
       "category": "sscc",
       "condition": "true",
       "threshold": 0,
-      "message": "Fallo de drenaje: riesgo de inundación de la central",
+      "message": {
+        "es": "Fallo de drenaje: riesgo de inundación de la central",
+        "en": "Drainage failure: risk of flooding of the plant"
+      },
       "priority": 900,
       "ack_required": true,
       "enabled": true,
@@ -557,7 +686,10 @@
       "category": "sscc",
       "condition": "low",
       "threshold": 6.0,
-      "message": "Presión baja de aire comprimido",
+      "message": {
+        "es": "Presión baja de aire comprimido",
+        "en": "Low compressed air pressure"
+      },
       "priority": 500,
       "ack_required": true,
       "enabled": true,
@@ -571,7 +703,10 @@
       "category": "sscc",
       "condition": "true",
       "threshold": 0,
-      "message": "Compresor en marcha sin recuperar presión",
+      "message": {
+        "es": "Compresor en marcha sin recuperar presión",
+        "en": "Compressor running without recovering pressure"
+      },
       "priority": 500,
       "ack_required": true,
       "enabled": true,
@@ -585,7 +720,10 @@
       "category": "sscc",
       "condition": "true",
       "threshold": 0,
-      "message": "Grupo diésel de emergencia en servicio",
+      "message": {
+        "es": "Grupo diésel de emergencia en servicio",
+        "en": "Emergency diesel unit in service"
+      },
       "priority": 600,
       "ack_required": true,
       "enabled": true,
@@ -599,7 +737,10 @@
       "category": "sscc",
       "condition": "low",
       "threshold": 360,
-      "message": "Tensión baja en servicios auxiliares 400 V",
+      "message": {
+        "es": "Tensión baja en servicios auxiliares 400 V",
+        "en": "Low voltage in auxiliary services 400 V"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -613,7 +754,10 @@
       "category": "sistema",
       "condition": "false",
       "threshold": 0,
-      "message": "Fallo de comunicación con PLC de servicios comunes",
+      "message": {
+        "es": "Fallo de comunicación con PLC de servicios comunes",
+        "en": "Communication failure with common services PLC"
+      },
       "priority": 900,
       "ack_required": true,
       "enabled": true,
@@ -627,7 +771,10 @@
       "category": "sistema",
       "condition": "false",
       "threshold": 0,
-      "message": "Fallo de comunicación con contador fiscal",
+      "message": {
+        "es": "Fallo de comunicación con contador fiscal",
+        "en": "Communication failure with tax accountant"
+      },
       "priority": 500,
       "ack_required": true,
       "enabled": true,

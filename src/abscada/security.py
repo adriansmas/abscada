@@ -214,6 +214,11 @@ class UserStore:
                                   must_change=must_change, disabled=False, created=now, password_changed=now))
         self.save(data)
 
+    def set_language(self, name, code, languages):
+        if code and code not in languages:
+            raise ValueError('Idioma de usuario no declarado en el proyecto')
+        self._update(name, lambda user: user.update(language=code))
+
     def set_password(self, name, password, policy, must_change=False):
         check_password_policy(name, password, policy)
 

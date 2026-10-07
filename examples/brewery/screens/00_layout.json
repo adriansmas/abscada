@@ -1,8 +1,11 @@
 {
-  "title": "La Tolva · SCADA",
+  "title": {
+    "es": "La Tolva · SCADA",
+    "en": "La Tolva · SCADA"
+  },
   "width": 1600,
   "height": 900,
-  "background": "@Fondo",
+  "background": "#dfe1e2",
   "elements": [
     {
       "id": "cabecera",

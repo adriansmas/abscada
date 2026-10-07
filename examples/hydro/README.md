@@ -99,7 +99,7 @@ El runtime arranca maximizado. Desde ahí, el operador abre ventanas independien
 - **Detalle de bomba.** En *Servicios auxiliares*, un clic en cualquier bomba (aceite G1/G2, drenaje 1/2, compresor) abre su estado y su fallo en una ventana propia, con el título del equipo.
 - **Alarmas en otro monitor.** **⧉ Monitor 2**, en las pantallas de alarmas, abre `05_ventana_alarmas` maximizada en el monitor 2. Sus pestañas Activas / Histórico / Eventos navegan dentro de esa ventana. Con un solo monitor, se abre en el principal.
 
-El runtime recuerda dónde deja el operador cada ventana. Para un puesto con tres monitores que arranque ya repartido, añade en `project.json` (o desde **Monitores…** en Studio):
+El runtime recuerda dónde deja el operador cada ventana. Para un puesto con tres monitores que arranque ya repartido, añade en `valdearenas.abscada` (o desde **Proyecto → Ajustes del proyecto… → Operación**):
 
 ```json
 "display": {
@@ -165,3 +165,7 @@ Este ejemplo enseña cómo es un SCADA hidroeléctrico; no es un sistema certifi
 .venv\Scripts\python tools/capture_hydro.py         # capturas con datos en vivo en artifacts/hydro
 .venv\Scripts\python -m pytest tests/test_hydro.py  # proyecto, secuencias, TCP, alarmas e histórico
 ```
+
+## Idiomas y colores
+
+El proyecto incluye español e inglés. Cambia el idioma de edición en Studio y el de operación desde Runtime; las traducciones se guardan junto a cada texto. Cada objeto utiliza colores HEX explícitos, editables en sus propiedades. Véase [la guía de Studio](../../docs/STUDIO.md#idiomas).

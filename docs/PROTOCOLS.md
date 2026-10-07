@@ -68,7 +68,7 @@ Siemens S7-1200/1500 con DB optimizados: usar el servidor OPC UA integrado en la
 
 ## TwinCAT ADS implementado
 
-`ads.py` implementa AMS/TCP directamente sobre un socket. No depende de `pyads` ni de `TcAdsDll.dll`, así que funciona igual en Windows y Linux sin instalar TwinCAT. El PLC debe tener una ruta estática hacia el AMS Net ID del SCADA (por defecto, IP local + `.1.1`). Al conectar se comprueba que el runtime está en RUN (`ReadState`).
+`ads.py` implementa AMS/TCP directamente sobre un socket, sin depender de `pyads`, `TcAdsDll.dll` ni TwinCAT en el puesto SCADA. Las pruebas locales se han ejecutado en Windows; falta validar otros sistemas y un PLC físico. El PLC debe tener una ruta estática hacia el AMS Net ID del SCADA (por defecto, IP local + `.1.1`). Al conectar se comprueba que el runtime está en RUN (`ReadState`).
 
 - **Acceso por símbolo.** Se obtiene un handle con `ReadWrite` en el grupo `0xF003` y se lee o escribe por `0xF005`. Los handles se guardan en caché por conexión, sin distinguir mayúsculas. Si el PLC responde *símbolo no encontrado* o *versión de símbolos no válida*, por ejemplo tras una descarga del programa, el handle se pide de nuevo una vez. Al cerrar se liberan con `0xF006`.
 - **Acceso por dirección.** `grupo:offset`, por ejemplo `0x4020:0` para %MB0 o `0xF030:4` para %QB4.
@@ -91,3 +91,57 @@ Coils y discrete inputs son bits; holding registers e input registers son regist
 - [OPC UA Services](https://reference.opcfoundation.org/specs/OPC-10000-4/5): sesiones, suscripciones y monitored items.
 - [Beckhoff ADS device identification](https://infosys.beckhoff.com/content/1033/tc3_ads_intro/116159883.html): AMS Net ID y puerto ADS.
 - [Beckhoff AMS Header](https://infosys.beckhoff.com/content/1033/tcadscommon/12440283915.html): identificación y operaciones ADS.
+
+## Comunicación Siemens S7
+
+El adaptador v1 usa `python-snap7` 3.2 y operaciones `db_read`/`db_write`. Está aislado del editor y de las variables. Se instala mediante `pip install -e '.[s7]'`.
+
+### Direcciones del adaptador
+
+La conexión identifica el equipo (IP/rack/slot/puerto). Cada variable o campo de estructura selecciona esa conexión y su propia dirección DB. No existe un único DB asignado a un PLC.
+
+| Dirección | Tipo de variable | Formato |
+| --- | --- | --- |
+| %DB1.DBX0.0 | bool | Bit 0 del byte 0 |
+| %DB1.DBB1 | int | Byte sin signo, 8 bits |
+| %DB1.DBW2 | int | Entero con signo de 16 bits, big-endian |
+| %DB1.DBD4 | int | Entero con signo de 32 bits, big-endian |
+| %DB1.DBD8 | float | IEEE 754 REAL de 32 bits, big-endian |
+
+DBD indica anchura de 32 bits; el tipo de variable decide entre entero DINT y REAL. El prefijo `%` es opcional, las mayúsculas/minúsculas no afectan y se recortan espacios al principio/final. Para compatibilidad se conservan `DB1.X0.0`, `DB1.W2`, `DB1.D4` y `DB1.R8`; en la sintaxis antigua `R` indica REAL explícitamente.
+
+DB >= 1, offsets >= 0, bit entre 0 y 7. Una escritura fuera de rango se rechaza durante la codificación. No se incluyen strings S7, arrays, áreas M/I/Q, acceso simbólico ni bloques optimizados.
+
+La escritura de bit hace lectura-modificación-escritura del byte para preservar los bits vecinos. El trabajador serializa sus operaciones; un PLC u otro cliente puede cambiar ese byte entre la lectura y la escritura. Por tanto, reservar bytes de mando o implementar un handshake en el PLC antes de uso real.
+
+### PLC de desarrollo
+
+`python -m abscada.s7_simulator --port 1102` inicia un servidor TCP S7 local. El servidor no es una CPU Siemens ni simula todas sus restricciones. Es útil para comprobar la ruta completa del adaptador.
+
+| Dirección | Significado |
+| --- | --- |
+| %DB1.DBX0.0 | Marcha bomba 1 |
+| %DB1.DBD4 | Caudal bomba 1 (consigna si está en marcha; 0 si parada) |
+| %DB1.DBD8 | Consigna bomba 1 (60 inicial) |
+| %DB1.DBD12 | Nivel de depósito, onda simulada |
+| %DB1.DBX16.0 | Marcha bomba 2 |
+| %DB1.DBD20 | Caudal bomba 2 |
+| %DB1.DBD24 | Consigna bomba 2 (45 inicial) |
+
+`examples/s7` y `examples/demo` apuntan a localhost:1102 mediante Siemens S7 TCP. Ambos necesitan python-snap7 y un PLC o servidor S7 disponible. El SCADA no contiene un simulador interno.
+
+### PLC físico
+
+Editar `connections.json`: dirección IP, rack, slot y puerto. Estos valores dependen de la CPU y configuración; los valores del ejemplo no son universales. Asegurar que las direcciones y los tipos coincidan con el programa PLC. Para S7-1200/1500 con acceso clásico, la configuración del PLC puede requerir habilitar PUT/GET y usar DB no optimizados. Consultar el manual específico de la CPU y sus restricciones de acceso antes de cambiar la configuración.
+
+Este adaptador usa comunicación S7 clásica, sin TLS ni autenticación PLC-HMI configurada. El cliente OPC UA cifrado ya está disponible como adaptador independiente para servidores compatibles; consulta [PROTOCOLS.md](PROTOCOLS.md). No añade cifrado a estas llamadas S7 clásicas.
+
+Ante un fallo se conserva el último valor, se marca calidad bad, se cierra el adaptador y se reintenta después de dos segundos. Se rechazan escrituras cuando la conexión no está disponible. No hay replay automático de órdenes.
+
+### Evidencia de validación
+
+`tests/test_s7_integration.py` abre un servidor local en un puerto disponible y ejecuta el runtime con un cliente Snap7 real. Comprueba lectura, escritura REAL y escritura bool mediante TCP. `test_core.py` comprueba INT, DINT, endianness y conservación de bits con un cliente de memoria.
+
+No se ha conectado un PLC Siemens físico. No se ha verificado acceso seguro, rendimiento con miles de tags, restricciones de CPUs concretas ni interferencia entre clientes. El tiempo de bloqueo de una llamada depende de la librería; el cierre espera hasta cinco segundos y mantiene el runtime referenciado si el trabajador sigue activo.
+
+Referencia: [API oficial python-snap7](https://python-snap7.readthedocs.io/en/latest/API/client.html).

@@ -1,8 +1,11 @@
 {
-  "title": "Recetas",
+  "title": {
+    "es": "Recetas",
+    "en": "Recipes"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dfe1e2",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "RECETAS",
+      "text": {
+        "es": "RECETAS",
+        "en": "RECIPES"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Gestor de recetas del PLC: cargar, modificar y guardar · editar exige el permiso «Recetas y parámetros de proceso»",
+      "text": {
+        "es": "Gestor de recetas del PLC: cargar, modificar y guardar · editar exige el permiso «Recetas y parámetros de proceso»",
+        "en": "PLC recipe manager: load, modify and save · editing requires the “Recipes and process parameters” permission"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -40,8 +49,8 @@
       "y": 60,
       "w": 340,
       "h": 400,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -53,10 +62,13 @@
       "y": 66,
       "w": 316,
       "h": 20,
-      "text": "RECETAS GUARDADAS EN EL PLC",
+      "text": {
+        "es": "RECETAS GUARDADAS EN EL PLC",
+        "en": "RECIPES SAVED IN THE PLC"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -66,14 +78,17 @@
       "y": 96,
       "w": 308,
       "h": 36,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Nombre1",
       "font_size": 15,
       "bold": true,
       "text_align": "left",
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "states": [
           {
@@ -84,8 +99,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
-              "border_color": "@Mando",
+              "color": "#2b6cb0",
+              "border_color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -99,13 +114,19 @@
       "y": 96,
       "w": 308,
       "h": 36,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Numero",
       "action": "set",
       "value": 1,
       "color": "#00000000",
       "border_color": "#00000000",
-      "description": "Cargar la receta 1 en el editor"
+      "description": {
+        "es": "Cargar la receta 1 en el editor",
+        "en": "Load recipe 1 into the editor"
+      }
     },
     {
       "id": "r2",
@@ -114,14 +135,17 @@
       "y": 140,
       "w": 308,
       "h": 36,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Nombre2",
       "font_size": 15,
       "bold": true,
       "text_align": "left",
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "states": [
           {
@@ -132,8 +156,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
-              "border_color": "@Mando",
+              "color": "#2b6cb0",
+              "border_color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -147,13 +171,19 @@
       "y": 140,
       "w": 308,
       "h": 36,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Numero",
       "action": "set",
       "value": 2,
       "color": "#00000000",
       "border_color": "#00000000",
-      "description": "Cargar la receta 2 en el editor"
+      "description": {
+        "es": "Cargar la receta 2 en el editor",
+        "en": "Load recipe 2 in the editor"
+      }
     },
     {
       "id": "r3",
@@ -162,14 +192,17 @@
       "y": 184,
       "w": 308,
       "h": 36,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Nombre3",
       "font_size": 15,
       "bold": true,
       "text_align": "left",
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "states": [
           {
@@ -180,8 +213,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
-              "border_color": "@Mando",
+              "color": "#2b6cb0",
+              "border_color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -195,13 +228,19 @@
       "y": 184,
       "w": 308,
       "h": 36,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Numero",
       "action": "set",
       "value": 3,
       "color": "#00000000",
       "border_color": "#00000000",
-      "description": "Cargar la receta 3 en el editor"
+      "description": {
+        "es": "Cargar la receta 3 en el editor",
+        "en": "Load recipe 3 in the editor"
+      }
     },
     {
       "id": "r4",
@@ -210,14 +249,17 @@
       "y": 228,
       "w": 308,
       "h": 36,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Nombre4",
       "font_size": 15,
       "bold": true,
       "text_align": "left",
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "states": [
           {
@@ -228,8 +270,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
-              "border_color": "@Mando",
+              "color": "#2b6cb0",
+              "border_color": "#2b6cb0",
               "text_color": "#ffffff"
             }
           }
@@ -243,13 +285,19 @@
       "y": 228,
       "w": 308,
       "h": 36,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Numero",
       "action": "set",
       "value": 4,
       "color": "#00000000",
       "border_color": "#00000000",
-      "description": "Cargar la receta 4 en el editor"
+      "description": {
+        "es": "Cargar la receta 4 en el editor",
+        "en": "Load recipe 4 in the editor"
+      }
     },
     {
       "id": "lista_n",
@@ -258,10 +306,13 @@
       "y": 276,
       "w": 308,
       "h": 56,
-      "text": "Pulsa una receta para cargarla en el editor. Los cambios sin guardar se descartan al cambiar de receta.",
+      "text": {
+        "es": "Pulsa una receta para cargarla en el editor. Los cambios sin guardar se descartan al cambiar de receta.",
+        "en": "Tap a recipe to load it into the editor. Unsaved changes are discarded when changing recipes."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -273,9 +324,9 @@
       "h": 20,
       "tag": "Recetas.Modificada",
       "lamp_colors": {
-        "on": "@Aviso",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#e89a1c",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -285,10 +336,13 @@
       "y": 341,
       "w": 272,
       "h": 22,
-      "text": "Cambios sin guardar",
+      "text": {
+        "es": "Cambios sin guardar",
+        "en": "Unsaved changes"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -300,9 +354,9 @@
       "h": 20,
       "tag": "Recetas.EnUso",
       "lamp_colors": {
-        "on": "@Mando",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#2b6cb0",
+        "off": "#9ba2a8",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -312,10 +366,13 @@
       "y": 369,
       "w": 272,
       "h": 22,
-      "text": "En uso por el lote en cocción",
+      "text": {
+        "es": "En uso por el lote en cocción",
+        "en": "In use by the batch in brewing"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -325,15 +382,18 @@
       "y": 404,
       "w": 150,
       "h": 40,
-      "text": "GUARDAR",
+      "text": {
+        "es": "GUARDAR",
+        "en": "SAVE"
+      },
       "tag": "Recetas.OrdenGuardar",
       "action": "set",
       "value": true,
       "permission": "recipes",
       "font_size": 13,
       "bold": true,
-      "color": "@Marcha",
-      "border_color": "@Marcha",
+      "color": "#2e8b57",
+      "border_color": "#2e8b57",
       "text_color": "#ffffff",
       "dynamics": {
         "enabled": {
@@ -347,7 +407,10 @@
           "text_color": "#8a949d",
           "border_color": "#c3c9ce"
         },
-        "disabled_reason": "No hay cambios que guardar"
+        "disabled_reason": {
+          "es": "No hay cambios que guardar",
+          "en": "There are no changes to save"
+        }
       }
     },
     {
@@ -357,15 +420,18 @@
       "y": 404,
       "w": 150,
       "h": 40,
-      "text": "DESCARTAR",
+      "text": {
+        "es": "DESCARTAR",
+        "en": "DISCARD"
+      },
       "tag": "Recetas.OrdenDescartar",
       "action": "set",
       "value": true,
       "permission": "recipes",
       "font_size": 13,
       "bold": true,
-      "color": "@Linea",
-      "border_color": "@Linea",
+      "color": "#6f777e",
+      "border_color": "#6f777e",
       "text_color": "#ffffff",
       "dynamics": {
         "enabled": {
@@ -379,7 +445,10 @@
           "text_color": "#8a949d",
           "border_color": "#c3c9ce"
         },
-        "disabled_reason": "No hay cambios que descartar"
+        "disabled_reason": {
+          "es": "No hay cambios que descartar",
+          "en": "There are no changes to discard"
+        }
       }
     },
     {
@@ -389,8 +458,8 @@
       "y": 470,
       "w": 340,
       "h": 360,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -402,10 +471,13 @@
       "y": 476,
       "w": 316,
       "h": 20,
-      "text": "QUIÉN PUEDE HACER QUÉ",
+      "text": {
+        "es": "QUIÉN PUEDE HACER QUÉ",
+        "en": "WHO CAN DO WHAT"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -415,10 +487,13 @@
       "y": 502,
       "w": 316,
       "h": 50,
-      "text": "• Observador: consulta todas las pantallas.",
+      "text": {
+        "es": "• Observador: consulta todas las pantallas.",
+        "en": "• Observer: See all screens."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -428,10 +503,13 @@
       "y": 554,
       "w": 316,
       "h": 50,
-      "text": "• Operador de cocción: elige receta y fermentador, manda la secuencia y reconoce alarmas.",
+      "text": {
+        "es": "• Operador de cocción: elige receta y fermentador, manda la secuencia y reconoce alarmas.",
+        "en": "• Brewing operator: choose recipe and fermenter, send the sequence and recognize alarms."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -441,10 +519,13 @@
       "y": 606,
       "w": 316,
       "h": 50,
-      "text": "• Maestro cervecero: además, modifica y guarda recetas.",
+      "text": {
+        "es": "• Maestro cervecero: además, modifica y guarda recetas.",
+        "en": "• Brewmaster: also modify and save recipes."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -454,10 +535,13 @@
       "y": 658,
       "w": 316,
       "h": 50,
-      "text": "• Administrador: todo, más usuarios y acceso por OPC UA.",
+      "text": {
+        "es": "• Administrador: todo, más usuarios y acceso por OPC UA.",
+        "en": "• Administrator: everything, more users and access through OPC UA."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -467,10 +551,13 @@
       "y": 710,
       "w": 316,
       "h": 50,
-      "text": "• Cliente MES: solo lee por el servidor OPC UA del SCADA.",
+      "text": {
+        "es": "• Cliente MES: solo lee por el servidor OPC UA del SCADA.",
+        "en": "• MES Client: only reads through the SCADA OPC UA server."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -480,10 +567,13 @@
       "y": 762,
       "w": 316,
       "h": 50,
-      "text": "• Un lote en marcha usa la copia de la receta tomada al iniciar: guardar no lo altera.",
+      "text": {
+        "es": "• Un lote en marcha usa la copia de la receta tomada al iniciar: guardar no lo altera.",
+        "en": "• A running batch uses the copy of the recipe taken at startup: saving does not alter it."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -493,8 +583,8 @@
       "y": 60,
       "w": 1030,
       "h": 770,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -506,10 +596,13 @@
       "y": 66,
       "w": 1006,
       "h": 20,
-      "text": "EDITOR DE RECETA",
+      "text": {
+        "es": "EDITOR DE RECETA",
+        "en": "RECIPE EDITOR"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -519,10 +612,13 @@
       "y": 98,
       "w": 120,
       "h": 24,
-      "text": "Nombre",
+      "text": {
+        "es": "Nombre",
+        "en": "Name"
+      },
       "font_size": 14,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -532,14 +628,17 @@
       "y": 94,
       "w": 300,
       "h": 32,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.Nombre",
       "font_size": 15,
       "bold": true,
       "text_align": "left",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "permission": "recipes"
     },
     {
@@ -549,10 +648,13 @@
       "y": 100,
       "w": 200,
       "h": 22,
-      "text": "Máximo 20 caracteres",
+      "text": {
+        "es": "Máximo 20 caracteres",
+        "en": "Maximum 20 characters"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -562,10 +664,13 @@
       "y": 146,
       "w": 300,
       "h": 20,
-      "text": "MACERACIÓN",
+      "text": {
+        "es": "MACERACIÓN",
+        "en": "MACERATION"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -575,10 +680,13 @@
       "y": 176,
       "w": 300,
       "h": 22,
-      "text": "Agua de empaste",
+      "text": {
+        "es": "Agua de empaste",
+        "en": "Mash water"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -588,15 +696,18 @@
       "y": 172,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.VolumenAgua",
       "unit": "hl",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -607,10 +718,13 @@
       "y": 178,
       "w": 80,
       "h": 20,
-      "text": "4 – 9",
+      "text": {
+        "es": "4 – 9",
+        "en": "4 – 9"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -620,10 +734,13 @@
       "y": 212,
       "w": 300,
       "h": 22,
-      "text": "Escalón 1 · temperatura",
+      "text": {
+        "es": "Escalón 1 · temperatura",
+        "en": "Step 1 · temperature"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -633,15 +750,18 @@
       "y": 208,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.TempE1",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -652,10 +772,13 @@
       "y": 214,
       "w": 80,
       "h": 20,
-      "text": "45 – 58",
+      "text": {
+        "es": "45 – 58",
+        "en": "45 – 58"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -665,10 +788,13 @@
       "y": 248,
       "w": 300,
       "h": 22,
-      "text": "Escalón 1 · tiempo (0 = sin escalón)",
+      "text": {
+        "es": "Escalón 1 · tiempo (0 = sin escalón)",
+        "en": "Step 1 · time (0 = no step)"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -678,15 +804,18 @@
       "y": 244,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.TiempoE1",
       "unit": "min",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -697,10 +826,13 @@
       "y": 250,
       "w": 80,
       "h": 20,
-      "text": "0 – 30",
+      "text": {
+        "es": "0 – 30",
+        "en": "0 – 30"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -710,10 +842,13 @@
       "y": 284,
       "w": 300,
       "h": 22,
-      "text": "Escalón 2 · temperatura",
+      "text": {
+        "es": "Escalón 2 · temperatura",
+        "en": "Step 2 · temperature"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -723,15 +858,18 @@
       "y": 280,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.TempE2",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -742,10 +880,13 @@
       "y": 286,
       "w": 80,
       "h": 20,
-      "text": "60 – 72",
+      "text": {
+        "es": "60 – 72",
+        "en": "60 – 72"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -755,10 +896,13 @@
       "y": 320,
       "w": 300,
       "h": 22,
-      "text": "Escalón 2 · tiempo",
+      "text": {
+        "es": "Escalón 2 · tiempo",
+        "en": "Step 2 · time"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -768,15 +912,18 @@
       "y": 316,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.TiempoE2",
       "unit": "min",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -787,10 +934,13 @@
       "y": 322,
       "w": 80,
       "h": 20,
-      "text": "20 – 90",
+      "text": {
+        "es": "20 – 90",
+        "en": "20 – 90"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -800,10 +950,13 @@
       "y": 356,
       "w": 300,
       "h": 22,
-      "text": "Mash-out · temperatura",
+      "text": {
+        "es": "Mash-out · temperatura",
+        "en": "Mash-out · temperature"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -813,15 +966,18 @@
       "y": 352,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.TempE3",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -832,10 +988,13 @@
       "y": 358,
       "w": 80,
       "h": 20,
-      "text": "74 – 80",
+      "text": {
+        "es": "74 – 80",
+        "en": "74 – 80"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -845,10 +1004,13 @@
       "y": 392,
       "w": 300,
       "h": 22,
-      "text": "Mash-out · tiempo",
+      "text": {
+        "es": "Mash-out · tiempo",
+        "en": "Mash-out · time"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -858,15 +1020,18 @@
       "y": 388,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.TiempoE3",
       "unit": "min",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -877,10 +1042,13 @@
       "y": 394,
       "w": 80,
       "h": 20,
-      "text": "5 – 20",
+      "text": {
+        "es": "5 – 20",
+        "en": "5 – 20"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -890,10 +1058,13 @@
       "y": 438,
       "w": 300,
       "h": 20,
-      "text": "COCCIÓN",
+      "text": {
+        "es": "COCCIÓN",
+        "en": "BREWING"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -903,10 +1074,13 @@
       "y": 468,
       "w": 300,
       "h": 22,
-      "text": "Tiempo de hervido",
+      "text": {
+        "es": "Tiempo de hervido",
+        "en": "Boiling time"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -916,15 +1090,18 @@
       "y": 464,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.TiempoHervido",
       "unit": "min",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -935,10 +1112,13 @@
       "y": 470,
       "w": 80,
       "h": 20,
-      "text": "45 – 120",
+      "text": {
+        "es": "45 – 120",
+        "en": "45 – 120"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -948,10 +1128,13 @@
       "y": 504,
       "w": 300,
       "h": 22,
-      "text": "Lúpulo aromático · antes del final",
+      "text": {
+        "es": "Lúpulo aromático · antes del final",
+        "en": "Aromatic hops · before the end"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -961,15 +1144,18 @@
       "y": 500,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.LupuloAroma",
       "unit": "min",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -980,10 +1166,13 @@
       "y": 506,
       "w": 80,
       "h": 20,
-      "text": "0 – 30",
+      "text": {
+        "es": "0 – 30",
+        "en": "0 – 30"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -993,10 +1182,13 @@
       "y": 540,
       "w": 300,
       "h": 22,
-      "text": "Densidad original",
+      "text": {
+        "es": "Densidad original",
+        "en": "Original density"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1006,15 +1198,18 @@
       "y": 536,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.DensidadOriginal",
       "unit": "°P",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -1025,10 +1220,13 @@
       "y": 542,
       "w": 80,
       "h": 20,
-      "text": "9 – 20",
+      "text": {
+        "es": "9 – 20",
+        "en": "9 – 20"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1038,10 +1236,13 @@
       "y": 146,
       "w": 300,
       "h": 20,
-      "text": "FERMENTACIÓN Y GUARDA",
+      "text": {
+        "es": "FERMENTACIÓN Y GUARDA",
+        "en": "FERMENTATION AND STORAGE"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1051,10 +1252,13 @@
       "y": 176,
       "w": 300,
       "h": 22,
-      "text": "Densidad final",
+      "text": {
+        "es": "Densidad final",
+        "en": "Final density"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1064,15 +1268,18 @@
       "y": 172,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.DensidadFinal",
       "unit": "°P",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -1083,10 +1290,13 @@
       "y": 178,
       "w": 80,
       "h": 20,
-      "text": "1.5 – 5",
+      "text": {
+        "es": "1.5 – 5",
+        "en": "1.5 – 5"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1096,10 +1306,13 @@
       "y": 212,
       "w": 300,
       "h": 22,
-      "text": "Fermentación · temperatura",
+      "text": {
+        "es": "Fermentación · temperatura",
+        "en": "Fermentation · temperature"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1109,15 +1322,18 @@
       "y": 208,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.TempFermentacion",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -1128,10 +1344,13 @@
       "y": 214,
       "w": 80,
       "h": 20,
-      "text": "8 – 24",
+      "text": {
+        "es": "8 – 24",
+        "en": "8 – 24"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1141,10 +1360,13 @@
       "y": 248,
       "w": 300,
       "h": 22,
-      "text": "Fermentación · días",
+      "text": {
+        "es": "Fermentación · días",
+        "en": "Fermentation · days"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1154,15 +1376,18 @@
       "y": 244,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.DiasFermentacion",
       "unit": "d",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -1173,10 +1398,13 @@
       "y": 250,
       "w": 80,
       "h": 20,
-      "text": "3 – 14",
+      "text": {
+        "es": "3 – 14",
+        "en": "3 – 14"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1186,10 +1414,13 @@
       "y": 284,
       "w": 300,
       "h": 22,
-      "text": "Reposo de diacetilo · temperatura",
+      "text": {
+        "es": "Reposo de diacetilo · temperatura",
+        "en": "Diacetyl rest temperature"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1199,15 +1430,18 @@
       "y": 280,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.TempDiacetilo",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -1218,10 +1452,13 @@
       "y": 286,
       "w": 80,
       "h": 20,
-      "text": "12 – 24",
+      "text": {
+        "es": "12 – 24",
+        "en": "12 – 24"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1231,10 +1468,13 @@
       "y": 320,
       "w": 300,
       "h": 22,
-      "text": "Reposo de diacetilo · días",
+      "text": {
+        "es": "Reposo de diacetilo · días",
+        "en": "Diacetyl rest days"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1244,15 +1484,18 @@
       "y": 316,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.DiasDiacetilo",
       "unit": "d",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -1263,10 +1506,13 @@
       "y": 322,
       "w": 80,
       "h": 20,
-      "text": "0 – 4",
+      "text": {
+        "es": "0 – 4",
+        "en": "0 – 4"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1276,10 +1522,13 @@
       "y": 356,
       "w": 300,
       "h": 22,
-      "text": "Guarda · temperatura",
+      "text": {
+        "es": "Guarda · temperatura",
+        "en": "Guard · temperature"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1289,15 +1538,18 @@
       "y": 352,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.TempGuarda",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -1308,10 +1560,13 @@
       "y": 358,
       "w": 80,
       "h": 20,
-      "text": "-1 – 6",
+      "text": {
+        "es": "-1 – 6",
+        "en": "-1 – 6"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1321,10 +1576,13 @@
       "y": 392,
       "w": 300,
       "h": 22,
-      "text": "Guarda · días",
+      "text": {
+        "es": "Guarda · días",
+        "en": "Save days"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1334,15 +1592,18 @@
       "y": 388,
       "w": 110,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Recetas.DiasGuarda",
       "unit": "d",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "permission": "recipes"
     },
@@ -1353,10 +1614,13 @@
       "y": 394,
       "w": 80,
       "h": 20,
-      "text": "1 – 21",
+      "text": {
+        "es": "1 – 21",
+        "en": "1 – 21"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1366,10 +1630,13 @@
       "y": 466,
       "w": 480,
       "h": 66,
-      "text": "Los valores fuera de rango se recortan al guardar: el PLC nunca almacena una receta imposible. El tiempo de receta está comprimido: 1 min de cocción = 1 s y 1 día de fermentación = 1 min.",
+      "text": {
+        "es": "Los valores fuera de rango se recortan al guardar: el PLC nunca almacena una receta imposible. El tiempo de receta está comprimido: 1 min de cocción = 1 s y 1 día de fermentación = 1 min.",
+        "en": "Out-of-range values ​​are trimmed when saving: the PLC never stores an impossible recipe. The recipe time is compressed: 1 min of brewing = 1 s and 1 day of fermentation = 1 min."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {

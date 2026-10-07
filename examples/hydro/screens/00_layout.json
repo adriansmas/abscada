@@ -1,8 +1,11 @@
 {
-  "title": "CH Valdearenas · SCADA",
+  "title": {
+    "es": "CH Valdearenas · SCADA",
+    "en": "CH Valdearenas · SCADA"
+  },
   "width": 1600,
   "height": 900,
-  "background": "@Fondo",
+  "background": "#dde1e4",
   "elements": [
     {
       "id": "cabecera",

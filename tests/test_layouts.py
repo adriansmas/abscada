@@ -91,7 +91,7 @@ def test_create_layout_and_add_container_from_palette(operational_studio,monkeyp
     w=operational_studio
     def create():
         dialog=QApplication.activeModalWidget()
-        dialog.name.setText('shell'); dialog.accept()
+        dialog.title.setText('shell'); dialog.accept()
     QTimer.singleShot(0,create)
     w.new_document(False)
     assert w.document_name=='shell'

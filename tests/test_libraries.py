@@ -53,9 +53,8 @@ def test_animated_object_switches_symbol_with_its_variables(operational_project)
                                                 template="estandar__bomba_estado", bindings=dict(marcha="Fault", fallo="Fault"))]
     project.validate()
     image = next(e for e in project.elements("main") if e["id"] == "b1.simbolo")
-    palette = {}
     def source(value, quality="good"):
-        return effective(image, {"Fault": Sample(value, quality, 0)}, palette)["source"]
+        return effective(image, {"Fault": Sample(value, quality, 0)})["source"]
     assert source(False).endswith("bomba_paro.svg")
     assert source(True).endswith("bomba_fallo.svg")       # fallo wins over marcha
     assert source(True, "bad").endswith("bomba_dudoso.svg")

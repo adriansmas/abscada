@@ -95,6 +95,8 @@ class Project:
             if (root / f"{key}.json").exists():
                 setattr(project, key, read_json(root / f"{key}.json"))
         project.scripts = {p.stem: p.read_text(encoding="utf-8") for p in (root / "scripts").glob("*.py")}
+        from .legacy_colors import migrate as migrate_colors
+        migrate_colors(project)
         from .recording import migrate
         migrate(project)
         from .screen_tree import migrate as organise
@@ -139,8 +141,14 @@ class Project:
         return result
 
     def validate(self):
+        from .project_languages import validate, resolved_project, default_language
+        validate(self)
         from .faceplate_libraries import validate_links
         validate_links(self)
+        validate(self)
+        resolved_project(self, default_language(self))._validate()
+
+    def _validate(self):
         from .validation import filenames
         for collection in (self.screens, self.faceplates, self.scripts):
             filenames(collection)
@@ -166,11 +174,6 @@ class Project:
         from . import dynamics
         from .operation_windows import validate_popup_button, validate_popup_writes, validate_window, validate_display
         from .security import validate_element_permission
-        palette=self.manifest.get('palette',{})
-        if not isinstance(palette,dict): raise ValueError(tr('Paleta inválida'))
-        for key,value in palette.items():
-            if not isinstance(key,str) or not key.strip(): raise ValueError(tr('Nombre de color vacío'))
-            dynamics.validate_color(value,{})
         from .operational_config import validate_operations
         try:
             validate_operations(self, tags)
@@ -208,7 +211,7 @@ class Project:
                 if isinstance(value,bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 < value <= 10000:
                     raise ValueError(tr("{name}: dimensiones inválidas", name=name))
             from .operational_config import color, number
-            color(dynamics.resolve_color(document.get("background", "#ffffff"),palette))
+            dynamics.validate_color(document.get("background", "#ffffff"))
             number(document.get("grid_size", 10), 1, 200)
             if not isinstance(document.get("grid_size", 10), int):
                 raise ValueError(tr("La cuadrícula necesita un tamaño entero"))
@@ -234,7 +237,7 @@ class Project:
                     raise ValueError(tr("{name}: tamaño inválido", name=name))
                 if element.get("text_align", "center") not in {"left", "center", "right"} or not isinstance(element.get("bold",False),bool):
                     raise ValueError(tr("Formato de texto inválido"))
-                try: dynamics.validate(element,tags,parameters,palette)
+                try: dynamics.validate(element,tags,parameters)
                 except (ValueError,TypeError,KeyError) as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
                 visual=element.get('dynamics',{})
                 for style in [visual.get(key,{}) for key in ('default','bad','disabled')]+[state['style'] for state in visual.get('states',[])]:
@@ -245,7 +248,7 @@ class Project:
                         raise ValueError(tr("{key}: se esperaba texto", key=key))
                 for color_key in ("stroke_color",):
                     if color_key in element:
-                        color(dynamics.resolve_color(element[color_key],palette))
+                        dynamics.validate_color(element[color_key])
                 tag = element.get("tag", "")
                 if not isinstance(tag,str):raise ValueError(tr("{name} / {id}: la referencia de variable debe ser texto", name=name, id=element["id"]))
                 if tag and tag not in tags and not (tag.startswith("$") and tag[1:] in parameters):
@@ -255,8 +258,10 @@ class Project:
                 except ValueError as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
                 if element['kind'] == 'button':
                     action = element.get('action','toggle')
-                    if action not in {'toggle','set','momentary','press_release','screen','popup','faceplate_popup','close_popup','script'}:
+                    if action not in {'toggle','set','momentary','press_release','screen','popup','faceplate_popup','close_popup','script','set_language'}:
                         raise ValueError(tr('Acción de botón desconocida'))
+                    if action == 'set_language' and element.get('language') not in self.manifest.get('languages', ['es']):
+                        raise ValueError('Idioma de destino no declarado')
                     if action == 'faceplate_popup':
                         try: validate_popup_button(element, self, tags, parameters)
                         except (ValueError, TypeError) as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc

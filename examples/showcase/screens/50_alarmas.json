@@ -1,8 +1,11 @@
 {
-  "title": "Alarmas, reconocimiento y retorno",
+  "title": {
+    "es": "Alarmas, reconocimiento y retorno",
+    "en": "Alarms, recognition and return"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Alarmas, reconocimiento y retorno",
+      "text": {
+        "es": "Alarmas, reconocimiento y retorno",
+        "en": "Alarms, recognition and return"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "Prueba el ciclo: activar → reconocer (ACK) → retornar. Las fechas y el operador quedan registrados en SQLite.",
+      "text": {
+        "es": "Prueba el ciclo: activar → reconocer (ACK) → retornar. Las fechas y el operador quedan registrados en SQLite.",
+        "en": "Try the cycle: activate → acknowledge (ACK) → return. The dates and operator are recorded in SQLite."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -48,7 +57,10 @@
       "y": 140,
       "w": 260,
       "h": 42,
-      "text": "Nivel alto (90 %)",
+      "text": {
+        "es": "Nivel alto (90 %)",
+        "en": "High level (90%)"
+      },
       "action": "set",
       "font_size": 15,
       "value": 90.0,
@@ -61,7 +73,10 @@
       "y": 140,
       "w": 260,
       "h": 42,
-      "text": "Nivel normal (50 %)",
+      "text": {
+        "es": "Nivel normal (50 %)",
+        "en": "Normal level (50%)"
+      },
       "action": "set",
       "font_size": 15,
       "value": 50.0,
@@ -74,7 +89,10 @@
       "y": 140,
       "w": 260,
       "h": 42,
-      "text": "Activar / quitar fallo",
+      "text": {
+        "es": "Activar / quitar fallo",
+        "en": "Activate/remove fault"
+      },
       "action": "toggle",
       "font_size": 15,
       "tag": "Local.Fallo"
@@ -86,7 +104,10 @@
       "y": 140,
       "w": 260,
       "h": 42,
-      "text": "Ver ocurrencias",
+      "text": {
+        "es": "Ver ocurrencias",
+        "en": "See occurrences"
+      },
       "action": "popup",
       "font_size": 15,
       "screen": "95_ocurrencias"
@@ -98,10 +119,13 @@
       "y": 707,
       "w": 1090,
       "h": 44,
-      "text": "Detén la señal local para mantener el nivel manual. El visor permite cambiar filtros, periodo, columnas y exportar CSV.",
+      "text": {
+        "es": "Detén la señal local para mantener el nivel manual. El visor permite cambiar filtros, periodo, columnas y exportar CSV.",
+        "en": "Stop local signal to maintain manual level. The viewer allows you to change filters, period, columns and export CSV."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     }
   ],
   "on_open": [

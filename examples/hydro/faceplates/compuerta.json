@@ -1,8 +1,11 @@
 {
-  "title": "Compuerta de aliviadero",
+  "title": {
+    "es": "Compuerta de aliviadero",
+    "en": "spillway gate"
+  },
   "width": 250,
   "height": 190,
-  "background": "@Panel",
+  "background": "#eceef0",
   "parameters": {
     "posicion": "float",
     "consigna": "float",
@@ -17,7 +20,7 @@
       "w": 52,
       "h": 162,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6c7882",
       "stroke_width": 2
     },
     {
@@ -30,7 +33,7 @@
       "tag": "$posicion",
       "min": 0,
       "max": 100,
-      "color": "@Agua",
+      "color": "#4f86b8",
       "dynamics": {}
     },
     {
@@ -40,10 +43,13 @@
       "y": 12,
       "w": 160,
       "h": 24,
-      "text": "Apertura",
+      "text": {
+        "es": "Apertura",
+        "en": "Opening"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -53,19 +59,22 @@
       "y": 38,
       "w": 150,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$posicion",
       "unit": "%",
       "decimals": 1,
       "font_size": 16,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -76,10 +85,13 @@
       "y": 74,
       "w": 160,
       "h": 24,
-      "text": "Consigna",
+      "text": {
+        "es": "Consigna",
+        "en": "Setpoint"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -89,15 +101,18 @@
       "y": 100,
       "w": 150,
       "h": 30,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$consigna",
       "unit": "%",
       "decimals": 1,
       "font_size": 15,
       "text_align": "right",
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "bold": true,
       "dynamics": {
         "enabled": {
@@ -109,9 +124,12 @@
         "disabled": {
           "color": "#e3e6e9",
           "text_color": "#8a949d",
-          "border_color": "@Borde"
+          "border_color": "#b4bbc2"
         },
-        "disabled_reason": "Aliviadero en automático: la consigna la calcula el PLC"
+        "disabled_reason": {
+          "es": "Aliviadero en automático: la consigna la calcula el PLC",
+          "en": "Automatic spillway: the setpoint is calculated by the PLC"
+        }
       }
     },
     {
@@ -125,19 +143,28 @@
       "font_size": 12,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Linea",
-      "border_color": "@Linea",
+      "color": "#6c7882",
+      "border_color": "#6c7882",
       "texts": [
         {
           "value": "true",
-          "text": "AUTOMÁTICO"
+          "text": {
+            "es": "AUTOMÁTICO",
+            "en": "AUTOMATIC"
+          }
         },
         {
           "value": "false",
-          "text": "MANUAL"
+          "text": {
+            "es": "MANUAL",
+            "en": "MANUAL"
+          }
         }
       ],
-      "default_text": "—",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "dynamics": {
         "states": [
           {
@@ -148,8 +175,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
-              "border_color": "@Mando"
+              "color": "#2b6cb0",
+              "border_color": "#2b6cb0"
             }
           }
         ]

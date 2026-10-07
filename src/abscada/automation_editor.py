@@ -3,7 +3,7 @@ import copy
 from PySide6.QtCore import QTimer, Qt
 from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QSplitter,QListWidget,QPlainTextEdit,
-    QPushButton,QInputDialog,QDialog,QTabWidget,QLabel)
+    QPushButton,QInputDialog,QDialog,QTabWidget,QLabel,QLineEdit,QMenu)
 from .engineering import RecordsPage, RecordDialog
 from .scripting import validate_scripts
 from .i18n import tr
@@ -16,17 +16,29 @@ class AutomationEditor(QTabWidget):
         self.edit_timer=QTimer(self); self.edit_timer.setSingleShot(True)
         self.edit_timer.timeout.connect(self.end_edit_group)
         page=QWidget(); layout=QVBoxLayout(page)
+        intro=QLabel(tr('Un script es un programa Python que automatiza el proyecto. Se ejecuta desde un botón (acción «Ejecutar script»), '
+                        'al abrir una pantalla, al arrancar el runtime («Eventos de inicio…») o cada cierto tiempo (pestaña «Tareas cíclicas»).'))
+        intro.setWordWrap(True); intro.setObjectName('muted'); layout.addWidget(intro)
         actions=QHBoxLayout()
         for text, callback in [(tr('Nuevo script'),self.add),(tr('Eliminar'),self.remove),(tr('Comprobar'),self.check),(tr('Eventos de inicio…'),self.startup)]:
             b=QPushButton(text); b.clicked.connect(callback); actions.addWidget(b)
         actions.addStretch(); layout.addLayout(actions)
         split=QSplitter(); self.list=QListWidget(); self.list.setMaximumWidth(260)
+        self.list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.list.customContextMenuRequested.connect(self.menu)
+        # The last line of the list: type the name of a new script and press Enter.
+        self.new_name=QLineEdit(); self.new_name.setObjectName('newScriptName'); self.new_name.setClearButtonEnabled(True)
+        self.new_name.setPlaceholderText(tr('+ Nuevo script: escribe el nombre y pulsa Intro'))
+        self.new_name.returnPressed.connect(self.create_from_field)
+        side=QWidget(); side_layout=QVBoxLayout(side); side_layout.setContentsMargins(0,0,0,0); side_layout.setSpacing(2)
+        side_layout.addWidget(self.list,1); side_layout.addWidget(self.new_name)
+        side.setMaximumWidth(260)
         from .python_editor import PythonHighlighter, PythonCodeEditor
         self.code=PythonCodeEditor(); self.code.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont))
         self.highlighter=PythonHighlighter(self.code.document())
-        self.code.setTabStopDistance(32); self.code.setPlaceholderText(tr('Selecciona o crea un script Python'))
+        self.code.setTabStopDistance(32)
         self.code.setEnabled(False)
-        split.addWidget(self.list); split.addWidget(self.code); layout.addWidget(split,1)
+        split.addWidget(side); split.addWidget(self.code); layout.addWidget(split,1)
         self.result=QLabel(); self.result.setWordWrap(True); self.result.setMaximumHeight(48); layout.addWidget(self.result)
         self.list.currentTextChanged.connect(self.select); self.code.textChanged.connect(self.changed)
         self.addTab(page,tr('Scripts Python'))
@@ -50,6 +62,8 @@ class AutomationEditor(QTabWidget):
         elif self.list.count(): self.list.setCurrentRow(0)
         self.loading=False
         self.select(self.list.currentItem().text() if self.list.currentItem() else '')
+        self.code.setPlaceholderText(tr('Selecciona un script de la lista para editarlo.') if self.list.count() else
+            tr('Todavía no hay scripts. Escribe un nombre en el campo de abajo a la izquierda y pulsa Intro para crear el primero.'))
         self.tasks.refresh()
 
     def select(self,name):
@@ -71,12 +85,38 @@ class AutomationEditor(QTabWidget):
     def end_edit_group(self):
         self.edit_group=False; self.edit_timer.stop()
 
+    TEMPLATE='# API: ctx.read, ctx.quality, ctx.write, ctx.state\nprint(ctx.event)\n'
+
     def add(self):
-        name,ok=QInputDialog.getText(self,tr('Nuevo script'),tr('Nombre de archivo (sin .py)'))
-        if not ok: return
+        self.new_name.setFocus()
+
+    def create_from_field(self):
+        import re
+        name=self.new_name.text().strip()
+        if not name: return
+        if not re.fullmatch(r'[A-Za-z0-9_-]+',name):
+            self.host.error(tr('Usa solo letras sin acentos, números, «_» y «-»')); return
         if name in self.host.project.scripts: self.host.error(tr('El script ya existe')); return
-        if self.host.mutate(lambda:self.host.project.scripts.__setitem__(name,'# API: ctx.read, ctx.quality, ctx.write, ctx.state\nprint(ctx.event)\n')):
+        if self.host.mutate(lambda:self.host.project.scripts.__setitem__(name,self.TEMPLATE)):
+            self.current=name; self.new_name.clear(); self.refresh(); self.code.setFocus()
+
+    def duplicate(self):
+        if not self.current: return
+        source=self.current; name=source+'_copia'; number=2
+        while name in self.host.project.scripts: name=f'{source}_copia{number}'; number+=1
+        if self.host.mutate(lambda:self.host.project.scripts.__setitem__(name,self.host.project.scripts[source])):
             self.current=name; self.refresh()
+
+    def menu(self,position):
+        item=self.list.itemAt(position)
+        if item: self.list.setCurrentItem(item)
+        menu=QMenu(self.list)
+        menu.addAction(tr('Nuevo script'),self.add)
+        if item:
+            menu.addAction(tr('Duplicar'),self.duplicate)
+            menu.addSeparator()
+            menu.addAction(tr('Eliminar'),self.remove)
+        menu.exec(self.list.mapToGlobal(position))
 
     def remove(self):
         if self.current:

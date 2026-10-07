@@ -3,6 +3,7 @@ import copy
 import operator
 import re
 from .i18n import tr
+from .project_languages import is_text
 
 OPS={'eq':operator.eq,'ne':operator.ne,'gt':operator.gt,'ge':operator.ge,'lt':operator.lt,'le':operator.le}
 COLOR_KEYS={'color','text_color','border_color','stroke_color'}
@@ -18,17 +19,9 @@ def style_keys(kind):
     return set()
 
 
-def resolve_color(value, palette):
-    if isinstance(value,str) and value.startswith('@'):
-        if value[1:] not in palette: raise ValueError(tr("Color de paleta inexistente: {value}", value=value))
-        return palette[value[1:]]
-    return value
-
-
-def validate_color(value,palette):
-    value=resolve_color(value,palette)
+def validate_color(value):
     if not isinstance(value,str) or not re.fullmatch(r'#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?',value):
-        raise ValueError(tr('Usa un color HEX #RRGGBB, #AARRGGBB o una referencia @paleta'))
+        raise ValueError(tr('Usa un color HEX #RRGGBB o #AARRGGBB'))
 
 
 def test(condition,samples):
@@ -46,7 +39,7 @@ def permitted(element,samples,key):
     return all(test(c,samples) for c in conditions)
 
 
-def effective(element,samples,palette,design=False):
+def effective(element,samples,design=False):
     result=dict(element); dynamics=element.get('dynamics',{})
     if not design:
         appearance={}
@@ -67,8 +60,6 @@ def effective(element,samples,palette,design=False):
             state='bad' if sample is None or sample.quality!='good' else 'on' if sample.value else 'off'
             result['lamp_color']=element.get('lamp_colors',{}).get(state,{'bad':'#e5a339','on':'#14b889','off':'#d7e0e9'}[state])
             if 'color' in appearance: result['lamp_color']=appearance['color']
-    for key in COLOR_KEYS|{'lamp_color'}:
-        if key in result: result[key]=resolve_color(result[key],palette)
     return result
 
 
@@ -84,7 +75,7 @@ def resolve_bindings(element,bindings):
     replace(result); return result
 
 
-def validate(element,tags,parameters,palette):
+def validate(element,tags,parameters):
     from .project import coerce
     kinds={name:t['type'] for name,t in tags.items()}|{'$'+key:value for key,value in parameters.items()}
     def condition(c):
@@ -97,13 +88,13 @@ def validate(element,tags,parameters,palette):
     def style(s):
         if not isinstance(s,dict) or set(s)-style_keys(element['kind']): raise ValueError(tr('Propiedad de apariencia no aplicable a este objeto'))
         for key,value in s.items():
-            if not isinstance(value,str): raise ValueError(tr('La apariencia necesita textos o colores'))
-            if key in COLOR_KEYS: validate_color(value,palette)
+            if not (is_text(value) if key == 'text' else isinstance(value, str)): raise ValueError(tr('La apariencia necesita textos o colores'))
+            if key in COLOR_KEYS: validate_color(value)
     d=element.get('dynamics',{})
     if not isinstance(d,dict) or set(d)-{'visible','enabled','states','default','bad','disabled','disabled_reason'}: raise ValueError(tr('Dinámica visual desconocida'))
     for key in ('visible','enabled'):
         if key in d: condition(d[key])
-    if not isinstance(d.get('disabled_reason',''),str): raise ValueError(tr('Motivo de bloqueo inválido'))
+    if not is_text(d.get('disabled_reason','')): raise ValueError(tr('Motivo de bloqueo inválido'))
     for key in ('default','bad','disabled'):
         if key in d: style(d[key])
     states=d.get('states',[])
@@ -111,14 +102,14 @@ def validate(element,tags,parameters,palette):
     for state in states:
         if not isinstance(state,dict) or set(state)!={'when','style'}: raise ValueError(tr('Estado inválido'))
         condition(state['when']); style(state['style'])
-    for color in element.get('lamp_colors',{}).values(): validate_color(color,palette)
+    for color in element.get('lamp_colors',{}).values(): validate_color(color)
     if set(element.get('lamp_colors',{}))-{'on','off','bad'}: raise ValueError(tr('Estado de piloto desconocido'))
     for key in COLOR_KEYS:
-        if key in element and element[key].startswith('@'): validate_color(element[key],palette)
+        if key in element: validate_color(element[key])
     for key in ('visible','editor_locked','editor_hidden'):
         if key in element and not isinstance(element[key],bool): raise ValueError(tr("{key} debe ser booleano", key=key))
     for key in ('group','description'):
-        if key in element and not isinstance(element[key],str): raise ValueError(tr("{key} debe ser texto", key=key))
+        if key in element and not (is_text(element[key]) if key == 'description' else isinstance(element[key], str)): raise ValueError(tr("{key} debe ser texto", key=key))
 
 
 def writable_control(element):
@@ -133,7 +124,7 @@ def compatible(element,tag):
 
 
 def issues(project):
-    known={'id','kind','x','y','w','h','text','tag','font_size','bold','text_align','text_color','border_color','color','unit','decimals','min','max','action','value','screen','modal','target_container','script','source','view','template','bindings','points','stroke_color','stroke_width','stroke_style','arrows','filled','texts','default_text','dynamics','lamp_colors','visible','editor_locked','editor_hidden','group','description','press_value','release_value','gauge_style','warning','alarm','title','window','permission'}
+    known={'id','kind','x','y','w','h','text','tag','font_size','bold','text_align','text_color','border_color','color','unit','decimals','min','max','action','value','screen','modal','target_container','script','source','view','template','bindings','points','stroke_color','stroke_width','stroke_style','arrows','filled','texts','default_text','dynamics','lamp_colors','visible','editor_locked','editor_hidden','group','description','press_value','release_value','gauge_style','warning','alarm','title','window','permission','language','tooltip'}
     result=[]
     for collection in (project.screens,project.faceplates):
         for name,document in collection.items():

@@ -1,8 +1,11 @@
 {
-  "title": "Mapa del laboratorio",
+  "title": {
+    "es": "Mapa del laboratorio",
+    "en": "Laboratory map"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Mapa del laboratorio",
+      "text": {
+        "es": "Mapa del laboratorio",
+        "en": "Laboratory map"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "El README del proyecto contiene el recorrido completo y los mapas de direcciones.",
+      "text": {
+        "es": "El README del proyecto contiene el recorrido completo y los mapas de direcciones.",
+        "en": "The project README contains the complete route and direction maps."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -39,10 +48,13 @@
       "y": 150,
       "w": 1080,
       "h": 53,
-      "text": "01–05: banco interno, dinámica visual, dibujos y componentes.",
+      "text": {
+        "es": "01–05: banco interno, dinámica visual, dibujos y componentes.",
+        "en": "01–05: internal bank, visual dynamics, drawings and components."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "help1",
@@ -51,10 +63,13 @@
       "y": 224,
       "w": 1080,
       "h": 53,
-      "text": "06–07: equipos externos S7 y Modbus, sin sustitución de lecturas.",
+      "text": {
+        "es": "06–07: equipos externos S7 y Modbus, sin sustitución de lecturas.",
+        "en": "06–07: external S7 and Modbus devices, without replacement of readings."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "help2",
@@ -63,10 +78,13 @@
       "y": 298,
       "w": 1080,
       "h": 53,
-      "text": "08–09: tiempo real, variable sin registro e históricos entre días.",
+      "text": {
+        "es": "08–09: tiempo real, variable sin registro e históricos entre días.",
+        "en": "08–09: real time, variable without registration and history between days."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "help3",
@@ -75,10 +93,13 @@
       "y": 372,
       "w": 1080,
       "h": 53,
-      "text": "10–11: alarmas, reconocimiento, retorno y exportación.",
+      "text": {
+        "es": "10–11: alarmas, reconocimiento, retorno y exportación.",
+        "en": "10–11: alarms, acknowledgment, return and export."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "help4",
@@ -87,10 +108,13 @@
       "y": 446,
       "w": 1080,
       "h": 53,
-      "text": "12: scripts de inicio, apertura, botón y tarea periódica.",
+      "text": {
+        "es": "12: scripts de inicio, apertura, botón y tarea periódica.",
+        "en": "12: start, open, button and periodic task scripts."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "help5",
@@ -99,10 +123,13 @@
       "y": 520,
       "w": 1080,
       "h": 53,
-      "text": "Guardar proyecto conserva todo; Versiones permite activar Git local.",
+      "text": {
+        "es": "Guardar proyecto conserva todo; Versiones permite activar Git local.",
+        "en": "Saving project preserves everything; Versions allows you to activate local Git."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "close",
@@ -111,7 +138,10 @@
       "y": 650,
       "w": 330,
       "h": 42,
-      "text": "Cerrar ayuda",
+      "text": {
+        "es": "Cerrar ayuda",
+        "en": "Close help"
+      },
       "action": "close_popup",
       "font_size": 15
     }

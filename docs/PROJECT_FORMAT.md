@@ -2,7 +2,7 @@
 
 ```text
 mi-proyecto/
-  project.json
+  MiPlanta.abscada
   types.json
   variables.json
   connections.json
@@ -16,11 +16,17 @@ mi-proyecto/
 
 Todos los documentos usan UTF-8. El orden del array de elementos determina el orden de dibujo. Los nombres de pantalla y faceplate corresponden a sus archivos, sin extensión. Se recomienda usar letras, números, guiones y guiones bajos. `schema_version` se refiere al proyecto completo.
 
+El manifiesto principal es `<nombre>.abscada`, también en JSON. Se admite `project.json` por compatibilidad. Abrir desde archivo o carpeta no modifica los archivos hasta guardar.
+
 ## Manifest
 
 ```json
 {"schema_version": 1, "name": "Planta", "startup_screen": "main"}
 ```
+
+El manifiesto admite `languages`, `default_language` e `initial_language`. Los textos pueden ser cadenas o mapas, como `"text":{"es":"Bomba","en":"Pump"}`. Véase [Idiomas del proyecto](STUDIO.md) para edición, CSV, validación y runtime.
+
+`screen_defaults` puede contener `width` y `height`, enteros de 1 a 10000; propone el tamaño de pantallas nuevas (1280 × 720 por defecto). No cambia las existentes. `display` configura ventanas de operación, según la sección de monitores.
 
 ## Tipos
 
@@ -61,7 +67,7 @@ Booleanos escritos desde texto aceptan `true`, `false`, `True`, `False`, `0` y `
 ]
 ```
 
-`id` es estable y único. `protocol` elige el adaptador registrado. `poll_ms` admite 50 a 60000; es un intervalo objetivo, no una garantía de tiempo real. Los adaptadores disponibles son S7 y Modbus TCP. La prueba sin PLC físico utiliza un servidor TCP externo y las mismas direcciones DB. No hay direcciones de simulación internas.
+`id` es estable y único. `protocol` elige el adaptador registrado. `poll_ms` admite 50 a 60000; es un intervalo objetivo, no una garantía de tiempo real. Los adaptadores disponibles son S7, Modbus TCP, TwinCAT ADS y OPC UA. La prueba sin PLC físico utiliza un servidor TCP externo y las mismas direcciones DB. No hay direcciones de simulación internas.
 
 ## Pantallas y gráficos
 
@@ -83,14 +89,33 @@ Cada elemento tiene identificador único en el documento, `kind` y geometría po
 | bar | tag numérico, min, max | Fracción limitada al intervalo; ámbar si calidad mala |
 | image | source | Archivo relativo dentro del proyecto |
 | faceplate | template, bindings | Instancia de plantilla parametrizada |
+| gauge | tag numérico, min, max, gauge_style, warning, alarm, text, unit, decimals, color | dial (240°), semi (180°) o thermometer; zonas superiores de aviso/alarma; alarm ≥ warning |
+| text_list | tag, texts, default_text | Valor exacto → texto; admite traducciones |
+| line / polyline / pipe | points, stroke_color, stroke_width, stroke_style, arrows | Trazados con 2 / 2–1000 / 2–1000 puntos |
+| rectangle / ellipse | color, filled, stroke_color, stroke_width, stroke_style | Formas editables; sin radio de esquina configurable |
+| trend / alarm_view | view | Visor solo en pantallas, caja mínima 400 × 280 |
+| screen_container | screen | Zona con una pantalla sin otros contenedores |
 
-En v1, los botones son órdenes al soltar; no son mandos momentáneos mantenidos. No usar para funciones que exijan detección segura de liberación. Los botones pueden invocar un script del proyecto mediante action=script; no se evalúan expresiones Python dentro de las propiedades gráficas.
+Las acciones toggle/set se activan al soltar dentro del botón; momentary y press_release gestionan pulsación y liberación. La pérdida de red o alimentación puede impedir enviar una liberación: no sustituyen una función de seguridad del PLC. Los botones pueden invocar un script del proyecto mediante action=script; no se evalúan expresiones Python dentro de las propiedades gráficas.
+
+| action | Campos y efecto |
+| --- | --- |
+| toggle | tag bool escribible; invierte el valor |
+| set | tag escribible y value compatible; asigna |
+| momentary | tag bool escribible; true al pulsar y false al soltar |
+| press_release | tag escribible, press_value y release_value compatibles |
+| screen | screen y target_container opcional; navega |
+| popup | screen, modal y window opcionales; abre pantalla emergente |
+| faceplate_popup | template, bindings, title, modal y window; abre un objeto por equipo |
+| close_popup | Cierra la ventana emergente actual |
+| script | script; invoca una fuente del proyecto |
+| set_language | language declarado; cambia el idioma del runtime |
 
 Las imágenes deben vivir dentro de la carpeta del proyecto; las rutas que escapan se rechazan. No se incrustan dentro del JSON. La aplicación no carga imágenes remotas.
 
 ## Faceplates (objetos de librería)
 
-En Studio se llaman **objetos de librería** (ver [FACEPLATE_LIBRARIES.md](FACEPLATE_LIBRARIES.md)). Un objeto puede llevar `"folder": "Válvulas/Agua"` para ordenarlo en la librería del proyecto; las carpetas vacías se guardan en `project.json` → `library_folders`. Las plantillas `estandar__*` pertenecen a la librería estándar de la aplicación y nunca se guardan en el proyecto.
+En Studio se llaman **objetos de librería** (ver [STUDIO.md](STUDIO.md)). Un objeto puede llevar `"folder": "Válvulas/Agua"` para ordenarlo en la librería del proyecto; las carpetas vacías se guardan en el manifiesto `.abscada` → `library_folders`. Las plantillas `estandar__*` pertenecen a la librería estándar de la aplicación y nunca se guardan en el proyecto.
 
 ```json
 {"width": 320, "height": 180,
@@ -109,7 +134,7 @@ Instancia en una pantalla:
 
 Se exige que estén enlazados todos los parámetros y coincidan los tipos. En este MVP los parámetros son variables primitivas; no hay parámetros gráficos, eventos ni estructuras como parámetro único.
 
-## Propiedades visuales de Studio 0.2
+## Propiedades visuales
 
 `font_size` define tamaño de texto en píxeles del documento (entero de 8 a 72). `color`, `text_color` y `border_color` permiten configurar colores. El inspector expone tamaño, fondo, color de texto, borde, negrita y alineación para los controles de texto. Studio no escribe valores de runtime en archivos: un enlace se representa mediante un marcador, y Runtime resuelve su valor desde el almacén de muestras.
 
@@ -177,7 +202,7 @@ Un botón puede navegar con `action: "screen"` y `screen: "nombre"`. No requiere
 
 ## Pantallas y dibujo vectorial
 
-Propiedades opcionales del documento: title (texto), background (#RRGGBB), grid_size (entero 1–200), show_grid y snap_to_grid (booleanos). Valores por defecto: fondo blanco, paso 10 y ambas opciones activadas. La pantalla inicial continúa en project.json → startup_screen.
+Propiedades opcionales del documento: title (texto), background (#RRGGBB), grid_size (entero 1–200), show_grid y snap_to_grid (booleanos). Valores por defecto: fondo blanco, paso 10 y ambas opciones activadas. La pantalla inicial se declara en el manifiesto `.abscada` → `startup_screen`.
 
 Nuevos tipos: line, polyline, pipe, rectangle y ellipse. Los trazados guardan points como pares normalizados entre 0 y 1 dentro de x/y/w/h, para poder moverlos y escalarlos sin reescribir cada coordenada. El inspector expone coordenadas absolutas. Una línea tiene dos puntos; los demás trazados admiten 2–1000. Las líneas horizontales/verticales conservan una caja de al menos 1 px sin alterar su dirección.
 
@@ -219,7 +244,7 @@ Una emergente puede ser un layout con sus propios contenedores. Los botones de n
 
 ## Monitores de operación
 
-`project.json` puede incluir `display` para colocar el runtime en varios monitores:
+El manifiesto `.abscada` puede incluir `display` para colocar el runtime en varios monitores:
 
 ```json
 "display": {
@@ -231,7 +256,7 @@ Una emergente puede ser un layout con sus propios contenedores. Los botones de n
 }
 ```
 
-`main` coloca la ventana principal. Cada elemento de `windows` abre una ventana adicional al arrancar, con la pantalla indicada. `mode` admite `normal`, `maximized` o `fullscreen`. Todas las ventanas comparten el mismo runtime: no hay conexiones ni registros adicionales. Sin `display`, el comportamiento es el de siempre: una ventana principal.
+`main` coloca la ventana principal. Cada elemento de `windows` abre una ventana adicional al arrancar, con la pantalla indicada. `mode` admite `normal`, `maximized` o `fullscreen`. Todas las ventanas comparten el mismo runtime: no hay conexiones ni registros adicionales. Sin `display`, se abre una ventana principal maximizada. `main.scale` admite `fit` (mantener proporciones), `stretch` (ocupar la ventana) o `none` (tamaño del documento, con barras de desplazamiento).
 
 La posición y el tamaño de cada ventana se recuerdan en las preferencias del usuario (QSettings), no en el proyecto, por carpeta de proyecto y por ventana; los faceplates emergentes se recuerdan por equipo. Si una ventana tiene monitor configurado y la posición recordada queda en otro, se respeta el monitor configurado.
 
@@ -248,10 +273,10 @@ Los valores de `texts` se guardan como strings y se validan y comparan según el
 
 ## Layouts
 
-Se guardan en `screens/<nombre>.json`, con `layout: true` para agruparlos como Layouts en el explorador. Comparten el formato, dimensiones, fondo y elementos de una pantalla. `startup_screen` puede apuntar al layout. No cambia el formato de los proyectos anteriores.
+Se guardan en `screens/<nombre>.json` como pantallas normales con controles `screen_container`. No existe un tipo o grupo separado de layouts; la antigua marca `layout` se retira al cargar. Comparten dimensiones, fondo y elementos de una pantalla. `startup_screen` puede apuntar al layout. No cambia el formato de los proyectos anteriores.
 
 ```json
-{"layout":true,"width":1200,"height":730,"elements":[
+{"width":1200,"height":730,"elements":[
  {"id":"cabecera","kind":"screen_container","x":0,"y":0,"w":1200,"h":90,"screen":"common_header"},
  {"id":"contenido","kind":"screen_container","x":0,"y":90,"w":1200,"h":640,"screen":"process_design"}
 ]}
@@ -261,7 +286,7 @@ Un botón de navegación añade `"action":"screen", "screen":"history", "target_
 
 ## Automatización y versiones
 
-Las fuentes residen en scripts/<nombre>.py; automation.json define startup, timeout_seconds y tasks. Los eventos de pantalla se guardan en on_open. Ver [Scripts y tareas](SCRIPTING.md) para la API y [Guardado y versiones](PROJECT_WORKFLOW.md) para Git y el guardado conjunto.
+Las fuentes residen en scripts/<nombre>.py; automation.json define startup, timeout_seconds y tasks. Los eventos de pantalla se guardan en on_open. Ver [Scripts y tareas](OPERATIONS.md) para la API y [Guardado y versiones](STUDIO.md) para Git y el guardado conjunto.
 
 
 ## Usuarios y roles
@@ -301,8 +326,96 @@ Endpoint `opc.tcp://<equipo>:<port>/abscada`, namespace `urn:abscada:<nombre del
 
 Un elemento puede contener `dynamics.visible` y `dynamics.enabled` como `{ "tag": "Pump1.running", "op": "eq", "value": true, "bad": false }`. Los operadores son `eq`, `ne`, `gt`, `ge`, `lt`, `le`; las comparaciones ordenadas requieren números. `dynamics.states` es una lista ordenada de `{ "when": condición, "style": apariencia }`, donde gana la primera coincidencia. `default`, `bad` y `disabled` contienen apariencias; `disabled_reason` contiene el motivo visible en tooltip. Las propiedades de apariencia se validan según el objeto. `lamp_colors` define `on`, `off` y `bad`.
 
-`project.json.palette` es un diccionario nombre → HEX. Los campos cromáticos admiten `@nombre` para referenciarlo. La evaluación resuelve las referencias conservando el vínculo en JSON. No se eliminan colores en uso sin corregir sus referencias.
+Los colores son valores explícitos `#RRGGBB` o `#AARRGGBB` (alfa al principio), en el fondo de cada documento, cada objeto y cada estado. Los nuevos documentos no admiten referencias `@nombre`. Al cargar un manifiesto antiguo con `palette`, se sustituyen sus referencias por el HEX correspondiente en pantallas y objetos de librería; el siguiente guardado retira `palette`. No se modifica ningún texto ni identificador que empiece por `@`. Una referencia de color sin definición se rechaza.
 
 Las acciones `momentary` y `press_release` complementan a las existentes. La primera escribe true/false sobre bool; la segunda requiere `press_value` y `release_value` compatibles con la variable. No son acciones de seguridad del PLC.
 
-`editor_hidden` y `editor_locked` solo afectan al diseño; `group` identifica un grupo plano y `description` da un nombre descriptivo en Objetos. `visible: false` oculta estáticamente en operación. Las condiciones admiten `$parámetro` en plantillas y se resuelven en cada instancia. La guía VISUAL_STATES.md describe precedencia y tratamiento de calidad.
+`editor_hidden` y `editor_locked` solo afectan al diseño; `group` identifica un grupo plano y `description` da un nombre descriptivo en Elementos. `visible: false` oculta estáticamente en operación. Las condiciones admiten `$parámetro` en plantillas y se resuelven en cada instancia. La guía STUDIO.md describe precedencia y tratamiento de calidad.
+
+## Idiomas y textos
+
+El manifiesto declara `languages`, `default_language` e `initial_language` (project, station o user). Sin estos campos se considera español. El idioma por defecto debe estar declarado; se admiten variantes como en-GB.
+
+```json
+{"schema_version":1,"name":"Planta","startup_screen":"main",
+ "languages":["es","en"],"default_language":"es","initial_language":"project"}
+```
+
+`text`, `title`, `message`, `default_text`, `disabled_reason`, `tooltip` y `description` admiten cadenas o mapas por idioma, incluidas apariencias dinámicas, listas, objetos de librería y ejes/curvas. Las categorías de alarma usan este formato en `name`. Cada mapa contiene el idioma por defecto y solo cadenas de idiomas declarados. Una traducción ausente o vacía utiliza el idioma por defecto; una cadena se muestra literalmente.
+
+```json
+{"id":"titulo","kind":"text","x":10,"y":10,"w":300,"h":40,
+ "text":{"es":"Sala de cocción","en":"Brewhouse"}}
+```
+
+No se traducen identificadores, valores de listas, unidades ni datos adquiridos. Las rutas CSV identifican elementos y alarmas por `@id` y filas de listas por `=valor`; reordenarlos no cambia su identidad. Los estados dinámicos usan posición, por lo que conviene reexportar si se reorganizan.
+
+Un botón cambia el idioma con `action: "set_language"` y `language: "en"`. Scripts usan `ctx.language` y `ctx.set_language()`. El idioma inicial project usa el predeterminado; station utiliza la elección guardada para el proyecto en el puesto; user aplica además la preferencia de cuenta al iniciar sesión. Una preferencia ausente o no declarada conserva el fallback. Todas las ventanas comparten el idioma sin reiniciar adquisición ni repetir eventos de apertura.
+
+La preferencia de usuario se guarda junto a la cuenta; la del puesto, en ajustes locales. Los controles comunes de Runtime usan el catálogo de interfaz de su idioma, sin cambiar Studio; sin catálogo usan español. Las alarmas históricas se presentan mediante alarm_id y su definición actual, con respaldo del texto traducible para definiciones retiradas. Las cadenas de archivos antiguos siguen siendo legibles.
+
+## Bibliotecas publicadas
+
+El paquete `.abscada-library.json` incluye schema_version, name, version, author, license, faceplates y assets. Los paquetes traducidos incluyen languages y default_language; el consumidor debe declarar los idiomas usados. Los textos de objetos vinculados se editan en su origen o en una copia local.
+
+```json
+{"schema_version":1,"name":"Equipos","version":"1.0.0",
+ "languages":["es","en"],"default_language":"es",
+ "author":"Mi equipo","license":"GPL-3.0-or-later",
+ "faceplates":{"bomba":{"width":100,"height":60,"parameters":{},"elements":[]}},
+ "assets":{}}
+```
+
+assets relaciona rutas relativas con bytes base64, incluidas imágenes de estados. Se rechazan rutas absolutas, `..`, dos puntos y barras invertidas; el exportador asigna nombres por hash. Una plantilla distribuible usa parámetros `$nombre`, colores HEX y recursos capturados, sin depender de variables, scripts, pantallas o visores del autor.
+
+libraries.json fija el paquete con source y sha256 por alias. El alias empieza por letra ASCII y admite letras, números, _ y -, hasta 40 caracteres. Las plantillas se resuelven como alias__nombre en memoria y no se duplican en faceplates/. La copia funciona sin el original. Actualizar exige el mismo nombre, una versión nueva si cambia contenido y compatibilidad con todas las instancias; se valida antes de aplicar. La huella es integridad, no firma de autoría.
+
+```python
+from abscada.project import Project
+from abscada.faceplate_libraries import export_library, link
+p = Project.load("autor")
+export_library(p, ["bomba"], "equipos-1.0.0.abscada-library.json",
+               "Equipos", "1.0.0", author="Mi equipo", license="GPL-3.0-or-later")
+consumer = Project.load("consumidor")
+link(consumer, "equipos-1.0.0.abscada-library.json", "equipos")
+consumer.save()
+```
+
+Publica en un archivo nuevo; no sobrescribas versiones distribuidas. Véase [STUDIO.md](STUDIO.md#librerías) para la interfaz.
+
+### Adaptar bibliotecas de otro sistema
+
+Trabaja con la versión y los archivos de origen, sus interfaces, recursos y código. Una captura permite aproximar apariencia, pero no acredita equivalencia de lógica. Respeta licencias; no copies recursos ni código sin derechos.
+
+Entrega un proyecto de autoría editable, un paquete nuevo, un consumidor de prueba y un informe de diferencias. Mantén nombres de parámetros estables y registra pérdidas de función o componentes omitidos. No añadas propiedades inventadas al JSON.
+
+
+Esta tabla propone estrategias para el destino; debe contrastarse con la biblioteca y versión de origen. Una biblioteca de origen puede distinguir interfaces de variables, propiedades y eventos. abSCADA utiliza los parámetros de variables primitivas descritos aquí.
+
+| Concepto de origen | Estrategia en abSCADA | Clasificación |
+| --- | --- | --- |
+| Tipo de faceplate e instancia | Documento de plantilla e instancia template/bindings | Adaptación directa de estructura básica |
+| Variable de interfaz simple | Parámetro bool/int/float/string y `$parametro` | Revisar tipo y acceso |
+| UDT o array de interfaz | Descomponer en parámetros de hojas; arrays necesitan transformación explícita | No equivalencia directa |
+| Propiedad configurable de interfaz (color, tamaño, imagen, etc.) | Variantes de plantilla o propiedades fijas publicadas | Sin interfaz de propiedades equivalente |
+| Eventos personalizados de interfaz | Trasladar lógica al consumidor con diseño explícito | Sin interfaz de eventos equivalente |
+| Scripts y APIs del sistema de origen | Analizar función; usar acción declarativa si existe, o rediseñar lógica del anfitrión | No ejecutar ni pegar JavaScript |
+| Color/visibilidad por variable | dynamics con comparaciones y primera coincidencia | Revisar precedencia, calidad y permisos |
+| Texto según estado | text_list o estados con style.text | Admite mapas de texto por idioma; revisar idiomas del consumidor |
+| Mandos de pulsación/liberación | momentary o press_release | Verificar contrato de escritura y pérdida de conexión |
+| Símbolos vectoriales e imágenes | Figuras nativas o SVG estático empaquetado | Revisar escalado y proporciones |
+| Faceplates dentro de faceplates | Aplanar geometría y parámetros con nombres únicos | Anidamiento no soportado |
+| Pantalla emergente de configuración | Pantalla del consumidor y botón popup | No se empaquetan pantallas en bibliotecas v1 |
+| Listas de acciones, expresiones complejas, animación | Informe de diferencias y propuesta separada | No inventar propiedades |
+
+
+### Comprobar un paquete
+
+Valida proyecto y paquete, prueba instancias con bindings completos y tipos compatibles, valores límite, calidad, permisos, solapamiento y pulsación/liberación. Revisa apariencia a escala nominal y redimensionada. Abre una copia sin acceso a recursos del autor y comprueba que una actualización incompatible se rechaza conservando el proyecto.
+
+```bash
+python tools/validate_library.py equipos-1.0.0.abscada-library.json
+python -m pytest tests/test_faceplate_libraries.py
+```
+
+El ejemplo de autoría es `examples/library_author`; su paquete inicial está en `examples/libraries/`. Cargar sin error no acredita equivalencia con la biblioteca de origen.

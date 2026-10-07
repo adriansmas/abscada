@@ -18,10 +18,10 @@ with tempfile.TemporaryDirectory(prefix='abscada-review-fixes-') as temporary:
     QSettings.setDefaultFormat(QSettings.Format.IniFormat)
     QSettings.setPath(QSettings.Format.IniFormat,QSettings.Scope.UserScope,temporary)
     project=Project.load(root/'examples/plant');project.root=Path(temporary)
-    project.manifest['startup_screen']='process_design';project.manifest['palette']={'Marcha':'#147d75','Paro':'#b44141'}
+    project.manifest['startup_screen']='process_design'
     condition=lambda value:dict(tag='Pump1.running',op='eq',value=value,bad=False)
     for name,value in [('MARCHA',True),('PARO',False)]:
-        project.screens['process_design']['elements'].append(dict(id=name,kind='button',x=800,y=430,w=180,h=48,text=name,tag='Pump1.running',action='set',value=value,color='@Marcha' if value else '@Paro',text_color='#ffffff',dynamics={'visible':condition(not value)}))
+        project.screens['process_design']['elements'].append(dict(id=name,kind='button',x=800,y=430,w=180,h=48,text=name,tag='Pump1.running',action='set',value=value,color='#147d75' if value else '#b44141',text_color='#ffffff',dynamics={'visible':condition(not value)}))
     w=Window(project);w.resize(1366,768);w.show();app.processEvents()
     w.render_scene(['MARCHA']);app.processEvents();w.grab().save(str(out/'studio-1366.png'))
     dynamic=DynamicDialog(w,w.scene.selectedItems()[0].element);dynamic.show();app.processEvents();dynamic.grab().save(str(out/'conditions.png'));dynamic.close()

@@ -13,7 +13,7 @@ abSCADA está en fase beta. Mientras no haya una versión 1.0, solo la última v
 
 ## Cómo informar de una vulnerabilidad
 
-**No abras una incidencia pública.** Usa el aviso privado de GitHub: pestaña **Security → Report a vulnerability** del repositorio. Si no puedes usar GitHub, escribe a la dirección de contacto de seguridad publicada en la web del proyecto.
+**No abras una incidencia pública.** Usa el aviso privado de GitHub: pestaña **Security → Report a vulnerability** del repositorio. Si la opción no está disponible, solicita al responsable del repositorio un canal privado antes de compartir detalles sensibles. Este proyecto no publica todavía una dirección de correo de seguridad alternativa.
 
 Incluye, si puedes:
 - versión de abSCADA (Ayuda → Acerca de) y sistema operativo;
@@ -45,5 +45,5 @@ Cuando una vulnerabilidad se esté explotando o haya un incidente grave que afec
 ## Documentación relacionada
 
 - [docs/SECURITY_DEVELOPMENT.md](docs/SECURITY_DEVELOPMENT.md): cómo se desarrolla abSCADA (IEC 62443-4-1, CRA).
-- [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md): modelo de amenazas.
+- [docs/SECURITY_DEVELOPMENT.md](docs/SECURITY_DEVELOPMENT.md): modelo de amenazas.
 - [docs/HARDENING.md](docs/HARDENING.md): guía de bastionado para instalaciones.

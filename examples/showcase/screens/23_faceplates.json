@@ -1,8 +1,11 @@
 {
-  "title": "Faceplates, contenedores y emergentes",
+  "title": {
+    "es": "Faceplates, contenedores y emergentes",
+    "en": "Faceplates, containers and popups"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Faceplates, contenedores y emergentes",
+      "text": {
+        "es": "Faceplates, contenedores y emergentes",
+        "en": "Faceplates, containers and popups"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "La misma plantilla con parámetros diferentes: una unidad interna y otra conectada a Siemens.",
+      "text": {
+        "es": "La misma plantilla con parámetros diferentes: una unidad interna y otra conectada a Siemens.",
+        "en": "The same template with different parameters: an internal unit and another connected to Siemens."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -39,10 +48,13 @@
       "y": 147,
       "w": 520,
       "h": 30,
-      "text": "INTERNA",
+      "text": {
+        "es": "INTERNA",
+        "en": "INTERNAL"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "unit0",
@@ -65,10 +77,13 @@
       "y": 147,
       "w": 520,
       "h": 30,
-      "text": "SIEMENS",
+      "text": {
+        "es": "SIEMENS",
+        "en": "SIEMENS"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "unit1",
@@ -91,7 +106,10 @@
       "y": 540,
       "w": 350,
       "h": 42,
-      "text": "Abrir ajustes no modales",
+      "text": {
+        "es": "Abrir ajustes no modales",
+        "en": "Open non-modal settings"
+      },
       "action": "popup",
       "font_size": 15,
       "screen": "90_ajustes"
@@ -103,7 +121,10 @@
       "y": 540,
       "w": 350,
       "h": 42,
-      "text": "Abrir ayuda modal",
+      "text": {
+        "es": "Abrir ayuda modal",
+        "en": "Open modal help"
+      },
       "action": "popup",
       "font_size": 15,
       "screen": "91_ayuda",
@@ -116,10 +137,13 @@
       "y": 620,
       "w": 1090,
       "h": 96,
-      "text": "La cabecera y el menú permanecen en sus contenedores. Los botones del menú navegan solo en «contenido». Las emergentes comparten adquisición y variables.",
+      "text": {
+        "es": "La cabecera y el menú permanecen en sus contenedores. Los botones del menú navegan solo en «contenido». Las emergentes comparten adquisición y variables.",
+        "en": "The header and menu remain in their containers. Menu buttons navigate to “content” only. Emerging companies share acquisition and variables."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     }
   ],
   "on_open": [

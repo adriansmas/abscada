@@ -24,7 +24,7 @@ abscada = "abscada.__main__:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-abscada = ["standard_library/*.json", "standard_library/*/*.svg", "locales/*.json"]
+abscada = ["standard_library/*.json", "standard_library/*/*.svg", "locales/*.json", "example_translations.json"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

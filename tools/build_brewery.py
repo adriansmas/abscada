@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from abscada.example_languages import bilingual
 from abscada.project import Project  # noqa: E402
 from abscada.project_files import is_project  # noqa: E402
 from abscada.screen_tree import own_viewers  # noqa: E402
@@ -18,15 +19,28 @@ from abscada.security import UserStore, default_security, users_path  # noqa: E4
 from abscada.simulators.brewery_map import (BREWHOUSE_FIELDS, ENDPOINT, FERMENTER_FIELDS, FERMENTERS, PHASES,  # noqa: E402
                                             PROMPTS, RECIPE_COUNT, RECIPE_EDITOR_FIELDS, RECIPE_PARAMETERS,
                                             SERVICES_FIELDS, STEPS, node)
-from build_hydro import SCREEN_W, Doc, condition, screen  # noqa: E402
+from build_hydro import SCREEN_W, SCREEN_H, Doc as BaseDoc, condition  # noqa: E402
 
-PALETTE = {
-    "Fondo": "#dfe1e2", "Panel": "#eeefef", "Borde": "#b8bdc1", "Texto": "#24292e",
-    "TextoSuave": "#5f676e", "Valor": "#f9f9f9", "Linea": "#6f777e", "Agua": "#4f86b8",
-    "Marcha": "#2e8b57", "Paro": "#9ba2a8", "Disparo": "#d32f2f", "Aviso": "#e89a1c",
-    "Mosto": "#c2872b", "Cerveza": "#d8a23e", "Glicol": "#3c8fa6", "Vapor": "#9a6fb0", "Muerto": "#b3b9be",
-    "Cabecera": "#2b2620", "Menu": "#38312a", "Mando": "#2b6cb0", "Apagado": "#4a4038",
-}
+
+class Doc(BaseDoc):
+    """Brewery drawing defaults, written as explicit colors into each object."""
+    text_color = "#24292e"
+    muted_color = "#5f676e"
+    panel_color = "#eeefef"
+    border_color = "#b8bdc1"
+    value_color = "#f9f9f9"
+    off_color = "#9ba2a8"
+
+
+def screen(project, key, title, subtitle="", width=SCREEN_W, height=SCREEN_H, background="#dfe1e2", **extra):
+    data = dict(title=title, width=width, height=height, background=background, grid_size=10, show_grid=False,
+                snap_to_grid=True, elements=[], **extra)
+    project.screens[key] = data
+    doc = Doc(data)
+    if subtitle is not None and width == SCREEN_W:
+        doc.title(title.upper(), subtitle)
+    return doc
+
 PLC = "PLC_Cerveceria"
 RECIPES_PERMISSION = "recipes"
 # Demonstration accounts, documented in the README. A real plant creates its own.
@@ -100,39 +114,39 @@ def build_accounts(project):
 # ---------------------------------------------------------------------------
 def phase_list(doc, identifier, tag, x, y, w, h, size=12):
     return doc.add("text_list", identifier, x, y, w, h, tag=tag, font_size=size, bold=True, text_color="#ffffff",
-                   color="@Paro", border_color="@Paro", default_text="SIN COMUNICACIÓN",
+                   color="#9ba2a8", border_color="#9ba2a8", default_text="SIN COMUNICACIÓN",
                    texts=[dict(value=str(i), text=t.upper()) for i, t in enumerate(PHASES)],
                    dynamics=dict(states=[
-                       dict(when=condition(tag, "eq", 6), style=dict(color="@Mando", border_color="@Mando")),
-                       dict(when=condition(tag, "eq", 1), style=dict(color="@Aviso", border_color="@Aviso")),
-                       dict(when=condition(tag, "gt", 1), style=dict(color="@Marcha", border_color="@Marcha"))],
-                       bad=dict(color="@Aviso", border_color="@Aviso")))
+                       dict(when=condition(tag, "eq", 6), style=dict(color="#2b6cb0", border_color="#2b6cb0")),
+                       dict(when=condition(tag, "eq", 1), style=dict(color="#e89a1c", border_color="#e89a1c")),
+                       dict(when=condition(tag, "gt", 1), style=dict(color="#2e8b57", border_color="#2e8b57"))],
+                       bad=dict(color="#e89a1c", border_color="#e89a1c")))
 
 
 def step_list(doc, identifier, tag, x, y, w, h, size=15):
     return doc.add("text_list", identifier, x, y, w, h, tag=tag, font_size=size, bold=True, text_color="#ffffff",
-                   color="@Paro", border_color="@Paro", default_text="SIN COMUNICACIÓN",
+                   color="#9ba2a8", border_color="#9ba2a8", default_text="SIN COMUNICACIÓN",
                    texts=[dict(value=str(i), text=t.upper()) for i, t in enumerate(STEPS)],
                    dynamics=dict(states=[
-                       dict(when=condition("Cocina.Retenido", "eq", True), style=dict(color="@Aviso", border_color="@Aviso")),
-                       dict(when=condition(tag, "gt", 0), style=dict(color="@Marcha", border_color="@Marcha"))],
-                       bad=dict(color="@Aviso", border_color="@Aviso")))
+                       dict(when=condition("Cocina.Retenido", "eq", True), style=dict(color="#e89a1c", border_color="#e89a1c")),
+                       dict(when=condition(tag, "gt", 0), style=dict(color="#2e8b57", border_color="#2e8b57"))],
+                       bad=dict(color="#e89a1c", border_color="#e89a1c")))
 
 
-def vessel(doc, key, x, y, w, h, level, capacity, caption, color="@Mosto", temperature=None):
+def vessel(doc, key, x, y, w, h, level, capacity, caption, color="#c2872b", temperature=None):
     """Tank outline with a level bar, its name above and level / temperature below."""
-    doc.label(key + "_t", caption, x - 20, y - 24, w + 40, 20, size=12, bold=True, color="@Texto", align="center")
-    doc.add("rectangle", key + "_marco", x, y, w, h, color="#ffffff", stroke_color="@Linea", stroke_width=2)
+    doc.label(key + "_t", caption, x - 20, y - 24, w + 40, 20, size=12, bold=True, color="#24292e", align="center")
+    doc.add("rectangle", key + "_marco", x, y, w, h, color="#ffffff", stroke_color="#6f777e", stroke_width=2)
     doc.bar(key + "_nivel", level, x + 3, y + 3, w - 6, h - 6, 0, capacity, color=color)
     doc.value(key + "_v", level, x, y + h + 4, w, 24, "hl", 1, size=12, align="center")
     if temperature:
         doc.value(key + "_temp", temperature, x, y + h + 30, w, 26, "°C", 1, size=14, align="center")
 
 
-def pipe(doc, identifier, points, *active, color="@Mosto", width=7, arrows="end"):
+def pipe(doc, identifier, points, *active, color="#c2872b", width=7, arrows="end"):
     """Process line: grey at rest, coloured while any of the (tag, op, value) conditions holds."""
     states = [dict(when=condition(tag, op, value), style=dict(stroke_color=color)) for tag, op, value in active]
-    return doc.path("polyline", identifier, points, stroke_color="@Muerto", stroke_width=width, arrows=arrows,
+    return doc.path("polyline", identifier, points, stroke_color="#b3b9be", stroke_width=width, arrows=arrows,
                     dynamics=dict(states=states) if states else {})
 
 
@@ -160,39 +174,39 @@ def fv_bindings(fv):
 
 def cylinder(doc, key, x, y, w, h, level_tag, capacity):
     """Cylindro-conical fermenter: shell, level and cone."""
-    doc.add("rectangle", key + "_casco", x, y, w, h, color="#ffffff", stroke_color="@Linea", stroke_width=2)
-    doc.bar(key + "_nivel", level_tag, x + 3, y + 3, w - 6, h - 6, 0, capacity, color="@Cerveza")
+    doc.add("rectangle", key + "_casco", x, y, w, h, color="#ffffff", stroke_color="#6f777e", stroke_width=2)
+    doc.bar(key + "_nivel", level_tag, x + 3, y + 3, w - 6, h - 6, 0, capacity, color="#d8a23e")
     doc.path("polyline", key + "_cono", [[x, y + h], [x + w / 2, y + h + w * 0.45], [x + w, y + h]],
-             stroke_color="@Linea", stroke_width=2)
+             stroke_color="#6f777e", stroke_width=2)
 
 
 def build_faceplates():
     faceplates = {}
-    tile = Doc(dict(title="Fermentador", width=318, height=236, background="@Panel", parameters=FV_PARAMETERS,
+    tile = Doc(dict(title="Fermentador", width=318, height=236, background="#eeefef", parameters=FV_PARAMETERS,
                     elements=[]))
     tile.add("text", "receta", 10, 8, 150, 28, text="", tag="$receta", font_size=15, bold=True, text_align="left",
-             color="@Panel", border_color="@Panel", text_color="@Texto")
+             color="#eeefef", border_color="#eeefef", text_color="#24292e")
     tile.label("lote_t", "Lote", 160, 12, 40, 20, size=11)
     tile.value("lote", "$lote", 196, 9, 52, 24, "", 0, size=12, align="center")
     tile.button("detalle", "Mando…", 254, 8, 56, 26, action="faceplate_popup", template="fermentador_mando",
-                bindings={name: "$" + name for name in FV_PARAMETERS}, color="@Mando", border_color="@Mando",
+                bindings={name: "$" + name for name in FV_PARAMETERS}, color="#2b6cb0", border_color="#2b6cb0",
                 text_color="#ffffff", font_size=11)
     phase_list(tile, "fase", "$fase", 10, 42, 298, 28)
     cylinder(tile, "fv", 14, 80, 62, 110, "$nivel", 12)
-    tile.add("rectangle", "alarma", 14, 214, 62, 16, color="@Paro", stroke_color="@Paro", stroke_width=1,
-             dynamics=dict(states=[dict(when=condition("$alarma", "eq", True), style=dict(color="@Disparo", stroke_color="@Disparo"))],
-                           bad=dict(color="@Aviso")))
+    tile.add("rectangle", "alarma", 14, 214, 62, 16, color="#9ba2a8", stroke_color="#9ba2a8", stroke_width=1,
+             dynamics=dict(states=[dict(when=condition("$alarma", "eq", True), style=dict(color="#d32f2f", stroke_color="#d32f2f"))],
+                           bad=dict(color="#e89a1c")))
     rows = [("Temperatura", "$temperatura", "°C", 1), ("Consigna", "$consigna", "°C", 1),
             ("Densidad", "$densidad", "°P", 2), ("Presión", "$presion", "bar", 2), ("Día", "$dia", "d", 1)]
     for i, (caption, tag, unit, decimals) in enumerate(rows):
         tile.field(f"v{i}", caption, tag, 92, 80 + i * 30, unit, 216, 104, decimals)
     faceplates["fermentador"] = tile.data
 
-    pop = Doc(dict(title="Mando del fermentador", width=520, height=470, background="@Panel",
+    pop = Doc(dict(title="Mando del fermentador", width=520, height=470, background="#eeefef",
                    parameters=FV_PARAMETERS, elements=[]))
     phase_list(pop, "fase", "$fase", 12, 12, 496, 34, 15)
     pop.add("text", "receta", 12, 56, 300, 28, text="", tag="$receta", font_size=16, bold=True, text_align="left",
-            color="@Panel", border_color="@Panel", text_color="@Texto")
+            color="#eeefef", border_color="#eeefef", text_color="#24292e")
     pop.label("lote_t", "Lote", 330, 60, 60, 22, size=12)
     pop.value("lote", "$lote", 388, 56, 120, 28, "", 0, align="center")
     rows = [("Temperatura", "$temperatura", "°C", 2), ("Consigna activa", "$consigna", "°C", 1),
@@ -203,18 +217,18 @@ def build_faceplates():
     for i, (caption, tag, unit, decimals) in enumerate(rows):
         pop.field(f"v{i}", caption, tag, 12, 96 + i * 30, unit, 300, 110, decimals)
     pop.label("modo_t", "REGULACIÓN DE TEMPERATURA", 330, 96, 180, 18, size=10, bold=True)
-    pop.state_text("modo", "$automatico", 330, 118, 178, 30, "SEGÚN RECETA", "MANUAL", "@Linea", "@Aviso")
+    pop.state_text("modo", "$automatico", 330, 118, 178, 30, "SEGÚN RECETA", "MANUAL", "#6f777e", "#e89a1c")
     pop.add("button", "modo_b", 330, 154, 178, 30, text="Receta / manual", tag="$automatico", action="toggle",
-            font_size=12, bold=True, color="#ffffff", border_color="@Mando", text_color="@Mando")
-    pop.label("sp_t", "Consigna manual", 330, 194, 178, 20, size=12, color="@Texto")
+            font_size=12, bold=True, color="#ffffff", border_color="#2b6cb0", text_color="#2b6cb0")
+    pop.label("sp_t", "Consigna manual", 330, 194, 178, 20, size=12, color="#24292e")
     pop.add("input", "sp", 330, 216, 178, 30, text="", tag="$consigna_manual", unit="°C", decimals=1, font_size=15,
-            text_align="right", color="#ffffff", border_color="@Mando", text_color="@Mando", bold=True,
+            text_align="right", color="#ffffff", border_color="#2b6cb0", text_color="#2b6cb0", bold=True,
             dynamics=dict(enabled=condition("$automatico", "eq", False),
-                          disabled=dict(color="#e3e6e9", text_color="#8a949d", border_color="@Borde"),
+                          disabled=dict(color="#e3e6e9", text_color="#8a949d", border_color="#b8bdc1"),
                           disabled_reason="En modo receta la consigna la marca la fase"))
-    pop.label("valv_t", "Válvula de glicol", 330, 258, 178, 20, size=12, color="@Texto")
-    pop.bar("valv", "$valvula", 330, 280, 178, 22, 0, 100, color="@Glicol")
-    pop.command("vaciar", "TRASEGAR A ENVASADO", "$vaciar", 330, 330, 178, 40, "@Mando",
+    pop.label("valv_t", "Válvula de glicol", 330, 258, 178, 20, size=12, color="#24292e")
+    pop.bar("valv", "$valvula", 330, 280, 178, 22, 0, 100, color="#3c8fa6")
+    pop.command("vaciar", "TRASEGAR A ENVASADO", "$vaciar", 330, 330, 178, 40, "#2b6cb0",
                 enabled=condition("$fase", "eq", 6), reason="La cerveza aún no está lista para envasar")
     pop.label("nota", "Las fases avanzan solas según la receta: fermentación → diacetilo → cold crash → guarda.",
               12, 376, 300, 40, size=11)
@@ -232,12 +246,12 @@ NAV = [("10_general", "Vista general"), ("20_cocina", "Sala de cocción"), ("30_
 
 
 def build_layout(project):
-    project.screens["00_layout"] = dict(title="La Tolva · SCADA", width=1600, height=900, background="@Fondo", elements=[
+    project.screens["00_layout"] = dict(title="La Tolva · SCADA", width=1600, height=900, background="#dfe1e2", elements=[
         dict(id="cabecera", kind="screen_container", x=0, y=0, w=1600, h=70, screen="01_cabecera"),
         dict(id="menu", kind="screen_container", x=0, y=70, w=200, h=830, screen="02_menu"),
         dict(id="contenido", kind="screen_container", x=200, y=70, w=1400, h=830, screen="10_general")])
 
-    h = screen(project, "01_cabecera", "Cabecera", None, 1600, 70, "@Cabecera")
+    h = screen(project, "01_cabecera", "Cabecera", None, 1600, 70, "#2b2620")
     h.label("marca", "LA TOLVA", 18, 8, 210, 28, size=20, bold=True, color="#ffffff")
     h.label("marca2", "Microcervecería · cocción 10 hl", 18, 38, 220, 20, size=11, color="#c9b9a6")
     h.label("paso_t", "SALA DE COCCIÓN", 250, 6, 300, 18, size=10, bold=True, color="#c9b9a6")
@@ -249,30 +263,30 @@ def build_layout(project):
         x = 570 + sum((90, 150, 120, 110)[:i]) + i * 10
         h.label(f"k{i}_t", caption, x, 6, w, 18, size=10, bold=True, color="#c9b9a6")
         h.add("text", f"k{i}", x, 26, w, 34, text="", tag=tag, unit=unit, decimals=decimals, font_size=18, bold=True,
-              text_align="left", color="@Cabecera", border_color="@Cabecera", text_color="#ffffff")
+              text_align="left", color="#2b2620", border_color="#2b2620", text_color="#ffffff")
     h.label("areas_t", "ALARMAS DE ÁREA", 1080, 6, 300, 18, size=10, bold=True, color="#c9b9a6")
     areas = [("COC.", "Cocina.AlarmaCocina")] + [(fv, f"{fv}.Alarma") for fv in FERMENTERS] + \
             [("SERV.", "Servicios.AlarmaServicios"), ("COM", "Sistema.ComPLC")]
     for i, (caption, tag) in enumerate(areas):
         bad_when = condition(tag, "eq", False) if caption == "COM" else condition(tag, "eq", True)
         h.add("text_list", f"area{i}", 1080 + i * 52, 28, 48, 30, tag=tag, font_size=11, bold=True, text_color="#ffffff",
-              color="@Apagado", border_color="@Apagado", texts=[dict(value="true", text=caption), dict(value="false", text=caption)],
-              dynamics=dict(states=[dict(when=bad_when, style=dict(color="@Disparo", border_color="@Disparo"))],
-                            bad=dict(color="@Aviso", border_color="@Aviso")))
+              color="#4a4038", border_color="#4a4038", texts=[dict(value="true", text=caption), dict(value="false", text=caption)],
+              dynamics=dict(states=[dict(when=bad_when, style=dict(color="#d32f2f", border_color="#d32f2f"))],
+                            bad=dict(color="#e89a1c", border_color="#e89a1c")))
         h.data["elements"][-1]["description"] = "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
     h.add("text", "fecha", 1400, 8, 185, 24, text="", tag="Sistema.Fecha", font_size=13, text_align="right",
-          color="@Cabecera", border_color="@Cabecera", text_color="#c9b9a6")
+          color="#2b2620", border_color="#2b2620", text_color="#c9b9a6")
     h.add("text", "hora", 1400, 30, 185, 32, text="", tag="Sistema.Hora", font_size=21, bold=True, text_align="right",
-          color="@Cabecera", border_color="@Cabecera", text_color="#ffffff")
+          color="#2b2620", border_color="#2b2620", text_color="#ffffff")
 
-    m = screen(project, "02_menu", "Menú", None, 200, 830, "@Menu")
+    m = screen(project, "02_menu", "Menú", None, 200, 830, "#38312a")
     for i, (key, caption) in enumerate(NAV):
         special = key == "90_instructor"
         m.button("nav_" + key, caption, 10, 14 + i * 48, 180, 40, action="screen", screen=key, target_container="contenido",
                  color="#6b4b16" if special else "#4a4037", border_color="#8a6420" if special else "#5d5146",
                  text_color="#ffffff", text_align="left")
     m.label("com_t", "COMUNICACIONES", 14, 420, 172, 18, size=10, bold=True, color="#c9b9a6")
-    m.lamp("com", "Sistema.ComPLC", 14, 446, 18, "@Marcha", "@Disparo")
+    m.lamp("com", "Sistema.ComPLC", 14, 446, 18, "#2e8b57", "#d32f2f")
     m.label("com_l", "PLC · OPC UA cifrado", 40, 444, 150, 22, size=12, color="#e6ddd2")
     m.label("evento_t", "ÚLTIMO EVENTO", 14, 486, 172, 18, size=10, bold=True, color="#c9b9a6")
     m.add("text", "evento", 10, 506, 180, 70, text="", tag="Sistema.UltimoEvento", font_size=11, text_align="left",
@@ -282,7 +296,7 @@ def build_layout(project):
             14, 616, 176, 56, size=11, color="#e6ddd2")
     m.label("pant_t", "PANTALLA", 14, 742, 172, 18, size=10, bold=True, color="#c9b9a6")
     m.add("text", "pantalla", 10, 762, 180, 26, text="", tag="Sistema.Pantalla", font_size=11, text_align="left",
-          color="@Menu", border_color="@Menu", text_color="#e6ddd2")
+          color="#38312a", border_color="#38312a", text_color="#e6ddd2")
     m.button("ayuda", "Ayuda", 10, 792, 180, 30, action="popup", screen="99_ayuda", color="#4a4037",
              border_color="#5d5146", text_color="#ffffff")
 
@@ -291,33 +305,33 @@ def draw_brewhouse(d, x0, y0, compact=False):
     """Hot liquor → mash tun → lauter tun → kettle → cooler → cellar."""
     s = 0.8 if compact else 1.0
     hh = int(200 * s)
-    vessel(d, "hlt", x0 + 20, y0, 80, hh, "Servicios.NivelHLT", 30, "Agua caliente", "@Agua", "Servicios.TempHLT")
-    vessel(d, "mt", x0 + 190, y0, 110, hh, "Cocina.NivelMT", 12, "Macerador", "@Mosto", "Cocina.TempMT")
-    vessel(d, "lt", x0 + 380, y0, 110, hh, "Cocina.NivelLT", 14, "Cuba filtro", "@Mosto")
-    vessel(d, "bk", x0 + 570, y0, 110, hh, "Cocina.NivelBK", 14, "Hervidor / whirlpool", "@Mosto", "Cocina.TempBK")
+    vessel(d, "hlt", x0 + 20, y0, 80, hh, "Servicios.NivelHLT", 30, "Agua caliente", "#4f86b8", "Servicios.TempHLT")
+    vessel(d, "mt", x0 + 190, y0, 110, hh, "Cocina.NivelMT", 12, "Macerador", "#c2872b", "Cocina.TempMT")
+    vessel(d, "lt", x0 + 380, y0, 110, hh, "Cocina.NivelLT", 14, "Cuba filtro", "#c2872b")
+    vessel(d, "bk", x0 + 570, y0, 110, hh, "Cocina.NivelBK", 14, "Hervidor / whirlpool", "#c2872b", "Cocina.TempBK")
     top, bottom = y0 + 16, y0 + hh - 14
-    pipe(d, "agua_mt", [[x0 + 100, top], [x0 + 190, top]], step(1), color="@Agua")
+    pipe(d, "agua_mt", [[x0 + 100, top], [x0 + 190, top]], step(1), color="#4f86b8")
     pipe(d, "agua_lt", [[x0 + 100, top - 10], [x0 + 140, top - 10], [x0 + 140, y0 - 34], [x0 + 435, y0 - 34], [x0 + 435, y0]],
-         step(7), color="@Agua", width=5)
+         step(7), color="#4f86b8", width=5)
     pipe(d, "mt_lt", [[x0 + 300, bottom], [x0 + 380, bottom]], step(6))
     pipe(d, "lt_bk", [[x0 + 490, bottom], [x0 + 570, bottom]], step(7))
     # Wort cooler: a plate heat exchanger, chilled water on the other side.
     hx = x0 + (740 if compact else 770)
-    d.add("rectangle", "hx", hx, y0 + 40, 54, int(120 * s), color="#ffffff", stroke_color="@Linea", stroke_width=2)
+    d.add("rectangle", "hx", hx, y0 + 40, 54, int(120 * s), color="#ffffff", stroke_color="#6f777e", stroke_width=2)
     for i in range(5):
         d.path("line", f"hx_p{i}", [[hx + 9 + i * 9, y0 + 46], [hx + 9 + i * 9, y0 + 34 + int(120 * s)]],
-               stroke_color="@Glicol", stroke_width=2)
-    d.label("hx_t", "Enfriador", hx - 20, y0 + 14, 94, 20, size=12, bold=True, color="@Texto", align="center")
+               stroke_color="#3c8fa6", stroke_width=2)
+    d.label("hx_t", "Enfriador", hx - 20, y0 + 14, 94, 20, size=12, bold=True, color="#24292e", align="center")
     d.value("hx_v", "Cocina.TempMostoSalida", hx - 14, y0 + 50 + int(120 * s), 82, 26, "°C", 1, size=13, align="center",
             alarms=[])
     pipe(d, "bk_hx", [[x0 + 680, bottom], [hx - 10, bottom], [hx - 10, y0 + 100], [hx, y0 + 100]], step(11))
-    pipe(d, "hx_fv", [[hx + 54, y0 + 100], [hx + (130 if compact else 100), y0 + 100]], step(11), color="@Cerveza")
+    pipe(d, "hx_fv", [[hx + 54, y0 + 100], [hx + (130 if compact else 100), y0 + 100]], step(11), color="#d8a23e")
     d.label("hx_fv_t", "→ bodega", hx + 64, y0 + 74, 80, 20, size=11)
     # Steam to the mash tun and the kettle
     pipe(d, "vapor_mt", [[x0 + 245, y0 + hh + 92], [x0 + 245, y0 + hh + 62]], ("Cocina.VaporMT", "gt", 1.0),
-         color="@Vapor", width=4)
+         color="#9a6fb0", width=4)
     pipe(d, "vapor_bk", [[x0 + 625, y0 + hh + 92], [x0 + 625, y0 + hh + 62]], ("Cocina.VaporBK", "gt", 1.0),
-         color="@Vapor", width=4)
+         color="#9a6fb0", width=4)
     d.label("vapor_t", "vapor", x0 + 252, y0 + hh + 72, 60, 18, size=10)
     d.label("vapor_t2", "vapor", x0 + 632, y0 + hh + 72, 60, 18, size=10)
 
@@ -334,24 +348,24 @@ def build_overview(project):
             ("Densidad del mosto", "Cocina.DensidadMosto", "°P", 1)]
     for i, (caption, tag, unit, decimals) in enumerate(rows):
         d.field(f"e{i}", caption, tag, 986, 144 + i * 30, unit, 378, 150, decimals)
-    d.add("text_list", "aviso", 986, 300, 378, 30, tag="Cocina.Aviso", font_size=12, bold=True, text_color="@Texto",
-          color="@Valor", border_color="@Borde", default_text="—",
+    d.add("text_list", "aviso", 986, 300, 378, 30, tag="Cocina.Aviso", font_size=12, bold=True, text_color="#24292e",
+          color="#f9f9f9", border_color="#b8bdc1", default_text="—",
           texts=[dict(value=str(i), text=t or "Sin avisos para el operador") for i, t in enumerate(PROMPTS)],
           dynamics=dict(states=[dict(when=condition("Cocina.EsperaOperador", "eq", True),
-                                     style=dict(color="@Aviso", border_color="@Aviso", text_color="#ffffff"))]))
+                                     style=dict(color="#e89a1c", border_color="#e89a1c", text_color="#ffffff"))]))
     d.button("ir_cocina", "Sala de cocción →", 1214, 336, 150, 28, action="screen", screen="20_cocina",
-             target_container="contenido", color="@Mando", border_color="@Mando", text_color="#ffffff", font_size=12)
+             target_container="contenido", color="#2b6cb0", border_color="#2b6cb0", text_color="#ffffff", font_size=12)
 
     for i, fv in enumerate(FERMENTERS):
         x = 10 + i * 326
-        d.label(f"{fv}_t", f"{fv} · 12 hl", x, 388, 200, 20, size=13, bold=True, color="@Texto")
+        d.label(f"{fv}_t", f"{fv} · 12 hl", x, 388, 200, 20, size=13, bold=True, color="#24292e")
         d.add("faceplate", f"tile_{fv}", x, 410, 318, 236, template="fermentador", bindings=fv_bindings(fv))
     d.panel("servicios", 10, 654, 970, 176, "Servicios")
     rows = [("Agua caliente", "Servicios.TempHLT", "°C", 1, []),
-            ("Presión de vapor", "Servicios.PresionVapor", "bar", 1, [("lt", 4.0, "@Disparo")]),
+            ("Presión de vapor", "Servicios.PresionVapor", "bar", 1, [("lt", 4.0, "#d32f2f")]),
             ("Agua fría del enfriador", "Servicios.TempAguaFria", "°C", 1, []),
-            ("Glicol", "Servicios.TempGlicol", "°C", 1, [("gt", 0.0, "@Disparo")]),
-            ("Nivel de glicol", "Servicios.NivelGlicol", "%", 0, [("lt", 40.0, "@Aviso")]),
+            ("Glicol", "Servicios.TempGlicol", "°C", 1, [("gt", 0.0, "#d32f2f")]),
+            ("Nivel de glicol", "Servicios.NivelGlicol", "%", 0, [("lt", 40.0, "#e89a1c")]),
             ("Lotes cocinados en esta sesión", "Sistema.LotesCocinados", "", 0, [])]
     for i, (caption, tag, unit, decimals, alarms) in enumerate(rows):
         d.field(f"s{i}", caption, tag, 26 + (i // 3) * 480, 688 + (i % 3) * 44, unit, 440, 110, decimals, alarms)
@@ -365,80 +379,80 @@ def build_brewhouse(project):
     d.panel("proceso", 10, 60, 900, 470)
     draw_brewhouse(d, 30, 130)
     d.lamp("agitador", "Cocina.AgitadorMT", 226, 418, 18)
-    d.label("agitador_t", "Agitador", 248, 416, 90, 22, size=12, color="@Texto")
-    d.lamp("rastrillos", "Cocina.Rastrillos", 416, 418, 18, "@Aviso")
-    d.label("rastrillos_t", "Rastrillos", 438, 416, 90, 22, size=12, color="@Texto")
-    d.field("lecho", "Lecho", "Cocina.PresionLecho", 410, 442, "mbar", 180, 100, 0, [("gt", 200.0, "@Disparo"), ("gt", 150.0, "@Aviso")])
+    d.label("agitador_t", "Agitador", 248, 416, 90, 22, size=12, color="#24292e")
+    d.lamp("rastrillos", "Cocina.Rastrillos", 416, 418, 18, "#e89a1c")
+    d.label("rastrillos_t", "Rastrillos", 438, 416, 90, 22, size=12, color="#24292e")
+    d.field("lecho", "Lecho", "Cocina.PresionLecho", 410, 442, "mbar", 180, 100, 0, [("gt", 200.0, "#d32f2f"), ("gt", 150.0, "#e89a1c")])
     d.field("filtrado", "Filtrado", "Cocina.CaudalFiltrado", 410, 474, "hl/h", 180, 100, 1)
     d.label("espuma_t", "Espuma", 712, 130, 70, 20, size=11, align="center")
-    d.bar("espuma", "Cocina.NivelEspuma", 728, 152, 36, 160, 0, 100, color="@Cerveza",
-          alarms=[("ge", 80.0, "@Disparo"), ("ge", 60.0, "@Aviso")])
+    d.bar("espuma", "Cocina.NivelEspuma", 728, 152, 36, 160, 0, 100, color="#d8a23e",
+          alarms=[("ge", 80.0, "#d32f2f"), ("ge", 60.0, "#e89a1c")])
     d.value("espuma_v", "Cocina.NivelEspuma", 714, 316, 64, 24, "%", 0, size=12, align="center",
-            alarms=[("ge", 80.0, "@Disparo")])
-    d.lamp("ebullicion", "Cocina.Ebullicion", 606, 418, 18, "@Marcha")
-    d.label("ebullicion_t", "Ebullición", 628, 416, 90, 22, size=12, color="@Texto")
+            alarms=[("ge", 80.0, "#d32f2f")])
+    d.lamp("ebullicion", "Cocina.Ebullicion", 606, 418, 18, "#2e8b57")
+    d.label("ebullicion_t", "Ebullición", 628, 416, 90, 22, size=12, color="#24292e")
     d.field("trasiego", "Trasiego", "Cocina.CaudalTrasiego", 760, 442, "hl/h", 144, 70, 0)
     d.field("vmt", "Vapor", "Cocina.VaporMT", 196, 442, "%", 180, 100, 0)
     d.field("vbk", "Vapor", "Cocina.VaporBK", 600, 474, "%", 150, 86, 0)
-    d.lamp("mt_fuera", "Cocina.FueraTemperaturaMT", 196, 478, 18, "@Disparo")
-    d.label("mt_fuera_t", "Fuera de escalón", 218, 476, 150, 22, size=12, color="@Texto")
-    d.status("siembra", "Siembra caliente", "Cocina.SiembraCaliente", 760, 478, 150, "@Disparo", "@Paro")
+    d.lamp("mt_fuera", "Cocina.FueraTemperaturaMT", 196, 478, 18, "#d32f2f")
+    d.label("mt_fuera_t", "Fuera de escalón", 218, 476, 150, 22, size=12, color="#24292e")
+    d.status("siembra", "Siembra caliente", "Cocina.SiembraCaliente", 760, 478, 150, "#d32f2f", "#9ba2a8")
 
     d.panel("secuencia", 920, 60, 470, 470, "Secuencia de cocción")
     for i in range(1, len(STEPS)):
         y = 90 + (i - 1) * 24
-        d.add("rectangle", f"paso{i}", 936, y + 4, 13, 13, color="#ffffff", stroke_color="@Linea", stroke_width=1,
-              dynamics=dict(states=[dict(when=condition("Cocina.Paso", "eq", i), style=dict(color="@Aviso", stroke_color="@Aviso")),
+        d.add("rectangle", f"paso{i}", 936, y + 4, 13, 13, color="#ffffff", stroke_color="#6f777e", stroke_width=1,
+              dynamics=dict(states=[dict(when=condition("Cocina.Paso", "eq", i), style=dict(color="#e89a1c", stroke_color="#e89a1c")),
                                     dict(when=condition("Cocina.Paso", "eq", 0), style=dict(color="#ffffff")),
-                                    dict(when=condition("Cocina.Paso", "gt", i), style=dict(color="@Marcha", stroke_color="@Marcha"))]))
-        d.label(f"paso{i}_t", f"{i}. {STEPS[i]}", 958, y, 400, 20, size=12, color="@Texto")
+                                    dict(when=condition("Cocina.Paso", "gt", i), style=dict(color="#2e8b57", stroke_color="#2e8b57"))]))
+        d.label(f"paso{i}_t", f"{i}. {STEPS[i]}", 958, y, 400, 20, size=12, color="#24292e")
     rows = [("Consigna del paso", "Cocina.ConsignaActual", "°C", 1), ("Tiempo en el paso", "Cocina.TiempoPaso", "min", 1),
             ("Tiempo restante", "Cocina.TiempoRestante", "min", 1)]
     for i, (caption, tag, unit, decimals) in enumerate(rows):
         d.field(f"t{i}", caption, tag, 936, 392 + i * 32, unit, 438, 130, decimals)
     d.state_text("retenido", "Cocina.Retenido", 936, 492, 438, 28, "SECUENCIA RETENIDA", "SECUENCIA EN AUTOMÁTICO",
-                 "@Aviso", "@Linea", 12)
+                 "#e89a1c", "#6f777e", 12)
 
     d.panel("mando", 10, 540, 560, 290, "Preparar y mandar el lote")
-    d.label("rec_t", "Receta", 26, 572, 120, 20, size=12, bold=True, color="@Texto")
+    d.label("rec_t", "Receta", 26, 572, 120, 20, size=12, bold=True, color="#24292e")
     for i in range(1, RECIPE_COUNT + 1):
         y = 594 + (i - 1) * 32
         # The recipe name comes from the PLC: a text shows it and a transparent button on top selects it.
         d.add("text", f"rec{i}_n", 26, y, 220, 28, text="", tag=f"Recetas.Nombre{i}", font_size=12, bold=True,
-              text_align="left", color="#ffffff", border_color="@Borde", text_color="@Texto",
+              text_align="left", color="#ffffff", border_color="#b8bdc1", text_color="#24292e",
               dynamics=dict(states=[dict(when=condition("Cocina.RecetaSeleccionada", "eq", i),
-                                         style=dict(color="@Mando", border_color="@Mando", text_color="#ffffff"))]))
+                                         style=dict(color="#2b6cb0", border_color="#2b6cb0", text_color="#ffffff"))]))
         d.add("button", f"rec{i}_b", 26, y, 220, 28, text="", tag="Cocina.RecetaSeleccionada", action="set", value=i,
               color="#00000000", border_color="#00000000", description=f"Elegir la receta {i} para el próximo lote")
-    d.label("fv_t", "Fermentador de destino", 270, 572, 200, 20, size=12, bold=True, color="@Texto")
+    d.label("fv_t", "Fermentador de destino", 270, 572, 200, 20, size=12, bold=True, color="#24292e")
     for i, fv in enumerate(FERMENTERS, 1):
         y = 594 + (i - 1) * 32
         d.add("button", f"fv{i}", 270, y, 90, 28, text=fv, tag="Cocina.FVDestino", action="set", value=i,
-              font_size=12, bold=True, color="#ffffff", border_color="@Mando", text_color="@Mando",
+              font_size=12, bold=True, color="#ffffff", border_color="#2b6cb0", text_color="#2b6cb0",
               dynamics=dict(states=[dict(when=condition("Cocina.FVDestino", "eq", i),
-                                         style=dict(color="@Mando", text_color="#ffffff"))]))
+                                         style=dict(color="#2b6cb0", text_color="#ffffff"))]))
         d.add("text_list", f"fv{i}_libre", 368, y, 186, 28, tag=f"{fv}.Fase", font_size=11, bold=True,
-              text_color="@Texto", color="@Valor", border_color="@Borde", default_text="—",
+              text_color="#24292e", color="#f9f9f9", border_color="#b8bdc1", default_text="—",
               texts=[dict(value="0", text="Libre")] + [dict(value=str(p), text=PHASES[p]) for p in range(1, len(PHASES))])
-    d.command("iniciar", "INICIAR LOTE", "Cocina.OrdenIniciar", 26, 728, 170, 42, "@Marcha",
+    d.command("iniciar", "INICIAR LOTE", "Cocina.OrdenIniciar", 26, 728, 170, 42, "#2e8b57",
               enabled=condition("Cocina.ListoIniciar", "eq", True),
               reason="Cocina ocupada, fermentador de destino lleno o servicios no preparados")
-    d.command("retener", "RETENER", "Cocina.OrdenRetener", 206, 728, 110, 42, "@Aviso",
+    d.command("retener", "RETENER", "Cocina.OrdenRetener", 206, 728, 110, 42, "#e89a1c",
               enabled=condition("Cocina.Paso", "gt", 0), reason="No hay cocción en marcha")
-    d.command("reanudar", "REANUDAR", "Cocina.OrdenReanudar", 326, 728, 110, 42, "@Mando",
+    d.command("reanudar", "REANUDAR", "Cocina.OrdenReanudar", 326, 728, 110, 42, "#2b6cb0",
               enabled=condition("Cocina.Retenido", "eq", True), reason="La secuencia no está retenida")
     d.button("abortar", "ABORTAR", 446, 728, 110, 42, action="popup", screen="95_abortar", modal=True,
-             color="@Disparo", border_color="#8e1c1c", text_color="#ffffff", font_size=13)
+             color="#d32f2f", border_color="#8e1c1c", text_color="#ffffff", font_size=13)
     d.status("listo", "Listo para iniciar", "Cocina.ListoIniciar", 26, 782, 300)
     d.label("listo_n", "Requiere fermentador libre, vapor > 4 bar y agua caliente ≥ 70 °C.", 26, 804, 530, 20, size=11)
 
     d.panel("aviso", 580, 540, 400, 150, "Aviso al operador")
-    d.add("text_list", "aviso_t", 596, 572, 368, 50, tag="Cocina.Aviso", font_size=14, bold=True, text_color="@Texto",
-          color="@Valor", border_color="@Borde", default_text="—",
+    d.add("text_list", "aviso_t", 596, 572, 368, 50, tag="Cocina.Aviso", font_size=14, bold=True, text_color="#24292e",
+          color="#f9f9f9", border_color="#b8bdc1", default_text="—",
           texts=[dict(value=str(i), text=t or "Sin avisos") for i, t in enumerate(PROMPTS)],
           dynamics=dict(states=[dict(when=condition("Cocina.EsperaOperador", "eq", True),
-                                     style=dict(color="@Aviso", border_color="@Aviso", text_color="#ffffff"))]))
-    d.command("confirmar", "CONFIRMAR", "Cocina.OrdenConfirmar", 596, 632, 368, 44, "@Marcha",
+                                     style=dict(color="#e89a1c", border_color="#e89a1c", text_color="#ffffff"))]))
+    d.command("confirmar", "CONFIRMAR", "Cocina.OrdenConfirmar", 596, 632, 368, 44, "#2e8b57",
               enabled=condition("Cocina.EsperaOperador", "eq", True), reason="No hay nada que confirmar")
     d.panel("lote", 580, 700, 400, 130, "Lote en la cocina")
     rows = [("Lote", "Cocina.Lote", "", 0), ("Receta", "Cocina.RecetaLote", "", 0), ("Densidad del mosto", "Cocina.DensidadMosto", "°P", 2)]
@@ -447,11 +461,11 @@ def build_brewhouse(project):
     d.add("trend", "tendencia", 990, 540, 400, 290, view="coccion")
 
     c = screen(project, "95_abortar", "Confirmar aborto de la cocción", None, 520, 260, "#fbeaea")
-    c.label("icono", "⚠", 20, 20, 60, 60, size=40, bold=True, color="@Disparo")
-    c.label("texto", "¿Abortar el lote en curso?", 90, 22, 410, 40, size=17, bold=True, color="@Texto")
+    c.label("icono", "⚠", 20, 20, 60, 60, size=40, bold=True, color="#d32f2f")
+    c.label("texto", "¿Abortar el lote en curso?", 90, 22, 410, 40, size=17, bold=True, color="#24292e")
     c.label("detalle", "El mosto de la sala de cocción, y el del fermentador si se estaba trasegando, va a desagüe. "
-            "No se puede deshacer.", 90, 66, 410, 80, size=13, color="@Texto")
-    c.command("confirmar", "ABORTAR LOTE", "Cocina.OrdenAbortar", 90, 170, 220, 46, "@Disparo")
+            "No se puede deshacer.", 90, 66, 410, 80, size=13, color="#24292e")
+    c.command("confirmar", "ABORTAR LOTE", "Cocina.OrdenAbortar", 90, 170, 220, 46, "#d32f2f")
     c.button("cancelar", "Cerrar", 330, 170, 170, 46, action="close_popup")
 
 
@@ -460,17 +474,17 @@ def build_cellar(project):
                "Las fases siguen la receta copiada al iniciar el lote (1 día de fermentación = 1 min) · «Mando…» abre cada fermentador")
     for i, fv in enumerate(FERMENTERS):
         x = 10 + i * 465
-        d.label(f"{fv}_t", f"{fv} · cilindrocónico 12 hl", x, 64, 300, 20, size=13, bold=True, color="@Texto")
+        d.label(f"{fv}_t", f"{fv} · cilindrocónico 12 hl", x, 64, 300, 20, size=13, bold=True, color="#24292e")
         d.add("faceplate", f"tile_{fv}", x, 86, 318, 236, template="fermentador", bindings=fv_bindings(fv))
         d.panel(f"{fv}_extra", x + 326, 86, 130, 236)
         d.label(f"{fv}_v_t", "GLICOL", x + 336, 92, 110, 18, size=10, bold=True)
-        d.bar(f"{fv}_v", f"{fv}.ValvulaGlicol", x + 352, 114, 36, 120, 0, 100, color="@Glicol")
+        d.bar(f"{fv}_v", f"{fv}.ValvulaGlicol", x + 352, 114, 36, 120, 0, 100, color="#3c8fa6")
         d.value(f"{fv}_v_v", f"{fv}.ValvulaGlicol", x + 336, 240, 110, 24, "%", 0, size=12, align="center")
-        d.status(f"{fv}_parada", "Parada", f"{fv}.FermentacionParada", x + 336, 270, 120, "@Disparo", "@Paro")
+        d.status(f"{fv}_parada", "Parada", f"{fv}.FermentacionParada", x + 336, 270, 120, "#d32f2f", "#9ba2a8")
         d.add("text_list", f"{fv}_modo", x + 336, 296, 110, 22, tag=f"{fv}.Automatico", font_size=10, bold=True,
-              text_color="@Texto", texts=[dict(value="true", text="RECETA"), dict(value="false", text="MANUAL")],
+              text_color="#24292e", texts=[dict(value="true", text="RECETA"), dict(value="false", text="MANUAL")],
               default_text="—", dynamics=dict(states=[dict(when=condition(f"{fv}.Automatico", "eq", False),
-                                                           style=dict(text_color="@Aviso"))]))
+                                                           style=dict(text_color="#e89a1c"))]))
         d.add("trend", f"{fv}_tend", x, 330, 456, 500, view=f"fermentacion_{fv.lower()}")
 
 
@@ -481,22 +495,22 @@ def build_recipes(project):
     for i in range(1, RECIPE_COUNT + 1):
         y = 96 + (i - 1) * 44
         d.add("text", f"r{i}", 26, y, 308, 36, text="", tag=f"Recetas.Nombre{i}", font_size=15, bold=True,
-              text_align="left", color="#ffffff", border_color="@Borde", text_color="@Texto",
+              text_align="left", color="#ffffff", border_color="#b8bdc1", text_color="#24292e",
               dynamics=dict(states=[dict(when=condition("Recetas.Numero", "eq", i),
-                                         style=dict(color="@Mando", border_color="@Mando", text_color="#ffffff"))]))
+                                         style=dict(color="#2b6cb0", border_color="#2b6cb0", text_color="#ffffff"))]))
         d.add("button", f"r{i}_b", 26, y, 308, 36, text="", tag="Recetas.Numero", action="set", value=i,
               color="#00000000", border_color="#00000000", description=f"Cargar la receta {i} en el editor")
     d.label("lista_n", "Pulsa una receta para cargarla en el editor. Los cambios sin guardar se descartan al cambiar de receta.",
             26, 276, 308, 56, size=12)
-    d.status("modificada", "Cambios sin guardar", "Recetas.Modificada", 26, 340, 300, "@Aviso", "@Paro")
-    d.status("en_uso", "En uso por el lote en cocción", "Recetas.EnUso", 26, 368, 300, "@Mando", "@Paro")
+    d.status("modificada", "Cambios sin guardar", "Recetas.Modificada", 26, 340, 300, "#e89a1c", "#9ba2a8")
+    d.status("en_uso", "En uso por el lote en cocción", "Recetas.EnUso", 26, 368, 300, "#2b6cb0", "#9ba2a8")
     d.add("button", "guardar", 26, 404, 150, 40, text="GUARDAR", tag="Recetas.OrdenGuardar", action="set", value=True,
-          permission=RECIPES_PERMISSION, font_size=13, bold=True, color="@Marcha", border_color="@Marcha", text_color="#ffffff",
+          permission=RECIPES_PERMISSION, font_size=13, bold=True, color="#2e8b57", border_color="#2e8b57", text_color="#ffffff",
           dynamics=dict(enabled=condition("Recetas.Modificada", "eq", True),
                         disabled=dict(color="#d7dce0", text_color="#8a949d", border_color="#c3c9ce"),
                         disabled_reason="No hay cambios que guardar"))
     d.add("button", "descartar", 184, 404, 150, 40, text="DESCARTAR", tag="Recetas.OrdenDescartar", action="set", value=True,
-          permission=RECIPES_PERMISSION, font_size=13, bold=True, color="@Linea", border_color="@Linea", text_color="#ffffff",
+          permission=RECIPES_PERMISSION, font_size=13, bold=True, color="#6f777e", border_color="#6f777e", text_color="#ffffff",
           dynamics=dict(enabled=condition("Recetas.Modificada", "eq", True),
                         disabled=dict(color="#d7dce0", text_color="#8a949d", border_color="#c3c9ce"),
                         disabled_reason="No hay cambios que descartar"))
@@ -508,12 +522,12 @@ def build_recipes(project):
              "Cliente MES: solo lee por el servidor OPC UA del SCADA.",
              "Un lote en marcha usa la copia de la receta tomada al iniciar: guardar no lo altera."]
     for i, line in enumerate(lines):
-        d.label(f"rol{i}", "• " + line, 26, 502 + i * 52, 316, 50, size=12, color="@Texto")
+        d.label(f"rol{i}", "• " + line, 26, 502 + i * 52, 316, 50, size=12, color="#24292e")
 
     d.panel("editor", 360, 60, 1030, 770, "Editor de receta")
-    d.label("nombre_t", "Nombre", 380, 98, 120, 24, size=14, bold=True, color="@Texto")
+    d.label("nombre_t", "Nombre", 380, 98, 120, 24, size=14, bold=True, color="#24292e")
     d.add("input", "nombre", 500, 94, 300, 32, text="", tag="Recetas.Nombre", font_size=15, bold=True, text_align="left",
-          color="#ffffff", border_color="@Mando", text_color="@Mando", permission=RECIPES_PERMISSION)
+          color="#ffffff", border_color="#2b6cb0", text_color="#2b6cb0", permission=RECIPES_PERMISSION)
     d.label("nombre_n", "Máximo 20 caracteres", 812, 100, 200, 22, size=11)
     groups = [("Maceración", ["VolumenAgua", "TempE1", "TiempoE1", "TempE2", "TiempoE2", "TempE3", "TiempoE3"]),
               ("Cocción", ["TiempoHervido", "LupuloAroma", "DensidadOriginal"]),
@@ -529,9 +543,9 @@ def build_recipes(project):
             for field in fields:
                 caption, unit = info[field]
                 low, high = ranges(field)
-                d.label(f"p_{field}_t", caption, x, y + 4, 300, 22, size=13, color="@Texto")
+                d.label(f"p_{field}_t", caption, x, y + 4, 300, 22, size=13, color="#24292e")
                 d.add("input", f"p_{field}", x + 300, y, 110, 30, text="", tag=f"Recetas.{field}", unit=unit, decimals=1,
-                      font_size=14, text_align="right", color="#ffffff", border_color="@Mando", text_color="@Mando",
+                      font_size=14, text_align="right", color="#ffffff", border_color="#2b6cb0", text_color="#2b6cb0",
                       bold=True, permission=RECIPES_PERMISSION)
                 d.label(f"p_{field}_r", f"{low:g} – {high:g}", x + 418, y + 6, 80, 20, size=11)
                 y += 36
@@ -545,33 +559,33 @@ def build_recipes(project):
 def build_services(project):
     d = screen(project, "50_servicios", "Servicios", "Agua caliente, vapor, glicol y agua fría del enfriador de mosto")
     d.panel("hlt", 10, 60, 340, 400, "Depósito de agua caliente (HLT)")
-    vessel(d, "hlt", 40, 120, 100, 240, "Servicios.NivelHLT", 30, "30 hl", "@Agua", "Servicios.TempHLT")
+    vessel(d, "hlt", 40, 120, 100, 240, "Servicios.NivelHLT", 30, "30 hl", "#4f86b8", "Servicios.TempHLT")
     d.setpoint("hlt_sp", "Consigna", "Servicios.ConsignaHLT", 160, 130, "°C", 176, 90)
     d.label("hlt_n", "Se rellena con agua de red por debajo de 15 hl. Calienta con vapor.", 160, 176, 176, 80, size=11)
 
     d.panel("vapor", 360, 60, 340, 400, "Generador de vapor")
     d.add("gauge", "vapor_m", 400, 100, 220, 220, tag="Servicios.PresionVapor", min=0, max=8, unit="bar", decimals=1,
           text="Vapor", gauge_style="dial", warning=7, alarm=7.5,
-          dynamics=dict(states=[dict(when=condition("Servicios.PresionVapor", "lt", 4.0), style=dict(color="@Disparo"))]))
+          dynamics=dict(states=[dict(when=condition("Servicios.PresionVapor", "lt", 4.0), style=dict(color="#d32f2f"))]))
     d.status("caldera", "Caldera en marcha", "Servicios.Caldera", 380, 340, 300)
-    d.status("caldera_f", "Fallo de caldera", "Servicios.FalloCaldera", 380, 370, 300, "@Disparo", "@Paro")
+    d.status("caldera_f", "Fallo de caldera", "Servicios.FalloCaldera", 380, 370, 300, "#d32f2f", "#9ba2a8")
     d.label("vapor_n", "Por debajo de 4 bar la cocina no puede iniciar lotes.", 380, 402, 300, 40, size=11)
 
     d.panel("glicol", 710, 60, 680, 400, "Glicol y agua fría")
-    d.add("rectangle", "gl_marco", 740, 110, 90, 240, color="#ffffff", stroke_color="@Linea", stroke_width=2)
-    d.bar("gl_nivel", "Servicios.NivelGlicol", 744, 114, 82, 232, 0, 100, color="@Glicol",
-          alarms=[("lt", 20.0, "@Disparo"), ("lt", 40.0, "@Aviso")])
-    d.label("gl_t", "Depósito", 730, 86, 110, 20, size=12, bold=True, color="@Texto", align="center")
+    d.add("rectangle", "gl_marco", 740, 110, 90, 240, color="#ffffff", stroke_color="#6f777e", stroke_width=2)
+    d.bar("gl_nivel", "Servicios.NivelGlicol", 744, 114, 82, 232, 0, 100, color="#3c8fa6",
+          alarms=[("lt", 20.0, "#d32f2f"), ("lt", 40.0, "#e89a1c")])
+    d.label("gl_t", "Depósito", 730, 86, 110, 20, size=12, bold=True, color="#24292e", align="center")
     d.value("gl_v", "Servicios.NivelGlicol", 740, 356, 90, 26, "%", 0, align="center",
-            alarms=[("lt", 20.0, "@Disparo"), ("lt", 40.0, "@Aviso")])
-    rows = [("Temperatura de glicol", "Servicios.TempGlicol", "°C", 2, [("gt", 0.0, "@Disparo")]),
+            alarms=[("lt", 20.0, "#d32f2f"), ("lt", 40.0, "#e89a1c")])
+    rows = [("Temperatura de glicol", "Servicios.TempGlicol", "°C", 2, [("gt", 0.0, "#d32f2f")]),
             ("Agua fría del enfriador", "Servicios.TempAguaFria", "°C", 1, [])]
     for i, (caption, tag, unit, decimals, alarms) in enumerate(rows):
         d.field(f"g{i}", caption, tag, 860, 110 + i * 36, unit, 500, 130, decimals, alarms)
     d.setpoint("gl_sp", "Consigna de glicol", "Servicios.ConsignaGlicol", 860, 182, "°C", 500, 130)
     d.status("enfriadora", "Enfriadora en marcha", "Servicios.Enfriadora", 860, 230, 300)
     d.status("enfriadora_f", "Fallo de enfriadora (o nivel de glicol < 20 %)", "Servicios.FalloEnfriadora", 860, 258, 500,
-             "@Disparo", "@Paro")
+             "#d32f2f", "#9ba2a8")
     d.label("gl_n", "El glicol enfría las camisas de los fermentadores y el agua fría del enfriador de mosto. "
             "Si se calienta, los fermentadores pierden la consigna y el mosto llega caliente a bodega.",
             860, 296, 500, 80, size=12)
@@ -587,8 +601,8 @@ def build_trends(project):
         for i, (other, other_caption, _) in enumerate(tabs):
             active = other == key
             d.button(f"tab{i}", other_caption, 930 + i * 92, 14, 88, 32, action="screen", screen=other,
-                     target_container="contenido", color="@Mando" if active else "#ffffff",
-                     border_color="@Mando", text_color="#ffffff" if active else "@Mando", font_size=12)
+                     target_container="contenido", color="#2b6cb0" if active else "#ffffff",
+                     border_color="#2b6cb0", text_color="#ffffff" if active else "#2b6cb0", font_size=12)
         d.add("trend", "tendencia", 10, 60, 1380, 770, view=view)
 
 
@@ -601,22 +615,22 @@ def build_alarm_screens(project):
         for i, (other, other_caption, _) in enumerate(tabs):
             active = other == key
             d.button(f"tab{i}", other_caption, 1110 + i * 94, 14, 90, 32, action="screen", screen=other,
-                     target_container="contenido", color="@Mando" if active else "#ffffff", border_color="@Mando",
-                     text_color="#ffffff" if active else "@Mando", font_size=12)
+                     target_container="contenido", color="#2b6cb0" if active else "#ffffff", border_color="#2b6cb0",
+                     text_color="#ffffff" if active else "#2b6cb0", font_size=12)
         d.add("alarm_view", "visor", 10, 60, 1380, 770, view=view)
 
 
 def build_instructor(project):
     d = screen(project, "90_instructor", "Panel del instructor · simulación",
                "Solo para formación: inyecta averías en el PLC simulado (abscada --simulador cerveceria)")
-    d.add("rectangle", "banda", 10, 60, 1380, 40, color="#fff4dc", stroke_color="@Aviso", stroke_width=2)
+    d.add("rectangle", "banda", 10, 60, 1380, 40, color="#fff4dc", stroke_color="#e89a1c", stroke_width=2)
     d.label("banda_t", "MODO FORMACIÓN · las órdenes de esta pantalla activan averías simuladas. Desactívalas para volver a la normalidad.",
             24, 68, 1350, 24, size=14, bold=True, color="#7a4b00")
 
     def fault(key, x, y, w, tag, caption, detail):
-        d.state_text(key, tag, x, y, 100, 30, "ACTIVA", "NORMAL", "@Disparo", "@Paro", 12)
+        d.state_text(key, tag, x, y, 100, 30, "ACTIVA", "NORMAL", "#d32f2f", "#9ba2a8", 12)
         d.add("button", key + "_b", x + 110, y, w - 110, 30, text=caption, tag=tag, action="toggle", font_size=13,
-              bold=True, color="#ffffff", border_color="@Aviso", text_color="#7a4b00")
+              bold=True, color="#ffffff", border_color="#e89a1c", text_color="#7a4b00")
         d.label(key + "_d", detail, x + 110, y + 34, w - 110, 48, size=11)
 
     d.panel("cocina", 10, 110, 450, 300, "Sala de cocción")
@@ -648,12 +662,12 @@ def build_instructor(project):
              "5. Inicia sesión como operador e intenta guardar una receta: no puedes. Hazlo como maestro cervecero.",
              "6. Cuando el FV2 esté «Listo para envasar», abre su «Mando…» y trasiégalo para dejarlo libre."]
     for i, line in enumerate(steps):
-        d.label(f"g{i}", line, 486, 556 + i * 44, 890, 40, size=13, color="@Texto")
+        d.label(f"g{i}", line, 486, 556 + i * 44, 890, 40, size=13, color="#24292e")
 
 
 def build_help(project):
     d = screen(project, "99_ayuda", "Ayuda de operación", None, 760, 560, "#ffffff")
-    d.label("t", "LA TOLVA · AYUDA RÁPIDA", 24, 18, 700, 30, size=18, bold=True, color="@Texto")
+    d.label("t", "LA TOLVA · AYUDA RÁPIDA", 24, 18, 700, 30, size=18, bold=True, color="#24292e")
     lines = [
         "• Sin sesión todo es de solo lectura. Inicia sesión en la barra de estado inferior.",
         "• Sala de cocción: receta, fermentador de destino, INICIAR, RETENER / REANUDAR y ABORTAR.",
@@ -666,7 +680,7 @@ def build_help(project):
         "• Simulación: abscada --simulador cerveceria.",
     ]
     for i, line in enumerate(lines):
-        d.label(f"l{i}", line, 24, 62 + i * 48, 712, 44, size=14, color="@Texto")
+        d.label(f"l{i}", line, 24, 62 + i * 48, 712, 44, size=14, color="#24292e")
     d.button("cerrar", "Cerrar", 560, 500, 176, 40, action="close_popup")
 
 
@@ -835,7 +849,7 @@ def build_project(root, force=False):
     root.mkdir(parents=True, exist_ok=True)
     for name, content in kept.items():
         (root / name).write_bytes(content)
-    project = Project(root, dict(schema_version=1, name="La Tolva", startup_screen="00_layout", palette=PALETTE,
+    project = Project(root, dict(schema_version=1, name="La Tolva", startup_screen="00_layout",
                                  display=dict(main=dict(mode="maximized"))),
                       {}, [], [], {}, {}, manifest_file="la_tolva.abscada")
     project.types, project.variables = build_variables()
@@ -858,6 +872,7 @@ def build_project(root, force=False):
     project.security = build_security()
     project.opcua_server = dict(enabled=True, port=4850, security=["Basic256Sha256_SignAndEncrypt"], allow_anonymous=False)
     organise(project)
+    bilingual(project)
     project.validate()
     project.save()
     build_accounts(project)

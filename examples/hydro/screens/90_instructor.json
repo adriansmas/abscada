@@ -1,8 +1,11 @@
 {
-  "title": "Panel del instructor · simulación",
+  "title": {
+    "es": "Panel del instructor · simulación",
+    "en": "Instructor panel · simulation"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dde1e4",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "PANEL DEL INSTRUCTOR · SIMULACIÓN",
+      "text": {
+        "es": "PANEL DEL INSTRUCTOR · SIMULACIÓN",
+        "en": "INSTRUCTOR PANEL · SIMULATION"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Solo para formación: inyecta fallos en el PLC simulado (tools/hydro_plc.py). No existe en una planta real.",
+      "text": {
+        "es": "Solo para formación: inyecta fallos en el PLC simulado (tools/hydro_plc.py). No existe en una planta real.",
+        "en": "For training only: Inject faults into the simulated PLC (tools/hydro_plc.py). It does not exist in a real plant."
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -41,7 +50,7 @@
       "w": 1380,
       "h": 40,
       "color": "#fff4dc",
-      "stroke_color": "@Aviso",
+      "stroke_color": "#e89a1c",
       "stroke_width": 2
     },
     {
@@ -51,7 +60,10 @@
       "y": 68,
       "w": 1350,
       "h": 24,
-      "text": "MODO FORMACIÓN · las órdenes de esta pantalla activan averías simuladas. Desactívalas para recuperar la normalidad.",
+      "text": {
+        "es": "MODO FORMACIÓN · las órdenes de esta pantalla activan averías simuladas. Desactívalas para recuperar la normalidad.",
+        "en": "TRAINING MODE · the orders on this screen activate simulated breakdowns. Deactivate them to return to normal."
+      },
       "font_size": 14,
       "bold": true,
       "text_color": "#7a4b00",
@@ -64,8 +76,8 @@
       "y": 110,
       "w": 455,
       "h": 470,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -77,10 +89,13 @@
       "y": 116,
       "w": 431,
       "h": 20,
-      "text": "GRUPO 1",
+      "text": {
+        "es": "GRUPO 1",
+        "en": "unit 1"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -96,17 +111,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -116,14 +140,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -134,13 +158,16 @@
       "y": 146,
       "w": 300,
       "h": 30,
-      "text": "Calentamiento de cojinete de empuje",
+      "text": {
+        "es": "Calentamiento de cojinete de empuje",
+        "en": "Thrust bearing heating"
+      },
       "tag": "G1.SimCojinete",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -150,10 +177,13 @@
       "y": 182,
       "w": 300,
       "h": 56,
-      "text": "Sube la temperatura del cojinete: alarma a 75 °C y disparo por temperatura a 85 °C.",
+      "text": {
+        "es": "Sube la temperatura del cojinete: alarma a 75 °C y disparo por temperatura a 85 °C.",
+        "en": "Bearing temperature rises: alarm at 75 °C and temperature trip at 85 °C."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -169,17 +199,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -189,14 +228,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -207,13 +246,16 @@
       "y": 252,
       "w": 300,
       "h": 30,
-      "text": "Fallo del agua de refrigeración",
+      "text": {
+        "es": "Fallo del agua de refrigeración",
+        "en": "Cooling water failure"
+      },
       "tag": "G1.SimRefrigeracion",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -223,10 +265,13 @@
       "y": 288,
       "w": 300,
       "h": 56,
-      "text": "Cae el caudal de refrigeración: fallo a los 5 s, suben todas las temperaturas y acaba en disparo.",
+      "text": {
+        "es": "Cae el caudal de refrigeración: fallo a los 5 s, suben todas las temperaturas y acaba en disparo.",
+        "en": "The cooling flow rate drops: failure after 5 s, all temperatures rise and it ends in tripping."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -242,17 +287,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -262,14 +316,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -280,13 +334,16 @@
       "y": 358,
       "w": 300,
       "h": 30,
-      "text": "Desequilibrio / vibración",
+      "text": {
+        "es": "Desequilibrio / vibración",
+        "en": "Imbalance/vibration"
+      },
       "tag": "G1.SimVibracion",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -296,10 +353,13 @@
       "y": 394,
       "w": 300,
       "h": 56,
-      "text": "Vibración por encima de 7,1 mm/s: alarma y disparo por vibración muy alta.",
+      "text": {
+        "es": "Vibración por encima de 7,1 mm/s: alarma y disparo por vibración muy alta.",
+        "en": "Vibration above 7.1 mm/s: alarm and trip due to very high vibration."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -315,17 +375,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -335,14 +404,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -353,13 +422,16 @@
       "y": 464,
       "w": 300,
       "h": 30,
-      "text": "Selector en LOCAL",
+      "text": {
+        "es": "Selector en LOCAL",
+        "en": "Selector in LOCAL"
+      },
       "tag": "G1.SimLocal",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -369,10 +441,13 @@
       "y": 500,
       "w": 300,
       "h": 56,
-      "text": "El grupo pasa a mando local: el SCADA no puede arrancar, parar ni cambiar consignas.",
+      "text": {
+        "es": "El grupo pasa a mando local: el SCADA no puede arrancar, parar ni cambiar consignas.",
+        "en": "The unit passes to local control: the SCADA cannot start, stop or change setpoints."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -382,8 +457,8 @@
       "y": 110,
       "w": 455,
       "h": 470,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -395,10 +470,13 @@
       "y": 116,
       "w": 431,
       "h": 20,
-      "text": "GRUPO 2",
+      "text": {
+        "es": "GRUPO 2",
+        "en": "unit 2"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -414,17 +492,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -434,14 +521,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -452,13 +539,16 @@
       "y": 146,
       "w": 300,
       "h": 30,
-      "text": "Calentamiento de cojinete de empuje",
+      "text": {
+        "es": "Calentamiento de cojinete de empuje",
+        "en": "Thrust bearing heating"
+      },
       "tag": "G2.SimCojinete",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -468,10 +558,13 @@
       "y": 182,
       "w": 300,
       "h": 56,
-      "text": "Sube la temperatura del cojinete: alarma a 75 °C y disparo por temperatura a 85 °C.",
+      "text": {
+        "es": "Sube la temperatura del cojinete: alarma a 75 °C y disparo por temperatura a 85 °C.",
+        "en": "Bearing temperature rises: alarm at 75 °C and temperature trip at 85 °C."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -487,17 +580,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -507,14 +609,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -525,13 +627,16 @@
       "y": 252,
       "w": 300,
       "h": 30,
-      "text": "Fallo del agua de refrigeración",
+      "text": {
+        "es": "Fallo del agua de refrigeración",
+        "en": "Cooling water failure"
+      },
       "tag": "G2.SimRefrigeracion",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -541,10 +646,13 @@
       "y": 288,
       "w": 300,
       "h": 56,
-      "text": "Cae el caudal de refrigeración: fallo a los 5 s, suben todas las temperaturas y acaba en disparo.",
+      "text": {
+        "es": "Cae el caudal de refrigeración: fallo a los 5 s, suben todas las temperaturas y acaba en disparo.",
+        "en": "The cooling flow rate drops: failure after 5 s, all temperatures rise and it ends in tripping."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -560,17 +668,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -580,14 +697,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -598,13 +715,16 @@
       "y": 358,
       "w": 300,
       "h": 30,
-      "text": "Desequilibrio / vibración",
+      "text": {
+        "es": "Desequilibrio / vibración",
+        "en": "Imbalance/vibration"
+      },
       "tag": "G2.SimVibracion",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -614,10 +734,13 @@
       "y": 394,
       "w": 300,
       "h": 56,
-      "text": "Vibración por encima de 7,1 mm/s: alarma y disparo por vibración muy alta.",
+      "text": {
+        "es": "Vibración por encima de 7,1 mm/s: alarma y disparo por vibración muy alta.",
+        "en": "Vibration above 7.1 mm/s: alarm and trip due to very high vibration."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -633,17 +756,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -653,14 +785,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -671,13 +803,16 @@
       "y": 464,
       "w": 300,
       "h": 30,
-      "text": "Selector en LOCAL",
+      "text": {
+        "es": "Selector en LOCAL",
+        "en": "Selector in LOCAL"
+      },
       "tag": "G2.SimLocal",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -687,10 +822,13 @@
       "y": 500,
       "w": 300,
       "h": 56,
-      "text": "El grupo pasa a mando local: el SCADA no puede arrancar, parar ni cambiar consignas.",
+      "text": {
+        "es": "El grupo pasa a mando local: el SCADA no puede arrancar, parar ni cambiar consignas.",
+        "en": "The unit passes to local control: the SCADA cannot start, stop or change setpoints."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -700,8 +838,8 @@
       "y": 110,
       "w": 450,
       "h": 470,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -713,10 +851,13 @@
       "y": 116,
       "w": 426,
       "h": 20,
-      "text": "SERVICIOS COMUNES",
+      "text": {
+        "es": "SERVICIOS COMUNES",
+        "en": "COMMON SERVICES"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -732,17 +873,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -752,14 +902,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -770,13 +920,16 @@
       "y": 146,
       "w": 300,
       "h": 30,
-      "text": "Avenida en el río",
+      "text": {
+        "es": "Avenida en el río",
+        "en": "Avenue on the river"
+      },
       "tag": "SSCC.SimAvenida",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -786,10 +939,13 @@
       "y": 182,
       "w": 300,
       "h": 80,
-      "text": "Entrada de 135 m³/s: sube el embalse, abre el aliviadero en automático y salta la alarma de avenida.",
+      "text": {
+        "es": "Entrada de 135 m³/s: sube el embalse, abre el aliviadero en automático y salta la alarma de avenida.",
+        "en": "Inlet of 135 m³/s: the reservoir rises, the spillway opens automatically and the flood alarm goes off."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -805,17 +961,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -825,14 +990,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -843,13 +1008,16 @@
       "y": 286,
       "w": 300,
       "h": 30,
-      "text": "Pérdida de red 66 kV",
+      "text": {
+        "es": "Pérdida de red 66 kV",
+        "en": "Network loss 66 kV"
+      },
       "tag": "SSCC.SimFalloRed",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -859,10 +1027,13 @@
       "y": 322,
       "w": 300,
       "h": 80,
-      "text": "Abre el 52L: rechazo de carga, sobrevelocidad y disparo de los grupos. Arranca el diésel.",
+      "text": {
+        "es": "Abre el 52L: rechazo de carga, sobrevelocidad y disparo de los grupos. Arranca el diésel.",
+        "en": "Open the 52L: load rejection, overspeed and unit triggering. Start the diesel."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -878,17 +1049,26 @@
       "texts": [
         {
           "value": "true",
-          "text": "ACTIVO"
+          "text": {
+            "es": "ACTIVO",
+            "en": "ACTIVE"
+          }
         },
         {
           "value": "false",
-          "text": "NORMAL"
+          "text": {
+            "es": "NORMAL",
+            "en": "NORMAL"
+          }
         }
       ],
-      "default_text": "—",
-      "color": "@Paro",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
+      "color": "#9aa3ab",
       "text_color": "#ffffff",
-      "border_color": "@Paro",
+      "border_color": "#9aa3ab",
       "dynamics": {
         "states": [
           {
@@ -898,14 +1078,14 @@
               "value": true
             },
             "style": {
-              "color": "@Disparo",
-              "border_color": "@Disparo"
+              "color": "#d32f2f",
+              "border_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -916,13 +1096,16 @@
       "y": 426,
       "w": 300,
       "h": 30,
-      "text": "Fallo del rectificador-cargador",
+      "text": {
+        "es": "Fallo del rectificador-cargador",
+        "en": "Rectifier-charger failure"
+      },
       "tag": "SSCC.SimFalloCargador",
       "action": "toggle",
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Aviso",
+      "border_color": "#e89a1c",
       "text_color": "#7a4b00"
     },
     {
@@ -932,10 +1115,13 @@
       "y": 462,
       "w": 300,
       "h": 80,
-      "text": "Las baterías se descargan lentamente: alarma a 110 V y crítica a 105 V.",
+      "text": {
+        "es": "Las baterías se descargan lentamente: alarma a 110 V y crítica a 105 V.",
+        "en": "Batteries discharge slowly: alarm at 110 V and critical at 105 V."
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -945,8 +1131,8 @@
       "y": 590,
       "w": 1380,
       "h": 240,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -958,10 +1144,13 @@
       "y": 596,
       "w": 1356,
       "h": 20,
-      "text": "EJERCICIO RECOMENDADO",
+      "text": {
+        "es": "EJERCICIO RECOMENDADO",
+        "en": "RECOMMENDED EXERCISE"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -971,10 +1160,13 @@
       "y": 626,
       "w": 1340,
       "h": 34,
-      "text": "1. Comprueba en «Grupo 1» que está LISTO PARA ARRANCAR y pulsa ARRANCAR: sigue los 6 pasos de la secuencia hasta EN CARGA.",
+      "text": {
+        "es": "1. Comprueba en «Grupo 1» que está LISTO PARA ARRANCAR y pulsa ARRANCAR: sigue los 6 pasos de la secuencia hasta EN CARGA.",
+        "en": "1. Check \"unit 1\" that it is READY TO START and press START: follow the 6 steps of the sequence until CHARGING."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -984,10 +1176,13 @@
       "y": 664,
       "w": 1340,
       "h": 34,
-      "text": "2. Cambia la consigna de potencia a 3,5 MW y observa la alarma de zona rugosa (distribuidor entre 25 y 45 %). Vuelve a 8 MW.",
+      "text": {
+        "es": "2. Cambia la consigna de potencia a 3,5 MW y observa la alarma de zona rugosa (distribuidor entre 25 y 45 %). Vuelve a 8 MW.",
+        "en": "2. Change the power setpoint to 3.5 MW and observe the rough zone alarm (guide vanes between 25 and 45%). Returns to 8 MW."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -997,10 +1192,13 @@
       "y": 702,
       "w": 1340,
       "h": 34,
-      "text": "3. Activa «Calentamiento de cojinete» del Grupo 1: reconoce la alarma de temperatura y espera al disparo por protección.",
+      "text": {
+        "es": "3. Activa «Calentamiento de cojinete» del Grupo 1: reconoce la alarma de temperatura y espera al disparo por protección.",
+        "en": "3. Activate \"Bearing heating\" of unit 1: recognize the temperature alarm and wait for the protection trip."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1010,10 +1208,13 @@
       "y": 740,
       "w": 1340,
       "h": 34,
-      "text": "4. Desactiva la avería, espera a que el grupo se pare y pulsa REARME 86. Vuelve a arrancar.",
+      "text": {
+        "es": "4. Desactiva la avería, espera a que el grupo se pare y pulsa REARME 86. Vuelve a arrancar.",
+        "en": "4. Deactivate the fault, wait for the unit to stop and press RESET 86. Start again."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1023,10 +1224,13 @@
       "y": 778,
       "w": 1340,
       "h": 34,
-      "text": "5. Provoca una «Pérdida de red 66 kV» con ambos grupos en carga. Restablece, cierra el 52L desde el unifilar y rearma los grupos.",
+      "text": {
+        "es": "5. Provoca una «Pérdida de red 66 kV» con ambos grupos en carga. Restablece, cierra el 52L desde el unifilar y rearma los grupos.",
+        "en": "5. Causes a “66 kV grid loss” with both units on load. Reset, close the 52L from the single line and rearm the units."
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     }
   ],

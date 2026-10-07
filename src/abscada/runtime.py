@@ -23,6 +23,13 @@ class Runtime:
     def __init__(self, project):
         project.validate()
         self.project = project
+        from .project_languages import default_language, languages
+        from .i18n import _read_settings
+        self.language = default_language(project)
+        if project.manifest.get('initial_language', 'project') in {'station', 'user'}:
+            station = _read_settings().get('project_station_languages', {}).get(str(project.root.resolve()), default_language(project))
+            if station in languages(project):
+                self.language = station
         self.tags = project.tags()
         self._samples = {name: Sample(t["initial"], "uncertain" if t.get("binding") else "good", time.time())
                          for name, t in self.tags.items()}
@@ -46,6 +53,19 @@ class Runtime:
         audited = self.security.enabled or project.opcua_server.get("enabled", False)
         self.operations = Operations(project) if audited or project.alarms["items"] or project.historian.get("tags") or any(f["variables"] for f in project.historian.get("files", [])) or database_path(project).exists() else None
         self.opcua = None
+
+    def set_language(self, code, *, persist=True):
+        from .project_languages import languages
+        if code not in languages(self.project):
+            raise ValueError(f'Idioma de proyecto desconocido: {code}')
+        self.language = code
+        if persist and self.project.manifest.get('initial_language') in {'station', 'user'}:
+            from .i18n import _read_settings, settings_path
+            import json
+            settings = _read_settings()
+            settings.setdefault('project_station_languages', {})[str(self.project.root.resolve())] = code
+            path = settings_path(); path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(settings, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
 
     def snapshot(self):
         with self._lock:
@@ -81,6 +101,11 @@ class Runtime:
                 self.operations.audit("login_failed", name or "", actor=name or "", detail=str(exc))
             raise
         self.session = session
+        if self.project.manifest.get('initial_language') == 'user':
+            account = self.security.store.find(session.user)
+            preferred = (account or {}).get('language')
+            if preferred in self.project.manifest.get('languages', ['es']):
+                self.set_language(preferred, persist=False)
         self.audit("login", session.user, session)
         return session
 

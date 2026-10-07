@@ -1,8 +1,8 @@
 # Laboratorio SCADA
 
-Proyecto de demostración editable: **21 pantallas, 33 variables agrupadas, 2 conexiones independientes, 1 faceplate local, 1 biblioteca con 2 plantillas, 3 registros, 3 gráficas, 6 alarmas y 5 scripts**. Incluye todos los tipos de controles gráficos y acciones de botón disponibles actualmente.
+Proyecto de demostración editable: **21 pantallas, 33 variables agrupadas, 2 conexiones independientes, 1 faceplate local, 1 biblioteca con 2 plantillas, 3 registros, 3 gráficas, 6 alarmas y 5 scripts**. Incluye un recorrido por los controles gráficos y las principales acciones de botón.
 
-**Bibliotecas…** muestra el vínculo `equipos` a «Equipos de proceso 1.0.0». La unidad Siemens de la pantalla 05 usa `equipos__unidad`; la interna utiliza la plantilla local. También puedes insertar `equipos__valvula`. El proyecto editable de autoría está en `examples/library_author`; consulta [cómo publicar y actualizar](../../docs/FACEPLATE_LIBRARIES.md).
+**Bibliotecas…** muestra el vínculo `equipos` a «Equipos de proceso 1.0.0». La unidad Siemens de la pantalla 05 usa `equipos__unidad`; la interna utiliza la plantilla local. También puedes insertar `equipos__valvula`. El proyecto editable de autoría está en `examples/library_author`; consulta [cómo publicar y actualizar](../../docs/STUDIO.md).
 
 ## Arranque
 
@@ -47,7 +47,7 @@ Este proceso independiente sirve **S7 TCP en 127.0.0.1:1102** y **Modbus TCP en 
 | 11 · Eventos y retorno | Consulta transiciones; «Ver ocurrencias» muestra entrada, retorno y reconocimiento de cada ocurrencia. Filtros, periodo y exportación CSV. |
 | 12 · Scripts y tareas | Fecha de inicio, contador periódico, aperturas de pantalla, script por botón y restablecimiento del banco interno. Las ejecuciones se consultan en Studio → Scripts y tareas. |
 
-La variable `Sistema.Operador` es una etiqueta demostrativa editable; **no representa autenticación ni cambia automáticamente el actor introducido al reconocer alarmas**.
+La variable `Sistema.Operador` es una etiqueta demostrativa editable; **no representa autenticación**. Con seguridad activada, el actor del ACK es el usuario de la sesión; sin ella, se introduce como texto libre.
 
 ## Variables y comunicaciones
 
@@ -114,7 +114,7 @@ Los scripts no escriben PLCs. El estado de los contadores de scripts se reinicia
 
 ## Edición, guardado y reproducción
 
-Selecciona pantallas desde el explorador de Studio; la plantilla está en Faceplates → unidad. Inspecciona dinámicas en Ajustes avanzados, paleta en su editor y enlaces en Variables. **Ctrl+S guarda el proyecto completo**. Versiones permite activar Git local; los datos de Runtime no forman parte del diseño. Haz una copia de esta carpeta para conservar tu variante.
+Selecciona pantallas desde el explorador de Studio; la plantilla está en Librerías → Proyecto → unidad. Inspecciona estados en Propiedades dinámicas, colores explícitos en el inspector y enlaces en Variables. **Ctrl+S guarda el proyecto completo**. Versiones permite activar Git local; los datos de Runtime no forman parte del diseño. Haz una copia de esta carpeta para conservar tu variante.
 
 Para generar otra copia limpia sin sobrescribir un proyecto existente:
 
@@ -123,3 +123,7 @@ Para generar otra copia limpia sin sobrescribir un proyecto existente:
 ```
 
 Las pruebas de `tests/test_showcase.py` comprueban cobertura de controles/acciones, reproducción del proyecto, scripts, lectura/escritura S7 y Modbus por TCP, independencia ante desconexión e histórico entre días. `tools/capture_showcase.py` genera capturas de todas las pantallas completas sin iniciar adquisición ni escribir datos en este proyecto.
+
+## Idiomas y colores
+
+El proyecto incluye español e inglés. Cambia el idioma de edición en Studio y el de operación desde Runtime; las traducciones se guardan junto a cada texto. Cada objeto utiliza colores HEX explícitos, editables en sus propiedades. Véase [la guía de Studio](../../docs/STUDIO.md#idiomas).

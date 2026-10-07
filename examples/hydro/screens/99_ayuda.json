@@ -1,5 +1,8 @@
 {
-  "title": "Ayuda de operación",
+  "title": {
+    "es": "Ayuda de operación",
+    "en": "Operation help"
+  },
   "width": 760,
   "height": 520,
   "background": "#ffffff",
@@ -14,10 +17,13 @@
       "y": 18,
       "w": 700,
       "h": 30,
-      "text": "CH VALDEARENAS · AYUDA RÁPIDA",
+      "text": {
+        "es": "CH VALDEARENAS · AYUDA RÁPIDA",
+        "en": "CH VALDEARENAS · FAST HELP"
+      },
       "font_size": 18,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 62,
       "w": 712,
       "h": 40,
-      "text": "• Cabecera: potencia, nivel, frecuencia, energía del día y alarmas por área en rojo.",
+      "text": {
+        "es": "• Cabecera: potencia, nivel, frecuencia, energía del día y alarmas por área en rojo.",
+        "en": "• Header: power, level, frequency, energy of the day and alarms per area in red."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -40,10 +49,13 @@
       "y": 104,
       "w": 712,
       "h": 40,
-      "text": "• Grupo 1 / 2: estado de la secuencia, mando (arrancar, parar, rearme 86), consignas P y Q.",
+      "text": {
+        "es": "• Grupo 1 / 2: estado de la secuencia, mando (arrancar, parar, rearme 86), consignas P y Q.",
+        "en": "• unit 1 / 2: sequence status, command (start, stop, reset 86), P and Q setpoints."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -53,10 +65,13 @@
       "y": 146,
       "w": 712,
       "h": 40,
-      "text": "• Las órdenes son pulsos: el PLC las borra al aceptarlas. Sin comunicación, el dato se marca «!».",
+      "text": {
+        "es": "• Las órdenes son pulsos: el PLC las borra al aceptarlas. Sin comunicación, el dato se marca «!».",
+        "en": "• The orders are pulses: the PLC deletes them when accepting them. Without communication, the data is marked \"!\"."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -66,10 +81,13 @@
       "y": 188,
       "w": 712,
       "h": 40,
-      "text": "• Parada de emergencia: pide confirmación y bloquea el grupo hasta el rearme.",
+      "text": {
+        "es": "• Parada de emergencia: pide confirmación y bloquea el grupo hasta el rearme.",
+        "en": "• Emergency stop: requests confirmation and blocks the unit until rearming."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -79,10 +97,13 @@
       "y": 230,
       "w": 712,
       "h": 40,
-      "text": "• Unifilar: rojo = interruptor cerrado, verde = abierto; azul = en tensión.",
+      "text": {
+        "es": "• Unifilar: rojo = interruptor cerrado, verde = abierto; azul = en tensión.",
+        "en": "• Single-wire: red = switch closed, green = open; blue = in tension."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -92,10 +113,13 @@
       "y": 272,
       "w": 712,
       "h": 40,
-      "text": "• Control de planta: reparto de potencia y regulación del nivel del embalse.",
+      "text": {
+        "es": "• Control de planta: reparto de potencia y regulación del nivel del embalse.",
+        "en": "• Plant control: power distribution and regulation of the reservoir level."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -105,10 +129,13 @@
       "y": 314,
       "w": 712,
       "h": 40,
-      "text": "• Alarmas: reconocer (ACK) con operador y comentario; filtros e histórico CSV.",
+      "text": {
+        "es": "• Alarmas: reconocer (ACK) con operador y comentario; filtros e histórico CSV.",
+        "en": "• Alarms: acknowledge (ACK) with operator and comment; filters and CSV history."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -118,10 +145,13 @@
       "y": 356,
       "w": 712,
       "h": 40,
-      "text": "• Ventanas: «Mando…» en la ficha de un grupo o un clic en una bomba abre su ventana; arrástrala a otro monitor.",
+      "text": {
+        "es": "• Ventanas: «Mando…» en la ficha de un grupo o un clic en una bomba abre su ventana; arrástrala a otro monitor.",
+        "en": "• Windows: “Command…” on a unit tab or clicking on a bomb opens its window; drag it to another monitor."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -131,10 +161,13 @@
       "y": 398,
       "w": 712,
       "h": 40,
-      "text": "• Simulación: el PLC simulado se arranca con  tools/hydro_plc.py.",
+      "text": {
+        "es": "• Simulación: el PLC simulado se arranca con  tools/hydro_plc.py.",
+        "en": "• Simulation: The simulated PLC is started with tools/hydro_plc.py."
+      },
       "font_size": 14,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -144,12 +177,15 @@
       "y": 456,
       "w": 176,
       "h": 40,
-      "text": "Cerrar",
+      "text": {
+        "es": "Cerrar",
+        "en": "Close"
+      },
       "font_size": 13,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "action": "close_popup"
     }
   ],

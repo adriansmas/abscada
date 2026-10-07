@@ -30,7 +30,7 @@ Para el integrador o el responsable de la planta. Aplica la defensa en profundid
    - Lectura anónima desactivada.
    - Una cuenta abSCADA por sistema cliente, con un rol que tenga *Acceso por OPC UA* y, solo si debe escribir, *Mandos y consignas*.
    - Acepta los certificados de cliente en Proyecto → Certificados OPC UA **después de comprobar la huella** con el administrador del otro sistema.
-3. **Conexiones OPC UA a PLC**: política con firma y cifrado y usuario del PLC. La contraseña se guarda cifrada en el puesto, nunca en el proyecto. Acepta el certificado del PLC comprobando su huella en TIA Portal.
+3. **Conexiones OPC UA a PLC**: política con firma y cifrado y usuario del PLC. La contraseña se guarda en `secrets.json` del proyecto, codificada en base64 y sin cifrar. Protege la carpeta y sus versiones como información confidencial. Acepta el certificado del PLC comprobando su huella en TIA Portal.
 4. **Scripts**: revísalos como código. Quien puede editar el proyecto puede ejecutar código en el puesto.
 5. **Auditoría**: haz copia del archivo con Herramientas → Copia de seguridad de los registros y revisa los inicios de sesión fallidos y las órdenes denegadas.
 

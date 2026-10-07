@@ -1,8 +1,11 @@
 {
-  "title": "Vista general de la cervecería",
+  "title": {
+    "es": "Vista general de la cervecería",
+    "en": "General view of the brewery"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dfe1e2",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "VISTA GENERAL DE LA CERVECERÍA",
+      "text": {
+        "es": "VISTA GENERAL DE LA CERVECERÍA",
+        "en": "BREWERY OVERVIEW"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Sala de cocción de 10 hl · 3 fermentadores cilindrocónicos de 12 hl · PLC por OPC UA cifrado",
+      "text": {
+        "es": "Sala de cocción de 10 hl · 3 fermentadores cilindrocónicos de 12 hl · PLC por OPC UA cifrado",
+        "en": "10 hl brewhouse · three 12 hl cylindroconical fermenters · PLC via encrypted OPC UA"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -40,8 +49,8 @@
       "y": 60,
       "w": 1380,
       "h": 320,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -53,10 +62,13 @@
       "y": 86,
       "w": 120,
       "h": 20,
-      "text": "Agua caliente",
+      "text": {
+        "es": "Agua caliente",
+        "en": "hot water"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -67,7 +79,7 @@
       "w": 80,
       "h": 160,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -80,7 +92,7 @@
       "tag": "Servicios.NivelHLT",
       "min": 0,
       "max": 30,
-      "color": "@Agua",
+      "color": "#4f86b8",
       "dynamics": {}
     },
     {
@@ -90,19 +102,22 @@
       "y": 274,
       "w": 80,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.NivelHLT",
       "unit": "hl",
       "decimals": 1,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -113,19 +128,22 @@
       "y": 300,
       "w": 80,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.TempHLT",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -136,10 +154,13 @@
       "y": 86,
       "w": 150,
       "h": 20,
-      "text": "Macerador",
+      "text": {
+        "es": "Macerador",
+        "en": "Mash tun"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -150,7 +171,7 @@
       "w": 110,
       "h": 160,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -163,7 +184,7 @@
       "tag": "Cocina.NivelMT",
       "min": 0,
       "max": 12,
-      "color": "@Mosto",
+      "color": "#c2872b",
       "dynamics": {}
     },
     {
@@ -173,19 +194,22 @@
       "y": 274,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.NivelMT",
       "unit": "hl",
       "decimals": 1,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -196,19 +220,22 @@
       "y": 300,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.TempMT",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -219,10 +246,13 @@
       "y": 86,
       "w": 150,
       "h": 20,
-      "text": "Cuba filtro",
+      "text": {
+        "es": "Cuba filtro",
+        "en": "Lauter tun"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -233,7 +263,7 @@
       "w": 110,
       "h": 160,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -246,7 +276,7 @@
       "tag": "Cocina.NivelLT",
       "min": 0,
       "max": 14,
-      "color": "@Mosto",
+      "color": "#c2872b",
       "dynamics": {}
     },
     {
@@ -256,19 +286,22 @@
       "y": 274,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.NivelLT",
       "unit": "hl",
       "decimals": 1,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -279,10 +312,13 @@
       "y": 86,
       "w": 150,
       "h": 20,
-      "text": "Hervidor / whirlpool",
+      "text": {
+        "es": "Hervidor / whirlpool",
+        "en": "Kettle / whirlpool"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -293,7 +329,7 @@
       "w": 110,
       "h": 160,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -306,7 +342,7 @@
       "tag": "Cocina.NivelBK",
       "min": 0,
       "max": 14,
-      "color": "@Mosto",
+      "color": "#c2872b",
       "dynamics": {}
     },
     {
@@ -316,19 +352,22 @@
       "y": 274,
       "w": 110,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.NivelBK",
       "unit": "hl",
       "decimals": 1,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -339,19 +378,22 @@
       "y": 300,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.TempBK",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -362,7 +404,7 @@
       "y": 126,
       "w": 90,
       "h": 1,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 7,
       "arrows": "end",
       "dynamics": {
@@ -375,7 +417,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Agua"
+              "stroke_color": "#4f86b8"
             }
           }
         ]
@@ -398,7 +440,7 @@
       "y": 76,
       "w": 335,
       "h": 40,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 5,
       "arrows": "end",
       "dynamics": {
@@ -411,7 +453,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Agua"
+              "stroke_color": "#4f86b8"
             }
           }
         ]
@@ -446,7 +488,7 @@
       "y": 256,
       "w": 80,
       "h": 1,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 7,
       "arrows": "end",
       "dynamics": {
@@ -459,7 +501,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Mosto"
+              "stroke_color": "#c2872b"
             }
           }
         ]
@@ -482,7 +524,7 @@
       "y": 256,
       "w": 80,
       "h": 1,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 7,
       "arrows": "end",
       "dynamics": {
@@ -495,7 +537,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Mosto"
+              "stroke_color": "#c2872b"
             }
           }
         ]
@@ -519,7 +561,7 @@
       "w": 54,
       "h": 96,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -529,7 +571,7 @@
       "y": 156,
       "w": 1,
       "h": 84,
-      "stroke_color": "@Glicol",
+      "stroke_color": "#3c8fa6",
       "stroke_width": 2,
       "points": [
         [
@@ -549,7 +591,7 @@
       "y": 156,
       "w": 1,
       "h": 84,
-      "stroke_color": "@Glicol",
+      "stroke_color": "#3c8fa6",
       "stroke_width": 2,
       "points": [
         [
@@ -569,7 +611,7 @@
       "y": 156,
       "w": 1,
       "h": 84,
-      "stroke_color": "@Glicol",
+      "stroke_color": "#3c8fa6",
       "stroke_width": 2,
       "points": [
         [
@@ -589,7 +631,7 @@
       "y": 156,
       "w": 1,
       "h": 84,
-      "stroke_color": "@Glicol",
+      "stroke_color": "#3c8fa6",
       "stroke_width": 2,
       "points": [
         [
@@ -609,7 +651,7 @@
       "y": 156,
       "w": 1,
       "h": 84,
-      "stroke_color": "@Glicol",
+      "stroke_color": "#3c8fa6",
       "stroke_width": 2,
       "points": [
         [
@@ -629,10 +671,13 @@
       "y": 124,
       "w": 94,
       "h": 20,
-      "text": "Enfriador",
+      "text": {
+        "es": "Enfriador",
+        "en": "Cooler"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "center"
     },
     {
@@ -642,19 +687,22 @@
       "y": 256,
       "w": 82,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.TempMostoSalida",
       "unit": "°C",
       "decimals": 1,
       "font_size": 13,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -665,7 +713,7 @@
       "y": 210,
       "w": 60,
       "h": 46,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 7,
       "arrows": "end",
       "dynamics": {
@@ -678,7 +726,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Mosto"
+              "stroke_color": "#c2872b"
             }
           }
         ]
@@ -709,7 +757,7 @@
       "y": 210,
       "w": 76,
       "h": 1,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 7,
       "arrows": "end",
       "dynamics": {
@@ -722,7 +770,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Cerveza"
+              "stroke_color": "#d8a23e"
             }
           }
         ]
@@ -745,10 +793,13 @@
       "y": 184,
       "w": 80,
       "h": 20,
-      "text": "→ bodega",
+      "text": {
+        "es": "→ bodega",
+        "en": "→ cellar"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -758,7 +809,7 @@
       "y": 332,
       "w": 1,
       "h": 30,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 4,
       "arrows": "end",
       "dynamics": {
@@ -771,7 +822,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Vapor"
+              "stroke_color": "#9a6fb0"
             }
           }
         ]
@@ -794,7 +845,7 @@
       "y": 332,
       "w": 1,
       "h": 30,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#b3b9be",
       "stroke_width": 4,
       "arrows": "end",
       "dynamics": {
@@ -807,7 +858,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Vapor"
+              "stroke_color": "#9a6fb0"
             }
           }
         ]
@@ -830,10 +881,13 @@
       "y": 342,
       "w": 60,
       "h": 18,
-      "text": "vapor",
+      "text": {
+        "es": "vapor",
+        "en": "steam"
+      },
       "font_size": 10,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -843,10 +897,13 @@
       "y": 342,
       "w": 60,
       "h": 18,
-      "text": "vapor",
+      "text": {
+        "es": "vapor",
+        "en": "steam"
+      },
       "font_size": 10,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -856,8 +913,8 @@
       "y": 70,
       "w": 410,
       "h": 300,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -869,10 +926,13 @@
       "y": 76,
       "w": 386,
       "h": 20,
-      "text": "COCCIÓN EN CURSO",
+      "text": {
+        "es": "COCCIÓN EN CURSO",
+        "en": "BREWING IN PROGRESS"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -886,61 +946,103 @@
       "font_size": 14,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Paro",
-      "border_color": "@Paro",
-      "default_text": "SIN COMUNICACIÓN",
+      "color": "#9ba2a8",
+      "border_color": "#9ba2a8",
+      "default_text": {
+        "es": "SIN COMUNICACIÓN",
+        "en": "NO COMMUNICATION"
+      },
       "texts": [
         {
           "value": "0",
-          "text": "REPOSO"
+          "text": {
+            "es": "REPOSO",
+            "en": "REST"
+          }
         },
         {
           "value": "1",
-          "text": "LLENADO DE AGUA"
+          "text": {
+            "es": "LLENADO DE AGUA",
+            "en": "WATER FILLING"
+          }
         },
         {
           "value": "2",
-          "text": "EMPASTE"
+          "text": {
+            "es": "EMPASTE",
+            "en": "MASH-IN"
+          }
         },
         {
           "value": "3",
-          "text": "ESCALÓN 1 · PROTEICO"
+          "text": {
+            "es": "ESCALÓN 1 · PROTEICO",
+            "en": "STEP 1 · PROTEIN REST"
+          }
         },
         {
           "value": "4",
-          "text": "ESCALÓN 2 · SACARIFICACIÓN"
+          "text": {
+            "es": "ESCALÓN 2 · SACARIFICACIÓN",
+            "en": "STEP 2 · SACCHARIFICATION"
+          }
         },
         {
           "value": "5",
-          "text": "ESCALÓN 3 · MASH-OUT"
+          "text": {
+            "es": "ESCALÓN 3 · MASH-OUT",
+            "en": "STEP 3 · MASH-OUT"
+          }
         },
         {
           "value": "6",
-          "text": "TRASIEGO Y RECIRCULACIÓN"
+          "text": {
+            "es": "TRASIEGO Y RECIRCULACIÓN",
+            "en": "TRANSFER AND RECIRCULATION"
+          }
         },
         {
           "value": "7",
-          "text": "FILTRADO Y LAVADO"
+          "text": {
+            "es": "FILTRADO Y LAVADO",
+            "en": "LAUTERING AND SPARGING"
+          }
         },
         {
           "value": "8",
-          "text": "CALENTAMIENTO A EBULLICIÓN"
+          "text": {
+            "es": "CALENTAMIENTO A EBULLICIÓN",
+            "en": "HEATING TO BOILING"
+          }
         },
         {
           "value": "9",
-          "text": "HERVIDO"
+          "text": {
+            "es": "HERVIDO",
+            "en": "BOILING"
+          }
         },
         {
           "value": "10",
-          "text": "WHIRLPOOL"
+          "text": {
+            "es": "WHIRLPOOL",
+            "en": "WHIRLPOOL"
+          }
         },
         {
           "value": "11",
-          "text": "ENFRIADO Y TRASIEGO A FV"
+          "text": {
+            "es": "ENFRIADO Y TRASIEGO A FV",
+            "en": "COOLING AND TRANSFER TO FV"
+          }
         },
         {
           "value": "12",
-          "text": "LIMPIEZA CIP"
+          "text": {
+            "es": "LIMPIEZA CIP",
+            "en": "CIP CLEANING"
+          }
         }
       ],
       "dynamics": {
@@ -953,8 +1055,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "border_color": "@Aviso"
+              "color": "#e89a1c",
+              "border_color": "#e89a1c"
             }
           },
           {
@@ -965,14 +1067,14 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "border_color": "@Marcha"
+              "color": "#2e8b57",
+              "border_color": "#2e8b57"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -983,10 +1085,13 @@
       "y": 147,
       "w": 222,
       "h": 22,
-      "text": "Lote",
+      "text": {
+        "es": "Lote",
+        "en": "Lot"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -996,19 +1101,22 @@
       "y": 144,
       "w": 150,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.Lote",
       "unit": "",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1019,10 +1127,13 @@
       "y": 177,
       "w": 222,
       "h": 22,
-      "text": "Receta",
+      "text": {
+        "es": "Receta",
+        "en": "Recipe"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1032,19 +1143,22 @@
       "y": 174,
       "w": 150,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.RecetaLote",
       "unit": "",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1055,10 +1169,13 @@
       "y": 207,
       "w": 222,
       "h": 22,
-      "text": "Fermentador de destino",
+      "text": {
+        "es": "Fermentador de destino",
+        "en": "Target Fermenter"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1068,19 +1185,22 @@
       "y": 204,
       "w": 150,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.FVLote",
       "unit": "",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1091,10 +1211,13 @@
       "y": 237,
       "w": 222,
       "h": 22,
-      "text": "Tiempo restante del paso",
+      "text": {
+        "es": "Tiempo restante del paso",
+        "en": "Remaining time of step"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1104,19 +1227,22 @@
       "y": 234,
       "w": 150,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.TiempoRestante",
       "unit": "min",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1127,10 +1253,13 @@
       "y": 267,
       "w": 222,
       "h": 22,
-      "text": "Densidad del mosto",
+      "text": {
+        "es": "Densidad del mosto",
+        "en": "Wort gravity"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1140,19 +1269,22 @@
       "y": 264,
       "w": 150,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Cocina.DensidadMosto",
       "unit": "°P",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1166,26 +1298,41 @@
       "tag": "Cocina.Aviso",
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "default_text": "—",
+      "text_color": "#24292e",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "default_text": {
+        "es": "—",
+        "en": "—"
+      },
       "texts": [
         {
           "value": "0",
-          "text": "Sin avisos para el operador"
+          "text": {
+            "es": "Sin avisos para el operador",
+            "en": "No warnings for the operator"
+          }
         },
         {
           "value": "1",
-          "text": "Añade la malta al macerador y confirma"
+          "text": {
+            "es": "Añade la malta al macerador y confirma",
+            "en": "Add the malt to the mash tun and confirm"
+          }
         },
         {
           "value": "2",
-          "text": "Añade el lúpulo de amargor y confirma"
+          "text": {
+            "es": "Añade el lúpulo de amargor y confirma",
+            "en": "Add the bittering hops and confirm"
+          }
         },
         {
           "value": "3",
-          "text": "Añade el lúpulo aromático y confirma"
+          "text": {
+            "es": "Añade el lúpulo aromático y confirma",
+            "en": "Add the aromatic hops and confirm"
+          }
         }
       ],
       "dynamics": {
@@ -1198,8 +1345,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "border_color": "@Aviso",
+              "color": "#e89a1c",
+              "border_color": "#e89a1c",
               "text_color": "#ffffff"
             }
           }
@@ -1213,11 +1360,14 @@
       "y": 336,
       "w": 150,
       "h": 28,
-      "text": "Sala de cocción →",
+      "text": {
+        "es": "Sala de cocción →",
+        "en": "Brewhouse →"
+      },
       "font_size": 12,
       "bold": true,
-      "color": "@Mando",
-      "border_color": "@Mando",
+      "color": "#2b6cb0",
+      "border_color": "#2b6cb0",
       "text_color": "#ffffff",
       "action": "screen",
       "screen": "20_cocina",
@@ -1230,10 +1380,13 @@
       "y": 388,
       "w": 200,
       "h": 20,
-      "text": "FV1 · 12 hl",
+      "text": {
+        "es": "FV1 · 12 hl",
+        "en": "FV1 12 hl"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1271,10 +1424,13 @@
       "y": 388,
       "w": 200,
       "h": 20,
-      "text": "FV2 · 12 hl",
+      "text": {
+        "es": "FV2 · 12 hl",
+        "en": "FV2 · 12 hl"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1312,10 +1468,13 @@
       "y": 388,
       "w": 200,
       "h": 20,
-      "text": "FV3 · 12 hl",
+      "text": {
+        "es": "FV3 · 12 hl",
+        "en": "FV3 12 hl"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1353,8 +1512,8 @@
       "y": 654,
       "w": 970,
       "h": 176,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eeefef",
+      "stroke_color": "#b8bdc1",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -1366,10 +1525,13 @@
       "y": 660,
       "w": 946,
       "h": 20,
-      "text": "SERVICIOS",
+      "text": {
+        "es": "SERVICIOS",
+        "en": "SERVICES"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -1379,10 +1541,13 @@
       "y": 691,
       "w": 324,
       "h": 22,
-      "text": "Agua caliente",
+      "text": {
+        "es": "Agua caliente",
+        "en": "hot water"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1392,19 +1557,22 @@
       "y": 688,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.TempHLT",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1415,10 +1583,13 @@
       "y": 735,
       "w": 324,
       "h": 22,
-      "text": "Presión de vapor",
+      "text": {
+        "es": "Presión de vapor",
+        "en": "Vapor pressure"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1428,19 +1599,22 @@
       "y": 732,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.PresionVapor",
       "unit": "bar",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -1451,9 +1625,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           }
         ]
@@ -1466,10 +1640,13 @@
       "y": 779,
       "w": 324,
       "h": 22,
-      "text": "Agua fría del enfriador",
+      "text": {
+        "es": "Agua fría del enfriador",
+        "en": "Cold water from the cooler"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1479,19 +1656,22 @@
       "y": 776,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.TempAguaFria",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1502,10 +1682,13 @@
       "y": 691,
       "w": 324,
       "h": 22,
-      "text": "Glicol",
+      "text": {
+        "es": "Glicol",
+        "en": "Glycol"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1515,19 +1698,22 @@
       "y": 688,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.TempGlicol",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -1538,9 +1724,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
+              "color": "#d32f2f",
               "text_color": "#ffffff",
-              "border_color": "@Disparo"
+              "border_color": "#d32f2f"
             }
           }
         ]
@@ -1553,10 +1739,13 @@
       "y": 735,
       "w": 324,
       "h": 22,
-      "text": "Nivel de glicol",
+      "text": {
+        "es": "Nivel de glicol",
+        "en": "glycol level"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1566,19 +1755,22 @@
       "y": 732,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Servicios.NivelGlicol",
       "unit": "%",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -1589,9 +1781,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
+              "color": "#e89a1c",
               "text_color": "#ffffff",
-              "border_color": "@Aviso"
+              "border_color": "#e89a1c"
             }
           }
         ]
@@ -1604,10 +1796,13 @@
       "y": 779,
       "w": 324,
       "h": 22,
-      "text": "Lotes cocinados en esta sesión",
+      "text": {
+        "es": "Lotes cocinados en esta sesión",
+        "en": "Batches brewed in this session"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -1617,19 +1812,22 @@
       "y": 776,
       "w": 110,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Sistema.LotesCocinados",
       "unit": "",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },

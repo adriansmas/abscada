@@ -15,7 +15,9 @@ from .operational_config import ALARM_COLUMNS, DEFAULT_ALARM_COLUMNS
 from PySide6.QtCharts import QChart, QChartView, QLineSeries, QDateTimeAxis, QValueAxis
 from .alarms import state
 from .storage import ArchiveReader, database_path, ProjectSampleReader
-from .i18n import tr
+from .i18n import tr, tr_existing
+from .project_languages import resolve, default_language, localized
+from .runtime_language_ui import runtime_ui
 
 READERS = ThreadPoolExecutor(max_workers=3, thread_name_prefix="abscada-query")
 COMMANDS = ThreadPoolExecutor(max_workers=1, thread_name_prefix="abscada-operator")
@@ -49,6 +51,7 @@ def csv_export(parent, rows, columns, filename):
         QMessageBox.warning(parent, tr("Exportación"), str(exc))
 
 
+@runtime_ui
 class AlarmViewer(QWidget):
     def __init__(self, project, runtime=None, config=None):
         super().__init__()
@@ -66,7 +69,7 @@ class AlarmViewer(QWidget):
         allowed = self.config.get("categories", [])
         for category in project.alarms["categories"]:
             if not allowed or category["id"] in allowed:
-                self.category.addItem(category["name"], category["id"])
+                self.category.addItem(self.project_text(category['name']), category['id'])
         self.search = QLineEdit(); self.search.setPlaceholderText(tr("Mensaje, variable o ID…"))
         self.priority = QSpinBox(); self.priority.setRange(1, 1000); self.priority.setPrefix(tr("Prioridad ≥ "))
         self.priority.setValue(self.config.get("min_priority", 1))
@@ -83,7 +86,7 @@ class AlarmViewer(QWidget):
         self.export = QPushButton(tr("CSV")); self.export.clicked.connect(self.export_csv); toolbar.addWidget(self.export)
         layout.addWidget(self.date_controls)
         self.table = QTableWidget(0, 10)
-        self.table.setHorizontalHeaderLabels([label for _,label in ALARM_COLUMNS])
+        self.table.setHorizontalHeaderLabels([tr_existing(label) for _,label in ALARM_COLUMNS])
         self.table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.table.setSelectionMode(QTableWidget.SelectionMode.ExtendedSelection)
         self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -94,7 +97,7 @@ class AlarmViewer(QWidget):
         columns = QToolButton(); columns.setText(tr("Columnas"))
         menu = QMenu(columns)
         for index,(key,title) in enumerate(ALARM_COLUMNS):
-            action = menu.addAction(title); action.setCheckable(True)
+            action = menu.addAction(tr_existing(title)); action.setCheckable(True)
             visible = key in self.config.get("columns",DEFAULT_ALARM_COLUMNS)
             action.setChecked(visible); self.table.setColumnHidden(index,not visible)
             action.toggled.connect(lambda checked, i=index: self.table.setColumnHidden(i,not checked))
@@ -132,6 +135,13 @@ class AlarmViewer(QWidget):
                 self.start.dateTime().toMSecsSinceEpoch()/1000, self.end.dateTime().toMSecsSinceEpoch()/1000)
 
     def poll(self):
+        code = self.runtime.language if self.runtime else default_language(self.project)
+        if getattr(self, 'displayed_language', None) != code:
+            self.displayed_language = code
+            names = {c['id']: self.project_text(c['name']) for c in self.project.alarms['categories']}
+            for index in range(1, self.category.count()):
+                self.category.setItemText(index, names.get(self.category.itemData(index), ''))
+            self.populate()
         pending = getattr(self, 'ack_future', None)
         if pending is not None and pending.done():
             self.ack_future = None
@@ -157,12 +167,30 @@ class AlarmViewer(QWidget):
             self.future = READERS.submit(lambda: (args, self.reader.alarms(*args)))
             self.next_query = time.monotonic()+1
 
+    def project_text(self, value):
+        return resolve(value, self.runtime.language if self.runtime else default_language(self.project), default_language(self.project))
+
+    def translated_rows(self):
+        definitions = {a['id']: a for a in self.project.alarms['items']}
+        result = []
+        for row in self.rows:
+            alarm = dict(row)
+            message = definitions.get(row['alarm_id'], {}).get('message', row['message'])
+            if isinstance(message, str) and message.startswith('{'):
+                try:
+                    message = json.loads(message)
+                except ValueError:
+                    pass
+            alarm['message'] = self.project_text(message)
+            result.append(alarm)
+        return result
+
     def populate(self, *args):
         selected = {item.data(Qt.ItemDataRole.UserRole) for item in self.table.selectedItems()}
         needle = self.search.text().casefold()
-        rows = [r for r in self.rows if needle in f"{r['message']} {r['tag']} {r['alarm_id']}".casefold()]
+        rows = [r for r in self.translated_rows() if needle in f"{r['message']} {r['tag']} {r['alarm_id']}".casefold()]
         self.table.setSortingEnabled(False); self.table.setRowCount(len(rows))
-        names = {c["id"]: c["name"] for c in self.project.alarms["categories"]}
+        names = {c["id"]: self.project_text(c["name"]) for c in self.project.alarms["categories"]}
         colors = {c["id"]: c.get("color", "#d74c4c") for c in self.project.alarms["categories"]}
         samples = self.runtime.snapshot() if self.runtime else {}
         for index, alarm in enumerate(rows):
@@ -218,7 +246,7 @@ class AlarmViewer(QWidget):
     def export_csv(self):
         rows = []
         visible = {self.table.item(r, 0).data(Qt.ItemDataRole.UserRole) for r in range(self.table.rowCount())}
-        for row in self.rows:
+        for row in self.translated_rows():
             if row["id"] in visible:
                 row = dict(row)
                 for key in ("entered_at", "returned_at", "ack_at", "timestamp"):
@@ -259,9 +287,12 @@ class TrendChartView(QChartView):
         self.host.cursor(position.x()/1000)
 
 
+@runtime_ui
 class TrendViewer(QWidget):
     def __init__(self, project, config, runtime=None):
         super().__init__()
+        self.source_config = config
+        config = localized(config, runtime.language if runtime else default_language(project), default_language(project))
         self.project, self.config, self.runtime = project, config, runtime
         self.buffer = {c["tag"]: deque(maxlen=50000) for c in config["curves"]}
         self.tag_types = {name: tag["type"] for name, tag in project.tags().items()}
@@ -294,7 +325,7 @@ class TrendViewer(QWidget):
         now = QDateTime.currentDateTime()
         self.x_axis.setRange(now.addMSecs(-int(config.get("window_seconds",600)*1000)), now)
         self.chart.addAxis(self.x_axis, Qt.AlignmentFlag.AlignBottom)
-        self.axes, self.curve_visible = {}, {}
+        self.axes, self.curve_visible, self.axis_checks = {}, {}, {}
         for axis in config["axes"]:
             widget = QValueAxis(); widget.setTitleText(axis.get("title", axis["id"]))
             widget.setRange(axis.get("min", 0), axis.get("max", 100))
@@ -312,6 +343,7 @@ class TrendViewer(QWidget):
         for axis in config["axes"]:
             check = QCheckBox(axis.get("title", axis["id"]))
             check.setChecked(axis.get("visible", True))
+            self.axis_checks[axis["id"]] = check
             check.toggled.connect(self.axes[axis["id"]].setVisible)
             toggles.addWidget(check)
         layout.addLayout(toggles)
@@ -327,6 +359,18 @@ class TrendViewer(QWidget):
             widget.setEnabled(not self.live.isChecked())
 
     def poll(self):
+        code = self.runtime.language if self.runtime else default_language(self.project)
+        if getattr(self, 'displayed_language', None) != code:
+            self.displayed_language = code
+            self.config = localized(self.source_config, code, default_language(self.project))
+            self.chart.setTitle(self.config['title'])
+            for axis in self.config['axes']:
+                title = axis.get('title', axis['id'])
+                self.axes[axis['id']].setTitleText(title)
+                self.axis_checks[axis['id']].setText(title)
+            for curve in self.config['curves']:
+                self.curve_visible[curve['id']].setText(curve.get('title', curve['tag']))
+            self.draw()
         if self.export_future and self.export_future.done():
             try:
                 count = self.export_future.result()

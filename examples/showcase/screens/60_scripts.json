@@ -1,8 +1,11 @@
 {
-  "title": "Python: inicio, apertura, tarea y botón",
+  "title": {
+    "es": "Python: inicio, apertura, tarea y botón",
+    "en": "Python: home, open, task and button"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Python: inicio, apertura, tarea y botón",
+      "text": {
+        "es": "Python: inicio, apertura, tarea y botón",
+        "en": "Python: home, open, task and button"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "Fuentes editables en scripts/. Las tareas de demostración escriben exclusivamente variables internas.",
+      "text": {
+        "es": "Fuentes editables en scripts/. Las tareas de demostración escriben exclusivamente variables internas.",
+        "en": "Fonts editable in scripts/. Demo tasks write internal variables exclusively."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -39,13 +48,16 @@
       "y": 145,
       "w": 1090,
       "h": 44,
-      "text": "Inicio de sesión",
+      "text": {
+        "es": "Inicio de sesión",
+        "en": "Login"
+      },
       "tag": "Sistema.Inicio",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "event1",
@@ -54,13 +66,16 @@
       "y": 218,
       "w": 1090,
       "h": 44,
-      "text": "Hora actual",
+      "text": {
+        "es": "Hora actual",
+        "en": "Current time"
+      },
       "tag": "Sistema.Hora",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "event2",
@@ -69,13 +84,16 @@
       "y": 291,
       "w": 1090,
       "h": 44,
-      "text": "Ciclos de tarea",
+      "text": {
+        "es": "Ciclos de tarea",
+        "en": "Task cycles"
+      },
       "tag": "Sistema.Ciclos",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "event3",
@@ -84,13 +102,16 @@
       "y": 364,
       "w": 1090,
       "h": 44,
-      "text": "Pantallas abiertas",
+      "text": {
+        "es": "Pantallas abiertas",
+        "en": "Open screens"
+      },
       "tag": "Sistema.Aperturas",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "event4",
@@ -99,13 +120,16 @@
       "y": 437,
       "w": 1090,
       "h": 44,
-      "text": "Último evento",
+      "text": {
+        "es": "Último evento",
+        "en": "Last event"
+      },
       "tag": "Sistema.UltimoEvento",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "script",
@@ -114,7 +138,10 @@
       "y": 550,
       "w": 350,
       "h": 42,
-      "text": "Ejecutar script de botón",
+      "text": {
+        "es": "Ejecutar script de botón",
+        "en": "Run button script"
+      },
       "action": "script",
       "font_size": 15,
       "script": "button_event"
@@ -126,7 +153,10 @@
       "y": 550,
       "w": 350,
       "h": 42,
-      "text": "Restablecer banco local",
+      "text": {
+        "es": "Restablecer banco local",
+        "en": "Reset local bank"
+      },
       "action": "script",
       "font_size": 15,
       "script": "reset_local"
@@ -138,13 +168,16 @@
       "y": 626,
       "w": 725,
       "h": 44,
-      "text": "Operador",
+      "text": {
+        "es": "Operador",
+        "en": "Operator"
+      },
       "tag": "Sistema.Operador",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "jobs",
@@ -153,10 +186,13 @@
       "y": 688,
       "w": 1090,
       "h": 57,
-      "text": "Tarea cada 1 s: reloj, contador, señal local opcional y estado de calidad de S7/Modbus. Ver ejecuciones en Studio → Scripts y tareas.",
+      "text": {
+        "es": "Tarea cada 1 s: reloj, contador, señal local opcional y estado de calidad de S7/Modbus. Ver ejecuciones en Studio → Scripts y tareas.",
+        "en": "Task every 1 s: clock, counter, optional local signal and S7/Modbus quality status. View runs in Studio → Scripts and Tasks."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     }
   ],
   "on_open": [

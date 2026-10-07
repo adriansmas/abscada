@@ -14,7 +14,10 @@
       "y": 0,
       "w": 240,
       "h": 38,
-      "text": "ESTACIÓN DE BOMBEO"
+      "text": {
+        "es": "ESTACIÓN DE BOMBEO",
+        "en": "PUMPING STATION"
+      }
     },
     {
       "id": "detail",
@@ -23,7 +26,10 @@
       "y": 4,
       "w": 88,
       "h": 30,
-      "text": "Detalle…",
+      "text": {
+        "es": "Detalle…",
+        "en": "Detail…"
+      },
       "font_size": 13,
       "action": "faceplate_popup",
       "template": "pump_detail",
@@ -49,7 +55,10 @@
       "y": 52,
       "w": 254,
       "h": 44,
-      "text": "Caudal",
+      "text": {
+        "es": "Caudal",
+        "en": "Flow"
+      },
       "tag": "$flow",
       "unit": "m³/h"
     },
@@ -60,7 +69,10 @@
       "y": 111,
       "w": 310,
       "h": 42,
-      "text": "Consigna",
+      "text": {
+        "es": "Consigna",
+        "en": "Setpoint"
+      },
       "tag": "$setpoint",
       "unit": "m³/h"
     },
@@ -71,7 +83,10 @@
       "y": 167,
       "w": 310,
       "h": 40,
-      "text": "Marcha / paro",
+      "text": {
+        "es": "Marcha / paro",
+        "en": "Start/stop"
+      },
       "tag": "$running",
       "action": "toggle"
     }

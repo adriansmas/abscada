@@ -13,7 +13,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Alarmas activas y pendientes de reconocer",
+    "title": {
+      "es": "Alarmas activas y pendientes de reconocer",
+      "en": "Alarms active and pending recognition"
+    },
     "mode": "pending"
   },
   "historico": {
@@ -30,7 +33,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Histórico de alarmas",
+    "title": {
+      "es": "Histórico de alarmas",
+      "en": "Alarm history"
+    },
     "mode": "history"
   },
   "eventos": {
@@ -47,7 +53,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Registro de eventos",
+    "title": {
+      "es": "Registro de eventos",
+      "en": "Event log"
+    },
     "mode": "events"
   },
   "visor": {
@@ -64,7 +73,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Alarmas activas y pendientes de reconocer",
+    "title": {
+      "es": "Alarmas activas y pendientes de reconocer",
+      "en": "Alarms active and pending recognition"
+    },
     "mode": "pending"
   }
 }

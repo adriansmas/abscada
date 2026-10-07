@@ -1,8 +1,11 @@
 {
-  "title": "Interruptor",
+  "title": {
+    "es": "Interruptor",
+    "en": "switch"
+  },
   "width": 44,
   "height": 44,
-  "background": "@Fondo",
+  "background": "#dde1e4",
   "parameters": {
     "cerrado": "bool"
   },
@@ -14,8 +17,8 @@
       "y": 2,
       "w": 40,
       "h": 40,
-      "color": "@Abierto",
-      "stroke_color": "@Texto",
+      "color": "#2e7d32",
+      "stroke_color": "#1f2a33",
       "stroke_width": 2,
       "dynamics": {
         "states": [
@@ -27,12 +30,12 @@
               "bad": false
             },
             "style": {
-              "color": "@Cerrado"
+              "color": "#c62828"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso"
+          "color": "#e89a1c"
         }
       }
     },
@@ -52,14 +55,23 @@
       "texts": [
         {
           "value": "true",
-          "text": "I"
+          "text": {
+            "es": "I",
+            "en": "I"
+          }
         },
         {
           "value": "false",
-          "text": "O"
+          "text": {
+            "es": "O",
+            "en": "Or"
+          }
         }
       ],
-      "default_text": "?"
+      "default_text": {
+        "es": "?",
+        "en": "?"
+      }
     }
   ]
 }

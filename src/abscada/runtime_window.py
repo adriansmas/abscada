@@ -10,7 +10,8 @@ from .graphics import CanvasScene, CanvasView, ElementItem
 from .runtime import Runtime
 from .viewers import AlarmViewer, TrendViewer
 from .operation_windows import MAIN_MODE, popup_key, popup_title, settings_key
-from .i18n import tr
+from .i18n import tr, tr_existing
+from .runtime_language_ui import runtime_ui
 
 
 def monitors():
@@ -18,6 +19,7 @@ def monitors():
     return sorted(QGuiApplication.screens(), key=lambda s: (s.geometry().x(), s.geometry().y()))
 
 
+@runtime_ui
 class RuntimeWindow(QMainWindow):
     closed = Signal()
     diagnostic = Signal(str)
@@ -50,6 +52,16 @@ class RuntimeWindow(QMainWindow):
         self.setCentralWidget(self.view)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.refresh)
+        from PySide6.QtWidgets import QComboBox
+        from .project_languages import languages
+        self.language_selector = QComboBox()
+        self.language_selector.setObjectName('runtimeLanguage')
+        self.language_selector.addItems(languages(self.project))
+        self.language_selector.setCurrentText(self.runtime.language)
+        self.language_selector.setToolTip(tr('Cambiar idioma'))
+        self.language_selector.currentTextChanged.connect(self.runtime.set_language)
+        if len(languages(self.project)) > 1:
+            self.statusBar().addPermanentWidget(self.language_selector)
         self.session_label = self.session_button = None
         if not owner and self.runtime.security.enabled:
             from PySide6.QtWidgets import QLabel, QPushButton
@@ -60,6 +72,7 @@ class RuntimeWindow(QMainWindow):
             self.statusBar().addPermanentWidget(self.session_button)
             self.update_session_widgets()
         self.render_scene()
+        self.displayed_language = self.runtime.language
 
     # -- operator session (root window only; pop-ups share it) --------------
     def update_session_widgets(self):
@@ -93,11 +106,11 @@ class RuntimeWindow(QMainWindow):
         if security.permits(self.runtime.session, permission):
             return True
         if self.runtime.session and not security.expired(self.runtime.session):
-            raise PermissionError(tr("El usuario {user} no tiene el permiso «{permissions_permissi}»", user=self.runtime.session.user, permissions_permissi=PERMISSIONS[permission]))
-        if not self.request_login(tr("Esta orden necesita el permiso «{permissions_permissi}».", permissions_permissi=PERMISSIONS[permission])):
+            raise PermissionError(tr("El usuario {user} no tiene el permiso «{permissions_permissi}»", user=self.runtime.session.user, permissions_permissi=tr_existing(PERMISSIONS[permission])))
+        if not self.request_login(tr("Esta orden necesita el permiso «{permissions_permissi}».", permissions_permissi=tr_existing(PERMISSIONS[permission]))):
             return False
         if not security.permits(self.runtime.session, permission):
-            raise PermissionError(tr("El usuario {user} no tiene el permiso «{permissions_permissi}»", user=self.runtime.session.user, permissions_permissi=PERMISSIONS[permission]))
+            raise PermissionError(tr("El usuario {user} no tiene el permiso «{permissions_permissi}»", user=self.runtime.session.user, permissions_permissi=tr_existing(PERMISSIONS[permission])))
         return True
 
     def start(self):
@@ -111,7 +124,8 @@ class RuntimeWindow(QMainWindow):
         if not self.faceplate:
             self.screen_opened(self.document_name)
         for container in self.containers.values():
-            self.screen_opened(container.document_name)
+            if container.document_name:
+                self.screen_opened(container.document_name)
 
     def show_operation(self):
         """Show the main window and the start-up windows configured per monitor."""
@@ -172,7 +186,7 @@ class RuntimeWindow(QMainWindow):
             raise ValueError(tr("Objeto de librería emergente inexistente"))
         bindings = dict(bindings)
         target = dict(faceplate=dict(template=template, bindings=bindings,
-                                     title=popup_title(root.project, template, bindings, title)))
+                                     title=title))
         return root.present(popup_key(template, bindings), target, modal, window)
 
     def present(self, key, target, modal=False, options=None):
@@ -222,7 +236,9 @@ class RuntimeWindow(QMainWindow):
         if not self.faceplate:
             return self.project.screens[self.document_name]
         template = self.project.faceplates[self.faceplate["template"]]
-        return dict(title=self.faceplate["title"], width=template["width"], height=template["height"],
+        title = popup_title(self.project, self.faceplate['template'], self.faceplate['bindings'],
+                            self.faceplate['title'], language=self.runtime.language)
+        return dict(title=title, width=template["width"], height=template["height"],
                     background=template.get("background", "#ffffff"),
                     elements=[dict(id="faceplate", kind="faceplate", x=0, y=0, w=template["width"],
                                    h=template["height"], template=self.faceplate["template"],
@@ -243,7 +259,8 @@ class RuntimeWindow(QMainWindow):
         self.containers.clear()
         self.scene.clear()
         document = self.screen_document()
-        title = document.get("title") or self.document_name
+        from .project_languages import resolve, default_language
+        title = resolve(document.get('title', ''), self.runtime.language, default_language(self.project)) or self.document_name
         self.setWindowTitle(title if self.owner else "abSCADA Runtime · " + self.project.manifest["name"] + " · " + title)
         self.scene.setSceneRect(0, 0, document["width"], document["height"])
         for element in self.project.expand(document["elements"]):
@@ -257,6 +274,14 @@ class RuntimeWindow(QMainWindow):
             self.runtime.scripts.submit(name, 'screen_open', screen)
 
     def refresh(self):
+        if self.displayed_language != self.runtime.language:
+            self.displayed_language = self.runtime.language
+            self.language_selector.blockSignals(True)
+            self.language_selector.setCurrentText(self.runtime.language)
+            self.language_selector.blockSignals(False)
+            from .project_languages import resolve, default_language
+            title = resolve(self.screen_document().get('title', ''), self.runtime.language, default_language(self.project)) or self.document_name
+            self.setWindowTitle(title if self.owner else 'abSCADA Runtime · ' + self.project.manifest['name'] + ' · ' + title)
         self.check_releases()
         self.samples = self.runtime.snapshot()
         for scene in [self.scene]+[c.scene for c in self.containers.values()]:
@@ -347,7 +372,8 @@ class RuntimeWindow(QMainWindow):
             from .dynamics import permitted
             samples=self.runtime.snapshot()
             if not permitted(element,samples,'visible') or not permitted(element,samples,'enabled'):
-                raise ValueError(element.get('dynamics',{}).get('disabled_reason',tr('No se cumple el permiso de operación')))
+                from .project_languages import resolve, default_language
+                raise ValueError(resolve(element.get('dynamics',{}).get('disabled_reason',tr('No se cumple el permiso de operación')), self.runtime.language, default_language(self.project)))
             if phase == 'press':
                 # No modal dialog while the mouse holds a momentary button: just refuse.
                 from .security import required_permission
@@ -357,6 +383,9 @@ class RuntimeWindow(QMainWindow):
             elif not self.authorize(element):
                 return
             action = element.get("action")
+            if action == 'set_language':
+                self.runtime.set_language(element['language'])
+                return
             if action == 'script':
                 self.runtime.scripts.submit(element['script'], 'button', source.document_name if source else self.document_name)
                 return

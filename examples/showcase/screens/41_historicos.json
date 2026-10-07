@@ -1,8 +1,11 @@
 {
-  "title": "Histórico y archivos diarios",
+  "title": {
+    "es": "Histórico y archivos diarios",
+    "en": "History and daily files"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Histórico y archivos diarios",
+      "text": {
+        "es": "Histórico y archivos diarios",
+        "en": "History and daily files"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "Registro interno: 1 s · equipos: 2 s · modos: 5 s. Selecciona un intervalo en el visor para consultar días anteriores.",
+      "text": {
+        "es": "Registro interno: 1 s · equipos: 2 s · modos: 5 s. Selecciona un intervalo en el visor para consultar días anteriores.",
+        "en": "Internal registration: 1 s · equipment: 2 s · modes: 5 s. Select an interval in the viewer to see previous days."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -48,10 +57,13 @@
       "y": 697,
       "w": 1090,
       "h": 56,
-      "text": "Cada variable pertenece a un solo registro. «Local.SinRegistro» no se archiva. Los datos de ayer y anteayer se preparan con seed_showcase_history.py.",
+      "text": {
+        "es": "Cada variable pertenece a un solo registro. «Local.SinRegistro» no se archiva. Los datos de ayer y anteayer se preparan con seed_showcase_history.py.",
+        "en": "Each variable belongs to a single record. “Local.SinRegistro” is not archived. Data from yesterday and the day before yesterday are prepared with seed_showcase_history.py."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     }
   ],
   "on_open": [

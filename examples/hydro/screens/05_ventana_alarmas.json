@@ -1,8 +1,11 @@
 {
-  "title": "CH Valdearenas · Alarmas",
+  "title": {
+    "es": "CH Valdearenas · Alarmas",
+    "en": "CH Valdearenas · Alarms"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dde1e4",
   "elements": [
     {
       "id": "contenido",

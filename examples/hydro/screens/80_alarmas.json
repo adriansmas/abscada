@@ -1,8 +1,11 @@
 {
-  "title": "Alarmas · Activas",
+  "title": {
+    "es": "Alarmas · Activas",
+    "en": "Alarms · Active"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dde1e4",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "ALARMAS · ACTIVAS",
+      "text": {
+        "es": "ALARMAS · ACTIVAS",
+        "en": "ALARMS · ACTIVE"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "ACK individual o múltiple · filtros por categoría, prioridad y fecha · exportación CSV",
+      "text": {
+        "es": "ACK individual o múltiple · filtros por categoría, prioridad y fecha · exportación CSV",
+        "en": "Single or multiple ACK · filters by category, priority and date · CSV export"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -40,11 +49,14 @@
       "y": 14,
       "w": 90,
       "h": 32,
-      "text": "Activas",
+      "text": {
+        "es": "Activas",
+        "en": "Active"
+      },
       "font_size": 12,
       "bold": true,
-      "color": "@Mando",
-      "border_color": "@Mando",
+      "color": "#2b6cb0",
+      "border_color": "#2b6cb0",
       "text_color": "#ffffff",
       "action": "screen",
       "screen": "80_alarmas",
@@ -57,12 +69,15 @@
       "y": 14,
       "w": 90,
       "h": 32,
-      "text": "Histórico",
+      "text": {
+        "es": "Histórico",
+        "en": "History"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "81_alarmas_historico",
       "target_container": "contenido"
@@ -74,12 +89,15 @@
       "y": 14,
       "w": 90,
       "h": 32,
-      "text": "Eventos",
+      "text": {
+        "es": "Eventos",
+        "en": "Events"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "82_alarmas_eventos",
       "target_container": "contenido"
@@ -91,12 +109,15 @@
       "y": 14,
       "w": 150,
       "h": 32,
-      "text": "⧉ Monitor 2",
+      "text": {
+        "es": "⧉ Monitor 2",
+        "en": "⧉ Monitor 2"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "action": "popup",
       "screen": "05_ventana_alarmas",
       "window": {

@@ -218,7 +218,8 @@ def rename_screen(project, old, new):
 def duplicate_screen(project, name, new):
     check_new_name(project, new)
     document = copy.deepcopy(project.screens[name])
-    document["title"] = f"{document.get('title', name)} (copia)"
+    caption = document.get('title', name)
+    document['title'] = {code: text + (' (copy)' if code == 'en' else ' (copia)') for code, text in caption.items()} if isinstance(caption, dict) else caption + ' (copia)'
     clone_viewers(project, document["elements"])
     screens = list(project.screens.items())
     position = next(i for i, (key, _) in enumerate(screens) if key == name) + 1
@@ -270,7 +271,8 @@ def duplicate_faceplate(project, name, new):
         # Copy of a read-only object into the project's library: it starts at the root.
         document.pop("folder", None)
     else:
-        document["title"] = f"{document.get('title', name)} (copia)"
+        caption = document.get('title', name)
+        document['title'] = {code: text + (' (copy)' if code == 'en' else ' (copia)') for code, text in caption.items()} if isinstance(caption, dict) else caption + ' (copia)'
     project.faceplates[new] = document
 
 

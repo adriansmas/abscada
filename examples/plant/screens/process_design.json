@@ -1,5 +1,8 @@
 {
-  "title": "Estación de bombeo",
+  "title": {
+    "es": "Estación de bombeo",
+    "en": "pumping station"
+  },
   "width": 1200,
   "height": 640,
   "background": "#f4f7fa",
@@ -14,7 +17,10 @@
       "y": 510,
       "w": 170,
       "h": 38,
-      "text": "Ajustes",
+      "text": {
+        "es": "Ajustes",
+        "en": "Settings"
+      },
       "action": "popup",
       "screen": "pump_settings",
       "modal": false
@@ -152,7 +158,10 @@
       "y": 13,
       "w": 205,
       "h": 36,
-      "text": "TK-01",
+      "text": {
+        "es": "TK-01",
+        "en": "TK-01"
+      },
       "font_size": 22,
       "text_color": "#324d63"
     },
@@ -163,7 +172,10 @@
       "y": 435,
       "w": 240,
       "h": 50,
-      "text": "Nivel",
+      "text": {
+        "es": "Nivel",
+        "en": "Level"
+      },
       "tag": "TankLevel",
       "unit": "%",
       "decimals": 1,
@@ -217,7 +229,10 @@
       "y": 88,
       "w": 170,
       "h": 35,
-      "text": "Bomba P-01",
+      "text": {
+        "es": "Bomba P-01",
+        "en": "P-01 Bomb"
+      },
       "font_size": 18
     },
     {
@@ -227,7 +242,10 @@
       "y": 229,
       "w": 270,
       "h": 33,
-      "text": "Caudal",
+      "text": {
+        "es": "Caudal",
+        "en": "Flow"
+      },
       "tag": "Pump1.flow",
       "unit": "m³/h",
       "decimals": 1,
@@ -240,7 +258,10 @@
       "y": 269,
       "w": 120,
       "h": 36,
-      "text": "Marcha / paro",
+      "text": {
+        "es": "Marcha / paro",
+        "en": "Start/stop"
+      },
       "tag": "Pump1.running",
       "action": "toggle"
     },
@@ -251,7 +272,10 @@
       "y": 269,
       "w": 140,
       "h": 36,
-      "text": "SP",
+      "text": {
+        "es": "SP",
+        "en": "SP"
+      },
       "tag": "Pump1.setpoint",
       "unit": "m³/h",
       "decimals": 1
@@ -303,7 +327,10 @@
       "y": 303,
       "w": 170,
       "h": 35,
-      "text": "Bomba P-02",
+      "text": {
+        "es": "Bomba P-02",
+        "en": "P-02 Bomb"
+      },
       "font_size": 18
     },
     {
@@ -313,7 +340,10 @@
       "y": 444,
       "w": 270,
       "h": 33,
-      "text": "Caudal",
+      "text": {
+        "es": "Caudal",
+        "en": "Flow"
+      },
       "tag": "Pump2.flow",
       "unit": "m³/h",
       "decimals": 1,
@@ -326,7 +356,10 @@
       "y": 484,
       "w": 120,
       "h": 36,
-      "text": "Marcha / paro",
+      "text": {
+        "es": "Marcha / paro",
+        "en": "Start/stop"
+      },
       "tag": "Pump2.running",
       "action": "toggle"
     },
@@ -337,7 +370,10 @@
       "y": 484,
       "w": 140,
       "h": 36,
-      "text": "SP",
+      "text": {
+        "es": "SP",
+        "en": "SP"
+      },
       "tag": "Pump2.setpoint",
       "unit": "m³/h",
       "decimals": 1
@@ -349,7 +385,10 @@
       "y": 109,
       "w": 130,
       "h": 28,
-      "text": "Alimentación 1",
+      "text": {
+        "es": "Alimentación 1",
+        "en": "Power 1"
+      },
       "font_size": 14,
       "text_color": "#718397"
     },
@@ -360,7 +399,10 @@
       "y": 324,
       "w": 130,
       "h": 28,
-      "text": "Alimentación 2",
+      "text": {
+        "es": "Alimentación 2",
+        "en": "Power 2"
+      },
       "font_size": 14,
       "text_color": "#718397"
     },
@@ -371,7 +413,10 @@
       "y": 491,
       "w": 170,
       "h": 30,
-      "text": "A proceso",
+      "text": {
+        "es": "A proceso",
+        "en": "To process"
+      },
       "font_size": 16,
       "text_color": "#718397"
     }

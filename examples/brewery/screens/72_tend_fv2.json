@@ -1,8 +1,11 @@
 {
-  "title": "Tendencias · FV2",
+  "title": {
+    "es": "Tendencias · FV2",
+    "en": "Trends · FV2"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dfe1e2",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "TENDENCIAS · FV2",
+      "text": {
+        "es": "TENDENCIAS · FV2",
+        "en": "TRENDS · FV2"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Tiempo real e histórico · zoom, cursor y exportación CSV",
+      "text": {
+        "es": "Tiempo real e histórico · zoom, cursor y exportación CSV",
+        "en": "Real and historical time · zoom, cursor and CSV export"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -40,12 +49,15 @@
       "y": 14,
       "w": 88,
       "h": 32,
-      "text": "Cocción",
+      "text": {
+        "es": "Cocción",
+        "en": "Brewhouse"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "70_tend_coccion",
       "target_container": "contenido"
@@ -57,12 +69,15 @@
       "y": 14,
       "w": 88,
       "h": 32,
-      "text": "FV1",
+      "text": {
+        "es": "FV1",
+        "en": "FV1"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "71_tend_fv1",
       "target_container": "contenido"
@@ -74,11 +89,14 @@
       "y": 14,
       "w": 88,
       "h": 32,
-      "text": "FV2",
+      "text": {
+        "es": "FV2",
+        "en": "FV2"
+      },
       "font_size": 12,
       "bold": true,
-      "color": "@Mando",
-      "border_color": "@Mando",
+      "color": "#2b6cb0",
+      "border_color": "#2b6cb0",
       "text_color": "#ffffff",
       "action": "screen",
       "screen": "72_tend_fv2",
@@ -91,12 +109,15 @@
       "y": 14,
       "w": 88,
       "h": 32,
-      "text": "FV3",
+      "text": {
+        "es": "FV3",
+        "en": "FV3"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "73_tend_fv3",
       "target_container": "contenido"
@@ -108,12 +129,15 @@
       "y": 14,
       "w": 88,
       "h": 32,
-      "text": "Servicios",
+      "text": {
+        "es": "Servicios",
+        "en": "Services"
+      },
       "font_size": 12,
       "bold": true,
       "color": "#ffffff",
-      "border_color": "@Mando",
-      "text_color": "@Mando",
+      "border_color": "#2b6cb0",
+      "text_color": "#2b6cb0",
       "action": "screen",
       "screen": "74_tend_servicios",
       "target_container": "contenido"

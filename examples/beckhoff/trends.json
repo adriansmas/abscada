@@ -1,11 +1,17 @@
 {
   "banco": {
-    "title": "Velocidad, temperatura y presión",
+    "title": {
+      "es": "Velocidad, temperatura y presión",
+      "en": "Speed, temperature and pressure"
+    },
     "window_seconds": 600,
     "axes": [
       {
         "id": "rpm",
-        "title": "Velocidad (rpm)",
+        "title": {
+          "es": "Velocidad (rpm)",
+          "en": "Speed (rpm)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -14,7 +20,10 @@
       },
       {
         "id": "t",
-        "title": "Temperatura (°C) / presión (bar)",
+        "title": {
+          "es": "Temperatura (°C) / presión (bar)",
+          "en": "Temperature (°C) / pressure (bar)"
+        },
         "side": "right",
         "auto": false,
         "min": 0,

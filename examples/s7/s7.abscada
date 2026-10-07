@@ -1,5 +1,10 @@
 {
   "schema_version": 1,
   "name": "Planta",
-  "startup_screen": "overview"
+  "startup_screen": "overview",
+  "languages": [
+    "es",
+    "en"
+  ],
+  "default_language": "es"
 }

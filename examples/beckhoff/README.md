@@ -80,7 +80,7 @@ BOOL, SINT, USINT, BYTE, INT, UINT, WORD, DINT, UDINT, DWORD, LINT, ULINT, REAL,
 
 ### Límites actuales
 
-- Lectura cíclica por símbolo, sin notificaciones ADS ni lecturas agrupadas (*sum commands*). Es adecuado para decenas o pocos cientos de variables por PLC.
+- Lectura cíclica por símbolo, sin notificaciones ADS ni lecturas agrupadas (*sum commands*). La capacidad de variables por PLC requiere medición; no se ha acreditado un límite industrial.
 - Sin WSTRING, arrays completos ni tipos de fecha.
 - Los handles de símbolo se guardan en caché y se renuevan solos si cambia el programa del PLC.
 - El simulador no reproduce un runtime TwinCAT: sirve para desarrollar y probar el SCADA.
@@ -91,3 +91,7 @@ BOOL, SINT, USINT, BYTE, INT, UINT, WORD, DINT, UDINT, DWORD, LINT, ULINT, REAL,
 .venv\Scripts\python tools/build_beckhoff.py --force   # conserva este README
 .venv\Scripts\python tools/capture_beckhoff.py
 ```
+
+## Idiomas y colores
+
+El proyecto incluye español e inglés. Cambia el idioma de edición en Studio y el de operación desde Runtime; las traducciones se guardan junto a cada texto. Cada objeto utiliza colores HEX explícitos, editables en sus propiedades. Véase [la guía de Studio](../../docs/STUDIO.md#idiomas).

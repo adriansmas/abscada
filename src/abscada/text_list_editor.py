@@ -5,6 +5,8 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
 from .text_lists import validate_text_list
 from .dialogs import EditorDialog as QDialog
 from .i18n import tr
+from .project_languages import resolve
+from .project_text_editor import editing_context
 
 
 class TextListDialog(QDialog):
@@ -23,7 +25,10 @@ class TextListDialog(QDialog):
         remove = QPushButton(tr('Eliminar')); remove.clicked.connect(self.remove_rows)
         actions.addWidget(add); actions.addWidget(remove); actions.addStretch()
         layout.addLayout(actions)
-        self.default = QLineEdit(element.get('default_text', '—'))
+        from .project_text_editor import ProjectTextField
+        self.original_rows = {r['value']: r['text'] for r in element.get('texts', [])}
+        self.host = parent
+        self.default = ProjectTextField(parent, element.get('default_text', '—'))
         form = QFormLayout(); form.addRow(tr('Texto por defecto'), self.default)
         layout.addLayout(form)
         self.error = QLabel(); self.error.setStyleSheet('color: #b43838;'); self.error.setWordWrap(True)
@@ -38,16 +43,24 @@ class TextListDialog(QDialog):
     def add_row(self, value='', text=''):
         row = self.table.rowCount(); self.table.insertRow(row)
         self.table.setItem(row, 0, QTableWidgetItem(value))
-        self.table.setItem(row, 1, QTableWidgetItem(text))
+        self.table.setItem(row, 1, QTableWidgetItem(resolve(text, *editing_context(self.host))))
         self.table.setCurrentCell(row, 0)
 
     def remove_rows(self):
         for row in sorted({item.row() for item in self.table.selectedIndexes()}, reverse=True):
             self.table.removeRow(row)
 
+    def row_text(self, row):
+        from .project_languages import resolve, edited
+        from .project_text_editor import editing_context
+        code, default = editing_context(self.host)
+        text = self.table.item(row, 1).text()
+        old = self.original_rows.get(self.table.item(row, 0).text(), '')
+        return old if text == resolve(old, code, default) else edited(old, text, code, default)
+
     def mapping(self):
-        return dict(texts=[dict(value=self.table.item(row, 0).text(), text=self.table.item(row, 1).text())
-                           for row in range(self.table.rowCount())], default_text=self.default.text())
+        return dict(texts=[dict(value=self.table.item(row, 0).text(), text=self.row_text(row))
+                           for row in range(self.table.rowCount())], default_text=self.default.translated_value())
 
     def accept(self):
         try:

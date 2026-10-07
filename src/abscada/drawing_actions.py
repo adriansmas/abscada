@@ -31,12 +31,12 @@ class DrawingActions:
         if not hasattr(self,"layers"):
             return
         self.layers.blockSignals(True); self.layers.clear()
-        from .graphics import tool_icon, PALETTE
+        from .graphics import tool_icon, TOOL_NAMES
         for element in reversed(self.document()["elements"]):
             flags=('🔒 ' if element.get('editor_locked') else '')+('◌ ' if element.get('editor_hidden') else '')
             title=element.get('description') or element['id']
             row = QListWidgetItem(tool_icon(element["kind"]),flags+title+(' ['+element['group']+']' if element.get('group') else ''))
-            row.setToolTip(PALETTE[element["kind"]]+' · '+element['id']); row.setData(Qt.ItemDataRole.UserRole,element["id"])
+            row.setToolTip(TOOL_NAMES[element["kind"]]+' · '+element['id']); row.setData(Qt.ItemDataRole.UserRole,element["id"])
             self.layers.addItem(row)
         self.layers.blockSignals(False)
         self.sync_layer_selection()
@@ -67,6 +67,50 @@ class DrawingActions:
         menu.addAction(tr('Nombre descriptivo…'),self.describe_element)
         menu.addAction(tr('Agrupar'),self.group_elements);menu.addAction(tr('Desagrupar'),self.ungroup_elements)
         menu.exec(self.layers.mapToGlobal(position))
+
+    def canvas_menu(self,position):
+        self.build_canvas_menu().exec(position)
+
+    def build_canvas_menu(self):
+        """Right click on the canvas: the commands that apply to the selection."""
+        from PySide6.QtWidgets import QApplication
+        from .clipboard_actions import MIME
+        selected=self.scene.selectedItems(); menu=QMenu(self)
+        clipboard=QApplication.clipboard().mimeData(); can_paste=bool(clipboard and clipboard.hasFormat(MIME))
+        if selected:
+            menu.addAction(tr('Copiar'),self.copy_elements);menu.addAction(tr('Cortar'),self.cut_elements)
+            menu.addAction(tr('Pegar'),self.paste_elements).setEnabled(can_paste)
+            menu.addAction(tr('Duplicar'),self.duplicate_element)
+            menu.addSeparator()
+            order=menu.addMenu(tr('Orden'))
+            for title,mode in ((tr('Traer al frente'),'front'),(tr('Subir un nivel'),'up'),(tr('Bajar un nivel'),'down'),(tr('Enviar al fondo'),'back')):
+                order.addAction(title,lambda checked=False,m=mode:self.order_elements(m))
+            if len(selected)>1:
+                align=menu.addMenu(tr('Alinear'))
+                for title,mode in ((tr('Izquierda'),'left'),(tr('Centro horizontal'),'center'),(tr('Derecha'),'right'),(tr('Arriba'),'top'),(tr('Centro vertical'),'middle'),(tr('Abajo'),'bottom')):
+                    align.addAction(title,lambda checked=False,m=mode:self.align_elements(m))
+                menu.addAction(tr('Agrupar'),self.group_elements)
+            if any(i.element.get('group') for i in selected):
+                menu.addAction(tr('Desagrupar'),self.ungroup_elements)
+            menu.addSeparator()
+            locked=all(i.element.get('editor_locked') for i in selected)
+            menu.addAction(tr('Desbloquear') if locked else tr('Bloquear'),lambda:self.toggle_layer_flag('editor_locked'))
+            hidden=all(i.element.get('editor_hidden') for i in selected)
+            menu.addAction(tr('Mostrar en diseño') if hidden else tr('Ocultar en diseño'),lambda:self.toggle_layer_flag('editor_hidden'))
+            if len(selected)==1:
+                menu.addAction(tr('Nombre descriptivo…'),self.describe_element)
+                from .dynamic_editor import edit_dynamics
+                menu.addAction(tr('Propiedades dinámicas…'),lambda:edit_dynamics(self))
+                menu.addAction(tr('Editar el elemento como JSON…'),self.edit_selected_json)
+            from .selection_editor import copy_style,paste_style
+            menu.addSeparator()
+            if len(selected)==1: menu.addAction(tr('Copiar formato'),lambda:copy_style(self))
+            menu.addAction(tr('Pegar formato'),lambda:paste_style(self))
+            menu.addSeparator()
+            menu.addAction(tr('Suprimir'),self.delete_element)
+        else:
+            menu.addAction(tr('Pegar'),self.paste_elements).setEnabled(can_paste)
+        return menu
 
     def toggle_layer_flag(self,key):
         selected=[i.element for i in self.scene.selectedItems()]

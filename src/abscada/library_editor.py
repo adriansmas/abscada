@@ -59,6 +59,13 @@ class LibraryDialog(EditorDialog):
         self.setWindowTitle(tr('Librerías externas'))
         self.resize(900, 610)
         layout = QVBoxLayout(self)
+        from PySide6.QtWidgets import QLabel
+        intro = QLabel(tr('Una librería externa es un archivo (*.abscada-library.json) con objetos listos para usar: bombas, válvulas, '
+                          'depósitos… Pulsa «Importar librería…», elige el archivo y ponle un nombre corto (alias). Sus objetos '
+                          'aparecerán en el árbol del proyecto, dentro de «Librerías», y se arrastran a la pantalla. El proyecto '
+                          'guarda una copia, así que no depende del archivo original.'))
+        intro.setWordWrap(True); intro.setObjectName('muted')
+        layout.addWidget(intro)
         self.table = QTableWidget(0, 4)
         self.table.setHorizontalHeaderLabels([tr('Alias'), tr('Biblioteca'), tr('Versión'), tr('Origen')])
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
@@ -68,7 +75,7 @@ class LibraryDialog(EditorDialog):
         self.table.horizontalHeader().setStretchLastSection(True)
         layout.addWidget(self.table)
         row = QHBoxLayout()
-        for title, callback in [(tr('Vincular…'),self.link),(tr('Actualizar desde…'),self.update),(tr('Desvincular'),self.unlink),(tr('Publicar biblioteca…'),lambda:PublishDialog(host).exec())]:
+        for title, callback in [(tr('Importar librería…'),self.link),(tr('Actualizar desde…'),self.update),(tr('Quitar librería'),self.unlink),(tr('Publicar biblioteca…'),lambda:PublishDialog(host).exec())]:
             button = QPushButton(title)
             button.clicked.connect(callback)
             row.addWidget(button)
@@ -90,6 +97,8 @@ class LibraryDialog(EditorDialog):
             for col, value in enumerate([alias, entry['package']['name'], entry['package']['version'], entry['source']]):
                 self.table.setItem(row, col, QTableWidgetItem(value))
         self.details.clear()
+        if not self.table.rowCount():
+            self.details.setHtml(tr('<p>Este proyecto aún no usa librerías externas.</p>'))
         if self.table.rowCount():
             self.table.selectRow(0)
 
@@ -107,7 +116,9 @@ class LibraryDialog(EditorDialog):
         types = {'bool':tr('Booleano'),'int':tr('Entero'),'float':tr('Real'),'string':tr('Texto')}
         for name, doc in package['faceplates'].items():
             parameters = '<br>'.join(escape(key)+' · '+types[kind] for key,kind in doc.get('parameters',{}).items()) or tr('Sin parámetros')
-            rows.append('<tr><td><b>'+escape(alias+'__'+name)+'</b><br>'+escape(doc.get('title',''))+'</td><td>'+parameters+'</td></tr>')
+            from .project_languages import resolve, default_language
+            caption = resolve(doc.get('title', ''), self.host.editing_language, default_language(self.host.project))
+            rows.append('<tr><td><b>'+escape(alias+'__'+name)+'</b><br>'+escape(caption)+'</td><td>'+parameters+'</td></tr>')
         self.details.setHtml('<h3>'+escape(package['name'])+' · '+escape(package['version'])+'</h3>'
             +'<p>Autor: '+escape(str(package.get('author',''))) +'<br>Licencia: '+escape(str(package.get('license','')))+'</p>'
             +tr('<table cellpadding="8"><tr><th align="left">Objeto</th><th align="left">Parámetros</th></tr>')+''.join(rows)+'</table>')
@@ -124,7 +135,7 @@ class LibraryDialog(EditorDialog):
         source = self.source()
         if not source:
             return
-        alias, ok = QInputDialog.getText(self, tr('Vincular biblioteca'), tr('Alias en este proyecto'), text=tr('equipos'))
+        alias, ok = QInputDialog.getText(self, tr('Importar librería'), tr('Nombre corto (alias) para usarla en este proyecto'), text=tr('equipos'))
         if ok:
             self.apply(lambda:libraries.link(self.host.project, source, alias.strip()))
 

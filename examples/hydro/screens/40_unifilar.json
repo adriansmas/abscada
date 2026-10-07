@@ -1,8 +1,11 @@
 {
-  "title": "Esquema unifilar · subestación 66 kV",
+  "title": {
+    "es": "Esquema unifilar · subestación 66 kV",
+    "en": "Single-line diagram · 66 kV substation"
+  },
   "width": 1400,
   "height": 830,
-  "background": "@Fondo",
+  "background": "#dde1e4",
   "grid_size": 10,
   "show_grid": false,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 8,
       "w": 900,
       "h": 30,
-      "text": "ESQUEMA UNIFILAR · SUBESTACIÓN 66 KV",
+      "text": {
+        "es": "ESQUEMA UNIFILAR · SUBESTACIÓN 66 KV",
+        "en": "SINGLE-FILE SCHEME · 66 KV SUBSTATION"
+      },
       "font_size": 20,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -27,10 +33,13 @@
       "y": 36,
       "w": 900,
       "h": 18,
-      "text": "Rojo = interruptor cerrado · verde = abierto · azul = conductor en tensión",
+      "text": {
+        "es": "Rojo = interruptor cerrado · verde = abierto · azul = conductor en tensión",
+        "en": "Red = switch closed green = open blue = live conductor"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -40,8 +49,8 @@
       "y": 60,
       "w": 1010,
       "h": 770,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -53,10 +62,13 @@
       "y": 70,
       "w": 400,
       "h": 22,
-      "text": "LÍNEA L-6601 → SE COMARCAL 66 kV",
+      "text": {
+        "es": "LÍNEA L-6601 → SE COMARCAL 66 kV",
+        "en": "LINE L-6601 → SE REGIONAL 66 kV"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -66,7 +78,7 @@
       "y": 96,
       "w": 1,
       "h": 44,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 5,
       "dynamics": {
         "states": [
@@ -78,7 +90,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -113,10 +125,13 @@
       "y": 150,
       "w": 50,
       "h": 22,
-      "text": "52L",
+      "text": {
+        "es": "52L",
+        "en": "52L"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -126,14 +141,17 @@
       "y": 140,
       "w": 130,
       "h": 34,
-      "text": "ABRIR 52L",
+      "text": {
+        "es": "ABRIR 52L",
+        "en": "OPEN 52L"
+      },
       "tag": "SSCC.OrdenAbrir52L",
       "action": "set",
       "value": true,
       "font_size": 13,
       "bold": true,
-      "color": "@Abierto",
-      "border_color": "@Abierto",
+      "color": "#2e7d32",
+      "border_color": "#2e7d32",
       "text_color": "#ffffff",
       "dynamics": {
         "enabled": {
@@ -147,7 +165,10 @@
           "text_color": "#8a949d",
           "border_color": "#c3c9ce"
         },
-        "disabled_reason": "El interruptor ya está abierto"
+        "disabled_reason": {
+          "es": "El interruptor ya está abierto",
+          "en": "The switch is already open"
+        }
       }
     },
     {
@@ -157,14 +178,17 @@
       "y": 140,
       "w": 130,
       "h": 34,
-      "text": "CERRAR 52L",
+      "text": {
+        "es": "CERRAR 52L",
+        "en": "CLOSE 52L"
+      },
       "tag": "SSCC.OrdenCerrar52L",
       "action": "set",
       "value": true,
       "font_size": 13,
       "bold": true,
-      "color": "@Cerrado",
-      "border_color": "@Cerrado",
+      "color": "#c62828",
+      "border_color": "#c62828",
       "text_color": "#ffffff",
       "dynamics": {
         "enabled": {
@@ -178,7 +202,10 @@
           "text_color": "#8a949d",
           "border_color": "#c3c9ce"
         },
-        "disabled_reason": "Sin tensión de red en la línea"
+        "disabled_reason": {
+          "es": "Sin tensión de red en la línea",
+          "en": "No mains voltage on the line"
+        }
       }
     },
     {
@@ -188,7 +215,7 @@
       "y": 184,
       "w": 1,
       "h": 46,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 5,
       "dynamics": {
         "states": [
@@ -200,7 +227,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -223,7 +250,7 @@
       "y": 230,
       "w": 800,
       "h": 1,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 8,
       "dynamics": {
         "states": [
@@ -235,7 +262,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -258,10 +285,13 @@
       "y": 204,
       "w": 140,
       "h": 20,
-      "text": "BARRAS 66 kV",
+      "text": {
+        "es": "BARRAS 66 kV",
+        "en": "66 kV BARS"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -271,19 +301,22 @@
       "y": 196,
       "w": 120,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.TensionBarras66",
       "unit": "kV",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -294,7 +327,7 @@
       "y": 230,
       "w": 1,
       "h": 50,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 4,
       "dynamics": {
         "states": [
@@ -306,7 +339,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -330,7 +363,7 @@
       "w": 52,
       "h": 52,
       "filled": false,
-      "stroke_color": "@Texto",
+      "stroke_color": "#1f2a33",
       "stroke_width": 2
     },
     {
@@ -341,7 +374,7 @@
       "w": 52,
       "h": 52,
       "filled": false,
-      "stroke_color": "@Texto",
+      "stroke_color": "#1f2a33",
       "stroke_width": 2
     },
     {
@@ -351,10 +384,13 @@
       "y": 312,
       "w": 200,
       "h": 20,
-      "text": "TP1  66/6,3 kV  12,5 MVA",
+      "text": {
+        "es": "TP1  66/6,3 kV  12,5 MVA",
+        "en": "TP1 66/6.3 kV 12.5 MVA"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -364,7 +400,7 @@
       "y": 366,
       "w": 1,
       "h": 44,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 4,
       "dynamics": {
         "states": [
@@ -376,7 +412,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -411,10 +447,13 @@
       "y": 420,
       "w": 60,
       "h": 20,
-      "text": "52G1",
+      "text": {
+        "es": "52G1",
+        "en": "52G1"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -424,7 +463,7 @@
       "y": 454,
       "w": 1,
       "h": 56,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 4,
       "dynamics": {
         "states": [
@@ -436,7 +475,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -460,7 +499,7 @@
       "w": 72,
       "h": 72,
       "color": "#ffffff",
-      "stroke_color": "@Texto",
+      "stroke_color": "#1f2a33",
       "stroke_width": 3,
       "dynamics": {
         "states": [
@@ -472,7 +511,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Disparo"
+              "stroke_color": "#d32f2f"
             }
           },
           {
@@ -483,7 +522,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -496,10 +535,13 @@
       "y": 534,
       "w": 72,
       "h": 26,
-      "text": "G1",
+      "text": {
+        "es": "G1",
+        "en": "G1"
+      },
       "font_size": 18,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "center"
     },
     {
@@ -509,10 +551,13 @@
       "y": 590,
       "w": 160,
       "h": 20,
-      "text": "Grupo 1 · 6,3 kV",
+      "text": {
+        "es": "Grupo 1 · 6,3 kV",
+        "en": "unit 1 · 6.3 kV"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "center"
     },
     {
@@ -522,10 +567,13 @@
       "y": 477,
       "w": 26,
       "h": 22,
-      "text": "P",
+      "text": {
+        "es": "P",
+        "en": "Q"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -535,19 +583,22 @@
       "y": 474,
       "w": 118,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G1.Potencia",
       "unit": "MW",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -558,10 +609,13 @@
       "y": 507,
       "w": 26,
       "h": 22,
-      "text": "Q",
+      "text": {
+        "es": "Q",
+        "en": "Q"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -571,19 +625,22 @@
       "y": 504,
       "w": 118,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G1.Reactiva",
       "unit": "Mvar",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -594,10 +651,13 @@
       "y": 537,
       "w": 26,
       "h": 22,
-      "text": "U",
+      "text": {
+        "es": "U",
+        "en": "u"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -607,19 +667,22 @@
       "y": 534,
       "w": 118,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G1.Tension",
       "unit": "kV",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -630,10 +693,13 @@
       "y": 567,
       "w": 26,
       "h": 22,
-      "text": "I",
+      "text": {
+        "es": "I",
+        "en": "I"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -643,19 +709,22 @@
       "y": 564,
       "w": 118,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G1.Intensidad",
       "unit": "A",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -666,7 +735,7 @@
       "y": 230,
       "w": 1,
       "h": 50,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 4,
       "dynamics": {
         "states": [
@@ -678,7 +747,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -702,7 +771,7 @@
       "w": 52,
       "h": 52,
       "filled": false,
-      "stroke_color": "@Texto",
+      "stroke_color": "#1f2a33",
       "stroke_width": 2
     },
     {
@@ -713,7 +782,7 @@
       "w": 52,
       "h": 52,
       "filled": false,
-      "stroke_color": "@Texto",
+      "stroke_color": "#1f2a33",
       "stroke_width": 2
     },
     {
@@ -723,10 +792,13 @@
       "y": 312,
       "w": 200,
       "h": 20,
-      "text": "TP2  66/6,3 kV  12,5 MVA",
+      "text": {
+        "es": "TP2  66/6,3 kV  12,5 MVA",
+        "en": "TP2 66/6.3 kV 12.5 MVA"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -736,7 +808,7 @@
       "y": 366,
       "w": 1,
       "h": 44,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 4,
       "dynamics": {
         "states": [
@@ -748,7 +820,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -783,10 +855,13 @@
       "y": 420,
       "w": 60,
       "h": 20,
-      "text": "52G2",
+      "text": {
+        "es": "52G2",
+        "en": "52G2"
+      },
       "font_size": 13,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -796,7 +871,7 @@
       "y": 454,
       "w": 1,
       "h": 56,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 4,
       "dynamics": {
         "states": [
@@ -808,7 +883,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -832,7 +907,7 @@
       "w": 72,
       "h": 72,
       "color": "#ffffff",
-      "stroke_color": "@Texto",
+      "stroke_color": "#1f2a33",
       "stroke_width": 3,
       "dynamics": {
         "states": [
@@ -844,7 +919,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Disparo"
+              "stroke_color": "#d32f2f"
             }
           },
           {
@@ -855,7 +930,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -868,10 +943,13 @@
       "y": 534,
       "w": 72,
       "h": 26,
-      "text": "G2",
+      "text": {
+        "es": "G2",
+        "en": "G2"
+      },
       "font_size": 18,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "center"
     },
     {
@@ -881,10 +959,13 @@
       "y": 590,
       "w": 160,
       "h": 20,
-      "text": "Grupo 2 · 6,3 kV",
+      "text": {
+        "es": "Grupo 2 · 6,3 kV",
+        "en": "unit 2 · 6.3 kV"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "center"
     },
     {
@@ -894,10 +975,13 @@
       "y": 477,
       "w": 26,
       "h": 22,
-      "text": "P",
+      "text": {
+        "es": "P",
+        "en": "Q"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -907,19 +991,22 @@
       "y": 474,
       "w": 118,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G2.Potencia",
       "unit": "MW",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -930,10 +1017,13 @@
       "y": 507,
       "w": 26,
       "h": 22,
-      "text": "Q",
+      "text": {
+        "es": "Q",
+        "en": "Q"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -943,19 +1033,22 @@
       "y": 504,
       "w": 118,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G2.Reactiva",
       "unit": "Mvar",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -966,10 +1059,13 @@
       "y": 537,
       "w": 26,
       "h": 22,
-      "text": "U",
+      "text": {
+        "es": "U",
+        "en": "u"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -979,19 +1075,22 @@
       "y": 534,
       "w": 118,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G2.Tension",
       "unit": "kV",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1002,10 +1101,13 @@
       "y": 567,
       "w": 26,
       "h": 22,
-      "text": "I",
+      "text": {
+        "es": "I",
+        "en": "I"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1015,19 +1117,22 @@
       "y": 564,
       "w": 118,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "G2.Intensidad",
       "unit": "A",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1038,7 +1143,7 @@
       "y": 230,
       "w": 1,
       "h": 70,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 4,
       "dynamics": {
         "states": [
@@ -1050,7 +1155,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -1074,7 +1179,7 @@
       "w": 40,
       "h": 40,
       "filled": false,
-      "stroke_color": "@Texto",
+      "stroke_color": "#1f2a33",
       "stroke_width": 2
     },
     {
@@ -1085,7 +1190,7 @@
       "w": 40,
       "h": 40,
       "filled": false,
-      "stroke_color": "@Texto",
+      "stroke_color": "#1f2a33",
       "stroke_width": 2
     },
     {
@@ -1095,10 +1200,13 @@
       "y": 322,
       "w": 120,
       "h": 20,
-      "text": "TSA 66/0,4 kV",
+      "text": {
+        "es": "TSA 66/0,4 kV",
+        "en": "TSA 66/0.4 kV"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "right"
     },
     {
@@ -1108,7 +1216,7 @@
       "y": 366,
       "w": 1,
       "h": 284,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 4,
       "dynamics": {
         "states": [
@@ -1120,7 +1228,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -1143,7 +1251,7 @@
       "y": 650,
       "w": 340,
       "h": 1,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 6,
       "dynamics": {
         "states": [
@@ -1155,7 +1263,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -1178,10 +1286,13 @@
       "y": 660,
       "w": 260,
       "h": 20,
-      "text": "SERVICIOS AUXILIARES 400 V",
+      "text": {
+        "es": "SERVICIOS AUXILIARES 400 V",
+        "en": "AUXILIARY SERVICES 400 V"
+      },
       "font_size": 12,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1191,19 +1302,22 @@
       "y": 680,
       "w": 100,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.Tension400V",
       "unit": "V",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1214,7 +1328,7 @@
       "y": 650,
       "w": 1,
       "h": 70,
-      "stroke_color": "@Muerto",
+      "stroke_color": "#a9b1b8",
       "stroke_width": 4,
       "dynamics": {
         "states": [
@@ -1226,7 +1340,7 @@
               "bad": false
             },
             "style": {
-              "stroke_color": "@Energizado"
+              "stroke_color": "#1f5f99"
             }
           }
         ]
@@ -1250,7 +1364,7 @@
       "w": 48,
       "h": 48,
       "color": "#ffffff",
-      "stroke_color": "@Texto",
+      "stroke_color": "#1f2a33",
       "stroke_width": 2,
       "dynamics": {
         "states": [
@@ -1262,7 +1376,7 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha"
+              "color": "#2e8b57"
             }
           }
         ]
@@ -1275,10 +1389,13 @@
       "y": 732,
       "w": 48,
       "h": 24,
-      "text": "GE",
+      "text": {
+        "es": "GE",
+        "en": "G.E."
+      },
       "font_size": 14,
       "bold": true,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "center"
     },
     {
@@ -1288,10 +1405,13 @@
       "y": 734,
       "w": 270,
       "h": 20,
-      "text": "Grupo diésel de emergencia 250 kVA",
+      "text": {
+        "es": "Grupo diésel de emergencia 250 kVA",
+        "en": "250 kVA emergency diesel set"
+      },
       "font_size": 12,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -1301,8 +1421,8 @@
       "y": 60,
       "w": 360,
       "h": 330,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -1314,10 +1434,13 @@
       "y": 66,
       "w": 336,
       "h": 20,
-      "text": "CONTADOR FISCAL 66 KV (MODBUS)",
+      "text": {
+        "es": "CONTADOR FISCAL 66 KV (MODBUS)",
+        "en": "FISCAL METER 66 KV (MODBUS)"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -1327,10 +1450,13 @@
       "y": 95,
       "w": 164,
       "h": 22,
-      "text": "Potencia activa",
+      "text": {
+        "es": "Potencia activa",
+        "en": "Active power"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1340,19 +1466,22 @@
       "y": 92,
       "w": 160,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Contador.Potencia",
       "unit": "MW",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1363,10 +1492,13 @@
       "y": 129,
       "w": 164,
       "h": 22,
-      "text": "Potencia reactiva",
+      "text": {
+        "es": "Potencia reactiva",
+        "en": "Reactive power"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1376,19 +1508,22 @@
       "y": 126,
       "w": 160,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Contador.Reactiva",
       "unit": "Mvar",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1399,10 +1534,13 @@
       "y": 163,
       "w": 164,
       "h": 22,
-      "text": "Tensión",
+      "text": {
+        "es": "Tensión",
+        "en": "Voltage"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1412,19 +1550,22 @@
       "y": 160,
       "w": 160,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Contador.Tension",
       "unit": "kV",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1435,10 +1576,13 @@
       "y": 197,
       "w": 164,
       "h": 22,
-      "text": "Frecuencia",
+      "text": {
+        "es": "Frecuencia",
+        "en": "Frequency"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1448,19 +1592,22 @@
       "y": 194,
       "w": 160,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Contador.Frecuencia",
       "unit": "Hz",
       "decimals": 3,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1471,10 +1618,13 @@
       "y": 231,
       "w": 164,
       "h": 22,
-      "text": "Factor de potencia",
+      "text": {
+        "es": "Factor de potencia",
+        "en": "power factor"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1484,19 +1634,22 @@
       "y": 228,
       "w": 160,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Contador.CosPhi",
       "unit": "",
       "decimals": 3,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1507,10 +1660,13 @@
       "y": 265,
       "w": 164,
       "h": 22,
-      "text": "Energía exportada",
+      "text": {
+        "es": "Energía exportada",
+        "en": "Exported energy"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1520,19 +1676,22 @@
       "y": 262,
       "w": 160,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Contador.EnergiaExportada",
       "unit": "kWh",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1543,10 +1702,13 @@
       "y": 299,
       "w": 164,
       "h": 22,
-      "text": "Energía importada",
+      "text": {
+        "es": "Energía importada",
+        "en": "Imported energy"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1556,19 +1718,22 @@
       "y": 296,
       "w": 160,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "Contador.EnergiaImportada",
       "unit": "kWh",
       "decimals": 0,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1581,9 +1746,9 @@
       "h": 20,
       "tag": "Contador.Comunicacion",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Paro",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#9aa3ab",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1593,10 +1758,13 @@
       "y": 343,
       "w": 302,
       "h": 22,
-      "text": "Comunicación con contador",
+      "text": {
+        "es": "Comunicación con contador",
+        "en": "Communication with accountant"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1606,8 +1774,8 @@
       "y": 400,
       "w": 360,
       "h": 160,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -1619,10 +1787,13 @@
       "y": 406,
       "w": 336,
       "h": 20,
-      "text": "RED",
+      "text": {
+        "es": "RED",
+        "en": "NETWORK"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -1634,9 +1805,9 @@
       "h": 20,
       "tag": "SSCC.RedPresente",
       "lamp_colors": {
-        "on": "@Marcha",
-        "off": "@Disparo",
-        "bad": "@Aviso"
+        "on": "#2e8b57",
+        "off": "#d32f2f",
+        "bad": "#e89a1c"
       }
     },
     {
@@ -1646,10 +1817,13 @@
       "y": 433,
       "w": 302,
       "h": 22,
-      "text": "Tensión de red presente",
+      "text": {
+        "es": "Tensión de red presente",
+        "en": "Mains voltage present"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1659,10 +1833,13 @@
       "y": 469,
       "w": 184,
       "h": 22,
-      "text": "Frecuencia de red",
+      "text": {
+        "es": "Frecuencia de red",
+        "en": "Network frequency"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1672,19 +1849,22 @@
       "y": 466,
       "w": 140,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.FrecuenciaRed",
       "unit": "Hz",
       "decimals": 3,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         },
         "states": [
           {
@@ -1695,9 +1875,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
+              "color": "#e89a1c",
               "text_color": "#ffffff",
-              "border_color": "@Aviso"
+              "border_color": "#e89a1c"
             }
           },
           {
@@ -1708,9 +1888,9 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
+              "color": "#e89a1c",
               "text_color": "#ffffff",
-              "border_color": "@Aviso"
+              "border_color": "#e89a1c"
             }
           }
         ]
@@ -1723,10 +1903,13 @@
       "y": 505,
       "w": 184,
       "h": 22,
-      "text": "Tensión de barras",
+      "text": {
+        "es": "Tensión de barras",
+        "en": "Bar tension"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1736,19 +1919,22 @@
       "y": 502,
       "w": 140,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "SSCC.TensionBarras66",
       "unit": "kV",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f8f9fa",
+      "border_color": "#b4bbc2",
+      "text_color": "#1f2a33",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -1759,8 +1945,8 @@
       "y": 570,
       "w": 360,
       "h": 260,
-      "color": "@Panel",
-      "stroke_color": "@Borde",
+      "color": "#eceef0",
+      "stroke_color": "#b4bbc2",
       "stroke_width": 1,
       "filled": true,
       "editor_locked": true
@@ -1772,10 +1958,13 @@
       "y": 576,
       "w": 336,
       "h": 20,
-      "text": "LEYENDA",
+      "text": {
+        "es": "LEYENDA",
+        "en": "LEGEND"
+      },
       "font_size": 11,
       "bold": true,
-      "text_color": "@TextoSuave",
+      "text_color": "#5b6670",
       "text_align": "left"
     },
     {
@@ -1785,8 +1974,8 @@
       "y": 606,
       "w": 26,
       "h": 26,
-      "color": "@Cerrado",
-      "stroke_color": "@Texto",
+      "color": "#c62828",
+      "stroke_color": "#1f2a33",
       "stroke_width": 1
     },
     {
@@ -1796,10 +1985,13 @@
       "y": 608,
       "w": 290,
       "h": 22,
-      "text": "Interruptor cerrado (I)",
+      "text": {
+        "es": "Interruptor cerrado (I)",
+        "en": "Switch closed (I)"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1809,8 +2001,8 @@
       "y": 646,
       "w": 26,
       "h": 26,
-      "color": "@Abierto",
-      "stroke_color": "@Texto",
+      "color": "#2e7d32",
+      "stroke_color": "#1f2a33",
       "stroke_width": 1
     },
     {
@@ -1820,10 +2012,13 @@
       "y": 648,
       "w": 290,
       "h": 22,
-      "text": "Interruptor abierto (O)",
+      "text": {
+        "es": "Interruptor abierto (O)",
+        "en": "Switch open (O)"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1833,8 +2028,8 @@
       "y": 686,
       "w": 26,
       "h": 26,
-      "color": "@Energizado",
-      "stroke_color": "@Texto",
+      "color": "#1f5f99",
+      "stroke_color": "#1f2a33",
       "stroke_width": 1
     },
     {
@@ -1844,10 +2039,13 @@
       "y": 688,
       "w": 290,
       "h": 22,
-      "text": "Conductor en tensión",
+      "text": {
+        "es": "Conductor en tensión",
+        "en": "conductor in tension"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1857,8 +2055,8 @@
       "y": 726,
       "w": 26,
       "h": 26,
-      "color": "@Muerto",
-      "stroke_color": "@Texto",
+      "color": "#a9b1b8",
+      "stroke_color": "#1f2a33",
       "stroke_width": 1
     },
     {
@@ -1868,10 +2066,13 @@
       "y": 728,
       "w": 290,
       "h": 22,
-      "text": "Conductor sin tensión",
+      "text": {
+        "es": "Conductor sin tensión",
+        "en": "Driver without tension"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     },
     {
@@ -1881,8 +2082,8 @@
       "y": 766,
       "w": 26,
       "h": 26,
-      "color": "@Aviso",
-      "stroke_color": "@Texto",
+      "color": "#e89a1c",
+      "stroke_color": "#1f2a33",
       "stroke_width": 1
     },
     {
@@ -1892,10 +2093,13 @@
       "y": 768,
       "w": 290,
       "h": 22,
-      "text": "Calidad de dato dudosa / sin comunicación",
+      "text": {
+        "es": "Calidad de dato dudosa / sin comunicación",
+        "en": "Questionable data quality / no communication"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#1f2a33",
       "text_align": "left"
     }
   ],

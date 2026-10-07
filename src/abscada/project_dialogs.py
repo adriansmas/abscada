@@ -7,19 +7,39 @@ from .dialogs import EditorDialog as QDialog
 from .i18n import tr
 
 
+def file_name_from_title(title, taken=()):
+    """File name derived from what the operator reads: no accents, only letters, digits, «_» and «-»."""
+    import unicodedata
+    plain = unicodedata.normalize('NFKD', title).encode('ascii', 'ignore').decode()
+    base = re.sub(r'[^A-Za-z0-9_-]+', '_', plain).strip('_-')
+    if not base:
+        return ''
+    used, name, number = {n.casefold() for n in taken}, base, 2
+    while name.casefold() in used:
+        name, number = f'{base}_{number}', number + 1
+    return name
+
+
 class NewDocumentDialog(QDialog):
     def __init__(self,host,faceplate=False):
         super().__init__(host); self.host=host; self.faceplate=faceplate
         self.setWindowTitle(tr('Nuevo objeto de librería') if faceplate else tr('Nueva pantalla'))
         self.resize(430,300); body=QVBoxLayout(self); form=QFormLayout()
-        self.name=QLineEdit(); self.name.setObjectName('documentName')
+        # The operator sees one name: the title. The file name is derived from it.
+        self.name=QLineEdit(); self.name.setObjectName('documentName'); self.name.hide()
         self.title=QLineEdit(); self.title.setObjectName('documentTitle')
+        self.file_hint=QLabel(); self.file_hint.setObjectName('muted')
+        collection=host.project.faceplates if faceplate else host.project.screens
+        def derive(text):
+            self.name.setText(file_name_from_title(text,collection))
+            self.file_hint.setText(tr('Archivo: {name}',name=self.name.text()) if self.name.text() else '')
+        self.title.textChanged.connect(derive)
         self.width=QSpinBox(); self.height=QSpinBox()
         for field in (self.width,self.height): field.setRange(1,10000)
         from .project_settings import screen_size
         width,height=(320,180) if faceplate else screen_size(host.project)
         self.width.setValue(width); self.height.setValue(height)
-        for label,field in [(tr('Nombre de archivo'),self.name),(tr('Título'),self.title),(tr('Ancho (px)'),self.width),(tr('Alto (px)'),self.height)]: form.addRow(label,field)
+        for label,field in [(tr('Nombre'),self.title),('',self.file_hint),(tr('Ancho (px)'),self.width),(tr('Alto (px)'),self.height)]: form.addRow(label,field)
         body.addLayout(form); self.error=QLabel(); body.addWidget(self.error)
         buttons=QDialogButtonBox(QDialogButtonBox.StandardButton.Ok|QDialogButtonBox.StandardButton.Cancel)
         buttons.button(QDialogButtonBox.StandardButton.Ok).setText(tr('Crear'))
@@ -27,6 +47,8 @@ class NewDocumentDialog(QDialog):
 
     def accept(self):
         name=self.name.text().strip()
+        if not name:
+            self.error.setText(tr('Escribe un nombre con letras o números')); return
         collection=self.host.project.faceplates if self.faceplate else self.host.project.screens
         from .validation import filename
         try: filename(name)

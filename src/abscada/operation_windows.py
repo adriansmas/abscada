@@ -109,10 +109,13 @@ def popup_key(template, bindings):
     return ("faceplate", template, tuple(sorted(bindings.items())))
 
 
-def popup_title(project, template, bindings, title=""):
+def popup_title(project, template, bindings, title="", *, language=None):
+    from .project_languages import resolve, default_language
+    code = language or default_language(project)
+    title = resolve(title, code, default_language(project))
     if title:
         return title
-    base = project.faceplates[template].get("title") or template
+    base = resolve(project.faceplates[template].get("title", ''), code, default_language(project)) or template
     roots = [value.split(".") for value in bindings.values()]
     common = []
     for parts in zip(*roots) if roots else ():

@@ -1,5 +1,8 @@
 {
-  "title": "Detalle de bomba",
+  "title": {
+    "es": "Detalle de bomba",
+    "en": "bomb detail"
+  },
   "width": 420,
   "height": 300,
   "background": "#f4f7fa",
@@ -16,7 +19,10 @@
       "y": 12,
       "w": 388,
       "h": 36,
-      "text": "DETALLE DE BOMBA",
+      "text": {
+        "es": "DETALLE DE BOMBA",
+        "en": "PUMP DETAIL"
+      },
       "bold": true,
       "text_align": "left"
     },
@@ -36,7 +42,10 @@
       "y": 62,
       "w": 324,
       "h": 52,
-      "text": "Caudal",
+      "text": {
+        "es": "Caudal",
+        "en": "Flow"
+      },
       "tag": "$flow",
       "unit": "m³/h",
       "font_size": 20,
@@ -49,7 +58,10 @@
       "y": 130,
       "w": 388,
       "h": 44,
-      "text": "Consigna",
+      "text": {
+        "es": "Consigna",
+        "en": "Setpoint"
+      },
       "tag": "$setpoint",
       "unit": "m³/h"
     },
@@ -60,7 +72,10 @@
       "y": 188,
       "w": 388,
       "h": 44,
-      "text": "Marcha / paro",
+      "text": {
+        "es": "Marcha / paro",
+        "en": "Start/stop"
+      },
       "tag": "$running",
       "action": "toggle"
     },
@@ -71,7 +86,10 @@
       "y": 246,
       "w": 120,
       "h": 38,
-      "text": "Cerrar",
+      "text": {
+        "es": "Cerrar",
+        "en": "Close"
+      },
       "action": "close_popup"
     }
   ]

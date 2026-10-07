@@ -3,17 +3,26 @@
   "categories": [
     {
       "id": "local",
-      "name": "Proceso interno",
+      "name": {
+        "es": "Proceso interno",
+        "en": "Internal process"
+      },
       "color": "#147d75"
     },
     {
       "id": "equipment",
-      "name": "Equipos TCP",
+      "name": {
+        "es": "Equipos TCP",
+        "en": "TCP equipment"
+      },
       "color": "#3678c8"
     },
     {
       "id": "events",
-      "name": "Avisos",
+      "name": {
+        "es": "Avisos",
+        "en": "Notices"
+      },
       "color": "#da982f"
     }
   ],
@@ -24,7 +33,10 @@
       "category": "local",
       "condition": "high",
       "threshold": 80,
-      "message": "Nivel local alto",
+      "message": {
+        "es": "Nivel local alto",
+        "en": "High local level"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,
@@ -38,7 +50,10 @@
       "category": "local",
       "condition": "low",
       "threshold": 15,
-      "message": "Nivel local bajo",
+      "message": {
+        "es": "Nivel local bajo",
+        "en": "Low local level"
+      },
       "priority": 600,
       "ack_required": true,
       "enabled": true,
@@ -52,7 +67,10 @@
       "category": "local",
       "condition": "true",
       "threshold": 0,
-      "message": "Fallo digital de ejemplo",
+      "message": {
+        "es": "Fallo digital de ejemplo",
+        "en": "Example digital failure"
+      },
       "priority": 900,
       "ack_required": true,
       "enabled": true,
@@ -66,7 +84,10 @@
       "category": "equipment",
       "condition": "high",
       "threshold": 80,
-      "message": "Nivel alto en depósito S7",
+      "message": {
+        "es": "Nivel alto en depósito S7",
+        "en": "High level in S7 tank"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -80,7 +101,10 @@
       "category": "equipment",
       "condition": "high",
       "threshold": 65,
-      "message": "Temperatura Modbus alta",
+      "message": {
+        "es": "Temperatura Modbus alta",
+        "en": "Modbus temperature high"
+      },
       "priority": 750,
       "ack_required": true,
       "enabled": true,
@@ -94,7 +118,10 @@
       "category": "events",
       "condition": "equal",
       "threshold": 1,
-      "message": "Modo manual seleccionado",
+      "message": {
+        "es": "Modo manual seleccionado",
+        "en": "Manual mode selected"
+      },
       "priority": 200,
       "ack_required": false,
       "enabled": true,

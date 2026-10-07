@@ -5,10 +5,19 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 ## [Sin publicar]
 
 ### Cambiado
+- Retirado el botón verde «+ Crear» de Studio; los documentos se crean desde el menú contextual del árbol.
+- Retiradas las paletas de colores: cada objeto y estado conserva su HEX explícito. Los ocho ejemplos y generadores usan colores locales; las referencias de proyectos antiguos se convierten al abrirlos.
+- Documentación revisada: menús actuales, layouts, protocolos implementados, persistencia, credenciales y ejecución desde macOS.
+- Documentación agrupada: `docs/` pasa de 23 a 9 Markdown, con guías únicas de Studio y operación, referencias técnicas e índice en README. Eliminados los informes antiguos y actualizados los enlaces y capturas.
 - El runtime espera hasta 30 s, en lugar de 5, a que el archivo SQLite esté listo al arrancar: en discos lentos o con el antivirus revisando archivos nuevos fallaba sin motivo.
 - **«Faceplates» pasa a llamarse «Librerías»**, y cada plantilla, «objeto de librería». El formato de archivo no cambia (`faceplates/*.json`), así que los proyectos existentes abren igual. «Bibliotecas de faceplates» pasa a ser «Librerías externas».
 
 ### Añadido
+- **Studio, ronda de usabilidad:** un contenedor de pantalla puede existir sin pantalla asociada (se diseña primero el layout); «Nueva pantalla» pide solo el nombre y deriva de él el archivo; clic derecho sobre un elemento del lienzo con copiar, orden, alinear, agrupar, bloquear, propiedades dinámicas y suprimir.
+- Variables: la última fila de la lista es donde se escribe una variable nueva (Intro para crear), con numeración, tipo editable en la propia fila y clic derecho para insertar encima o debajo, mover o eliminar. Tipos de datos y conexiones tienen numeración y menú contextual; los tipos, también fila de alta.
+- Propiedades dinámicas: las condiciones sobre variables booleanas piden solo «Verdadero / Falso» (antes «igual a» y «distinto de» decían lo mismo).
+- Scripts: la pantalla explica para qué sirven, crea scripts escribiendo el nombre en la última línea y tiene menú contextual; «Scripts al abrir la pantalla» remite a la sección Scripts si aún no hay ninguno. «Librerías externas» explica cómo importar una librería y se alcanza también desde el árbol del proyecto.
+- **Idiomas por proyecto** con traducciones junto a cada texto, fallback, idioma de edición, tabla con filtro e intercambio CSV, cambio en runtime y scripts, preferencias por puesto/usuario y alarmas históricas traducidas. Los ocho ejemplos incluyen español e inglés.
 - **Studio y el runtime en inglés**: **Ayuda → Idioma / Language** elige el idioma de la aplicación (español o inglés), que se aplica al volver a abrirla. Es un ajuste del usuario, independiente de los proyectos. Catálogo en `src/abscada/locales/en.json` y herramientas `tools/i18n_check.py` e `tools/i18n_wrap.py`.
 - **Librería estándar del sistema** (solo lectura, viene con la aplicación y no se copia al proyecto): carpeta **Gráficos** con 35 símbolos SVG (depósitos, válvulas, bombas y motores, proceso, instrumentos y eléctrico) y carpeta **Objetos** con versiones animadas (bomba, motor y ventilador con marcha y fallo; válvula abierta o cerrada; interruptor; depósito con nivel). «Copiar al proyecto» crea una copia editable.
 - **Carpetas en la librería del proyecto**: crear, renombrar, eliminar y arrastrar objetos entre carpetas (`library_folders` en `project.json`).
@@ -30,7 +39,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 - **Servidor OPC UA** (Proyecto → Servidor OPC UA) que publica las variables. Inicio de sesión con cuentas abSCADA y escrituras como órdenes auditadas.
 - Propiedad `permission` en botones y entradas para exigir un permiso concreto.
 - Cadena de suministro: `pip-audit` en CI, SBOM CycloneDX, `SHA256SUMS.txt` y atestación de procedencia en cada versión, y Dependabot.
-- Documentación: [SECURITY.md](SECURITY.md), [docs/SECURITY_DEVELOPMENT.md](docs/SECURITY_DEVELOPMENT.md), [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) y [docs/HARDENING.md](docs/HARDENING.md).
+- Documentación: [SECURITY.md](SECURITY.md), [docs/SECURITY_DEVELOPMENT.md](docs/SECURITY_DEVELOPMENT.md), [docs/SECURITY_DEVELOPMENT.md](docs/SECURITY_DEVELOPMENT.md) y [docs/HARDENING.md](docs/HARDENING.md).
 
 ### Seguridad
 - La seguridad de usuarios está **desactivada por defecto** para no cambiar el comportamiento de los proyectos existentes. Actívala en las instalaciones reales ([docs/HARDENING.md](docs/HARDENING.md)).

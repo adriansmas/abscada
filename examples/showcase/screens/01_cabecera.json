@@ -1,5 +1,8 @@
 {
-  "title": "Cabecera compartida",
+  "title": {
+    "es": "Cabecera compartida",
+    "en": "Shared header"
+  },
   "width": 1360,
   "height": 80,
   "background": "#183445",
@@ -11,7 +14,10 @@
       "y": 20,
       "w": 535,
       "h": 40,
-      "text": "abSCADA / LABORATORIO",
+      "text": {
+        "es": "abSCADA / LABORATORIO",
+        "en": "absCada / LABORATORY"
+      },
       "font_size": 25,
       "text_align": "left",
       "text_color": "#ffffff",
@@ -24,7 +30,10 @@
       "y": 21,
       "w": 350,
       "h": 38,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "font_size": 16,
       "text_align": "left",
       "text_color": "#ffffff",
@@ -38,7 +47,10 @@
       "y": 21,
       "w": 335,
       "h": 38,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "font_size": 16,
       "text_align": "left",
       "text_color": "#ffffff",

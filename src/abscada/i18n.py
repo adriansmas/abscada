@@ -16,6 +16,9 @@ from __future__ import annotations
 
 import json
 import os
+from contextvars import ContextVar
+from contextlib import contextmanager
+from functools import lru_cache
 from pathlib import Path
 
 SOURCE = "es"
@@ -24,6 +27,22 @@ LOCALES = Path(__file__).with_name("locales")
 
 _language: str | None = None
 _catalog: dict[str, str] = {}
+_scoped_language = ContextVar('abscada_language', default=None)
+
+
+@contextmanager
+def using_language(code):
+    """Translate a runtime callback independently of Studio's process language."""
+    token = _scoped_language.set(code)
+    try:
+        yield
+    finally:
+        _scoped_language.reset(token)
+
+
+@lru_cache(maxsize=32)
+def scoped_catalog(code):
+    return load_catalog(code)
 
 
 def settings_path() -> Path:
@@ -80,7 +99,9 @@ def language() -> str:
 def tr(source: str, /, **values) -> str:
     """Translate a Spanish source text; keyword arguments fill its {placeholders}."""
     language()
-    translated = _catalog.get(source) or source
+    code = _scoped_language.get()
+    catalog = scoped_catalog(code) if code else _catalog
+    translated = catalog.get(source) or source
     if values:
         try:
             return translated.format(**values)
@@ -92,3 +113,10 @@ def tr(source: str, /, **values) -> str:
 def N_(source: str) -> str:
     """Mark a text for the catalogs without translating it now (gettext convention)."""
     return source
+
+
+def tr_existing(text: str) -> str:
+    """Retranslate a caption which may have been created at import in Studio."""
+    language()
+    source = next((key for key, value in _catalog.items() if value == text), text)
+    return tr(source)

@@ -194,6 +194,10 @@ class ProjectTreeActions:
                 menu.addSeparator()
                 menu.addAction(tr("Renombrar carpeta…"), lambda: self.tree_rename(item))
                 menu.addAction(tr("Eliminar carpeta (su contenido sube un nivel)"), lambda: self.tree_mutate(lambda: screen_tree.delete_folder(self.project, folder)))
+        elif value == ("group", "libraries"):
+            from .library_editor import LibraryDialog
+            menu.addAction(tr("Importar librería externa…"), lambda: LibraryDialog(self).exec())
+            menu.addAction(tr("Nuevo objeto de librería…"), lambda: self.new_document(True))
         elif kind == "screens":
             name = value[1]
             menu.addAction(tr("Renombrar…"), lambda: self.tree_rename(item))

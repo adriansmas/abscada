@@ -27,7 +27,7 @@ class ScreenContainer(QWidget):
         self.project = window.project
         self.runtime = getattr(window,'runtime',None)
         self.preview_mode = getattr(window,'preview_mode',False)
-        self.document_name = element['screen']
+        self.document_name = element.get('screen', '')
         self.setFont(window.font())
         self.scene = CanvasScene(self)
         self.view = EmbeddedCanvasView(self.scene, self)
@@ -38,7 +38,8 @@ class ScreenContainer(QWidget):
         layout.setSizeConstraint(QLayout.SizeConstraint.SetNoConstraint)
         layout.addWidget(self.view)
         self.initializing = True
-        self.select_screen(self.document_name)
+        if self.document_name:
+            self.select_screen(self.document_name)
         self.initializing = False
 
     @property

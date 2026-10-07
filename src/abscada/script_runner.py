@@ -26,6 +26,14 @@ class Context:
         self.state = request.get('state', {})
         self.samples = request['samples']
         self.actions = []
+        self.language = request.get('language', 'es')
+        self.languages = request.get('languages', ['es'])
+        self.language_change = None
+
+    def set_language(self, code):
+        if code not in self.languages:
+            raise ValueError(f'Idioma desconocido: {code}')
+        self.language = self.language_change = code
 
     def read(self, name):
         sample = self.samples[name]
@@ -56,7 +64,7 @@ def main():
     try:
         with contextlib.redirect_stdout(output), contextlib.redirect_stderr(output):
             exec(compile(request['source'], request['filename'], 'exec'), {'ctx': ctx, '__name__': '__scada_script__'})
-        response = dict(ok=True, actions=ctx.actions, state=ctx.state, output=output.getvalue()[-16000:])
+        response = dict(ok=True, language_change=ctx.language_change, actions=ctx.actions, state=ctx.state, output=output.getvalue()[-16000:])
         encoded = json.dumps(response, allow_nan=False)
     except BaseException:
         encoded = json.dumps(dict(ok=False, error=traceback.format_exc()[-16000:], output=output.getvalue()[-16000:]))

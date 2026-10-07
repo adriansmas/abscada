@@ -146,7 +146,7 @@ class Repository:
     def enter(self, alarm, value, now):
         cursor = self.connection.execute("""INSERT INTO alarm_instances
           (alarm_id,message,category,priority,tag,entered_at,ack_required,value)
-          VALUES(?,?,?,?,?,?,?,?)""", (alarm["id"], alarm["message"], alarm["category"], alarm.get("priority", 500),
+          VALUES(?,?,?,?,?,?,?,?)""", (alarm['id'], json.dumps(alarm['message'], ensure_ascii=False) if isinstance(alarm['message'], dict) else alarm['message'], alarm['category'], alarm.get("priority", 500),
             alarm["tag"], now, alarm.get("ack_required", True), json.dumps(value)))
         self.event(cursor.lastrowid, "incoming", now)
         return cursor.lastrowid

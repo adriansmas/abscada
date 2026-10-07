@@ -84,23 +84,21 @@ def test_visibility_switches_overlapping_buttons_and_hit_targets(operational_stu
     assert r.runtime.snapshot()['Fault'].value is False
 
 
-def test_conditions_roundtrip_faceplate_parameters_and_palette(operational_project):
-    p=operational_project;p.manifest['palette']={'run':'#123456'}
-    child=command('child',dynamics={'visible':condition(False,'$run'),'states':[dict(when=condition(True,'$run'),style={'color':'@run'})]});child['tag']='$run'
+def test_conditions_roundtrip_faceplate_parameters_and_colors(operational_project):
+    p=operational_project
+    child=command('child',dynamics={'visible':condition(False,'$run'),'states':[dict(when=condition(True,'$run'),style={'color':'#123456'})]});child['tag']='$run'
     p.faceplates['motor']=dict(width=250,height=100,parameters={'run':'bool'},elements=[child])
     p.screens['main']['elements']=[dict(id='motor1',kind='faceplate',template='motor',bindings={'run':'Fault'},x=0,y=0,w=250,h=100)]
     p.save();p=Project.load(p.root);expanded=list(p.elements('main'))[0]
     assert expanded['dynamics']['visible']['tag']=='Fault'
-    assert dynamics.effective(expanded,{'Fault':Sample(True,'good',0)},p.manifest['palette'])['color']=='#123456'
+    assert dynamics.effective(expanded,{'Fault':Sample(True,'good',0)})['color']=='#123456'
 
 
-def test_pilot_exact_colors_bad_quality_and_shared_palette(operational_project):
-    p=operational_project;palette={'active':'#234567'}
-    e=dict(id='pilot',kind='lamp',tag='Fault',lamp_colors={'on':'@active','off':'#123456','bad':'#654321'})
+def test_pilot_exact_colors_and_bad_quality(operational_project):
+    e=dict(id='pilot',kind='lamp',tag='Fault',lamp_colors={'on':'#234567','off':'#123456','bad':'#654321'})
     for value,quality,expected in [(True,'good','#234567'),(False,'good','#123456'),(True,'bad','#654321')]:
-        assert dynamics.effective(e,{'Fault':Sample(value,quality,0)},palette)['lamp_color']==expected
-    palette['active']='#112233';assert dynamics.effective(e,{'Fault':Sample(True,'good',0)},palette)['lamp_color']=='#112233'
-    e['lamp_colors']['on']='#998877';assert dynamics.effective(e,{'Fault':Sample(True,'good',0)},palette)['lamp_color']=='#998877'
+        assert dynamics.effective(e,{'Fault':Sample(value,quality,0)})['lamp_color']==expected
+    e['lamp_colors']['on']='#998877';assert dynamics.effective(e,{'Fault':Sample(True,'good',0)})['lamp_color']=='#998877'
 
 
 def test_state_dialog_keeps_both_conditions_and_colors(operational_studio):
@@ -213,12 +211,12 @@ def test_structure_duplication_clears_plc_bindings(studio):
     assert all(not tag.get('binding') for name,tag in w.project.tags().items() if name.startswith('PumpCopy.'))
 
 
-def test_palette_change_undo_updates_all_references_but_not_local_override(operational_studio):
-    w=operational_studio;w.project.manifest['palette']={'brand':'#112233'}
-    w.project.screens['main']['elements']=[command('a',color='@brand'),command('b',color='@brand'),command('local',color='#abcdef')]
-    w.render_scene();w.mutate(lambda:w.project.manifest['palette'].__setitem__('brand','#445566'))
-    colors=lambda:[dynamics.effective(e,{},w.project.manifest['palette'],True)['color'] for e in w.document()['elements']]
-    assert colors()==['#445566','#445566','#abcdef']
+def test_local_color_change_undo_preserves_other_objects(operational_studio):
+    w=operational_studio
+    w.project.screens['main']['elements']=[command('a',color='#112233'),command('b',color='#112233'),command('local',color='#abcdef')]
+    w.render_scene();w.mutate(lambda:w.document()['elements'][0].__setitem__('color','#445566'))
+    colors=lambda:[dynamics.effective(e,{},True)['color'] for e in w.document()['elements']]
+    assert colors()==['#445566','#112233','#abcdef']
     w.undo();assert colors()==['#112233','#112233','#abcdef']
 
 

@@ -1,6 +1,9 @@
 {
   "process": {
-    "title": "Alarmas de planta",
+    "title": {
+      "es": "Alarmas de planta",
+      "en": "Plant alarms"
+    },
     "categories": [],
     "min_priority": 1,
     "mode": "pending",

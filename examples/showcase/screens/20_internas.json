@@ -1,8 +1,11 @@
 {
-  "title": "Proceso con variables internas",
+  "title": {
+    "es": "Proceso con variables internas",
+    "en": "Process with internal variables"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Proceso con variables internas",
+      "text": {
+        "es": "Proceso con variables internas",
+        "en": "Process with internal variables"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "Los mandos y valores son locales. «Señal local» activa una tarea de ejemplo; no interviene en S7 ni Modbus.",
+      "text": {
+        "es": "Los mandos y valores son locales. «Señal local» activa una tarea de ejemplo; no interviene en S7 ni Modbus.",
+        "en": "The controls and values are local. “Local signal” activates an example task; It does not intervene in S7 or Modbus."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -39,7 +48,7 @@
       "y": 140,
       "w": 640,
       "h": 505,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -52,7 +61,7 @@
       "y": 140,
       "w": 435,
       "h": 505,
-      "color": "@Panel",
+      "color": "#ffffff",
       "stroke_color": "#dce5ed",
       "stroke_width": 1,
       "filled": true,
@@ -61,7 +70,7 @@
     {
       "id": "inlet",
       "kind": "pipe",
-      "stroke_color": "@Linea",
+      "stroke_color": "#7c94a5",
       "stroke_width": 12,
       "arrows": "end",
       "x": 75,
@@ -90,7 +99,7 @@
     {
       "id": "outlet",
       "kind": "pipe",
-      "stroke_color": "@Linea",
+      "stroke_color": "#7c94a5",
       "stroke_width": 12,
       "arrows": "end",
       "x": 465,
@@ -124,7 +133,7 @@
       "w": 80,
       "h": 80,
       "color": "#ffffff",
-      "stroke_color": "@S7",
+      "stroke_color": "#3678c8",
       "stroke_width": 3,
       "filled": true,
       "group": "bomba_local"
@@ -132,7 +141,7 @@
     {
       "id": "pump_line",
       "kind": "line",
-      "stroke_color": "@Linea",
+      "stroke_color": "#7c94a5",
       "stroke_width": 3,
       "group": "bomba_local",
       "x": 128,
@@ -158,7 +167,7 @@
       "w": 130,
       "h": 305,
       "color": "#edf3f7",
-      "stroke_color": "@Linea",
+      "stroke_color": "#7c94a5",
       "stroke_width": 3,
       "filled": true
     },
@@ -170,7 +179,7 @@
       "w": 130,
       "h": 30,
       "color": "#edf3f7",
-      "stroke_color": "@Linea",
+      "stroke_color": "#7c94a5",
       "stroke_width": 3,
       "filled": true
     },
@@ -194,15 +203,15 @@
               "bad": false
             },
             "style": {
-              "color": "@Paro"
+              "color": "#c64b51"
             }
           }
         ],
         "default": {
-          "color": "@Marcha"
+          "color": "#147d75"
         },
         "bad": {
-          "color": "@Aviso"
+          "color": "#da982f"
         }
       }
     },
@@ -218,7 +227,10 @@
       "max": 60,
       "unit": "°C",
       "decimals": 1,
-      "text": "Temperatura",
+      "text": {
+        "es": "Temperatura",
+        "en": "Temperature"
+      },
       "gauge_style": "dial",
       "warning": 40,
       "alarm": 50
@@ -232,9 +244,9 @@
       "h": 44,
       "tag": "Local.Marcha",
       "lamp_colors": {
-        "on": "@Marcha",
+        "on": "#147d75",
         "off": "#d7e0e9",
-        "bad": "@Aviso"
+        "bad": "#da982f"
       }
     },
     {
@@ -244,13 +256,16 @@
       "y": 556,
       "w": 280,
       "h": 44,
-      "text": "Nivel",
+      "text": {
+        "es": "Nivel",
+        "en": "Level"
+      },
       "tag": "Local.Nivel",
       "unit": "%",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "tank_label",
@@ -259,10 +274,13 @@
       "y": 166,
       "w": 190,
       "h": 36,
-      "text": "TK-01",
+      "text": {
+        "es": "TK-01",
+        "en": "TK-01"
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "temp",
@@ -271,13 +289,16 @@
       "y": 580,
       "w": 250,
       "h": 44,
-      "text": "Temperatura",
+      "text": {
+        "es": "Temperatura",
+        "en": "Temperature"
+      },
       "tag": "Local.Temperatura",
       "unit": "°C",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "run",
@@ -286,7 +307,10 @@
       "y": 165,
       "w": 385,
       "h": 42,
-      "text": "Marcha / paro",
+      "text": {
+        "es": "Marcha / paro",
+        "en": "Start/stop"
+      },
       "action": "toggle",
       "font_size": 15,
       "tag": "Local.Marcha"
@@ -298,7 +322,10 @@
       "y": 222,
       "w": 385,
       "h": 42,
-      "text": "Señal local: activar / parar",
+      "text": {
+        "es": "Señal local: activar / parar",
+        "en": "Local signal: activate / stop"
+      },
       "action": "toggle",
       "font_size": 15,
       "tag": "Local.Generador"
@@ -310,13 +337,16 @@
       "y": 292,
       "w": 385,
       "h": 44,
-      "text": "Consigna",
+      "text": {
+        "es": "Consigna",
+        "en": "Setpoint"
+      },
       "tag": "Local.Consigna",
       "unit": "%",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "manual_level",
@@ -325,13 +355,16 @@
       "y": 354,
       "w": 385,
       "h": 44,
-      "text": "Nivel manual",
+      "text": {
+        "es": "Nivel manual",
+        "en": "manual level"
+      },
       "tag": "Local.Nivel",
       "unit": "%",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "dynamics": {
         "enabled": {
           "tag": "Local.Generador",
@@ -339,7 +372,10 @@
           "value": false,
           "bad": false
         },
-        "disabled_reason": "Detén la señal local para introducir un nivel manual"
+        "disabled_reason": {
+          "es": "Detén la señal local para introducir un nivel manual",
+          "en": "Stop the local signal to enter a manual level"
+        }
       }
     },
     {
@@ -349,13 +385,16 @@
       "y": 416,
       "w": 385,
       "h": 44,
-      "text": "Lote",
+      "text": {
+        "es": "Lote",
+        "en": "Lot"
+      },
       "tag": "Local.Texto",
       "unit": "",
       "decimals": 1,
       "text_align": "left",
       "color": "#ffffff",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     },
     {
       "id": "run_text",
@@ -368,14 +407,23 @@
       "texts": [
         {
           "value": "false",
-          "text": "Equipo parado"
+          "text": {
+            "es": "Equipo parado",
+            "en": "Equipment stopped"
+          }
         },
         {
           "value": "true",
-          "text": "Equipo en marcha"
+          "text": {
+            "es": "Equipo en marcha",
+            "en": "Team in motion"
+          }
         }
       ],
-      "default_text": "Estado desconocido",
+      "default_text": {
+        "es": "Estado desconocido",
+        "en": "Unknown status"
+      },
       "color": "#ffffff"
     },
     {
@@ -385,10 +433,13 @@
       "y": 675,
       "w": 1090,
       "h": 60,
-      "text": "Doble clic en una entrada para escribir. El nivel > 80 activa una alarma con retardo; los valores se registran cada segundo.",
+      "text": {
+        "es": "Doble clic en una entrada para escribir. El nivel > 80 activa una alarma con retardo; los valores se registran cada segundo.",
+        "en": "Double click on an entry to write. Level > 80 activates a delayed alarm; values ​​are recorded every second."
+      },
       "font_size": 16,
       "text_align": "left",
-      "text_color": "@Texto"
+      "text_color": "#243c50"
     }
   ],
   "on_open": [

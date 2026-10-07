@@ -13,7 +13,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Alarmas activas y pendientes de reconocer",
+    "title": {
+      "es": "Alarmas activas y pendientes de reconocer",
+      "en": "Alarms active and pending recognition"
+    },
     "mode": "pending"
   },
   "historico": {
@@ -30,7 +33,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Histórico de alarmas",
+    "title": {
+      "es": "Histórico de alarmas",
+      "en": "Alarm history"
+    },
     "mode": "history"
   },
   "eventos": {
@@ -47,7 +53,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Registro de eventos",
+    "title": {
+      "es": "Registro de eventos",
+      "en": "Event log"
+    },
     "mode": "events"
   },
   "activas_g1": {
@@ -66,7 +75,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Alarmas del Grupo 1",
+    "title": {
+      "es": "Alarmas del Grupo 1",
+      "en": "unit 1 Alarms"
+    },
     "mode": "pending"
   },
   "activas_g2": {
@@ -85,7 +97,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Alarmas del Grupo 2",
+    "title": {
+      "es": "Alarmas del Grupo 2",
+      "en": "unit 2 Alarms"
+    },
     "mode": "pending"
   },
   "activas_sscc": {
@@ -105,7 +120,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Alarmas de servicios auxiliares y subestación",
+    "title": {
+      "es": "Alarmas de servicios auxiliares y subestación",
+      "en": "Auxiliary services and substation alarms"
+    },
     "mode": "pending"
   },
   "visor": {
@@ -122,7 +140,10 @@
       "ack_at",
       "actor"
     ],
-    "title": "Alarmas activas y pendientes de reconocer",
+    "title": {
+      "es": "Alarmas activas y pendientes de reconocer",
+      "en": "Alarms active and pending recognition"
+    },
     "mode": "pending"
   }
 }

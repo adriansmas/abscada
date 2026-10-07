@@ -3,7 +3,10 @@
   "categories": [
     {
       "id": "banco",
-      "name": "Banco de ensayo",
+      "name": {
+        "es": "Banco de ensayo",
+        "en": "Test bench"
+      },
       "color": "#2b6cb0"
     }
   ],
@@ -14,7 +17,10 @@
       "category": "banco",
       "condition": "high",
       "threshold": 75,
-      "message": "Temperatura de devanado alta",
+      "message": {
+        "es": "Temperatura de devanado alta",
+        "en": "High winding temperature"
+      },
       "priority": 700,
       "ack_required": true,
       "enabled": true,
@@ -28,7 +34,10 @@
       "category": "banco",
       "condition": "true",
       "threshold": 0,
-      "message": "Temperatura de devanado muy alta (PLC)",
+      "message": {
+        "es": "Temperatura de devanado muy alta (PLC)",
+        "en": "Very high winding temperature (PLC)"
+      },
       "priority": 900,
       "ack_required": true,
       "enabled": true,
@@ -42,7 +51,10 @@
       "category": "banco",
       "condition": "high",
       "threshold": 2800,
-      "message": "Velocidad excesiva",
+      "message": {
+        "es": "Velocidad excesiva",
+        "en": "Excessive speed"
+      },
       "priority": 800,
       "ack_required": true,
       "enabled": true,

@@ -16,10 +16,12 @@ from PySide6.QtWidgets import (
     QHeaderView, QMessageBox, QInputDialog, QTabWidget, QMenu, QToolButton,QSizePolicy,
 )
 from .project import coerce, PRIMITIVES
+from .numbered_rows import NUMBER_ROLE
+from .variable_forms import NEW_ROW
 from .connectors import REGISTRY, definition, binding_summary
 from .protocol_editor import ProtocolForm, BindingEditor
 from .project_actions import ProjectActions
-from .graphics import PALETTE, tool_icon, CanvasScene, CanvasView, ElementItem
+from .graphics import TOOL_NAMES, tool_icon, CanvasScene, CanvasView, ElementItem
 from .theme import STYLE, STUDIO_STYLE, configure_fonts
 from .runtime_window import RuntimeWindow
 from .engineering import OperationalEngineering
@@ -29,6 +31,7 @@ from .drawing_actions import DrawingActions
 from .text_list_editor import edit_text_list
 from .dialogs import EditorDialog as QDialog
 from .i18n import tr
+from .project_languages import resolve, default_language
 
 
 def label(text, name="muted"):
@@ -68,7 +71,7 @@ class Toolbox(QListWidget):
         self.setMinimumHeight(204)
         listed = set()
         for title, kinds in TOOL_GROUPS:
-            kinds = kinds or tuple(k for k in PALETTE if k in PATH_KINDS | SHAPE_KINDS)
+            kinds = kinds or tuple(k for k in TOOL_NAMES if k in PATH_KINDS | SHAPE_KINDS)
             header = QListWidgetItem(title.upper())
             header.setFlags(Qt.ItemFlag.NoItemFlags)
             header.setSizeHint(QSize(190, 24))
@@ -76,12 +79,12 @@ class Toolbox(QListWidget):
             self.addItem(header)
             for kind in kinds:
                 self.add_tool(kind); listed.add(kind)
-        for kind in PALETTE:
+        for kind in TOOL_NAMES:
             if kind not in listed:
                 self.add_tool(kind)
 
     def add_tool(self, kind):
-        title = PALETTE[kind]
+        title = TOOL_NAMES[kind]
         item = QListWidgetItem(tool_icon(kind), title)
         item.setSizeHint(QSize(190, 30))
         item.setData(Qt.ItemDataRole.UserRole, kind)
@@ -118,6 +121,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         super().__init__()
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose, True)
         self.project = project
+        from .project_languages import default_language
+        self.editing_language = default_language(project)
         self.runtime_window = None
         self.samples = {}
         self.dirty = False
@@ -149,6 +154,14 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         titles.addWidget(self.page_title)
         top.addLayout(titles)
         top.addStretch()
+        from .project_languages import languages
+        self.editing_language_field = QComboBox()
+        self.editing_language_field.setObjectName('editingLanguage')
+        self.editing_language_field.setToolTip(tr('Idioma de edición del proyecto'))
+        self.editing_language_field.addItems(languages(self.project))
+        self.editing_language_field.setCurrentText(self.editing_language)
+        self.editing_language_field.currentTextChanged.connect(self.change_editing_language)
+        top.addWidget(self.editing_language_field)
         self.unsaved_label = QPushButton(tr("● Cambios sin guardar · Guardar (Ctrl+S)"))
         self.unsaved_label.setObjectName("unsavedBadge")
         self.unsaved_label.setToolTip(tr("Los cambios se conservan al pasar de una sección a otra, pero solo se escriben en disco al guardar."))
@@ -219,10 +232,20 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if self.runtime_window and QMessageBox.question(self,tr('Reiniciar runtime'),tr('Se interrumpirá la sesión de operación. ¿Reiniciar con los cambios actuales?'),QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.No)!=QMessageBox.StandardButton.Yes:return
         if self.stop_runtime():self.start_runtime()
 
+    def change_editing_language(self, code):
+        if not code:
+            return
+        self.editing_language = code
+        selected = [item.element['id'] for item in self.scene.selectedItems()]
+        self.render_scene(selected)
+        self.show_properties()
+
     def review_project(self):
         from .dynamics import issues
         try:
             self.project.validate(); messages=issues(self.project)
+            from .project_languages import missing
+            messages.extend(missing(self.project))
         except Exception as exc: messages=[str(exc)]
         QMessageBox.information(self,tr('Revisión del proyecto'),'\n'.join(messages) or tr('No se han encontrado errores de configuración'))
 
@@ -300,14 +323,6 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         box.setSpacing(5)
         header = QHBoxLayout(); header.setContentsMargins(0, 0, 0, 0)
         header.addWidget(label(tr("PROYECTO"), "sectionTitle")); header.addStretch()
-        create = QToolButton(); create.setText(tr("+ Crear")); create.setObjectName("createButton")
-        create.setToolTip(tr("Crear una pantalla, una carpeta o un objeto de librería (símbolo o plantilla de equipo)"))
-        create.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
-        menu = QMenu(create)
-        menu.addAction(tr("Pantalla…"), lambda: self.new_document(False, folder=self.current_folder()))
-        menu.addAction(tr("Carpeta de pantallas…"), lambda: self.tree_new_folder(self.current_folder()))
-        menu.addAction(tr("Objeto de librería…"), lambda: self.new_document(True))
-        create.setMenu(menu); header.addWidget(create)
         box.addLayout(header)
         box.addWidget(self.project_label)
         self.navigation = ProjectTree(self)
@@ -321,7 +336,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.layers.customContextMenuRequested.connect(self.layer_menu)
         self.layers.setToolTip(tr("Elementos de la pantalla abierta, del fondo al frente. Selecciona aquí los que se tapan entre sí; "
                                "clic derecho para ocultar, bloquear u ordenar."))
-        self.resource_tabs.addTab(self.layers, tr("Elementos"))
+        layers_page = QWidget(); layers_box = QVBoxLayout(layers_page); layers_box.setContentsMargins(0, 0, 0, 0)
+        layers_hint = label(tr("Úsalo solo para elegir un elemento tapado por otro. Para el resto, clic derecho sobre el elemento."))
+        layers_hint.setWordWrap(True)
+        layers_box.addWidget(layers_hint); layers_box.addWidget(self.layers, 1)
+        self.resource_tabs.addTab(layers_page, tr("Elementos"))
         self.resource_tabs.setTabToolTip(1, self.layers.toolTip())
         box.addWidget(self.resource_tabs, 1)
         box.addSpacing(4)
@@ -419,13 +438,17 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         body.addWidget(self.drawing_properties)
         self.content_group = QGroupBox(tr("Contenido y variable"))
         form = QFormLayout(self.content_group)
-        self.text_field, self.unit_field = QLineEdit(), QLineEdit()
+        from .project_text_editor import ProjectTextField
+        self.text_field, self.unit_field = ProjectTextField(self), QLineEdit()
+        self.tooltip_field = ProjectTextField(self)
+        self.tooltip_field.editingFinished.connect(self.auto_apply)
         self.tag_field = QComboBox()
         self.tag_field.setEditable(True)
         self.decimals_field = QSpinBox()
         self.decimals_field.setRange(0, 10)
         for title, field in ((tr("Texto"), self.text_field), (tr("Variable"), self.tag_field), (tr("Unidad"), self.unit_field), (tr("Decimales"), self.decimals_field)):
             form.addRow(title, field)
+        form.addRow(tr('Ayuda'), self.tooltip_field)
         for field in (self.text_field, self.unit_field, self.decimals_field):
             field.editingFinished.connect(self.auto_apply)
         self.tag_field.activated.connect(self.auto_apply)
@@ -484,6 +507,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.action_field.addItem(tr("Abrir objeto de librería emergente"), "faceplate_popup")
         self.action_field.addItem(tr("Cerrar emergente"), "close_popup")
         self.action_field.addItem(tr("Ejecutar script"), "script")
+        self.action_field.addItem(tr('Cambiar idioma'), 'set_language')
+        self.language_target_field = QComboBox()
+        self.language_target_field.addItems(self.project.manifest.get('languages', ['es']))
+        self.language_target_field.activated.connect(self.auto_apply)
+        form.addRow(tr('Idioma'), self.language_target_field)
         self.action_field.addItem(tr("Pulsador momentáneo (1 / 0)"), "momentary")
         self.action_field.addItem(tr("Escribir al pulsar y soltar"), "press_release")
         self.action_field.activated.connect(self.auto_apply)
@@ -508,7 +536,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.popup_binding_form.setContentsMargins(0, 0, 0, 0)
         self.popup_binding_fields = {}
         form.addRow(self.popup_bindings)
-        self.popup_title_field = QLineEdit()
+        self.popup_title_field = ProjectTextField(self)
         self.popup_title_field.setPlaceholderText(tr("Automático: objeto · equipo"))
         self.popup_title_field.editingFinished.connect(self.auto_apply)
         form.addRow(tr("Título"), self.popup_title_field)
@@ -631,7 +659,13 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.table.setColumnWidth(6, 96)
         self.table.header().setSectionResizeMode(7, QHeaderView.ResizeMode.Fixed)
         self.table.setColumnWidth(7, 150)
+        from .numbered_rows import NumberedDelegate
+        self.table.setItemDelegateForColumn(0, NumberedDelegate(self.table))
+        self.table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.table.customContextMenuRequested.connect(lambda pos: self.variable_menu(self.table.itemAt(pos), self.table.viewport().mapToGlobal(pos)))
         self.table.itemDoubleClicked.connect(self.edit_variable_form)
+        self.pending_variable_index = None   # where the row being typed will be inserted; None = at the end
+        self.focus_new_variable = False
         layout.addWidget(self.table, 1)
         self.variables_page = page
 
@@ -642,8 +676,9 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
         table.setAlternatingRowColors(True)
-        table.verticalHeader().hide()
+        # The row number is the position in the project file; the header shows it.
         table.verticalHeader().setDefaultSectionSize(42)
+        table.verticalHeader().setMinimumWidth(34)
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         return table
 
@@ -662,8 +697,17 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             layout.addLayout(row)
             table = self.make_table(headers)
             table.cellDoubleClicked.connect(lambda row, col, k=key: self.edit_catalog(k, False))
+            table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            table.customContextMenuRequested.connect(lambda pos, k=key, t=table: self.catalog_menu(k, t, t.viewport().mapToGlobal(pos), t.rowAt(pos.y())))
             setattr(self, key + "_table", table)
             layout.addWidget(table)
+            if key == "types":
+                # Last line of the list: type the name of a new data type and press Enter.
+                self.new_type_field = QLineEdit()
+                self.new_type_field.setObjectName("newTypeName")
+                self.new_type_field.setPlaceholderText(tr("+ Nuevo tipo: escribe el nombre y pulsa Intro"))
+                self.new_type_field.returnPressed.connect(self.create_type_from_field)
+                layout.addWidget(self.new_type_field)
             setattr(self, key + "_page", page)
         page = QWidget()
         layout = QVBoxLayout(page)
@@ -716,6 +760,16 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.render_scene()
 
     def render_scene(self, selected_ids=()):
+        from .project_languages import languages
+        codes = languages(self.project)
+        if [self.editing_language_field.itemText(i) for i in range(self.editing_language_field.count())] != codes:
+            self.editing_language_field.blockSignals(True)
+            self.editing_language_field.clear()
+            self.editing_language_field.addItems(codes)
+            if self.editing_language not in codes:
+                self.editing_language = default_language(self.project)
+            self.editing_language_field.setCurrentText(self.editing_language)
+            self.editing_language_field.blockSignals(False)
         self.scene.blockSignals(True)
         self.scene.clear()
         document = self.document()
@@ -747,7 +801,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if len(items)>1:self.common_properties.refresh()
         self.inspector_fields.setVisible(len(items) == 1)
         self.inspector_fields.setEnabled(len(items) == 1)
-        self.selection_label.setText((tr("PROPIEDADES DE PANTALLA") if self.document_kind == "screens" else tr("PROPIEDADES DEL OBJETO DE LIBRERÍA")) if not items else tr("{count} ELEMENTOS", count=len(items)) if len(items) > 1 else PALETTE[items[0].element["kind"]].upper())
+        self.selection_label.setText((tr("PROPIEDADES DE PANTALLA") if self.document_kind == "screens" else tr("PROPIEDADES DEL OBJETO DE LIBRERÍA")) if not items else tr("{count} ELEMENTOS", count=len(items)) if len(items) > 1 else TOOL_NAMES[items[0].element["kind"]].upper())
         if len(items)!=1:
             self._syncing = False
             return
@@ -755,7 +809,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.id_field.setText(e["id"])
         for key, field in self.property_fields.items():
             field.setValue(e[key])
-        self.text_field.setText(e.get("text", ""))
+        self.text_field.set_value(e.get("text", ""))
+        self.tooltip_field.set_value(e.get('tooltip', ''))
         self.tag_field.clear()
         from .selection_editor import available_tags
         from .dynamics import compatible
@@ -767,7 +822,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.font_field.setValue(e.get("font_size", 15))
         self.bold_field.setChecked(e.get("bold", False))
         self.align_field.setCurrentIndex({"left":0,"center":1,"right":2}[e.get("text_align","center")])
-        self._display_text_color = e.get("text_color", "#f8fafc" if QColor(self.resolve_color(e.get("color", "#f1f5f9"))).lightness()<110 else "#273b53")
+        self._display_text_color = e.get("text_color", "#f8fafc" if QColor(e.get("color", "#f1f5f9")).lightness()<110 else "#273b53")
         self.text_color_field.setText(self._display_text_color)
         self.border_color_field.setText(e.get("border_color", "#ccd7e3"))
         self.color_field.setText(e.get("color", ""))
@@ -802,9 +857,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.action_group.layout().setRowVisible(self.target_container_field, e.get('action') == 'screen')
         self.container_group.setVisible(e['kind'] == 'screen_container')
         self.container_screen_field.clear()
-        self.container_screen_field.addItems([name for name, doc in self.project.screens.items()
-            if name != self.document_name and not containers(doc)])
-        self.container_screen_field.setCurrentText(e.get('screen', ''))
+        self.container_screen_field.addItem(tr('(sin pantalla)'), '')
+        for name, doc in self.project.screens.items():
+            if name != self.document_name and not containers(doc):
+                self.container_screen_field.addItem(name, name)
+        self.container_screen_field.setCurrentIndex(max(0, self.container_screen_field.findData(e.get('screen', ''))))
         self.script_field.clear(); self.script_field.addItems(list(self.project.scripts))
         self.script_field.setCurrentText(e.get('script', ''))
         self.action_group.layout().setRowVisible(self.script_field, e.get('action') == 'script')
@@ -812,6 +869,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.action_group.layout().setRowVisible(self.value_field, e.get('action') == 'set')
         for key,field in [('press_value',self.press_value_field),('release_value',self.release_value_field)]:
             field.setText(str(e.get(key,'')));self.action_group.layout().setRowVisible(field,e.get('action')=='press_release')
+        self.language_target_field.clear()
+        self.language_target_field.addItems(self.project.manifest.get('languages', ['es']))
+        self.language_target_field.setCurrentText(e.get('language', self.editing_language))
+        self.action_group.layout().setRowVisible(self.language_target_field, e.get('action') == 'set_language')
         self.value_field.setText(str(e.get("value", "")))
         self.value_field.setEnabled(e.get("action") == "set")
         self.content_group.setVisible(e["kind"] not in {"screen_container", "faceplate", "trend", "alarm_view"} | PATH_KINDS | SHAPE_KINDS)
@@ -834,12 +895,12 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if e["kind"] == "trend":
             trend = self.project.trends.get(e.get("view"), {})
             self.viewer_group.setTitle(tr("Gráfica"))
-            self.viewer_summary.setText(tr("{get}\n{len} curvas · {len2} ejes · ventana {get2} s", get=trend.get('title', ''), len=len(trend.get('curves', [])), len2=len(trend.get('axes', [])), get2=trend.get('window_seconds', 600)))
+            self.viewer_summary.setText(tr("{get}\n{len} curvas · {len2} ejes · ventana {get2} s", get=resolve(trend.get('title', ''), self.editing_language, default_language(self.project)), len=len(trend.get('curves', [])), len2=len(trend.get('axes', [])), get2=trend.get('window_seconds', 600)))
             self.viewer_button.setText(tr("Configurar gráfica…"))
         elif e["kind"] == "alarm_view":
             view = self.project.alarm_views.get(e.get("view"), {})
             self.viewer_group.setTitle(tr("Visor de alarmas"))
-            self.viewer_summary.setText(view.get("title", ""))
+            self.viewer_summary.setText(resolve(view.get('title', ''), self.editing_language, default_language(self.project)))
             self.viewer_button.setText(tr("Configurar visor…"))
         self.range_group.setVisible(e["kind"] in {"bar", "gauge"})
         self.action_group.setVisible(e["kind"] == "button")
@@ -881,7 +942,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.popup_template_field.clear()
         self.popup_template_field.addItems(list(self.project.faceplates))
         self.popup_template_field.setCurrentText(e.get("template", ""))
-        self.popup_title_field.setText(e.get("title", ""))
+        self.popup_title_field.set_value(e.get("title", ""))
         while self.popup_binding_form.count():
             entry = self.popup_binding_form.takeAt(0)
             if entry.widget():
@@ -914,8 +975,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             bindings[parameter] = value
         e.update(template=template, bindings=bindings)
         title = self.popup_title_field.text().strip()
-        if title:
-            e["title"] = title
+        if title or isinstance(self.popup_title_field.original, dict):
+            e["title"] = self.popup_title_field.translated_value()
         else:
             e.pop("title", None)
         e.pop("tag", None); e.pop("screen", None)
@@ -930,18 +991,23 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             return
         previous = selected[0].element
         e = copy.deepcopy(previous)
+        tooltip = self.tooltip_field.translated_value()
+        if tooltip:
+            e['tooltip'] = tooltip
+        else:
+            e.pop('tooltip', None)
         e.update({key: field.value() for key, field in self.property_fields.items()})
         e.update(id=self.id_field.text().strip())
         if e["kind"] in {"text","button","input","text_list"}:
-            e.update(text=self.text_field.text(),font_size=self.font_field.value())
+            e.update(text=self.text_field.translated_value(),font_size=self.font_field.value())
             e.update(bold=self.bold_field.isChecked(),text_align=["left","center","right"][self.align_field.currentIndex()],
                 text_color=self.text_color_field.text(),border_color=self.border_color_field.text())
-            if not QColor(self.resolve_color(e["text_color"])).isValid() or not QColor(self.resolve_color(e["border_color"])).isValid():
+            if not QColor(e["text_color"]).isValid() or not QColor(e["border_color"]).isValid():
                 self.error(tr("Color inválido")); self.show_properties(); return
             if "text_color" not in previous and e["text_color"] == self._display_text_color:
                 e.pop("text_color")
         color = self.color_field.text().strip()
-        if color and not QColor(self.resolve_color(color)).isValid():
+        if color and not QColor(color).isValid():
             self.error(tr("Color inválido; usa un valor como #147d75"))
             self.show_properties()
             return
@@ -959,12 +1025,12 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             if e["kind"] in {"text", "input"}:
                 e.update(unit=self.unit_field.text(), decimals=self.decimals_field.value())
         if e['kind'] == 'screen_container':
-            e['screen'] = self.container_screen_field.currentText()
+            e['screen'] = self.container_screen_field.currentData() or ''
             e.pop('tag', None)
         if e["kind"] == "bar":
             e.update(min=self.min_field.value(), max=self.max_field.value())
         if e["kind"] == "gauge":
-            e.update(min=self.min_field.value(), max=self.max_field.value(), text=self.text_field.text(),
+            e.update(min=self.min_field.value(), max=self.max_field.value(), text=self.text_field.translated_value(),
                      unit=self.unit_field.text(), decimals=self.decimals_field.value(),
                      gauge_style=self.gauge_style_field.currentData())
             for key, field in (("warning", self.warning_field), ("alarm", self.alarm_field)):
@@ -980,6 +1046,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                     return
         if e["kind"] == "button":
             e["action"] = self.action_field.currentData()
+            if e['action'] == 'set_language':
+                e['language'] = self.language_target_field.currentText()
+                e.pop('tag', None)
+            else:
+                e.pop('language', None)
             tag = e.get('tag', '')
             tags = self.project.tags()
             kind = tags[tag]['type'] if tag in tags else self.document().get('parameters', {}).get(tag.lstrip('$'))
@@ -1047,11 +1118,6 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if e != previous:
             index = self.document()["elements"].index(previous)
             self.mutate(lambda: self.document()["elements"].__setitem__(index, e), selected_ids=[e["id"]])
-
-    def resolve_color(self,value):
-        from .dynamics import resolve_color
-        try:return resolve_color(value,self.project.manifest.get('palette',{}))
-        except ValueError:return ''
 
     def choose_color(self):
         color = QColorDialog.getColor(QColor(self.color_field.text() or "#f1f5f9"), self, tr("Color de fondo"))
@@ -1227,7 +1293,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.restore_history(self.redo_stack, self.undo_stack)
 
     def add_element(self, kind="text", position=None):
-        if kind not in PALETTE:
+        if kind not in TOOL_NAMES:
             return
         if kind in PATH_KINDS and position is None:
             self.view.set_drawing_tool(kind)
@@ -1237,7 +1303,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self._insertion_counter += 1
         offset = (self._insertion_counter % 5) * 20
         position = position or QPointF(document["width"]/2 - 90 + offset, document["height"]/2 - 30 + offset)
-        e = dict(id=kind + "_" + uuid.uuid4().hex[:6], kind=kind, x=round(position.x()), y=round(position.y()), w=180, h=48, text=PALETTE[kind])
+        e = dict(id=kind + "_" + uuid.uuid4().hex[:6], kind=kind, x=round(position.x()), y=round(position.y()), w=180, h=48, text=TOOL_NAMES[kind])
         if kind in PATH_KINDS:
             points = [[position.x(),position.y()],[position.x()+180,position.y()]]
             if kind != "line":
@@ -1249,10 +1315,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             from .screen_layouts import containers
             candidates = [name for name, doc in self.project.screens.items()
                           if name != self.document_name and not containers(doc)]
-            if self.document_kind == 'faceplates' or not candidates:
-                self.error(tr('Crea primero una pantalla de contenido para alojar en el contenedor'))
+            if self.document_kind == 'faceplates':
+                self.error(tr('Los contenedores se colocan en pantallas, no en objetos de librería'))
                 return
-            e.update(screen=candidates[0], w=600, h=400)
+            # The zone may stay empty: the layout is designed first, the content is chosen later.
+            e.update(screen=candidates[0] if candidates else '', w=600, h=400)
         if kind == "text_list":
             e.update(texts=[], default_text="—", w=220)
         if kind == "lamp":
@@ -1287,7 +1354,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 self.project.alarm_views[e["view"]] = dict(title=tr("Alarmas"), categories=[], min_priority=1, mode="pending", allow_ack=True)
             self.document()["elements"].append(e)
         if self.mutate(insert, selected_ids=[e["id"]]):
-            self.statusBar().showMessage(tr("{palette_kind} añadido", palette_kind=PALETTE[kind]), 3000)
+            self.statusBar().showMessage(tr("{palette_kind} añadido", palette_kind=TOOL_NAMES[kind]), 3000)
 
     def insert_library_object(self, name, position=None):
         """Add an instance of a library object; its parameters are linked to variables right away."""
@@ -1374,7 +1441,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.table.clear()
         tags = self.project.tags()
         query = self.filter.text().casefold()
-        for source in self.project.variables:
+        for source_index, source in enumerate(self.project.variables):
             root_name = source["name"]
             matching = []
             for name, tag in tags.items():
@@ -1390,11 +1457,13 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             if source["type"] not in PRIMITIVES:
                 root = QTreeWidgetItem([root_name, source["type"], tr("{len} campos", len=len(matching)), tr("Por campo"), "", ""])
                 root.setData(0, role, root_name)
+                root.setData(0, NUMBER_ROLE, source_index + 1)
                 root.setSizeHint(0, QSize(0, 38))
                 self.table.addTopLevelItem(root)
                 root.setExpanded(bool(query) or root_name in expanded)
                 groups[root_name] = root
                 self.table.setItemWidget(root, 6, button(tr("Campos"), lambda checked=False, item=root: item.setExpanded(not item.isExpanded())))
+                self.table.setItemWidget(root, 1, self.variable_type_combo(root_name, source["type"]))
                 if selected_name == root_name:
                     self.table.setCurrentItem(root)
             for name, tag in matching:
@@ -1411,6 +1480,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                         if path not in groups:
                             group = QTreeWidgetItem([field, group_type, tr("Estructura"), tr("Por campo"), "", ""])
                             group.setData(0, role, path)
+                            group.setData(0, NUMBER_ROLE, parent.childCount() + 1)
                             group.setSizeHint(0, QSize(0, 38))
                             parent.addChild(group)
                             group.setExpanded(bool(query) or path in expanded)
@@ -1418,6 +1488,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                         parent = groups[path]
                 item = QTreeWidgetItem([parts[-1] if structured else name, tag["type"], str(tag["initial"]), tr("Lectura / escritura") if tag.get("writable") else tr("Solo lectura"), binding.get("connection", "Local"), binding_summary(binding, self.project.connections, tag["type"])])
                 item.setData(0, role, name)
+                item.setData(0, NUMBER_ROLE, (parent.childCount() if parent else source_index) + 1)
                 item.setSizeHint(0, QSize(0, 38))
                 item.setToolTip(0, name)
                 item.setToolTip(5, tr("El DB y el desplazamiento se indican en esta dirección"))
@@ -1425,6 +1496,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                     parent.addChild(item)
                 else:
                     self.table.addTopLevelItem(item)
+                    self.table.setItemWidget(item, 1, self.variable_type_combo(name, source["type"]))
                 self.table.setItemWidget(item, 6, button(tr("Enlace…"), lambda checked=False, n=name: self.tag_form(n)))
                 from . import recording
                 record = QComboBox()
@@ -1439,6 +1511,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                     self.table.setCurrentItem(item)
         shown = self.table.topLevelItemCount()
         total = len(self.project.variables)
+        self.add_variable_row()
         self.filter_notice.setVisible(bool(query))
         if query:
             self.filter_notice.setText(tr("Filtro «{text}»: se muestran {shown} de {total} variables · <a href='clear'>Quitar el filtro</a>", text=self.filter.text(), shown=shown, total=total))
@@ -1472,20 +1545,12 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 if source is not None and source!=c:text=tr('Configuración distinta · ')+text
             self.connections_table.setItem(row,5,QTableWidgetItem(text))
 
-    def add_variable(self):
-        before = {v["name"] for v in self.project.variables}
-        self.variable_form(None)
-        created = [v["name"] for v in self.project.variables if v["name"] not in before]
-        if created:
-            # A new variable must always be visible, even if the list was filtered.
-            self.filter.clear()
-            for item in self.table.findItems(created[0], Qt.MatchFlag.MatchExactly, 0):
-                self.table.setCurrentItem(item)
-
     def edit_variable_form(self, *args):
         item = self.table.currentItem()
         if item:
             name = item.data(0, Qt.ItemDataRole.UserRole)
+            if name == NEW_ROW:
+                return
             if name in self.project.tags():
                 self.tag_form(name)
             else:
@@ -1513,6 +1578,31 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         item = table.item(table.currentRow(), 0)
         if new or item:
             (self.connection_form if key == "connections" else self.type_form)(None if new else item.text())
+
+    def catalog_menu(self, key, table, position, row):
+        menu = QMenu(self)
+        if row >= 0:
+            table.selectRow(row)
+            menu.addAction(tr("Editar…"), lambda: self.edit_catalog(key, False))
+            menu.addSeparator()
+        menu.addAction(tr("Nuevo tipo") if key == "types" else tr("Nueva conexión"),
+                       self.new_type_field.setFocus if key == "types" else lambda: self.edit_catalog(key, True))
+        if row >= 0:
+            menu.addSeparator()
+            menu.addAction(tr("Eliminar"), lambda: self.delete_catalog(key))
+        menu.exec(position)
+
+    def create_type_from_field(self):
+        name = self.new_type_field.text().strip()
+        if not name:
+            return
+        if "." in name or name in PRIMITIVES or name in self.project.types:
+            self.error(tr("El nombre del tipo y sus campos deben ser únicos y no vacíos"))
+            return
+        # A type needs at least one field: it starts with a «valor» that is edited right after.
+        if self.mutate(lambda: self.project.types.__setitem__(name, {"valor": "float"})):
+            self.new_type_field.clear()
+            self.new_type_field.setFocus()
 
     def delete_catalog(self, key):
         table = getattr(self, key + "_table")

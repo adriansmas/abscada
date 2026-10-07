@@ -8,11 +8,10 @@ import argparse
 import shutil
 from pathlib import Path
 
+from abscada.example_languages import bilingual
 from abscada.project import Project
 from abscada.project_files import is_project
 
-PALETTE = {"Fondo": "#dde1e4", "Panel": "#eceef0", "Borde": "#b4bbc2", "Texto": "#1f2a33", "Suave": "#5b6670",
-           "Marcha": "#2e8b57", "Paro": "#9aa3ab", "Alarma": "#d32f2f", "Aviso": "#e89a1c", "Mando": "#2b6cb0"}
 
 FIELDS = [  # (field, type, symbol, PLC type, writable)
     ("Marcha", "bool", "MAIN.bMarcha", "BOOL", True),
@@ -39,7 +38,7 @@ def build_project(root, force=False):
     if readme is not None:
         (root / "README.md").write_text(readme, encoding="utf-8", newline="\n")
 
-    p = Project(root, dict(schema_version=1, name="Banco de ensayo Beckhoff", startup_screen="banco", palette=PALETTE),
+    p = Project(root, dict(schema_version=1, name="Banco de ensayo Beckhoff", startup_screen="banco"),
                 {}, [], [], {}, {}, manifest_file="banco_beckhoff.abscada")
     p.types = {"BancoEnsayo": {field: kind for field, kind, *_ in FIELDS}}
     bindings = {}
@@ -60,11 +59,11 @@ def build_project(root, force=False):
     def add(kind, identifier, x, y, w, h, **props):
         elements.append(dict(id=identifier, kind=kind, x=x, y=y, w=w, h=h, **props))
 
-    def label(identifier, text, x, y, w, h=24, size=13, bold=False, color="@Suave"):
+    def label(identifier, text, x, y, w, h=24, size=13, bold=False, color="#5b6670"):
         add("text", identifier, x, y, w, h, text=text, font_size=size, bold=bold, text_color=color, text_align="left")
 
     def panel(identifier, x, y, w, h, caption):
-        add("rectangle", identifier, x, y, w, h, color="@Panel", stroke_color="@Borde", stroke_width=1, filled=True, editor_locked=True)
+        add("rectangle", identifier, x, y, w, h, color="#eceef0", stroke_color="#b4bbc2", stroke_width=1, filled=True, editor_locked=True)
         label(identifier + "_t", caption.upper(), x + 14, y + 8, w - 28, 20, size=11, bold=True)
 
     def command(identifier, text, tag, value, x, y, w, color, enabled=None, reason=""):
@@ -74,7 +73,7 @@ def build_project(root, force=False):
         add("button", identifier, x, y, w, 42, text=text, tag=tag, action="set", value=value, font_size=14, bold=True,
             color=color, border_color=color, text_color="#ffffff", dynamics=dynamics)
 
-    label("titulo", "BANCO DE ENSAYO DE MOTOR", 20, 12, 700, 32, size=22, bold=True, color="@Texto")
+    label("titulo", "BANCO DE ENSAYO DE MOTOR", 20, 12, 700, 32, size=22, bold=True, color="#1f2a33")
     label("subtitulo", "Beckhoff CX · TwinCAT 3 · ADS sobre TCP 48898 · puerto 851 · símbolos MAIN.* y GVL.*", 20, 44, 900, 20, size=12)
 
     panel("instrumentos", 20, 76, 770, 300, "Instrumentos")
@@ -87,33 +86,33 @@ def build_project(root, force=False):
 
     panel("mando", 806, 76, 454, 300, "Mando")
     add("text", "estado", 822, 110, 422, 40, text="", tag="Banco.Estado", font_size=18, bold=True, text_align="center",
-        color="@Paro", border_color="@Paro", text_color="#ffffff",
-        dynamics=dict(states=[dict(when=dict(tag="Banco.Estado", op="eq", value="EN MARCHA", bad=False), style=dict(color="@Marcha", border_color="@Marcha")),
-                              dict(when=dict(tag="Banco.Estado", op="ne", value="PARADO", bad=False), style=dict(color="@Aviso", border_color="@Aviso"))],
-                      bad=dict(color="@Aviso", border_color="@Aviso")))
-    command("marcha", "MARCHA", "Banco.Marcha", True, 822, 164, 205, "@Marcha",
+        color="#9aa3ab", border_color="#9aa3ab", text_color="#ffffff",
+        dynamics=dict(states=[dict(when=dict(tag="Banco.Estado", op="eq", value="EN MARCHA", bad=False), style=dict(color="#2e8b57", border_color="#2e8b57")),
+                              dict(when=dict(tag="Banco.Estado", op="ne", value="PARADO", bad=False), style=dict(color="#e89a1c", border_color="#e89a1c"))],
+                      bad=dict(color="#e89a1c", border_color="#e89a1c")))
+    command("marcha", "MARCHA", "Banco.Marcha", True, 822, 164, 205, "#2e8b57",
             enabled=dict(tag="Banco.Marcha", op="eq", value=False, bad=False), reason="El motor ya está en marcha")
-    command("paro", "PARO", "Banco.Marcha", False, 1039, 164, 205, "@Alarma",
+    command("paro", "PARO", "Banco.Marcha", False, 1039, 164, 205, "#d32f2f",
             enabled=dict(tag="Banco.Marcha", op="eq", value=True, bad=False), reason="El motor ya está parado")
-    label("sp_t", "Consigna de velocidad", 822, 222, 230, 26, size=13, color="@Texto")
+    label("sp_t", "Consigna de velocidad", 822, 222, 230, 26, size=13, color="#1f2a33")
     add("input", "consigna", 1064, 218, 180, 32, text="", tag="Banco.Consigna", unit="rpm", decimals=0, font_size=15, bold=True,
-        text_align="right", color="#ffffff", border_color="@Mando", text_color="@Mando")
-    label("modo_t", "Modo", 822, 266, 100, 26, size=13, color="@Texto")
-    add("text_list", "modo", 1064, 262, 180, 32, tag="Banco.Modo", font_size=13, bold=True, color="#ffffff", border_color="@Borde",
-        text_color="@Texto", texts=[dict(value="0", text="Manual"), dict(value="1", text="Automático"), dict(value="2", text="Mantenimiento")],
+        text_align="right", color="#ffffff", border_color="#2b6cb0", text_color="#2b6cb0")
+    label("modo_t", "Modo", 822, 266, 100, 26, size=13, color="#1f2a33")
+    add("text_list", "modo", 1064, 262, 180, 32, tag="Banco.Modo", font_size=13, bold=True, color="#ffffff", border_color="#b4bbc2",
+        text_color="#1f2a33", texts=[dict(value="0", text="Manual"), dict(value="1", text="Automático"), dict(value="2", text="Mantenimiento")],
         default_text="—")
     for i, (text, value) in enumerate([("Manual", 0), ("Auto", 1), ("Mant.", 2)]):
         add("button", f"modo{i}", 822 + i * 76, 304, 70, 30, text=text, tag="Banco.Modo", action="set", value=value, font_size=12,
-            color="#ffffff", border_color="@Mando", text_color="@Mando")
-    label("ciclos_t", "Ciclos", 1064, 304, 70, 30, size=13, color="@Texto")
+            color="#ffffff", border_color="#2b6cb0", text_color="#2b6cb0")
+    label("ciclos_t", "Ciclos", 1064, 304, 70, 30, size=13, color="#1f2a33")
     add("text", "ciclos", 1130, 304, 114, 30, text="", tag="Banco.Ciclos", font_size=14, text_align="right",
-        color="#f8f9fa", border_color="@Borde", text_color="@Texto")
-    add("lamp", "alarma", 822, 342, 26, 26, tag="Banco.AlarmaTemperatura", lamp_colors=dict(on="@Alarma", off="@Paro", bad="@Aviso"))
-    label("alarma_t", "Alarma de temperatura (calculada en el PLC)", 856, 342, 390, 26, size=13, color="@Texto")
+        color="#f8f9fa", border_color="#b4bbc2", text_color="#1f2a33")
+    add("lamp", "alarma", 822, 342, 26, 26, tag="Banco.AlarmaTemperatura", lamp_colors=dict(on="#d32f2f", off="#9aa3ab", bad="#e89a1c"))
+    label("alarma_t", "Alarma de temperatura (calculada en el PLC)", 856, 342, 390, 26, size=13, color="#1f2a33")
 
     add("trend", "tendencia", 20, 390, 770, 360, view="banco")
     add("alarm_view", "alarmas", 806, 390, 454, 360, view="activas")
-    p.screens["banco"] = dict(title="Banco de ensayo", width=1280, height=770, background="@Fondo", elements=elements)
+    p.screens["banco"] = dict(title="Banco de ensayo", width=1280, height=770, background="#dde1e4", elements=elements)
 
     p.trends = {"banco": dict(title="Velocidad, temperatura y presión", window_seconds=600, axes=[
         dict(id="rpm", title="Velocidad (rpm)", side="left", auto=False, min=0, max=3000, visible=True),
@@ -134,6 +133,7 @@ def build_project(root, force=False):
              priority=800, ack_required=True, enabled=True, hysteresis=50, on_delay_ms=500, off_delay_ms=500)])
     p.alarm_views = {"activas": dict(title="Alarmas del banco", categories=[], min_priority=1, mode="pending", allow_ack=True,
                                      columns=["priority", "message", "state", "entered_at", "ack_at"])}
+    bilingual(p)
     p.validate()
     p.save()
     return p

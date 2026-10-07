@@ -1,8 +1,11 @@
 {
-  "title": "Navegación de ventana completa",
+  "title": {
+    "es": "Navegación de ventana completa",
+    "en": "Full window navigation"
+  },
   "width": 1160,
   "height": 770,
-  "background": "@Fondo",
+  "background": "#f4f7fa",
   "grid_size": 10,
   "show_grid": true,
   "snap_to_grid": true,
@@ -14,10 +17,13 @@
       "y": 22,
       "w": 1090,
       "h": 44,
-      "text": "Navegación de ventana completa",
+      "text": {
+        "es": "Navegación de ventana completa",
+        "en": "Full window navigation"
+      },
       "font_size": 28,
       "text_align": "left",
-      "text_color": "@Texto",
+      "text_color": "#243c50",
       "bold": true
     },
     {
@@ -27,7 +33,10 @@
       "y": 72,
       "w": 1090,
       "h": 48,
-      "text": "Esta acción sustituye el layout completo. El botón inferior restaura cabecera, menú y contenido.",
+      "text": {
+        "es": "Esta acción sustituye el layout completo. El botón inferior restaura cabecera, menú y contenido.",
+        "en": "This action replaces the entire layout. The bottom button restores header, menu and content."
+      },
       "font_size": 14,
       "text_align": "left",
       "text_color": "#63768b"
@@ -48,7 +57,10 @@
       "y": 570,
       "w": 400,
       "h": 42,
-      "text": "Volver al laboratorio",
+      "text": {
+        "es": "Volver al laboratorio",
+        "en": "Return to the laboratory"
+      },
       "action": "screen",
       "font_size": 15,
       "screen": "00_layout",

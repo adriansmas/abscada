@@ -1,11 +1,17 @@
 {
   "process": {
-    "title": "Nivel y caudales",
+    "title": {
+      "es": "Nivel y caudales",
+      "en": "Level and flows"
+    },
     "window_seconds": 600,
     "axes": [
       {
         "id": "level",
-        "title": "Nivel (%)",
+        "title": {
+          "es": "Nivel (%)",
+          "en": "Level (%)"
+        },
         "side": "left",
         "auto": false,
         "min": 0,
@@ -14,7 +20,10 @@
       },
       {
         "id": "flow",
-        "title": "Caudal (m³/h)",
+        "title": {
+          "es": "Caudal (m³/h)",
+          "en": "Flow rate (m³/h)"
+        },
         "side": "right",
         "auto": true,
         "min": 0,

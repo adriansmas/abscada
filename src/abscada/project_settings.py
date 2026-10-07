@@ -56,6 +56,16 @@ def edit_project_settings(studio):
     startup.setCurrentText(project.manifest["startup_screen"])
     form.addRow(tr("Nombre"), name)
     form.addRow(tr("Pantalla de inicio"), startup)
+    from .project_languages import languages, default_language
+    codes = QLineEdit(', '.join(languages(project)))
+    default = QLineEdit(default_language(project))
+    initial = QComboBox()
+    for key, title in [('project', tr('Proyecto')), ('station', tr('Puesto')), ('user', tr('Usuario'))]:
+        initial.addItem(title, key)
+    initial.setCurrentIndex(max(0, initial.findData(project.manifest.get('initial_language', 'project'))))
+    form.addRow(tr('Idiomas (separados por comas)'), codes)
+    form.addRow(tr('Idioma por defecto'), default)
+    form.addRow(tr('Idioma inicial'), initial)
     body.addWidget(identity)
 
     size = QGroupBox(tr("Tamaño de las pantallas")); form = QFormLayout(size)
@@ -110,6 +120,9 @@ def edit_project_settings(studio):
     resize.clicked.connect(ask_scale)
 
     def apply(target):
+        target.manifest['languages'] = [c.strip() for c in codes.text().split(',') if c.strip()]
+        target.manifest['default_language'] = default.text().strip()
+        target.manifest['initial_language'] = initial.currentData()
         target.manifest["name"] = name.text().strip()
         target.manifest["startup_screen"] = startup.currentText()
         if (width.value(), height.value()) == DEFAULT_SIZE:
@@ -133,3 +146,10 @@ def edit_project_settings(studio):
         if candidate != project:
             studio.mutate(lambda: apply(studio.project))
             studio.project_label.setText(studio.project.manifest["name"])
+            studio.editing_language_field.blockSignals(True)
+            studio.editing_language_field.clear()
+            studio.editing_language_field.addItems(languages(studio.project))
+            studio.editing_language = studio.editing_language if studio.editing_language in languages(studio.project) else default_language(studio.project)
+            studio.editing_language_field.setCurrentText(studio.editing_language)
+            studio.editing_language_field.blockSignals(False)
+            studio.render_scene(); studio.show_properties()

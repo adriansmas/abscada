@@ -1,8 +1,11 @@
 {
-  "title": "Fermentador",
+  "title": {
+    "es": "Fermentador",
+    "en": "Fermenter"
+  },
   "width": 318,
   "height": 236,
-  "background": "@Panel",
+  "background": "#eeefef",
   "parameters": {
     "fase": "int",
     "temperatura": "float",
@@ -30,14 +33,17 @@
       "y": 8,
       "w": 150,
       "h": 28,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$receta",
       "font_size": 15,
       "bold": true,
       "text_align": "left",
-      "color": "@Panel",
-      "border_color": "@Panel",
-      "text_color": "@Texto"
+      "color": "#eeefef",
+      "border_color": "#eeefef",
+      "text_color": "#24292e"
     },
     {
       "id": "lote_t",
@@ -46,10 +52,13 @@
       "y": 12,
       "w": 40,
       "h": 20,
-      "text": "Lote",
+      "text": {
+        "es": "Lote",
+        "en": "Lot"
+      },
       "font_size": 11,
       "bold": false,
-      "text_color": "@TextoSuave",
+      "text_color": "#5f676e",
       "text_align": "left"
     },
     {
@@ -59,19 +68,22 @@
       "y": 9,
       "w": 52,
       "h": 24,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$lote",
       "unit": "",
       "decimals": 0,
       "font_size": 12,
       "text_align": "center",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -82,11 +94,14 @@
       "y": 8,
       "w": 56,
       "h": 26,
-      "text": "Mando…",
+      "text": {
+        "es": "Mando…",
+        "en": "Command…"
+      },
       "font_size": 11,
       "bold": true,
-      "color": "@Mando",
-      "border_color": "@Mando",
+      "color": "#2b6cb0",
+      "border_color": "#2b6cb0",
       "text_color": "#ffffff",
       "action": "faceplate_popup",
       "template": "fermentador_mando",
@@ -121,37 +136,61 @@
       "font_size": 12,
       "bold": true,
       "text_color": "#ffffff",
-      "color": "@Paro",
-      "border_color": "@Paro",
-      "default_text": "SIN COMUNICACIÓN",
+      "color": "#9ba2a8",
+      "border_color": "#9ba2a8",
+      "default_text": {
+        "es": "SIN COMUNICACIÓN",
+        "en": "NO COMMUNICATION"
+      },
       "texts": [
         {
           "value": "0",
-          "text": "VACÍO Y LIMPIO"
+          "text": {
+            "es": "VACÍO Y LIMPIO",
+            "en": "EMPTY AND CLEAN"
+          }
         },
         {
           "value": "1",
-          "text": "LLENADO"
+          "text": {
+            "es": "LLENADO",
+            "en": "FILLING"
+          }
         },
         {
           "value": "2",
-          "text": "FERMENTACIÓN"
+          "text": {
+            "es": "FERMENTACIÓN",
+            "en": "FERMENTATION"
+          }
         },
         {
           "value": "3",
-          "text": "REPOSO DE DIACETILO"
+          "text": {
+            "es": "REPOSO DE DIACETILO",
+            "en": "DIACETYL REST"
+          }
         },
         {
           "value": "4",
-          "text": "ENFRIAMIENTO (COLD CRASH)"
+          "text": {
+            "es": "ENFRIAMIENTO (COLD CRASH)",
+            "en": "COOLING (COLD CRASH)"
+          }
         },
         {
           "value": "5",
-          "text": "GUARDA"
+          "text": {
+            "es": "GUARDA",
+            "en": "GUARD"
+          }
         },
         {
           "value": "6",
-          "text": "LISTO PARA ENVASAR"
+          "text": {
+            "es": "LISTO PARA ENVASAR",
+            "en": "READY TO PACK"
+          }
         }
       ],
       "dynamics": {
@@ -164,8 +203,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Mando",
-              "border_color": "@Mando"
+              "color": "#2b6cb0",
+              "border_color": "#2b6cb0"
             }
           },
           {
@@ -176,8 +215,8 @@
               "bad": false
             },
             "style": {
-              "color": "@Aviso",
-              "border_color": "@Aviso"
+              "color": "#e89a1c",
+              "border_color": "#e89a1c"
             }
           },
           {
@@ -188,14 +227,14 @@
               "bad": false
             },
             "style": {
-              "color": "@Marcha",
-              "border_color": "@Marcha"
+              "color": "#2e8b57",
+              "border_color": "#2e8b57"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso",
-          "border_color": "@Aviso"
+          "color": "#e89a1c",
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -207,7 +246,7 @@
       "w": 62,
       "h": 110,
       "color": "#ffffff",
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2
     },
     {
@@ -220,7 +259,7 @@
       "tag": "$nivel",
       "min": 0,
       "max": 12,
-      "color": "@Cerveza",
+      "color": "#d8a23e",
       "dynamics": {}
     },
     {
@@ -230,7 +269,7 @@
       "y": 190,
       "w": 62,
       "h": 27.900000000000006,
-      "stroke_color": "@Linea",
+      "stroke_color": "#6f777e",
       "stroke_width": 2,
       "points": [
         [
@@ -254,8 +293,8 @@
       "y": 214,
       "w": 62,
       "h": 16,
-      "color": "@Paro",
-      "stroke_color": "@Paro",
+      "color": "#9ba2a8",
+      "stroke_color": "#9ba2a8",
       "stroke_width": 1,
       "dynamics": {
         "states": [
@@ -267,13 +306,13 @@
               "bad": false
             },
             "style": {
-              "color": "@Disparo",
-              "stroke_color": "@Disparo"
+              "color": "#d32f2f",
+              "stroke_color": "#d32f2f"
             }
           }
         ],
         "bad": {
-          "color": "@Aviso"
+          "color": "#e89a1c"
         }
       }
     },
@@ -284,10 +323,13 @@
       "y": 83,
       "w": 106,
       "h": 22,
-      "text": "Temperatura",
+      "text": {
+        "es": "Temperatura",
+        "en": "Temperature"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -297,19 +339,22 @@
       "y": 80,
       "w": 104,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$temperatura",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -320,10 +365,13 @@
       "y": 113,
       "w": 106,
       "h": 22,
-      "text": "Consigna",
+      "text": {
+        "es": "Consigna",
+        "en": "Setpoint"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -333,19 +381,22 @@
       "y": 110,
       "w": 104,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$consigna",
       "unit": "°C",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -356,10 +407,13 @@
       "y": 143,
       "w": 106,
       "h": 22,
-      "text": "Densidad",
+      "text": {
+        "es": "Densidad",
+        "en": "Density"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -369,19 +423,22 @@
       "y": 140,
       "w": 104,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$densidad",
       "unit": "°P",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -392,10 +449,13 @@
       "y": 173,
       "w": 106,
       "h": 22,
-      "text": "Presión",
+      "text": {
+        "es": "Presión",
+        "en": "Pressure"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -405,19 +465,22 @@
       "y": 170,
       "w": 104,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$presion",
       "unit": "bar",
       "decimals": 2,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     },
@@ -428,10 +491,13 @@
       "y": 203,
       "w": 106,
       "h": 22,
-      "text": "Día",
+      "text": {
+        "es": "Día",
+        "en": "Day"
+      },
       "font_size": 13,
       "bold": false,
-      "text_color": "@Texto",
+      "text_color": "#24292e",
       "text_align": "left"
     },
     {
@@ -441,19 +507,22 @@
       "y": 200,
       "w": 104,
       "h": 26,
-      "text": "",
+      "text": {
+        "es": "",
+        "en": ""
+      },
       "tag": "$dia",
       "unit": "d",
       "decimals": 1,
       "font_size": 14,
       "text_align": "right",
-      "color": "@Valor",
-      "border_color": "@Borde",
-      "text_color": "@Texto",
+      "color": "#f9f9f9",
+      "border_color": "#b8bdc1",
+      "text_color": "#24292e",
       "dynamics": {
         "bad": {
           "color": "#fdf1dc",
-          "border_color": "@Aviso"
+          "border_color": "#e89a1c"
         }
       }
     }
