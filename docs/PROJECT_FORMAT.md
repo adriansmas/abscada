@@ -88,7 +88,9 @@ En v1, los botones son órdenes al soltar; no son mandos momentáneos mantenidos
 
 Las imágenes deben vivir dentro de la carpeta del proyecto; las rutas que escapan se rechazan. No se incrustan dentro del JSON. La aplicación no carga imágenes remotas.
 
-## Faceplates
+## Faceplates (objetos de librería)
+
+En Studio se llaman **objetos de librería** (ver [FACEPLATE_LIBRARIES.md](FACEPLATE_LIBRARIES.md)). Un objeto puede llevar `"folder": "Válvulas/Agua"` para ordenarlo en la librería del proyecto; las carpetas vacías se guardan en `project.json` → `library_folders`. Las plantillas `estandar__*` pertenecen a la librería estándar de la aplicación y nunca se guardan en el proyecto.
 
 ```json
 {"width": 320, "height": 180,

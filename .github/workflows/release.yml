@@ -81,8 +81,11 @@ jobs:
           ---
           **Descarga:** \`abSCADA-${GITHUB_REF_NAME#v}-windows.zip\` · descomprimir y ejecutar \`abscada.exe\`. Guía de prueba: [docs/BETA.md](https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_REF_NAME}/docs/BETA.md).
 
-          **Verificar la descarga:** \`gh attestation verify abSCADA-${GITHUB_REF_NAME#v}-windows.zip --repo ${GITHUB_REPOSITORY}\` y \`sha256sum -c SHA256SUMS.txt\`. Componentes incluidos: \`sbom.cdx.json\` (CycloneDX).
+          **Verificar la descarga:** \`sha256sum -c SHA256SUMS.txt\`. Componentes incluidos: \`sbom.cdx.json\` (CycloneDX).
           EOF
+          if [ "${{ github.event.repository.visibility }}" = "public" ]; then
+            echo "Procedencia firmada: \`gh attestation verify abSCADA-${GITHUB_REF_NAME#v}-windows.zip --repo ${GITHUB_REPOSITORY}\`." >> notes.md
+          fi
           flags=""
           case "$GITHUB_REF_NAME" in *a*|*b*|*rc*) flags="--prerelease";; esac
           # The release may already exist when it was drafted on github.com (that creates the tag).

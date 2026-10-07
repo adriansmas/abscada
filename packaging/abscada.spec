@@ -23,6 +23,8 @@ a = Analysis(
     [str(ROOT / "packaging" / "launcher.py")],
     pathex=[str(ROOT / "src")],
     datas=example_datas() + [
+        # Standard library: SVG symbols and catalogue, read at run time from the package folder.
+        (str(ROOT / "src" / "abscada" / "standard_library"), "abscada/standard_library"),
         (str(ROOT / "packaging" / "abscada.ico"), "packaging"),
         (str(ROOT / "docs" / "BETA.md"), "docs"),
         (str(ROOT / "LICENSE"), "."),

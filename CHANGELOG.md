@@ -4,6 +4,15 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 
 ## [Sin publicar]
 
+### Cambiado
+- **«Faceplates» pasa a llamarse «Librerías»**, y cada plantilla, «objeto de librería». El formato de archivo no cambia (`faceplates/*.json`), así que los proyectos existentes abren igual. «Bibliotecas de faceplates» pasa a ser «Librerías externas».
+
+### Añadido
+- **Librería estándar del sistema** (solo lectura, viene con la aplicación y no se copia al proyecto): carpeta **Gráficos** con 35 símbolos SVG (depósitos, válvulas, bombas y motores, proceso, instrumentos y eléctrico) y carpeta **Objetos** con versiones animadas (bomba, motor y ventilador con marcha y fallo; válvula abierta o cerrada; interruptor; depósito con nivel). «Copiar al proyecto» crea una copia editable.
+- **Carpetas en la librería del proyecto**: crear, renombrar, eliminar y arrastrar objetos entre carpetas (`library_folders` en `project.json`).
+- **Insertar objetos arrastrándolos** desde el árbol de Librerías al lienzo, o con el selector con buscador de la herramienta «Objeto de librería».
+- Las imágenes SVG se dibujan vectorialmente: nítidas a cualquier tamaño y zoom.
+
 ## [0.5.0b2] - 2026-10-07
 
 ### Añadido

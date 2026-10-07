@@ -116,7 +116,7 @@ def build_menus(studio):
     project = bar.addMenu("&Proyecto")
     action(project, "Ajustes del proyecto…", lambda: edit_project_settings(studio))
     action(project, "Paleta de colores…", lambda: edit_palette(studio))
-    action(project, "Bibliotecas de faceplates…", lambda: LibraryDialog(studio).exec())
+    action(project, "Librerías externas…", lambda: LibraryDialog(studio).exec())
     project.addSeparator()
     from .security_editor import certificates_dialog, edit_opcua_server, edit_security
     action(project, "Usuarios y roles…", lambda: edit_security(studio))

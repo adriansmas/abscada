@@ -19,9 +19,9 @@ EXAMPLES = [
      "SCADA completo de dos grupos Francis: secuencias, protecciones, unifilar, alarmas y tendencias."),
     ("beckhoff", "Banco de ensayo Beckhoff (TwinCAT ADS)",
      "Indicadores de aguja, mando y alarmas sobre un PLC Beckhoff simulado."),
-    ("showcase", "Laboratorio SCADA", "Todos los controles, estados, faceplates, gráficas, alarmas y scripts."),
+    ("showcase", "Laboratorio SCADA", "Todos los controles, estados, objetos de librería, gráficas, alarmas y scripts."),
     ("plant", "Planta de bombeo", "Ejemplo básico con layout, depósito, bombas, alarmas y registros."),
-    ("library_author", "Autoría de bibliotecas", "Cómo crear y publicar faceplates reutilizables."),
+    ("library_author", "Autoría de bibliotecas", "Cómo crear y publicar librerías de objetos reutilizables."),
 ]
 
 

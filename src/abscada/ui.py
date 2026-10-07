@@ -235,7 +235,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         graphics = key in {"screens", "faceplates"}
         # The project tree and the drawing tools only make sense while editing screens.
         self.resources_panel.setVisible(graphics)
-        titles = {"screens": "Pantallas", "faceplates": "Faceplates", "variables": "Variables",
+        titles = {"screens": "Pantallas", "faceplates": "Librerías", "variables": "Variables",
                   "types": "Tipos de datos", "connections": "Conexiones", "diagnostics": "Diagnóstico", "alarms": "Alarmas", "historian": "Registros", "automation": "Scripts y tareas"}
         self.page_title.setText(titles[key])
         self.pages.setCurrentWidget(self.section_pages[key])
@@ -300,12 +300,12 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         header = QHBoxLayout(); header.setContentsMargins(0, 0, 0, 0)
         header.addWidget(label("PROYECTO", "sectionTitle")); header.addStretch()
         create = QToolButton(); create.setText("+ Crear"); create.setObjectName("createButton")
-        create.setToolTip("Crear una pantalla, una carpeta para ordenarlas o un faceplate (plantilla de equipo)")
+        create.setToolTip("Crear una pantalla, una carpeta o un objeto de librería (símbolo o plantilla de equipo)")
         create.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         menu = QMenu(create)
         menu.addAction("Pantalla…", lambda: self.new_document(False, folder=self.current_folder()))
         menu.addAction("Carpeta de pantallas…", lambda: self.tree_new_folder(self.current_folder()))
-        menu.addAction("Faceplate (plantilla de equipo)…", lambda: self.new_document(True))
+        menu.addAction("Objeto de librería…", lambda: self.new_document(True))
         create.setMenu(menu); header.addWidget(create)
         box.addLayout(header)
         box.addWidget(self.project_label)
@@ -480,7 +480,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.action_field.addItem("Escribir valor", "set")
         self.action_field.addItem("Abrir pantalla", "screen")
         self.action_field.addItem("Abrir emergente", "popup")
-        self.action_field.addItem("Abrir faceplate emergente", "faceplate_popup")
+        self.action_field.addItem("Abrir objeto de librería emergente", "faceplate_popup")
         self.action_field.addItem("Cerrar emergente", "close_popup")
         self.action_field.addItem("Ejecutar script", "script")
         self.action_field.addItem("Pulsador momentáneo (1 / 0)", "momentary")
@@ -501,14 +501,14 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         form.addRow("Script", self.script_field)
         self.popup_template_field = QComboBox()
         self.popup_template_field.activated.connect(self.auto_apply)
-        form.addRow("Faceplate", self.popup_template_field)
+        form.addRow("Objeto", self.popup_template_field)
         self.popup_bindings = QWidget()
         self.popup_binding_form = QFormLayout(self.popup_bindings)
         self.popup_binding_form.setContentsMargins(0, 0, 0, 0)
         self.popup_binding_fields = {}
         form.addRow(self.popup_bindings)
         self.popup_title_field = QLineEdit()
-        self.popup_title_field.setPlaceholderText("Automático: faceplate · equipo")
+        self.popup_title_field.setPlaceholderText("Automático: objeto · equipo")
         self.popup_title_field.editingFinished.connect(self.auto_apply)
         form.addRow("Título", self.popup_title_field)
         self.popup_modal = QCheckBox("Bloquear la ventana principal")
@@ -547,7 +547,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         image_layout.addWidget(self.image_label)
         image_layout.addWidget(button("Elegir imagen…", self.choose_image))
         body.addWidget(self.image_group)
-        self.binding_group = QGroupBox("Parámetros del faceplate")
+        self.binding_group = QGroupBox("Parámetros del objeto de librería")
         self.binding_form = QFormLayout(self.binding_group)
         self.binding_fields = {}
         body.addWidget(self.binding_group)
@@ -681,8 +681,9 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             self.navigate(value[1]); return
         from .faceplate_libraries import owner
         if value[0] == 'faceplates' and owner(self.project, value[1]):
-            from .library_editor import LibraryDialog
-            LibraryDialog(self).exec()
+            # Read-only objects are used, not edited: drag them onto a screen or copy them first.
+            self.statusBar().showMessage("Objeto de solo lectura: arrástralo al lienzo para usarlo, o clic derecho → "
+                                         "«Copiar al proyecto para modificarlo»", 8000)
             return
         self.view.set_drawing_tool(None)
         self.document_kind, self.document_name = value
@@ -745,7 +746,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if len(items)>1:self.common_properties.refresh()
         self.inspector_fields.setVisible(len(items) == 1)
         self.inspector_fields.setEnabled(len(items) == 1)
-        self.selection_label.setText(("PROPIEDADES DE PANTALLA" if self.document_kind == "screens" else "PROPIEDADES DE FACEPLATE") if not items else f"{len(items)} ELEMENTOS" if len(items) > 1 else PALETTE[items[0].element["kind"]].upper())
+        self.selection_label.setText(("PROPIEDADES DE PANTALLA" if self.document_kind == "screens" else "PROPIEDADES DEL OBJETO DE LIBRERÍA") if not items else f"{len(items)} ELEMENTOS" if len(items) > 1 else PALETTE[items[0].element["kind"]].upper())
         if len(items)!=1:
             self._syncing = False
             return
@@ -900,7 +901,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
     def popup_faceplate_fields(self, e, previous):
         template = self.popup_template_field.currentText()
         if template not in self.project.faceplates:
-            raise ValueError("Crea primero un faceplate para abrirlo en una ventana")
+            raise ValueError("Crea primero un objeto de librería para abrirlo en una ventana")
         same = template == previous.get("template")
         bindings = {}
         for parameter, kind in self.project.faceplates[template].get("parameters", {}).items():
@@ -1270,29 +1271,14 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             e.update(view=new_view_id(self.project, kind, e["id"]), w=720, h=420)
         if kind == "faceplate":
             if self.document_kind == "faceplates":
-                self.error("Los faceplates anidados todavía no están disponibles")
+                self.error("Un objeto de librería no puede contener otros objetos de librería todavía")
                 return
-            templates = list(self.project.faceplates)
-            if not templates:
-                self.error("Crea una plantilla con + Faceplate antes de añadir una instancia")
+            from .library_browser import LibraryPicker
+            picker = LibraryPicker(self, self.project)
+            if picker.exec() != QDialog.DialogCode.Accepted or not picker.selected():
                 return
-            name, ok = QInputDialog.getItem(self, "Añadir faceplate", "Plantilla", templates, 0, False)
-            if not ok:
-                return
-            template = self.project.faceplates[name]
-            bindings = {}
-            for parameter, tag_type in template.get("parameters", {}).items():
-                from .dynamics import parameter_writable
-                needs_write=parameter_writable(template,parameter)
-                candidates = [n for n, tag in self.project.tags().items() if tag['type']==tag_type and (not needs_write or tag.get('writable'))]
-                if not candidates:
-                    self.error(f"Crea primero una variable de tipo {tag_type}")
-                    return
-                tag, ok = QInputDialog.getItem(self, "Enlazar parámetros", parameter, candidates, 0, False)
-                if not ok:
-                    return
-                bindings[parameter] = tag
-            e.update(template=name, bindings=bindings, w=template["width"], h=template["height"])
+            self.insert_library_object(picker.selected(), position)
+            return
         def insert():
             if kind == "trend":
                 self.project.trends[e["view"]] = dict(title="Gráfica", window_seconds=600,
@@ -1302,6 +1288,41 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             self.document()["elements"].append(e)
         if self.mutate(insert, selected_ids=[e["id"]]):
             self.statusBar().showMessage(f"{PALETTE[kind]} añadido", 3000)
+
+    def insert_library_object(self, name, position=None):
+        """Add an instance of a library object; its parameters are linked to variables right away."""
+        if self.document_kind != "screens":
+            self.error("Los objetos de librería se colocan en pantallas")
+            return False
+        template = self.project.faceplates[name]
+        bindings = {}
+        for parameter, tag_type in template.get("parameters", {}).items():
+            from .dynamics import parameter_writable
+            needs_write = parameter_writable(template, parameter)
+            candidates = [n for n, tag in self.project.tags().items() if tag["type"] == tag_type and (not needs_write or tag.get("writable"))]
+            if not candidates:
+                self.error(f"Este objeto necesita una variable {tag_type} para «{parameter}»: créala primero")
+                return False
+            tag, ok = QInputDialog.getItem(self, "Enlazar parámetros", f"Variable para «{parameter}» ({tag_type})", candidates, 0, False)
+            if not ok:
+                return False
+            bindings[parameter] = tag
+        document = self.document()
+        width, height = template["width"], template["height"]
+        if position is None:
+            self._insertion_counter += 1
+            offset = (self._insertion_counter % 5) * 20
+            position = QPointF(document["width"] / 2 - width / 2 + offset, document["height"] / 2 - height / 2 + offset)
+        else:
+            position = QPointF(position.x() - width / 2, position.y() - height / 2)  # dropped by its centre
+        base = name.split("__", 1)[-1]
+        e = dict(id=f"{base}_{uuid.uuid4().hex[:6]}", kind="faceplate", x=round(position.x()), y=round(position.y()),
+                 w=width, h=height, template=name, bindings=bindings)
+        if self.mutate(lambda: self.document()["elements"].append(e), selected_ids=[e["id"]]):
+            from .system_library import is_system, title
+            self.statusBar().showMessage(f"{title(name) if is_system(name) else name} añadido", 3000)
+            return True
+        return False
 
     def configure_viewer(self):
         selected = self.scene.selectedItems()

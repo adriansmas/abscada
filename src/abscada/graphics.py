@@ -11,7 +11,7 @@ from .drawing import PATH_KINDS, SHAPE_KINDS, world_points, set_points
 from .vector_graphics import element_path, paint_vector, DrawingInteraction
 
 PALETTE = {"text": "Texto", "lamp": "Piloto", "button": "Botón",
-           "input": "Entrada", "bar": "Barra", "gauge": "Indicador", "image": "Imagen", "faceplate": "Faceplate",
+           "input": "Entrada", "bar": "Barra", "gauge": "Indicador", "image": "Imagen", "faceplate": "Objeto de librería",
            "trend": "Tendencia", "alarm_view": "Alarmas", "line": "Línea", "polyline": "Polilínea",
            "pipe": "Tubería", "rectangle": "Rectángulo", "ellipse": "Elipse", "text_list": "Lista de textos", "screen_container": "Contenedor de pantalla"}
 
@@ -64,6 +64,24 @@ def tool_icon(kind):
     return QIcon(pixmap)
 
 
+_SVG = {}
+
+
+def svg_renderer(path):
+    """Cached QSvgRenderer per file and modification time; None if the SVG is invalid."""
+    from PySide6.QtSvg import QSvgRenderer
+    try:
+        key = (str(path), path.stat().st_mtime_ns)
+    except OSError:
+        return None
+    if key not in _SVG:
+        renderer = QSvgRenderer(str(path))
+        if hasattr(renderer, "setAspectRatioMode"):  # Qt 6.7+: symbols keep their proportions
+            renderer.setAspectRatioMode(Qt.AspectRatioMode.KeepAspectRatio)
+        _SVG[key] = renderer if renderer.isValid() else None
+    return _SVG[key]
+
+
 def effective_color(host,value):
     from .dynamics import resolve_color
     return resolve_color(value,host.project.manifest.get('palette',{}))
@@ -111,8 +129,10 @@ def draw_element(painter, e, host, rect=None):
         return
     if kind == "faceplate":
         template = host.project.faceplates.get(e.get("template"))
-        painter.setBrush(QColor(effective_color(host,template.get("background", "#f8fafc")) if template else "#f8fafc"))
-        painter.drawRoundedRect(rect, 8, 8)
+        # Symbols without a background (most library objects) are drawn as themselves, without a frame.
+        if not template or "background" in template:
+            painter.setBrush(QColor(effective_color(host,template.get("background", "#f8fafc")) if template else "#f8fafc"))
+            painter.drawRoundedRect(rect, 8, 8)
         if template:
             painter.save()
             painter.scale(rect.width() / template["width"], rect.height() / template["height"])
@@ -173,8 +193,14 @@ def draw_element(painter, e, host, rect=None):
         pixmap = QPixmap()
         try:
             source = e.get("source", "")
-            if source:
-                pixmap = QPixmap(str(host.project.asset(source)))
+            path = host.project.asset(source) if source else None
+            if path is not None and path.suffix.lower() == ".svg":
+                renderer = svg_renderer(path)
+                if renderer is not None:
+                    renderer.render(painter, rect)  # vector: sharp at any size and zoom
+                    return
+            elif path is not None:
+                pixmap = QPixmap(str(path))
         except ValueError:
             pass
         if not pixmap.isNull():
@@ -310,21 +336,33 @@ class CanvasView(DrawingInteraction, QGraphicsView):
         else:
             super().wheelEvent(event)
 
+    def accepts(self, mime):
+        # Toolbox kinds, and library objects dragged from the «Librerías» tree.
+        return self.host.design_mode and (mime.hasFormat("application/x-abscada-element")
+                                          or mime.hasFormat("application/x-abscada-template"))
+
     def dragEnterEvent(self, event):
-        if self.host.design_mode and event.mimeData().hasFormat("application/x-abscada-element"):
+        if self.accepts(event.mimeData()):
             event.acceptProposedAction()
         else:
             super().dragEnterEvent(event)
 
     def dragMoveEvent(self, event):
-        if self.host.design_mode and event.mimeData().hasFormat("application/x-abscada-element"):
+        if self.accepts(event.mimeData()):
             event.acceptProposedAction()
         else:
             super().dragMoveEvent(event)
 
     def dropEvent(self, event):
-        if self.host.design_mode and event.mimeData().hasFormat("application/x-abscada-element"):
-            kind = bytes(event.mimeData().data("application/x-abscada-element")).decode()
+        mime = event.mimeData()
+        if self.host.design_mode and mime.hasFormat("application/x-abscada-template"):
+            name = bytes(mime.data("application/x-abscada-template")).decode("utf-8")
+            position = self.mapToScene(event.position().toPoint())
+            event.setDropAction(Qt.DropAction.CopyAction); event.accept()
+            # After the drop has finished: the insertion may open a dialog to link parameters.
+            QTimer.singleShot(0, lambda: self.host.insert_library_object(name, position))
+        elif self.host.design_mode and mime.hasFormat("application/x-abscada-element"):
+            kind = bytes(mime.data("application/x-abscada-element")).decode()
             position = self.mapToScene(event.position().toPoint())
             self.host.add_element(kind, position)
             event.acceptProposedAction()

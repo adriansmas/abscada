@@ -17,7 +17,7 @@ class ProjectActions:
         name = dialog.name.text().strip()
         kind = 'faceplates' if faceplate else 'screens'
         document = dialog.document()
-        if folder and not faceplate:
+        if folder:
             document['folder'] = folder
         if self.tree_mutate(lambda: getattr(self.project, kind).__setitem__(name, document), (kind, name)):
             self.navigate(kind)

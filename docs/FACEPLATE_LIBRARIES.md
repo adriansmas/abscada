@@ -1,13 +1,31 @@
-# Bibliotecas de faceplates
+# Librerías
 
-Una biblioteca publica plantillas parametrizadas e imágenes para reutilizarlas en varios proyectos. Se vincula con un alias y una versión concreta. Cada instancia mantiene sus enlaces a variables del proyecto consumidor.
+En Studio, la sección **Librerías** agrupa los objetos reutilizables: símbolos y plantillas de equipo con parámetros (internamente siguen siendo *faceplates*: `faceplates/*.json` y elementos `kind: "faceplate"`). Tiene tres tipos de librería:
+
+| Librería | Dónde vive | Edición |
+| --- | --- | --- |
+| **Proyecto** | `faceplates/` del proyecto, en carpetas (`folder` en cada objeto y `library_folders` en `project.json`) | Editable: clic derecho para crear objetos y carpetas, renombrar, duplicar y mover; también arrastrando |
+| **Estándar (sistema)** | Dentro de la aplicación (`src/abscada/standard_library`), generada por `tools/build_standard_library.py` | Solo lectura. No se guarda en el proyecto: las pantallas solo guardan `estandar__<nombre>`. «Copiar al proyecto para modificarlo» crea una copia editable |
+| **Externas** | Paquete `*.abscada-library.json` vinculado con un alias (ver abajo) | Solo lectura, con versión fija |
+
+Para usar un objeto, **arrástralo desde el árbol al lienzo** o usa la herramienta *Objeto de librería*, que abre un selector con buscador. Si el objeto tiene parámetros, Studio pide la variable de cada uno.
+
+La librería estándar contiene:
+- **Gráficos**: símbolos SVG estáticos de depósitos, válvulas, bombas y motores, equipos de proceso, instrumentos (LT, PT, TT, FT) y aparamenta eléctrica.
+- **Objetos**: símbolos animados con estilo ISA-101: gris parado o cerrado, verde en marcha o abierto, rojo fallo y ámbar calidad dudosa. Son la bomba, el motor y el ventilador (`marcha`, `fallo`), la válvula (`abierta`), el interruptor (`cerrado`; rojo cerrado y verde abierto, convención eléctrica) y el depósito con nivel (`nivel` en %).
+
+Los recursos de la librería estándar se direccionan como `library://estandar/graficos/<símbolo>.svg` y también pueden usarse en imágenes propias. El prefijo `estandar__` y el alias `estandar` están reservados.
+
+## Librerías externas
+
+Una librería externa publica plantillas parametrizadas e imágenes para reutilizarlas en varios proyectos. Se vincula con un alias y una versión concreta. Cada instancia mantiene sus enlaces a variables del proyecto consumidor.
 
 ## Vincular y utilizar
 
-1. Abre **Bibliotecas…** en la barra de Studio y pulsa **Vincular…**.
+1. Abre **Proyecto → Librerías externas…** y pulsa **Vincular…**.
 2. Selecciona un archivo `*.abscada-library.json` y escribe un alias, por ejemplo `equipos`.
-3. Añade un elemento Faceplate a una pantalla. El selector incluye plantillas como `equipos__unidad` y `equipos__valvula`.
-4. Asigna sus parámetros a variables compatibles, igual que en los faceplates locales.
+3. La librería aparece en el árbol, dentro de Librerías. Arrastra sus objetos (`equipos__unidad`, `equipos__valvula`…) al lienzo.
+4. Asigna sus parámetros a variables compatibles, igual que con los objetos del proyecto.
 5. Guarda con **Ctrl+S**. El vínculo participa en deshacer/rehacer, guardado único e historial Git.
 
 El explorador muestra las bibliotecas agrupadas por alias y versión. Sus plantillas son de solo lectura: seleccionarlas abre el gestor, donde se muestran la versión, el origen, la huella y los parámetros. Las instancias se pueden mover, redimensionar y enlazar en las pantallas.

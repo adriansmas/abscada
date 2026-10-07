@@ -9,7 +9,7 @@ from .dialogs import EditorDialog as QDialog
 class NewDocumentDialog(QDialog):
     def __init__(self,host,faceplate=False):
         super().__init__(host); self.host=host; self.faceplate=faceplate
-        self.setWindowTitle('Nuevo '+('faceplate' if faceplate else 'pantalla'))
+        self.setWindowTitle('Nuevo objeto de librería' if faceplate else 'Nueva pantalla')
         self.resize(430,300); body=QVBoxLayout(self); form=QFormLayout()
         self.name=QLineEdit(); self.name.setObjectName('documentName')
         self.title=QLineEdit(); self.title.setObjectName('documentTitle')
