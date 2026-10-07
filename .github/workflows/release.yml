@@ -57,7 +57,7 @@ jobs:
       - name: Build provenance (verify with gh attestation verify <zip> --repo <owner>/<repo>)
         # Free for public repositories; private ones need GitHub Enterprise Cloud.
         if: github.event.repository.visibility == 'public'
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: dist/abSCADA-*-windows.zip
       - uses: actions/upload-artifact@v4
