@@ -11,7 +11,7 @@ Access rules:
   Failed attempts count towards the same lockout as the HMI.
 - Writing also needs «Mandos y consignas» (``operate``).
 - Anonymous access only if ``allow_anonymous`` is set, and always read-only.
-- Client certificates must be trusted by an administrator (runtime/pki/trusted).
+- Client certificates must be trusted by an administrator (pki/trusted).
 """
 from __future__ import annotations
 
@@ -96,7 +96,7 @@ class OpcUaServer:
         await server.init()
         server.set_endpoint(endpoint(self.config))
         server.set_server_name(f"abSCADA · {project.manifest['name']}")
-        uri = pki.application_uri(project, "server")
+        uri = pki.application_uri(project.root, "server")
         await server.set_application_uri(uri)
         policies = [getattr(ua.SecurityPolicyType, "NoSecurity" if p == "None" else p) for p in self.config["security"]]
         if any(p != "None" for p in self.config["security"]):

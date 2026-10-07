@@ -34,7 +34,8 @@ def documents(project):
 
 
 def disk_state(root):
-    paths = list(root.glob('*.json')) + list(root.glob('*.abscada'))
+    # users.json and secrets.json are written at once (accounts editor, runtime, connection form), never by a save.
+    paths = [p for p in root.glob('*.json') if p.name not in ('users.json', 'secrets.json')] + list(root.glob('*.abscada'))
     for folder, pattern in (('screens','*.json'),('faceplates','*.json'),('scripts','*.py')):
         paths.extend((root/folder).glob(pattern))
     return {p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}

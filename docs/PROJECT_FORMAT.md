@@ -274,9 +274,11 @@ Las fuentes residen en scripts/<nombre>.py; automation.json define startup, time
  "roles": [{"id": "operator", "name": "Operador", "permissions": ["operate", "acknowledge"]}]}
 ```
 
-Permisos: `operate` (mandos, consignas y scripts de botón), `acknowledge` (reconocer alarmas), `manage_users` (gestionar cuentas) y `opcua` (iniciar sesión por OPC UA). Con `enabled: false`, el valor por defecto, todo está permitido como en versiones anteriores.
+Permisos: `operate` (mandos, consignas y scripts de botón), `acknowledge` (reconocer alarmas), `recipes` (recetas y parámetros de proceso; ningún control lo pide por defecto, se asigna con `permission`), `manage_users` (gestionar cuentas) y `opcua` (iniciar sesión por OPC UA). Con `enabled: false`, el valor por defecto, todo está permitido como en versiones anteriores.
 
-Las **cuentas no forman parte del proyecto**. Se guardan en `runtime/users.json` de cada instalación, solo con hash scrypt, y se gestionan en Proyecto → Usuarios y roles → Cuentas.
+Las **cuentas forman parte del proyecto**: `users.json`, versionado y copiado con él. Cada cuenta guarda nombre, roles, «cambiar en el primer acceso», desactivada y la huella scrypt de su contraseña, nunca la contraseña. Se gestionan en Proyecto → Usuarios y roles → Cuentas y se escriben al momento, sin pasar por Guardar, porque el runtime también las cambia cuando un operador renueva su contraseña. Los intentos fallidos y los bloqueos solo existen en la memoria del runtime. Un proyecto de 0.5.0b2 con `runtime/users.json` pasa sus cuentas a `users.json` la primera vez que se usan.
+
+Las **contraseñas de las conexiones** van en `secrets.json` (clave `connection:<id>:password`, valor `plain:<base64>`): codificadas, no cifradas, porque el runtime tiene que enviarlas al PLC. Se escriben al momento desde el botón Contraseña… de la conexión. Los **certificados OPC UA** van en `pki/` (`own`, `trusted`, `rejected`). Igual que las cuentas, viajan con el proyecto; los de 0.5.0b2 (`runtime/secrets.json` cifrado con DPAPI y `runtime/pki`) se mueven solos la primera vez.
 
 Un botón o una entrada puede exigir un permiso concreto con `"permission": "manage_users"`. Sin esa propiedad, los controles que escriben y los scripts piden `operate`, y la navegación no pide nada.
 

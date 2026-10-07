@@ -61,11 +61,11 @@ def test_certificates_must_be_trusted_on_both_sides(served):
     config = connection(project, "mes", "clave-del-mes-1")
     with pytest.raises(Exception, match="BadSecurityChecksFailed"):
         connect(project, config)                       # CreateSession: the server does not trust the client
-    assert [i["uri"] for i in pki.listing(project.root, "rejected")] == [pki.application_uri(project, "client")]
+    assert [i["uri"] for i in pki.listing(project.root, "rejected")] == [pki.application_uri(project.root, "client")]
     trust_everything_rejected(project)
     with pytest.raises(pki.UntrustedCertificate):
         connect(project, config)                       # then the client does not trust the server
-    assert [i["uri"] for i in pki.listing(project.root, "rejected")] == [pki.application_uri(project, "server")]
+    assert [i["uri"] for i in pki.listing(project.root, "rejected")] == [pki.application_uri(project.root, "server")]
     trust_everything_rejected(project)
     connect(project, config).close()
     assert not pki.listing(project.root, "rejected") and len(pki.listing(project.root, "trusted")) == 2

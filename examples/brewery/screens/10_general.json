@@ -1,0 +1,1650 @@
+{
+  "title": "Vista general de la cervecería",
+  "width": 1400,
+  "height": 830,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "titulo",
+      "kind": "text",
+      "x": 14,
+      "y": 8,
+      "w": 900,
+      "h": 30,
+      "text": "VISTA GENERAL DE LA CERVECERÍA",
+      "font_size": 20,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "subtitulo",
+      "kind": "text",
+      "x": 14,
+      "y": 36,
+      "w": 900,
+      "h": 18,
+      "text": "Sala de cocción de 10 hl · 3 fermentadores cilindrocónicos de 12 hl · PLC por OPC UA cifrado",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "sinoptico",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 60,
+      "w": 1380,
+      "h": 320,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "hlt_t",
+      "kind": "text",
+      "x": 30,
+      "y": 86,
+      "w": 120,
+      "h": 20,
+      "text": "Agua caliente",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "center"
+    },
+    {
+      "id": "hlt_marco",
+      "kind": "rectangle",
+      "x": 50,
+      "y": 110,
+      "w": 80,
+      "h": 160,
+      "color": "#ffffff",
+      "stroke_color": "@Linea",
+      "stroke_width": 2
+    },
+    {
+      "id": "hlt_nivel",
+      "kind": "bar",
+      "x": 53,
+      "y": 113,
+      "w": 74,
+      "h": 154,
+      "tag": "Servicios.NivelHLT",
+      "min": 0,
+      "max": 30,
+      "color": "@Agua",
+      "dynamics": {}
+    },
+    {
+      "id": "hlt_v",
+      "kind": "text",
+      "x": 50,
+      "y": 274,
+      "w": 80,
+      "h": 24,
+      "text": "",
+      "tag": "Servicios.NivelHLT",
+      "unit": "hl",
+      "decimals": 1,
+      "font_size": 12,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "hlt_temp",
+      "kind": "text",
+      "x": 50,
+      "y": 300,
+      "w": 80,
+      "h": 26,
+      "text": "",
+      "tag": "Servicios.TempHLT",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "mt_t",
+      "kind": "text",
+      "x": 200,
+      "y": 86,
+      "w": 150,
+      "h": 20,
+      "text": "Macerador",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "center"
+    },
+    {
+      "id": "mt_marco",
+      "kind": "rectangle",
+      "x": 220,
+      "y": 110,
+      "w": 110,
+      "h": 160,
+      "color": "#ffffff",
+      "stroke_color": "@Linea",
+      "stroke_width": 2
+    },
+    {
+      "id": "mt_nivel",
+      "kind": "bar",
+      "x": 223,
+      "y": 113,
+      "w": 104,
+      "h": 154,
+      "tag": "Cocina.NivelMT",
+      "min": 0,
+      "max": 12,
+      "color": "@Mosto",
+      "dynamics": {}
+    },
+    {
+      "id": "mt_v",
+      "kind": "text",
+      "x": 220,
+      "y": 274,
+      "w": 110,
+      "h": 24,
+      "text": "",
+      "tag": "Cocina.NivelMT",
+      "unit": "hl",
+      "decimals": 1,
+      "font_size": 12,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "mt_temp",
+      "kind": "text",
+      "x": 220,
+      "y": 300,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "Cocina.TempMT",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "lt_t",
+      "kind": "text",
+      "x": 390,
+      "y": 86,
+      "w": 150,
+      "h": 20,
+      "text": "Cuba filtro",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "center"
+    },
+    {
+      "id": "lt_marco",
+      "kind": "rectangle",
+      "x": 410,
+      "y": 110,
+      "w": 110,
+      "h": 160,
+      "color": "#ffffff",
+      "stroke_color": "@Linea",
+      "stroke_width": 2
+    },
+    {
+      "id": "lt_nivel",
+      "kind": "bar",
+      "x": 413,
+      "y": 113,
+      "w": 104,
+      "h": 154,
+      "tag": "Cocina.NivelLT",
+      "min": 0,
+      "max": 14,
+      "color": "@Mosto",
+      "dynamics": {}
+    },
+    {
+      "id": "lt_v",
+      "kind": "text",
+      "x": 410,
+      "y": 274,
+      "w": 110,
+      "h": 24,
+      "text": "",
+      "tag": "Cocina.NivelLT",
+      "unit": "hl",
+      "decimals": 1,
+      "font_size": 12,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "bk_t",
+      "kind": "text",
+      "x": 580,
+      "y": 86,
+      "w": 150,
+      "h": 20,
+      "text": "Hervidor / whirlpool",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "center"
+    },
+    {
+      "id": "bk_marco",
+      "kind": "rectangle",
+      "x": 600,
+      "y": 110,
+      "w": 110,
+      "h": 160,
+      "color": "#ffffff",
+      "stroke_color": "@Linea",
+      "stroke_width": 2
+    },
+    {
+      "id": "bk_nivel",
+      "kind": "bar",
+      "x": 603,
+      "y": 113,
+      "w": 104,
+      "h": 154,
+      "tag": "Cocina.NivelBK",
+      "min": 0,
+      "max": 14,
+      "color": "@Mosto",
+      "dynamics": {}
+    },
+    {
+      "id": "bk_v",
+      "kind": "text",
+      "x": 600,
+      "y": 274,
+      "w": 110,
+      "h": 24,
+      "text": "",
+      "tag": "Cocina.NivelBK",
+      "unit": "hl",
+      "decimals": 1,
+      "font_size": 12,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "bk_temp",
+      "kind": "text",
+      "x": 600,
+      "y": 300,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "Cocina.TempBK",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "agua_mt",
+      "kind": "polyline",
+      "x": 130,
+      "y": 126,
+      "w": 90,
+      "h": 1,
+      "stroke_color": "@Muerto",
+      "stroke_width": 7,
+      "arrows": "end",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.Paso",
+              "op": "eq",
+              "value": 1,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Agua"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "agua_lt",
+      "kind": "polyline",
+      "x": 130,
+      "y": 76,
+      "w": 335,
+      "h": 40,
+      "stroke_color": "@Muerto",
+      "stroke_width": 5,
+      "arrows": "end",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.Paso",
+              "op": "eq",
+              "value": 7,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Agua"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.11940298507462686,
+          1.0
+        ],
+        [
+          0.11940298507462686,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.85
+        ]
+      ]
+    },
+    {
+      "id": "mt_lt",
+      "kind": "polyline",
+      "x": 330,
+      "y": 256,
+      "w": 80,
+      "h": 1,
+      "stroke_color": "@Muerto",
+      "stroke_width": 7,
+      "arrows": "end",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.Paso",
+              "op": "eq",
+              "value": 6,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Mosto"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "lt_bk",
+      "kind": "polyline",
+      "x": 520,
+      "y": 256,
+      "w": 80,
+      "h": 1,
+      "stroke_color": "@Muerto",
+      "stroke_width": 7,
+      "arrows": "end",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.Paso",
+              "op": "eq",
+              "value": 7,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Mosto"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "hx",
+      "kind": "rectangle",
+      "x": 770,
+      "y": 150,
+      "w": 54,
+      "h": 96,
+      "color": "#ffffff",
+      "stroke_color": "@Linea",
+      "stroke_width": 2
+    },
+    {
+      "id": "hx_p0",
+      "kind": "line",
+      "x": 779,
+      "y": 156,
+      "w": 1,
+      "h": 84,
+      "stroke_color": "@Glicol",
+      "stroke_width": 2,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "hx_p1",
+      "kind": "line",
+      "x": 788,
+      "y": 156,
+      "w": 1,
+      "h": 84,
+      "stroke_color": "@Glicol",
+      "stroke_width": 2,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "hx_p2",
+      "kind": "line",
+      "x": 797,
+      "y": 156,
+      "w": 1,
+      "h": 84,
+      "stroke_color": "@Glicol",
+      "stroke_width": 2,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "hx_p3",
+      "kind": "line",
+      "x": 806,
+      "y": 156,
+      "w": 1,
+      "h": 84,
+      "stroke_color": "@Glicol",
+      "stroke_width": 2,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "hx_p4",
+      "kind": "line",
+      "x": 815,
+      "y": 156,
+      "w": 1,
+      "h": 84,
+      "stroke_color": "@Glicol",
+      "stroke_width": 2,
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "hx_t",
+      "kind": "text",
+      "x": 750,
+      "y": 124,
+      "w": 94,
+      "h": 20,
+      "text": "Enfriador",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "center"
+    },
+    {
+      "id": "hx_v",
+      "kind": "text",
+      "x": 756,
+      "y": 256,
+      "w": 82,
+      "h": 26,
+      "text": "",
+      "tag": "Cocina.TempMostoSalida",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 13,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "bk_hx",
+      "kind": "polyline",
+      "x": 710,
+      "y": 210,
+      "w": 60,
+      "h": 46,
+      "stroke_color": "@Muerto",
+      "stroke_width": 7,
+      "arrows": "end",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.Paso",
+              "op": "eq",
+              "value": 11,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Mosto"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.8333333333333334,
+          1.0
+        ],
+        [
+          0.8333333333333334,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "hx_fv",
+      "kind": "polyline",
+      "x": 824,
+      "y": 210,
+      "w": 76,
+      "h": 1,
+      "stroke_color": "@Muerto",
+      "stroke_width": 7,
+      "arrows": "end",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.Paso",
+              "op": "eq",
+              "value": 11,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Cerveza"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "hx_fv_t",
+      "kind": "text",
+      "x": 834,
+      "y": 184,
+      "w": 80,
+      "h": 20,
+      "text": "→ bodega",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "vapor_mt",
+      "kind": "polyline",
+      "x": 275,
+      "y": 332,
+      "w": 1,
+      "h": 30,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "arrows": "end",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.VaporMT",
+              "op": "gt",
+              "value": 1.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Vapor"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "vapor_bk",
+      "kind": "polyline",
+      "x": 655,
+      "y": 332,
+      "w": 1,
+      "h": 30,
+      "stroke_color": "@Muerto",
+      "stroke_width": 4,
+      "arrows": "end",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.VaporBK",
+              "op": "gt",
+              "value": 1.0,
+              "bad": false
+            },
+            "style": {
+              "stroke_color": "@Vapor"
+            }
+          }
+        ]
+      },
+      "points": [
+        [
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "vapor_t",
+      "kind": "text",
+      "x": 282,
+      "y": 342,
+      "w": 60,
+      "h": 18,
+      "text": "vapor",
+      "font_size": 10,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "vapor_t2",
+      "kind": "text",
+      "x": 662,
+      "y": 342,
+      "w": 60,
+      "h": 18,
+      "text": "vapor",
+      "font_size": 10,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "estado",
+      "kind": "rectangle",
+      "x": 970,
+      "y": 70,
+      "w": 410,
+      "h": 300,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "estado_titulo",
+      "kind": "text",
+      "x": 982,
+      "y": 76,
+      "w": 386,
+      "h": 20,
+      "text": "COCCIÓN EN CURSO",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "paso",
+      "kind": "text_list",
+      "x": 986,
+      "y": 100,
+      "w": 378,
+      "h": 34,
+      "tag": "Cocina.Paso",
+      "font_size": 14,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Paro",
+      "border_color": "@Paro",
+      "default_text": "SIN COMUNICACIÓN",
+      "texts": [
+        {
+          "value": "0",
+          "text": "REPOSO"
+        },
+        {
+          "value": "1",
+          "text": "LLENADO DE AGUA"
+        },
+        {
+          "value": "2",
+          "text": "EMPASTE"
+        },
+        {
+          "value": "3",
+          "text": "ESCALÓN 1 · PROTEICO"
+        },
+        {
+          "value": "4",
+          "text": "ESCALÓN 2 · SACARIFICACIÓN"
+        },
+        {
+          "value": "5",
+          "text": "ESCALÓN 3 · MASH-OUT"
+        },
+        {
+          "value": "6",
+          "text": "TRASIEGO Y RECIRCULACIÓN"
+        },
+        {
+          "value": "7",
+          "text": "FILTRADO Y LAVADO"
+        },
+        {
+          "value": "8",
+          "text": "CALENTAMIENTO A EBULLICIÓN"
+        },
+        {
+          "value": "9",
+          "text": "HERVIDO"
+        },
+        {
+          "value": "10",
+          "text": "WHIRLPOOL"
+        },
+        {
+          "value": "11",
+          "text": "ENFRIADO Y TRASIEGO A FV"
+        },
+        {
+          "value": "12",
+          "text": "LIMPIEZA CIP"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.Retenido",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "border_color": "@Aviso"
+            }
+          },
+          {
+            "when": {
+              "tag": "Cocina.Paso",
+              "op": "gt",
+              "value": 0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Marcha",
+              "border_color": "@Marcha"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "e0_t",
+      "kind": "text",
+      "x": 986,
+      "y": 147,
+      "w": 222,
+      "h": 22,
+      "text": "Lote",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "e0",
+      "kind": "text",
+      "x": 1214,
+      "y": 144,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "Cocina.Lote",
+      "unit": "",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "e1_t",
+      "kind": "text",
+      "x": 986,
+      "y": 177,
+      "w": 222,
+      "h": 22,
+      "text": "Receta",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "e1",
+      "kind": "text",
+      "x": 1214,
+      "y": 174,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "Cocina.RecetaLote",
+      "unit": "",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "e2_t",
+      "kind": "text",
+      "x": 986,
+      "y": 207,
+      "w": 222,
+      "h": 22,
+      "text": "Fermentador de destino",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "e2",
+      "kind": "text",
+      "x": 1214,
+      "y": 204,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "Cocina.FVLote",
+      "unit": "",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "e3_t",
+      "kind": "text",
+      "x": 986,
+      "y": 237,
+      "w": 222,
+      "h": 22,
+      "text": "Tiempo restante del paso",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "e3",
+      "kind": "text",
+      "x": 1214,
+      "y": 234,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "Cocina.TiempoRestante",
+      "unit": "min",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "e4_t",
+      "kind": "text",
+      "x": 986,
+      "y": 267,
+      "w": 222,
+      "h": 22,
+      "text": "Densidad del mosto",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "e4",
+      "kind": "text",
+      "x": 1214,
+      "y": 264,
+      "w": 150,
+      "h": 26,
+      "text": "",
+      "tag": "Cocina.DensidadMosto",
+      "unit": "°P",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "aviso",
+      "kind": "text_list",
+      "x": 986,
+      "y": 300,
+      "w": 378,
+      "h": 30,
+      "tag": "Cocina.Aviso",
+      "font_size": 12,
+      "bold": true,
+      "text_color": "@Texto",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "default_text": "—",
+      "texts": [
+        {
+          "value": "0",
+          "text": "Sin avisos para el operador"
+        },
+        {
+          "value": "1",
+          "text": "Añade la malta al macerador y confirma"
+        },
+        {
+          "value": "2",
+          "text": "Añade el lúpulo de amargor y confirma"
+        },
+        {
+          "value": "3",
+          "text": "Añade el lúpulo aromático y confirma"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.EsperaOperador",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "border_color": "@Aviso",
+              "text_color": "#ffffff"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "ir_cocina",
+      "kind": "button",
+      "x": 1214,
+      "y": 336,
+      "w": 150,
+      "h": 28,
+      "text": "Sala de cocción →",
+      "font_size": 12,
+      "bold": true,
+      "color": "@Mando",
+      "border_color": "@Mando",
+      "text_color": "#ffffff",
+      "action": "screen",
+      "screen": "20_cocina",
+      "target_container": "contenido"
+    },
+    {
+      "id": "FV1_t",
+      "kind": "text",
+      "x": 10,
+      "y": 388,
+      "w": 200,
+      "h": 20,
+      "text": "FV1 · 12 hl",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "tile_FV1",
+      "kind": "faceplate",
+      "x": 10,
+      "y": 410,
+      "w": 318,
+      "h": 236,
+      "template": "fermentador",
+      "bindings": {
+        "fase": "FV1.Fase",
+        "temperatura": "FV1.Temperatura",
+        "consigna": "FV1.ConsignaTemp",
+        "densidad": "FV1.Densidad",
+        "objetivo": "FV1.DensidadObjetivo",
+        "presion": "FV1.Presion",
+        "nivel": "FV1.Nivel",
+        "dia": "FV1.Dia",
+        "lote": "FV1.Lote",
+        "receta": "FV1.NombreReceta",
+        "alarma": "FV1.Alarma",
+        "valvula": "FV1.ValvulaGlicol",
+        "automatico": "FV1.Automatico",
+        "consigna_manual": "FV1.ConsignaManual",
+        "vaciar": "FV1.OrdenVaciar",
+        "atenuacion": "FV1.Atenuacion",
+        "original": "FV1.DensidadOriginal"
+      }
+    },
+    {
+      "id": "FV2_t",
+      "kind": "text",
+      "x": 336,
+      "y": 388,
+      "w": 200,
+      "h": 20,
+      "text": "FV2 · 12 hl",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "tile_FV2",
+      "kind": "faceplate",
+      "x": 336,
+      "y": 410,
+      "w": 318,
+      "h": 236,
+      "template": "fermentador",
+      "bindings": {
+        "fase": "FV2.Fase",
+        "temperatura": "FV2.Temperatura",
+        "consigna": "FV2.ConsignaTemp",
+        "densidad": "FV2.Densidad",
+        "objetivo": "FV2.DensidadObjetivo",
+        "presion": "FV2.Presion",
+        "nivel": "FV2.Nivel",
+        "dia": "FV2.Dia",
+        "lote": "FV2.Lote",
+        "receta": "FV2.NombreReceta",
+        "alarma": "FV2.Alarma",
+        "valvula": "FV2.ValvulaGlicol",
+        "automatico": "FV2.Automatico",
+        "consigna_manual": "FV2.ConsignaManual",
+        "vaciar": "FV2.OrdenVaciar",
+        "atenuacion": "FV2.Atenuacion",
+        "original": "FV2.DensidadOriginal"
+      }
+    },
+    {
+      "id": "FV3_t",
+      "kind": "text",
+      "x": 662,
+      "y": 388,
+      "w": 200,
+      "h": 20,
+      "text": "FV3 · 12 hl",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "tile_FV3",
+      "kind": "faceplate",
+      "x": 662,
+      "y": 410,
+      "w": 318,
+      "h": 236,
+      "template": "fermentador",
+      "bindings": {
+        "fase": "FV3.Fase",
+        "temperatura": "FV3.Temperatura",
+        "consigna": "FV3.ConsignaTemp",
+        "densidad": "FV3.Densidad",
+        "objetivo": "FV3.DensidadObjetivo",
+        "presion": "FV3.Presion",
+        "nivel": "FV3.Nivel",
+        "dia": "FV3.Dia",
+        "lote": "FV3.Lote",
+        "receta": "FV3.NombreReceta",
+        "alarma": "FV3.Alarma",
+        "valvula": "FV3.ValvulaGlicol",
+        "automatico": "FV3.Automatico",
+        "consigna_manual": "FV3.ConsignaManual",
+        "vaciar": "FV3.OrdenVaciar",
+        "atenuacion": "FV3.Atenuacion",
+        "original": "FV3.DensidadOriginal"
+      }
+    },
+    {
+      "id": "servicios",
+      "kind": "rectangle",
+      "x": 10,
+      "y": 654,
+      "w": 970,
+      "h": 176,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "servicios_titulo",
+      "kind": "text",
+      "x": 22,
+      "y": 660,
+      "w": 946,
+      "h": 20,
+      "text": "SERVICIOS",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "s0_t",
+      "kind": "text",
+      "x": 26,
+      "y": 691,
+      "w": 324,
+      "h": 22,
+      "text": "Agua caliente",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "s0",
+      "kind": "text",
+      "x": 356,
+      "y": 688,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "Servicios.TempHLT",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "s1_t",
+      "kind": "text",
+      "x": 26,
+      "y": 735,
+      "w": 324,
+      "h": 22,
+      "text": "Presión de vapor",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "s1",
+      "kind": "text",
+      "x": 356,
+      "y": 732,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "Servicios.PresionVapor",
+      "unit": "bar",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "Servicios.PresionVapor",
+              "op": "lt",
+              "value": 4.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "text_color": "#ffffff",
+              "border_color": "@Disparo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s2_t",
+      "kind": "text",
+      "x": 26,
+      "y": 779,
+      "w": 324,
+      "h": 22,
+      "text": "Agua fría del enfriador",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "s2",
+      "kind": "text",
+      "x": 356,
+      "y": 776,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "Servicios.TempAguaFria",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "s3_t",
+      "kind": "text",
+      "x": 506,
+      "y": 691,
+      "w": 324,
+      "h": 22,
+      "text": "Glicol",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "s3",
+      "kind": "text",
+      "x": 836,
+      "y": 688,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "Servicios.TempGlicol",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "Servicios.TempGlicol",
+              "op": "gt",
+              "value": 0.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "text_color": "#ffffff",
+              "border_color": "@Disparo"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s4_t",
+      "kind": "text",
+      "x": 506,
+      "y": 735,
+      "w": 324,
+      "h": 22,
+      "text": "Nivel de glicol",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "s4",
+      "kind": "text",
+      "x": 836,
+      "y": 732,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "Servicios.NivelGlicol",
+      "unit": "%",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        },
+        "states": [
+          {
+            "when": {
+              "tag": "Servicios.NivelGlicol",
+              "op": "lt",
+              "value": 40.0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "text_color": "#ffffff",
+              "border_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "s5_t",
+      "kind": "text",
+      "x": 506,
+      "y": 779,
+      "w": 324,
+      "h": 22,
+      "text": "Lotes cocinados en esta sesión",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "s5",
+      "kind": "text",
+      "x": 836,
+      "y": 776,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "Sistema.LotesCocinados",
+      "unit": "",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "alarmas",
+      "kind": "alarm_view",
+      "x": 988,
+      "y": 388,
+      "w": 402,
+      "h": 442,
+      "view": "activas"
+    }
+  ],
+  "on_open": [
+    "apertura"
+  ],
+  "folder": "Proceso"
+}

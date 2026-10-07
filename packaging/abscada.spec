@@ -10,11 +10,11 @@ VERSION_FILE = os.environ.get("ABSCADA_VERSION_FILE")
 
 
 def example_datas():
-    """Ship examples without runtime data (SQLite archives, locks) or caches."""
+    """Ship examples without runtime data (SQLite archives, locks), certificates or caches."""
     pairs = []
     for path in (ROOT / "examples").rglob("*"):
         parts = path.relative_to(ROOT).parts
-        if path.is_file() and "runtime" not in parts and "__pycache__" not in parts:
+        if path.is_file() and not {"runtime", "pki", "__pycache__"} & set(parts):
             pairs.append((str(path), str(Path(*parts[:-1]))))
     return pairs
 

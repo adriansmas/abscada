@@ -1,0 +1,1413 @@
+[
+  {
+    "name": "Cocina",
+    "type": "Cocina",
+    "writable": true,
+    "overrides": {
+      "NombreReceta": {
+        "writable": false
+      },
+      "Paso": {
+        "writable": false
+      },
+      "ListoIniciar": {
+        "writable": false
+      },
+      "Retenido": {
+        "writable": false
+      },
+      "EsperaOperador": {
+        "writable": false
+      },
+      "Aviso": {
+        "writable": false
+      },
+      "Lote": {
+        "writable": false
+      },
+      "RecetaLote": {
+        "writable": false
+      },
+      "FVLote": {
+        "writable": false
+      },
+      "TiempoPaso": {
+        "writable": false
+      },
+      "TiempoRestante": {
+        "writable": false
+      },
+      "ConsignaActual": {
+        "writable": false
+      },
+      "TempMT": {
+        "writable": false
+      },
+      "NivelMT": {
+        "writable": false
+      },
+      "VaporMT": {
+        "writable": false
+      },
+      "AgitadorMT": {
+        "writable": false
+      },
+      "FueraTemperaturaMT": {
+        "writable": false
+      },
+      "NivelLT": {
+        "writable": false
+      },
+      "CaudalFiltrado": {
+        "writable": false
+      },
+      "PresionLecho": {
+        "writable": false
+      },
+      "Rastrillos": {
+        "writable": false
+      },
+      "TempBK": {
+        "writable": false
+      },
+      "NivelBK": {
+        "writable": false
+      },
+      "VaporBK": {
+        "writable": false
+      },
+      "Ebullicion": {
+        "writable": false
+      },
+      "NivelEspuma": {
+        "writable": false
+      },
+      "TempMostoSalida": {
+        "writable": false
+      },
+      "CaudalTrasiego": {
+        "writable": false
+      },
+      "DensidadMosto": {
+        "writable": false
+      },
+      "SiembraCaliente": {
+        "writable": false
+      },
+      "AlarmaCocina": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "Cocina.OrdenIniciar": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.OrdenIniciar"
+        }
+      },
+      "Cocina.OrdenRetener": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.OrdenRetener"
+        }
+      },
+      "Cocina.OrdenReanudar": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.OrdenReanudar"
+        }
+      },
+      "Cocina.OrdenAbortar": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.OrdenAbortar"
+        }
+      },
+      "Cocina.OrdenConfirmar": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.OrdenConfirmar"
+        }
+      },
+      "Cocina.RecetaSeleccionada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.RecetaSeleccionada"
+        }
+      },
+      "Cocina.FVDestino": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.FVDestino"
+        }
+      },
+      "Cocina.NombreReceta": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.NombreReceta"
+        }
+      },
+      "Cocina.Paso": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.Paso"
+        }
+      },
+      "Cocina.ListoIniciar": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.ListoIniciar"
+        }
+      },
+      "Cocina.Retenido": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.Retenido"
+        }
+      },
+      "Cocina.EsperaOperador": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.EsperaOperador"
+        }
+      },
+      "Cocina.Aviso": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.Aviso"
+        }
+      },
+      "Cocina.Lote": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.Lote"
+        }
+      },
+      "Cocina.RecetaLote": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.RecetaLote"
+        }
+      },
+      "Cocina.FVLote": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.FVLote"
+        }
+      },
+      "Cocina.TiempoPaso": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.TiempoPaso"
+        }
+      },
+      "Cocina.TiempoRestante": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.TiempoRestante"
+        }
+      },
+      "Cocina.ConsignaActual": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.ConsignaActual"
+        }
+      },
+      "Cocina.TempMT": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.TempMT"
+        }
+      },
+      "Cocina.NivelMT": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.NivelMT"
+        }
+      },
+      "Cocina.VaporMT": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.VaporMT"
+        }
+      },
+      "Cocina.AgitadorMT": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.AgitadorMT"
+        }
+      },
+      "Cocina.FueraTemperaturaMT": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.FueraTemperaturaMT"
+        }
+      },
+      "Cocina.NivelLT": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.NivelLT"
+        }
+      },
+      "Cocina.CaudalFiltrado": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.CaudalFiltrado"
+        }
+      },
+      "Cocina.PresionLecho": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.PresionLecho"
+        }
+      },
+      "Cocina.Rastrillos": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.Rastrillos"
+        }
+      },
+      "Cocina.TempBK": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.TempBK"
+        }
+      },
+      "Cocina.NivelBK": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.NivelBK"
+        }
+      },
+      "Cocina.VaporBK": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.VaporBK"
+        }
+      },
+      "Cocina.Ebullicion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.Ebullicion"
+        }
+      },
+      "Cocina.NivelEspuma": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.NivelEspuma"
+        }
+      },
+      "Cocina.TempMostoSalida": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.TempMostoSalida"
+        }
+      },
+      "Cocina.CaudalTrasiego": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.CaudalTrasiego"
+        }
+      },
+      "Cocina.DensidadMosto": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.DensidadMosto"
+        }
+      },
+      "Cocina.SiembraCaliente": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.SiembraCaliente"
+        }
+      },
+      "Cocina.AlarmaCocina": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.AlarmaCocina"
+        }
+      },
+      "Cocina.SimEspuma": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.SimEspuma"
+        }
+      },
+      "Cocina.SimLechoColmatado": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Cocina.SimLechoColmatado"
+        }
+      }
+    },
+    "initial": {
+      "OrdenIniciar": false,
+      "OrdenRetener": false,
+      "OrdenReanudar": false,
+      "OrdenAbortar": false,
+      "OrdenConfirmar": false,
+      "RecetaSeleccionada": 0,
+      "FVDestino": 0,
+      "NombreReceta": "",
+      "Paso": 0,
+      "ListoIniciar": false,
+      "Retenido": false,
+      "EsperaOperador": false,
+      "Aviso": 0,
+      "Lote": 0,
+      "RecetaLote": "",
+      "FVLote": 0,
+      "TiempoPaso": 0.0,
+      "TiempoRestante": 0.0,
+      "ConsignaActual": 0.0,
+      "TempMT": 0.0,
+      "NivelMT": 0.0,
+      "VaporMT": 0.0,
+      "AgitadorMT": false,
+      "FueraTemperaturaMT": false,
+      "NivelLT": 0.0,
+      "CaudalFiltrado": 0.0,
+      "PresionLecho": 0.0,
+      "Rastrillos": false,
+      "TempBK": 0.0,
+      "NivelBK": 0.0,
+      "VaporBK": 0.0,
+      "Ebullicion": false,
+      "NivelEspuma": 0.0,
+      "TempMostoSalida": 0.0,
+      "CaudalTrasiego": 0.0,
+      "DensidadMosto": 0.0,
+      "SiembraCaliente": false,
+      "AlarmaCocina": false,
+      "SimEspuma": false,
+      "SimLechoColmatado": false
+    }
+  },
+  {
+    "name": "FV1",
+    "type": "Fermentador",
+    "writable": true,
+    "overrides": {
+      "Fase": {
+        "writable": false
+      },
+      "Lote": {
+        "writable": false
+      },
+      "NombreReceta": {
+        "writable": false
+      },
+      "Dia": {
+        "writable": false
+      },
+      "Temperatura": {
+        "writable": false
+      },
+      "ConsignaTemp": {
+        "writable": false
+      },
+      "Desviacion": {
+        "writable": false
+      },
+      "Densidad": {
+        "writable": false
+      },
+      "DensidadOriginal": {
+        "writable": false
+      },
+      "DensidadObjetivo": {
+        "writable": false
+      },
+      "Atenuacion": {
+        "writable": false
+      },
+      "Presion": {
+        "writable": false
+      },
+      "Nivel": {
+        "writable": false
+      },
+      "ValvulaGlicol": {
+        "writable": false
+      },
+      "FermentacionParada": {
+        "writable": false
+      },
+      "Alarma": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "FV1.OrdenVaciar": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.OrdenVaciar"
+        }
+      },
+      "FV1.Automatico": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Automatico"
+        }
+      },
+      "FV1.ConsignaManual": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.ConsignaManual"
+        }
+      },
+      "FV1.Fase": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Fase"
+        }
+      },
+      "FV1.Lote": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Lote"
+        }
+      },
+      "FV1.NombreReceta": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.NombreReceta"
+        }
+      },
+      "FV1.Dia": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Dia"
+        }
+      },
+      "FV1.Temperatura": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Temperatura"
+        }
+      },
+      "FV1.ConsignaTemp": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.ConsignaTemp"
+        }
+      },
+      "FV1.Desviacion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Desviacion"
+        }
+      },
+      "FV1.Densidad": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Densidad"
+        }
+      },
+      "FV1.DensidadOriginal": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.DensidadOriginal"
+        }
+      },
+      "FV1.DensidadObjetivo": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.DensidadObjetivo"
+        }
+      },
+      "FV1.Atenuacion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Atenuacion"
+        }
+      },
+      "FV1.Presion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Presion"
+        }
+      },
+      "FV1.Nivel": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Nivel"
+        }
+      },
+      "FV1.ValvulaGlicol": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.ValvulaGlicol"
+        }
+      },
+      "FV1.FermentacionParada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.FermentacionParada"
+        }
+      },
+      "FV1.Alarma": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.Alarma"
+        }
+      },
+      "FV1.SimValvulaAtascada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.SimValvulaAtascada"
+        }
+      },
+      "FV1.SimSobrepresion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.SimSobrepresion"
+        }
+      },
+      "FV1.SimFermentacionParada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV1.SimFermentacionParada"
+        }
+      }
+    },
+    "initial": {
+      "OrdenVaciar": false,
+      "Automatico": false,
+      "ConsignaManual": 0.0,
+      "Fase": 0,
+      "Lote": 0,
+      "NombreReceta": "",
+      "Dia": 0.0,
+      "Temperatura": 0.0,
+      "ConsignaTemp": 0.0,
+      "Desviacion": 0.0,
+      "Densidad": 0.0,
+      "DensidadOriginal": 0.0,
+      "DensidadObjetivo": 0.0,
+      "Atenuacion": 0.0,
+      "Presion": 0.0,
+      "Nivel": 0.0,
+      "ValvulaGlicol": 0.0,
+      "FermentacionParada": false,
+      "Alarma": false,
+      "SimValvulaAtascada": false,
+      "SimSobrepresion": false,
+      "SimFermentacionParada": false
+    }
+  },
+  {
+    "name": "FV2",
+    "type": "Fermentador",
+    "writable": true,
+    "overrides": {
+      "Fase": {
+        "writable": false
+      },
+      "Lote": {
+        "writable": false
+      },
+      "NombreReceta": {
+        "writable": false
+      },
+      "Dia": {
+        "writable": false
+      },
+      "Temperatura": {
+        "writable": false
+      },
+      "ConsignaTemp": {
+        "writable": false
+      },
+      "Desviacion": {
+        "writable": false
+      },
+      "Densidad": {
+        "writable": false
+      },
+      "DensidadOriginal": {
+        "writable": false
+      },
+      "DensidadObjetivo": {
+        "writable": false
+      },
+      "Atenuacion": {
+        "writable": false
+      },
+      "Presion": {
+        "writable": false
+      },
+      "Nivel": {
+        "writable": false
+      },
+      "ValvulaGlicol": {
+        "writable": false
+      },
+      "FermentacionParada": {
+        "writable": false
+      },
+      "Alarma": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "FV2.OrdenVaciar": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.OrdenVaciar"
+        }
+      },
+      "FV2.Automatico": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Automatico"
+        }
+      },
+      "FV2.ConsignaManual": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.ConsignaManual"
+        }
+      },
+      "FV2.Fase": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Fase"
+        }
+      },
+      "FV2.Lote": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Lote"
+        }
+      },
+      "FV2.NombreReceta": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.NombreReceta"
+        }
+      },
+      "FV2.Dia": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Dia"
+        }
+      },
+      "FV2.Temperatura": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Temperatura"
+        }
+      },
+      "FV2.ConsignaTemp": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.ConsignaTemp"
+        }
+      },
+      "FV2.Desviacion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Desviacion"
+        }
+      },
+      "FV2.Densidad": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Densidad"
+        }
+      },
+      "FV2.DensidadOriginal": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.DensidadOriginal"
+        }
+      },
+      "FV2.DensidadObjetivo": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.DensidadObjetivo"
+        }
+      },
+      "FV2.Atenuacion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Atenuacion"
+        }
+      },
+      "FV2.Presion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Presion"
+        }
+      },
+      "FV2.Nivel": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Nivel"
+        }
+      },
+      "FV2.ValvulaGlicol": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.ValvulaGlicol"
+        }
+      },
+      "FV2.FermentacionParada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.FermentacionParada"
+        }
+      },
+      "FV2.Alarma": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.Alarma"
+        }
+      },
+      "FV2.SimValvulaAtascada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.SimValvulaAtascada"
+        }
+      },
+      "FV2.SimSobrepresion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.SimSobrepresion"
+        }
+      },
+      "FV2.SimFermentacionParada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV2.SimFermentacionParada"
+        }
+      }
+    },
+    "initial": {
+      "OrdenVaciar": false,
+      "Automatico": false,
+      "ConsignaManual": 0.0,
+      "Fase": 0,
+      "Lote": 0,
+      "NombreReceta": "",
+      "Dia": 0.0,
+      "Temperatura": 0.0,
+      "ConsignaTemp": 0.0,
+      "Desviacion": 0.0,
+      "Densidad": 0.0,
+      "DensidadOriginal": 0.0,
+      "DensidadObjetivo": 0.0,
+      "Atenuacion": 0.0,
+      "Presion": 0.0,
+      "Nivel": 0.0,
+      "ValvulaGlicol": 0.0,
+      "FermentacionParada": false,
+      "Alarma": false,
+      "SimValvulaAtascada": false,
+      "SimSobrepresion": false,
+      "SimFermentacionParada": false
+    }
+  },
+  {
+    "name": "FV3",
+    "type": "Fermentador",
+    "writable": true,
+    "overrides": {
+      "Fase": {
+        "writable": false
+      },
+      "Lote": {
+        "writable": false
+      },
+      "NombreReceta": {
+        "writable": false
+      },
+      "Dia": {
+        "writable": false
+      },
+      "Temperatura": {
+        "writable": false
+      },
+      "ConsignaTemp": {
+        "writable": false
+      },
+      "Desviacion": {
+        "writable": false
+      },
+      "Densidad": {
+        "writable": false
+      },
+      "DensidadOriginal": {
+        "writable": false
+      },
+      "DensidadObjetivo": {
+        "writable": false
+      },
+      "Atenuacion": {
+        "writable": false
+      },
+      "Presion": {
+        "writable": false
+      },
+      "Nivel": {
+        "writable": false
+      },
+      "ValvulaGlicol": {
+        "writable": false
+      },
+      "FermentacionParada": {
+        "writable": false
+      },
+      "Alarma": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "FV3.OrdenVaciar": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.OrdenVaciar"
+        }
+      },
+      "FV3.Automatico": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Automatico"
+        }
+      },
+      "FV3.ConsignaManual": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.ConsignaManual"
+        }
+      },
+      "FV3.Fase": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Fase"
+        }
+      },
+      "FV3.Lote": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Lote"
+        }
+      },
+      "FV3.NombreReceta": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.NombreReceta"
+        }
+      },
+      "FV3.Dia": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Dia"
+        }
+      },
+      "FV3.Temperatura": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Temperatura"
+        }
+      },
+      "FV3.ConsignaTemp": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.ConsignaTemp"
+        }
+      },
+      "FV3.Desviacion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Desviacion"
+        }
+      },
+      "FV3.Densidad": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Densidad"
+        }
+      },
+      "FV3.DensidadOriginal": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.DensidadOriginal"
+        }
+      },
+      "FV3.DensidadObjetivo": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.DensidadObjetivo"
+        }
+      },
+      "FV3.Atenuacion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Atenuacion"
+        }
+      },
+      "FV3.Presion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Presion"
+        }
+      },
+      "FV3.Nivel": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Nivel"
+        }
+      },
+      "FV3.ValvulaGlicol": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.ValvulaGlicol"
+        }
+      },
+      "FV3.FermentacionParada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.FermentacionParada"
+        }
+      },
+      "FV3.Alarma": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.Alarma"
+        }
+      },
+      "FV3.SimValvulaAtascada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.SimValvulaAtascada"
+        }
+      },
+      "FV3.SimSobrepresion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.SimSobrepresion"
+        }
+      },
+      "FV3.SimFermentacionParada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=FV3.SimFermentacionParada"
+        }
+      }
+    },
+    "initial": {
+      "OrdenVaciar": false,
+      "Automatico": false,
+      "ConsignaManual": 0.0,
+      "Fase": 0,
+      "Lote": 0,
+      "NombreReceta": "",
+      "Dia": 0.0,
+      "Temperatura": 0.0,
+      "ConsignaTemp": 0.0,
+      "Desviacion": 0.0,
+      "Densidad": 0.0,
+      "DensidadOriginal": 0.0,
+      "DensidadObjetivo": 0.0,
+      "Atenuacion": 0.0,
+      "Presion": 0.0,
+      "Nivel": 0.0,
+      "ValvulaGlicol": 0.0,
+      "FermentacionParada": false,
+      "Alarma": false,
+      "SimValvulaAtascada": false,
+      "SimSobrepresion": false,
+      "SimFermentacionParada": false
+    }
+  },
+  {
+    "name": "Servicios",
+    "type": "Servicios",
+    "writable": true,
+    "overrides": {
+      "TempHLT": {
+        "writable": false
+      },
+      "NivelHLT": {
+        "writable": false
+      },
+      "PresionVapor": {
+        "writable": false
+      },
+      "Caldera": {
+        "writable": false
+      },
+      "FalloCaldera": {
+        "writable": false
+      },
+      "Enfriadora": {
+        "writable": false
+      },
+      "FalloEnfriadora": {
+        "writable": false
+      },
+      "TempGlicol": {
+        "writable": false
+      },
+      "NivelGlicol": {
+        "writable": false
+      },
+      "TempAguaFria": {
+        "writable": false
+      },
+      "AlarmaServicios": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "Servicios.ConsignaHLT": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.ConsignaHLT"
+        }
+      },
+      "Servicios.ConsignaGlicol": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.ConsignaGlicol"
+        }
+      },
+      "Servicios.TempHLT": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.TempHLT"
+        }
+      },
+      "Servicios.NivelHLT": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.NivelHLT"
+        }
+      },
+      "Servicios.PresionVapor": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.PresionVapor"
+        }
+      },
+      "Servicios.Caldera": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.Caldera"
+        }
+      },
+      "Servicios.FalloCaldera": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.FalloCaldera"
+        }
+      },
+      "Servicios.Enfriadora": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.Enfriadora"
+        }
+      },
+      "Servicios.FalloEnfriadora": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.FalloEnfriadora"
+        }
+      },
+      "Servicios.TempGlicol": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.TempGlicol"
+        }
+      },
+      "Servicios.NivelGlicol": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.NivelGlicol"
+        }
+      },
+      "Servicios.TempAguaFria": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.TempAguaFria"
+        }
+      },
+      "Servicios.AlarmaServicios": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.AlarmaServicios"
+        }
+      },
+      "Servicios.SimFalloCaldera": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.SimFalloCaldera"
+        }
+      },
+      "Servicios.SimFalloEnfriadora": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.SimFalloEnfriadora"
+        }
+      },
+      "Servicios.SimFugaGlicol": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Servicios.SimFugaGlicol"
+        }
+      }
+    },
+    "initial": {
+      "ConsignaHLT": 0.0,
+      "ConsignaGlicol": 0.0,
+      "TempHLT": 0.0,
+      "NivelHLT": 0.0,
+      "PresionVapor": 0.0,
+      "Caldera": false,
+      "FalloCaldera": false,
+      "Enfriadora": false,
+      "FalloEnfriadora": false,
+      "TempGlicol": 0.0,
+      "NivelGlicol": 0.0,
+      "TempAguaFria": 0.0,
+      "AlarmaServicios": false,
+      "SimFalloCaldera": false,
+      "SimFalloEnfriadora": false,
+      "SimFugaGlicol": false
+    }
+  },
+  {
+    "name": "Recetas",
+    "type": "EditorRecetas",
+    "writable": true,
+    "overrides": {
+      "Modificada": {
+        "writable": false
+      },
+      "EnUso": {
+        "writable": false
+      },
+      "Nombre1": {
+        "writable": false
+      },
+      "Nombre2": {
+        "writable": false
+      },
+      "Nombre3": {
+        "writable": false
+      },
+      "Nombre4": {
+        "writable": false
+      }
+    },
+    "bindings": {
+      "Recetas.Numero": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.Numero"
+        }
+      },
+      "Recetas.OrdenGuardar": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.OrdenGuardar"
+        }
+      },
+      "Recetas.OrdenDescartar": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.OrdenDescartar"
+        }
+      },
+      "Recetas.Modificada": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.Modificada"
+        }
+      },
+      "Recetas.EnUso": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.EnUso"
+        }
+      },
+      "Recetas.Nombre": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.Nombre"
+        }
+      },
+      "Recetas.VolumenAgua": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.VolumenAgua"
+        }
+      },
+      "Recetas.TempE1": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.TempE1"
+        }
+      },
+      "Recetas.TiempoE1": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.TiempoE1"
+        }
+      },
+      "Recetas.TempE2": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.TempE2"
+        }
+      },
+      "Recetas.TiempoE2": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.TiempoE2"
+        }
+      },
+      "Recetas.TempE3": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.TempE3"
+        }
+      },
+      "Recetas.TiempoE3": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.TiempoE3"
+        }
+      },
+      "Recetas.TiempoHervido": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.TiempoHervido"
+        }
+      },
+      "Recetas.LupuloAroma": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.LupuloAroma"
+        }
+      },
+      "Recetas.DensidadOriginal": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.DensidadOriginal"
+        }
+      },
+      "Recetas.DensidadFinal": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.DensidadFinal"
+        }
+      },
+      "Recetas.TempFermentacion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.TempFermentacion"
+        }
+      },
+      "Recetas.DiasFermentacion": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.DiasFermentacion"
+        }
+      },
+      "Recetas.TempDiacetilo": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.TempDiacetilo"
+        }
+      },
+      "Recetas.DiasDiacetilo": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.DiasDiacetilo"
+        }
+      },
+      "Recetas.TempGuarda": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.TempGuarda"
+        }
+      },
+      "Recetas.DiasGuarda": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.DiasGuarda"
+        }
+      },
+      "Recetas.Nombre1": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.Nombre1"
+        }
+      },
+      "Recetas.Nombre2": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.Nombre2"
+        }
+      },
+      "Recetas.Nombre3": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.Nombre3"
+        }
+      },
+      "Recetas.Nombre4": {
+        "connection": "PLC_Cerveceria",
+        "address": {
+          "node": "nsu=urn:latolva:plc;s=Recetas.Nombre4"
+        }
+      }
+    },
+    "initial": {
+      "Numero": 0,
+      "OrdenGuardar": false,
+      "OrdenDescartar": false,
+      "Modificada": false,
+      "EnUso": false,
+      "Nombre": "",
+      "VolumenAgua": 0.0,
+      "TempE1": 0.0,
+      "TiempoE1": 0.0,
+      "TempE2": 0.0,
+      "TiempoE2": 0.0,
+      "TempE3": 0.0,
+      "TiempoE3": 0.0,
+      "TiempoHervido": 0.0,
+      "LupuloAroma": 0.0,
+      "DensidadOriginal": 0.0,
+      "DensidadFinal": 0.0,
+      "TempFermentacion": 0.0,
+      "DiasFermentacion": 0.0,
+      "TempDiacetilo": 0.0,
+      "DiasDiacetilo": 0.0,
+      "TempGuarda": 0.0,
+      "DiasGuarda": 0.0,
+      "Nombre1": "",
+      "Nombre2": "",
+      "Nombre3": "",
+      "Nombre4": ""
+    }
+  },
+  {
+    "name": "Sistema",
+    "type": "Sistema",
+    "writable": true,
+    "initial": {
+      "Fecha": "",
+      "Hora": "",
+      "Inicio": "",
+      "Pantalla": "",
+      "ComPLC": false,
+      "UltimoEvento": "",
+      "LotesCocinados": 0
+    }
+  }
+]

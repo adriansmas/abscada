@@ -55,6 +55,38 @@ def test_lockout_after_failed_attempts_and_generic_errors(tmp_path):
         store.authenticate("ana", "operar-la-planta", policy)
 
 
+def test_accounts_live_in_the_project_and_lockouts_never_touch_it(operational_project):
+    project = operational_project
+    store = secured(project, max_failed_logins=2)
+    assert users_path(project.root) == project.root / "users.json"
+    before = users_path(project.root).read_bytes()
+    for _ in range(2):
+        with pytest.raises(AuthenticationError):
+            store.authenticate("ana", "mala", project.security)
+    with pytest.raises(AuthenticationError, match="bloqueado"):
+        store.authenticate("ana", "operar-la-planta", project.security)
+    assert users_path(project.root).read_bytes() == before  # a failed login is not a project change
+    # Accounts are written at once, so Studio's save neither refuses nor overwrites them.
+    project.save()
+    store.set_password("ana", "otra-clave-larga", project.security)
+    project.save()
+    assert store.authenticate("ana", "otra-clave-larga", project.security)["name"] == "ana"
+
+
+def test_accounts_from_0_5_0b2_move_into_the_project(tmp_path):
+    import json
+    legacy = tmp_path / "runtime" / "users.json"
+    UserStore(legacy).create("ana", "operar-la-planta", ["operator"], POLICY, must_change=False)
+    data = json.loads(legacy.read_text(encoding="utf-8"))
+    data["users"][0].update(failed=2, locked_until=0)
+    legacy.write_text(json.dumps(data), encoding="utf-8")
+    store = UserStore(users_path(tmp_path))
+    assert store.authenticate("ana", "operar-la-planta", POLICY)["name"] == "ana"
+    assert not legacy.exists()
+    (user,) = json.loads(users_path(tmp_path).read_text(encoding="utf-8"))["users"]
+    assert "failed" not in user and "locked_until" not in user
+
+
 @pytest.mark.parametrize("change", [dict(enabled="yes"), dict(roles=[]), dict(password_min_length=4),
                                     dict(roles=[dict(id="x", name="X", permissions=["volar"])]),
                                     dict(roles=[dict(id="x", name="X", permissions=[])] * 2), dict(extra=1)])
@@ -69,6 +101,7 @@ def test_required_permission_by_control():
     assert required_permission(dict(kind="button", action="script", script="s")) == "operate"
     assert required_permission(dict(kind="button", action="screen", screen="x")) is None
     assert required_permission(dict(kind="button", action="screen", screen="x", permission="manage_users")) == "manage_users"
+    assert required_permission(dict(kind="input", tag="A", permission="recipes")) == "recipes"
 
 
 def test_disabled_security_allows_everything(operational_project):
@@ -114,3 +147,47 @@ def test_must_change_password_blocks_commands(operational_project):
     service = SecurityService(operational_project)
     session = service.login("nuevo", "temporal-12345")
     assert session.must_change and not service.permits(session, "operate")
+
+
+def test_connection_secrets_live_in_the_project(operational_project):
+    from abscada.secrets_store import SecretStore, connection_secret_key, secrets_path
+    project = operational_project
+    store = SecretStore(secrets_path(project.root))
+    store.set(connection_secret_key("PLC"), "clave-del-plc")
+    assert secrets_path(project.root) == project.root / "secrets.json"
+    assert "clave-del-plc" not in secrets_path(project.root).read_text(encoding="utf-8")  # encoded, not in clear
+    project.save()  # written at once: Studio's save neither refuses nor overwrites it
+    store.set(connection_secret_key("PLC"), "otra-clave")
+    project.save()
+    assert SecretStore(secrets_path(project.root)).get(connection_secret_key("PLC")) == "otra-clave"
+
+
+def test_connection_secrets_from_0_5_0b2_move_into_the_project(tmp_path):
+    import json
+    from abscada.secrets_store import SecretStore, legacy_secrets_path, protect, secrets_path
+    legacy = legacy_secrets_path(tmp_path)
+    legacy.parent.mkdir()
+    legacy.write_text(json.dumps({"connection:PLC:password": protect(b"clave"),
+                                  "connection:OTRO:password": "dpapi:bm8gZXMgZHBhcGk="}), encoding="utf-8")
+    store = SecretStore(secrets_path(tmp_path))
+    assert store.get("connection:PLC:password") == "clave"
+    assert not store.has("connection:OTRO:password")
+    # What cannot be decrypted here stays where it was, for the user to re-enter.
+    assert list(json.loads(legacy.read_text(encoding="utf-8"))) == ["connection:OTRO:password"]
+
+
+def test_opcua_certificates_travel_with_the_project(tmp_path):
+    from abscada import pki
+    project = tmp_path / "Mi Planta"
+    legacy = project / "runtime" / "pki" / "trusted"
+    legacy.mkdir(parents=True)
+    (legacy / "PLC.der").write_bytes(b"der")
+    assert pki.pki_root(project) == project / "pki"  # 0.5.0b2 kept them in runtime/pki
+    assert (project / "pki" / "trusted" / "PLC.der").exists() and not (project / "runtime" / "pki").exists()
+    uri = pki.application_uri(project, "client")
+    assert uri == "urn:abscada:mi-planta:client"  # the same on every PC, unlike the host name
+    certificate, _ = pki.ensure_own_certificate(project, uri, "abSCADA client")
+    assert pki.ensure_own_certificate(project, uri, "abSCADA client")[0].read_bytes() == certificate.read_bytes()
+    first = certificate.read_bytes()
+    renamed = pki.ensure_own_certificate(project, "urn:abscada:otra:client", "abSCADA client")[0]
+    assert pki.certificate_uri(renamed.read_bytes()) == "urn:abscada:otra:client" and renamed.read_bytes() != first

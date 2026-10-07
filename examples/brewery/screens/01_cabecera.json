@@ -1,0 +1,590 @@
+{
+  "title": "Cabecera",
+  "width": 1600,
+  "height": 70,
+  "background": "@Cabecera",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "marca",
+      "kind": "text",
+      "x": 18,
+      "y": 8,
+      "w": 210,
+      "h": 28,
+      "text": "LA TOLVA",
+      "font_size": 20,
+      "bold": true,
+      "text_color": "#ffffff",
+      "text_align": "left"
+    },
+    {
+      "id": "marca2",
+      "kind": "text",
+      "x": 18,
+      "y": 38,
+      "w": 220,
+      "h": 20,
+      "text": "Microcervecería · cocción 10 hl",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "#c9b9a6",
+      "text_align": "left"
+    },
+    {
+      "id": "paso_t",
+      "kind": "text",
+      "x": 250,
+      "y": 6,
+      "w": 300,
+      "h": 18,
+      "text": "SALA DE COCCIÓN",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#c9b9a6",
+      "text_align": "left"
+    },
+    {
+      "id": "paso",
+      "kind": "text_list",
+      "x": 250,
+      "y": 26,
+      "w": 300,
+      "h": 34,
+      "tag": "Cocina.Paso",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Paro",
+      "border_color": "@Paro",
+      "default_text": "SIN COMUNICACIÓN",
+      "texts": [
+        {
+          "value": "0",
+          "text": "REPOSO"
+        },
+        {
+          "value": "1",
+          "text": "LLENADO DE AGUA"
+        },
+        {
+          "value": "2",
+          "text": "EMPASTE"
+        },
+        {
+          "value": "3",
+          "text": "ESCALÓN 1 · PROTEICO"
+        },
+        {
+          "value": "4",
+          "text": "ESCALÓN 2 · SACARIFICACIÓN"
+        },
+        {
+          "value": "5",
+          "text": "ESCALÓN 3 · MASH-OUT"
+        },
+        {
+          "value": "6",
+          "text": "TRASIEGO Y RECIRCULACIÓN"
+        },
+        {
+          "value": "7",
+          "text": "FILTRADO Y LAVADO"
+        },
+        {
+          "value": "8",
+          "text": "CALENTAMIENTO A EBULLICIÓN"
+        },
+        {
+          "value": "9",
+          "text": "HERVIDO"
+        },
+        {
+          "value": "10",
+          "text": "WHIRLPOOL"
+        },
+        {
+          "value": "11",
+          "text": "ENFRIADO Y TRASIEGO A FV"
+        },
+        {
+          "value": "12",
+          "text": "LIMPIEZA CIP"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.Retenido",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "border_color": "@Aviso"
+            }
+          },
+          {
+            "when": {
+              "tag": "Cocina.Paso",
+              "op": "gt",
+              "value": 0,
+              "bad": false
+            },
+            "style": {
+              "color": "@Marcha",
+              "border_color": "@Marcha"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "k0_t",
+      "kind": "text",
+      "x": 570,
+      "y": 6,
+      "w": 90,
+      "h": 18,
+      "text": "LOTE",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#c9b9a6",
+      "text_align": "left"
+    },
+    {
+      "id": "k0",
+      "kind": "text",
+      "x": 570,
+      "y": 26,
+      "w": 90,
+      "h": 34,
+      "text": "",
+      "tag": "Cocina.Lote",
+      "unit": "",
+      "decimals": 0,
+      "font_size": 18,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#ffffff"
+    },
+    {
+      "id": "k1_t",
+      "kind": "text",
+      "x": 670,
+      "y": 6,
+      "w": 150,
+      "h": 18,
+      "text": "RECETA",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#c9b9a6",
+      "text_align": "left"
+    },
+    {
+      "id": "k1",
+      "kind": "text",
+      "x": 670,
+      "y": 26,
+      "w": 150,
+      "h": 34,
+      "text": "",
+      "tag": "Cocina.RecetaLote",
+      "unit": "",
+      "decimals": 0,
+      "font_size": 18,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#ffffff"
+    },
+    {
+      "id": "k2_t",
+      "kind": "text",
+      "x": 830,
+      "y": 6,
+      "w": 120,
+      "h": 18,
+      "text": "RESTANTE",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#c9b9a6",
+      "text_align": "left"
+    },
+    {
+      "id": "k2",
+      "kind": "text",
+      "x": 830,
+      "y": 26,
+      "w": 120,
+      "h": 34,
+      "text": "",
+      "tag": "Cocina.TiempoRestante",
+      "unit": "min",
+      "decimals": 0,
+      "font_size": 18,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#ffffff"
+    },
+    {
+      "id": "k3_t",
+      "kind": "text",
+      "x": 960,
+      "y": 6,
+      "w": 110,
+      "h": 18,
+      "text": "GLICOL",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#c9b9a6",
+      "text_align": "left"
+    },
+    {
+      "id": "k3",
+      "kind": "text",
+      "x": 960,
+      "y": 26,
+      "w": 110,
+      "h": 34,
+      "text": "",
+      "tag": "Servicios.TempGlicol",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 18,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#ffffff"
+    },
+    {
+      "id": "areas_t",
+      "kind": "text",
+      "x": 1080,
+      "y": 6,
+      "w": 300,
+      "h": 18,
+      "text": "ALARMAS DE ÁREA",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "#c9b9a6",
+      "text_align": "left"
+    },
+    {
+      "id": "area0",
+      "kind": "text_list",
+      "x": 1080,
+      "y": 28,
+      "w": 48,
+      "h": 30,
+      "tag": "Cocina.AlarmaCocina",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "COC."
+        },
+        {
+          "value": "false",
+          "text": "COC."
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Cocina.AlarmaCocina",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      },
+      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+    },
+    {
+      "id": "area1",
+      "kind": "text_list",
+      "x": 1132,
+      "y": 28,
+      "w": 48,
+      "h": 30,
+      "tag": "FV1.Alarma",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "FV1"
+        },
+        {
+          "value": "false",
+          "text": "FV1"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "FV1.Alarma",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      },
+      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+    },
+    {
+      "id": "area2",
+      "kind": "text_list",
+      "x": 1184,
+      "y": 28,
+      "w": 48,
+      "h": 30,
+      "tag": "FV2.Alarma",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "FV2"
+        },
+        {
+          "value": "false",
+          "text": "FV2"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "FV2.Alarma",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      },
+      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+    },
+    {
+      "id": "area3",
+      "kind": "text_list",
+      "x": 1236,
+      "y": 28,
+      "w": 48,
+      "h": 30,
+      "tag": "FV3.Alarma",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "FV3"
+        },
+        {
+          "value": "false",
+          "text": "FV3"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "FV3.Alarma",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      },
+      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+    },
+    {
+      "id": "area4",
+      "kind": "text_list",
+      "x": 1288,
+      "y": 28,
+      "w": 48,
+      "h": 30,
+      "tag": "Servicios.AlarmaServicios",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "SERV."
+        },
+        {
+          "value": "false",
+          "text": "SERV."
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Servicios.AlarmaServicios",
+              "op": "eq",
+              "value": true,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      },
+      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+    },
+    {
+      "id": "area5",
+      "kind": "text_list",
+      "x": 1340,
+      "y": 28,
+      "w": 48,
+      "h": 30,
+      "tag": "Sistema.ComPLC",
+      "font_size": 11,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Apagado",
+      "border_color": "@Apagado",
+      "texts": [
+        {
+          "value": "true",
+          "text": "COM"
+        },
+        {
+          "value": "false",
+          "text": "COM"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "Sistema.ComPLC",
+              "op": "eq",
+              "value": false,
+              "bad": false
+            },
+            "style": {
+              "color": "@Disparo",
+              "border_color": "@Disparo"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      },
+      "description": "En rojo si el área tiene alguna alarma (COM: sin comunicación con el PLC)"
+    },
+    {
+      "id": "fecha",
+      "kind": "text",
+      "x": 1400,
+      "y": 8,
+      "w": 185,
+      "h": 24,
+      "text": "",
+      "tag": "Sistema.Fecha",
+      "font_size": 13,
+      "text_align": "right",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#c9b9a6"
+    },
+    {
+      "id": "hora",
+      "kind": "text",
+      "x": 1400,
+      "y": 30,
+      "w": 185,
+      "h": 32,
+      "text": "",
+      "tag": "Sistema.Hora",
+      "font_size": 21,
+      "bold": true,
+      "text_align": "right",
+      "color": "@Cabecera",
+      "border_color": "@Cabecera",
+      "text_color": "#ffffff"
+    }
+  ],
+  "folder": "Estructura"
+}

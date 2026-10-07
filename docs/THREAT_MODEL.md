@@ -13,8 +13,8 @@ Método STRIDE sobre los límites de confianza de una instalación típica. Se r
   Ingeniero con Studio ─────────────────────────┼─────┘  │
   (edita el proyecto: JSON, scripts)            │        └─ Operador en el HMI (usuario y rol)
                                                 │
-                    Archivos del puesto: proyecto (versionado) · runtime/ (cuentas, secretos,
-                    certificados, histórico SQLite) — no versionado, solo en ese equipo
+                    Archivos del puesto: proyecto (versionado: roles, cuentas, contraseñas de
+                    conexión, certificados) · runtime/ (histórico SQLite) — no versionado
 ```
 
 | Límite | Qué lo cruza | Protección |
@@ -23,7 +23,7 @@ Método STRIDE sobre los límites de confianza de una instalación típica. Se r
 | Red IT → servidor OPC UA | Lecturas y escrituras de clientes | Firma y cifrado; certificado del cliente aceptado expresamente; usuario con permiso «Acceso por OPC UA»; escritura solo con «Mandos y consignas»; anónimo desactivado por defecto |
 | Runtime → PLC | Lecturas y órdenes | OPC UA cifrado cuando el PLC lo permite; S7 clásico y Modbus sin protección (aislar en la red) |
 | Ingeniero → proyecto | JSON, scripts Python | Permisos del sistema de archivos y control de versiones Git; los scripts son código de confianza |
-| Disco del puesto | Cuentas, secretos, claves privadas, histórico | Hash scrypt; DPAPI; claves con permisos restringidos; `runtime/` nunca va al repositorio |
+| Disco del puesto y repositorio | Cuentas (huellas scrypt), contraseñas de conexión, clave privada OPC UA, histórico | Hash scrypt y longitud mínima; acceso restringido a la carpeta y al repositorio; `runtime/` nunca va al repositorio |
 
 ## Amenazas (STRIDE)
 
@@ -36,11 +36,11 @@ Método STRIDE sobre los límites de confianza de una instalación típica. Se r
 | T5 | Manipulación | Modificar el proyecto o un script para que ejecute órdenes | Permisos de archivos, Git y revisión de cambios; Studio detecta ediciones externas | Un ingeniero malintencionado con acceso al proyecto |
 | T6 | Manipulación | Sustituir el ejecutable o una actualización | Descarga por HTTPS, SHA-256 y atestación de procedencia | Sin firma Authenticode todavía |
 | T7 | Repudio | Un usuario niega haber dado una orden | Auditoría con usuario, origen (HMI, OPC UA, script) y valor | El usuario de Windows con acceso al disco puede borrar el SQLite |
-| T8 | Divulgación | Robo de contraseñas desde el disco | Solo hash scrypt; secretos de conexión con DPAPI | En Linux los secretos solo están protegidos por permisos de archivo |
+| T8 | Divulgación | Robo de contraseñas desde el disco | Solo hash scrypt para las cuentas | Las contraseñas de conexión y la clave OPC UA van en el proyecto: quien lo copie las tiene. Proteger el repositorio y no publicar proyectos reales |
 | T9 | Divulgación | Escucha del tráfico de proceso | OPC UA con cifrado | S7 clásico y Modbus viajan en claro |
 | T10 | Denegación de servicio | Saturar el servidor OPC UA o un PLC lento | Un trabajador por conexión; colas acotadas; timeouts | Sin limitación de sesiones OPC UA concurrentes (pendiente) |
 | T11 | Denegación de servicio | Bloquear cuentas a base de contraseñas falsas | Bloqueo temporal, no permanente | Un atacante en la red puede bloquear a un operador unos minutos |
-| T12 | Elevación de privilegios | Un operador obtiene permisos de gestión | Roles definidos en el proyecto; las cuentas solo se gestionan desde Studio | Quien edita `runtime/users.json` en el disco puede alterar roles: proteger el puesto |
+| T12 | Elevación de privilegios | Un operador obtiene permisos de gestión | Roles definidos en el proyecto; las cuentas solo se gestionan desde Studio | Quien edita `users.json` en el disco o en el repositorio puede alterar roles: proteger el puesto y revisar los cambios de ese archivo en Git |
 | T13 | Elevación de privilegios | Un script de proyecto hace más de lo previsto | Proceso aparte sin acceso al runtime ni a Qt; sus escrituras pasan por las mismas validaciones | No es una sandbox: código de confianza |
 
 ## Supuestos

@@ -21,7 +21,7 @@ def _spin(value, low, high):
 def edit_security(studio):
     project = studio.project
     policy = copy.deepcopy(project.security)
-    dialog = EditorDialog(studio); dialog.setWindowTitle("Usuarios y roles"); dialog.resize(820, 560)
+    dialog = EditorDialog(studio); dialog.setWindowTitle("Usuarios y roles"); dialog.resize(1080, 560)
     layout = QVBoxLayout(dialog)
     tabs = QTabWidget(); layout.addWidget(tabs)
 
@@ -48,7 +48,12 @@ def edit_security(studio):
     page = QWidget(); box = QVBoxLayout(page)
     roles = QTableWidget(0, 2 + len(PERMISSIONS)); roles.setObjectName("roles_table")
     roles.setHorizontalHeaderLabels(["Identificador", "Nombre"] + list(PERMISSIONS.values()))
-    roles.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+    # Permission names are long: show them whole (one per column) and let the table scroll.
+    header = roles.horizontalHeader()
+    header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+    header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+    for column, title in enumerate(PERMISSIONS.values(), 2):
+        roles.horizontalHeaderItem(column).setToolTip(title)
     box.addWidget(roles)
 
     def add_role(role=None):
@@ -67,11 +72,11 @@ def edit_security(studio):
     row.addStretch()
     tabs.addTab(page, "Roles")
 
-    # -- accounts (this installation) ----------------------------------------
+    # -- accounts (saved with the project, written at once) ------------------
     store = UserStore(users_path(project.root))
     page = QWidget(); box = QVBoxLayout(page)
-    info = QLabel(f"Cuentas de este equipo, en {users_path(project.root)}. Se guardan al momento y no forman parte "
-                  "del proyecto ni de sus versiones.")
+    info = QLabel("Cuentas del proyecto, en users.json: viajan con él. Solo se guarda la huella de cada contraseña "
+                  "(scrypt). Los cambios se graban al momento, sin pulsar Guardar.")
     info.setWordWrap(True); box.addWidget(info)
     accounts = QTableWidget(0, 4); accounts.setObjectName("accounts_table")
     accounts.setHorizontalHeaderLabels(["Usuario", "Nombre", "Roles", "Estado"])
@@ -301,8 +306,8 @@ def set_connection_password(parent, project_root, connection_id):
         QMessageBox.information(parent, "Contraseña", "Pon nombre a la conexión antes de guardar su contraseña")
         return False
     password, ok = QInputDialog.getText(parent, "Contraseña de la conexión",
-                                        f"Contraseña para {connection_id} (vacía = borrar). Se guarda cifrada en este equipo, "
-                                        "nunca en el proyecto.", QLineEdit.EchoMode.Password)
+                                        f"Contraseña para {connection_id} (vacía = borrar). Se guarda al momento en el proyecto "
+                                        "(secrets.json), codificada pero no cifrada.", QLineEdit.EchoMode.Password)
     if ok:
         SecretStore(secrets_path(project_root)).set(connection_secret_key(connection_id), password)
     return ok

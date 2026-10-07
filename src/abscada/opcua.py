@@ -1,12 +1,12 @@
 """OPC UA client connector (asyncua). Reads and writes Value attributes by NodeId.
 
 Security follows the usual OPC UA practice:
-- Each installation has its own application certificate (runtime/pki/own), created on
+- Each project has its own application certificate (pki/own), created on
   first use. The server must trust it (in an S7-1500: TIA Portal > OPC UA > trusted clients,
   or "accept automatically" during commissioning).
 - The server certificate is accepted only if an administrator trusted it. The first attempt
-  stores it in runtime/pki/rejected and fails with a clear message; Studio offers to trust it.
-- User names live in the connection; passwords only in the per-installation secret store.
+  stores it in pki/rejected and fails with a clear message; Studio offers to trust it.
+- User names live in the connection; passwords live in the project's secrets.json.
 
 Bindings name a NodeId in the standard string form: ``ns=3;s="Motor_DB"."Speed"``,
 ``ns=2;i=1001`` or with the namespace URI, ``nsu=http://example.org/UA/;s=Level``. The
@@ -97,7 +97,7 @@ class OpcUaClient:
         timeout = self.config.get("timeout_ms", 4000) / 1000
         client = Client(self.config["endpoint"], timeout=timeout)
         client.name = "abSCADA"
-        client.application_uri = pki.application_uri(None, "client")
+        client.application_uri = pki.application_uri(self.root, "client")
         client.description = "abSCADA"
         security = self.config.get("security", "Basic256Sha256_SignAndEncrypt")
         if security != "None":

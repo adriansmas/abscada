@@ -1,10 +1,12 @@
 """Users, roles and operator sessions. No Qt.
 
-Roles and the password/session policy are engineering data, saved with the project in
-``security.json`` and versioned. Accounts belong to each installation: they live in
-``<project>/runtime/users.json`` (never versioned, never copied with the project) and
-store only scrypt hashes. With ``enabled`` false (the default) everything is allowed, as
-before; enabling it makes the runtime start logged out, read-only.
+Everything belongs to the project and travels with it: roles and the password/session
+policy in ``security.json``, accounts in ``users.json`` (scrypt hashes only, never a
+password). Accounts are written at once, one change at a time, by Studio and by the
+runtime (an operator changing their password), so they are not part of Studio's bulk
+save. Failed-login counters and lockouts are runtime state: they live in memory only.
+With ``enabled`` false (the default) everything is allowed, as before; enabling it makes
+the runtime start logged out, read-only.
 """
 from __future__ import annotations
 
@@ -17,6 +19,7 @@ import os
 import re
 import secrets
 import tempfile
+import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -24,6 +27,7 @@ from pathlib import Path
 PERMISSIONS = {
     "operate": "Mandos y consignas",
     "acknowledge": "Reconocer alarmas",
+    "recipes": "Recetas y parámetros de proceso",
     "manage_users": "Gestionar usuarios",
     "opcua": "Acceso por OPC UA",
 }
@@ -122,23 +126,47 @@ def check_password_policy(name, password, policy):
         raise ValueError("La contraseña es demasiado simple")
 
 
+USERS_FILE = "users.json"
+_RUNTIME_STATE = ("failed", "locked_until")
+
+
 def users_path(project_root):
-    return Path(project_root) / "runtime" / "users.json"
+    return Path(project_root) / USERS_FILE
+
+
+def legacy_users_path(project_root):
+    """Where 0.5.0b2 kept the accounts, outside the versioned project files."""
+    return Path(project_root) / "runtime" / USERS_FILE
 
 
 class UserStore:
-    """Accounts of one installation. Every change is written atomically."""
+    """Accounts of a project. Every change is written atomically; lockouts stay in memory."""
 
     def __init__(self, path):
         self.path = Path(path)
+        self.attempts = {}   # lower-case name -> [failed count, locked until]
+        self._lock = threading.Lock()
 
     def load(self):
+        if not self.path.exists():
+            self._migrate()
         if not self.path.exists():
             return dict(version=1, users=[])
         data = json.loads(self.path.read_text(encoding="utf-8"))
         if data.get("version") != 1 or not isinstance(data.get("users"), list):
             raise ValueError("Archivo de usuarios con formato desconocido")
         return data
+
+    def _migrate(self):
+        legacy = legacy_users_path(self.path.parent)
+        if self.path.name != USERS_FILE or not legacy.exists():
+            return
+        data = json.loads(legacy.read_text(encoding="utf-8"))
+        for user in data.get("users", []):
+            for key in _RUNTIME_STATE:
+                user.pop(key, None)
+        self.save(data)
+        legacy.unlink()
 
     def save(self, data):
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -182,24 +210,28 @@ class UserStore:
             raise ValueError(f"El usuario ya existe: {name}")
         now = time.time()
         data["users"].append(dict(name=name, full_name=full_name, roles=list(roles), password=hash_password(password),
-                                  must_change=must_change, disabled=False, failed=0, locked_until=0,
-                                  created=now, password_changed=now))
+                                  must_change=must_change, disabled=False, created=now, password_changed=now))
         self.save(data)
 
     def set_password(self, name, password, policy, must_change=False):
         check_password_policy(name, password, policy)
 
         def change(user):
-            user.update(password=hash_password(password), must_change=must_change, failed=0, locked_until=0,
-                        password_changed=time.time())
+            user.update(password=hash_password(password), must_change=must_change, password_changed=time.time())
         self._update(name, change)
+        self.unlock(name)
 
     def set_roles(self, name, roles, policy):
         self._check_roles(roles, policy)
         self._update(name, lambda user: user.update(roles=list(roles)))
 
     def set_disabled(self, name, disabled):
-        self._update(name, lambda user: user.update(disabled=bool(disabled), failed=0, locked_until=0))
+        self._update(name, lambda user: user.update(disabled=bool(disabled)))
+        self.unlock(name)
+
+    def unlock(self, name):
+        with self._lock:
+            self.attempts.pop(name.lower(), None)
 
     def set_full_name(self, name, full_name):
         self._update(name, lambda user: user.update(full_name=str(full_name)))
@@ -228,19 +260,21 @@ class UserStore:
             raise AuthenticationError("Usuario o contraseña incorrectos")
         if user.get("disabled"):
             raise AuthenticationError("Usuario desactivado")
-        if user.get("locked_until", 0) > now:
-            minutes = int((user["locked_until"] - now) // 60) + 1
+        key = user["name"].lower()
+        with self._lock:
+            failed, locked_until = self.attempts.get(key, (0, 0))
+        if locked_until > now:
+            minutes = int((locked_until - now) // 60) + 1
             raise AuthenticationError(f"Usuario bloqueado por intentos fallidos; espera {minutes} min")
         if not verify_password(password or "", user["password"]):
-            user["failed"] = user.get("failed", 0) + 1
-            if user["failed"] >= policy["max_failed_logins"]:
-                user["locked_until"] = now + policy["lockout_minutes"] * 60
-                user["failed"] = 0
-            self.save(data)
+            with self._lock:
+                failed += 1
+                if failed >= policy["max_failed_logins"]:
+                    self.attempts[key] = (0, now + policy["lockout_minutes"] * 60)
+                else:
+                    self.attempts[key] = (failed, 0)
             raise AuthenticationError("Usuario o contraseña incorrectos")
-        if user.get("failed") or user.get("locked_until"):
-            user.update(failed=0, locked_until=0)
-            self.save(data)
+        self.unlock(key)
         return dict(user)
 
 

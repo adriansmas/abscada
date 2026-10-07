@@ -1,0 +1,11 @@
+[
+  {
+    "id": "PLC_Cerveceria",
+    "protocol": "opcua",
+    "endpoint": "opc.tcp://127.0.0.1:4841/latolva",
+    "security": "Basic256Sha256_SignAndEncrypt",
+    "username": "",
+    "timeout_ms": 4000,
+    "poll_ms": 1000
+  }
+]

@@ -1,0 +1,70 @@
+{
+  "activas": {
+    "categories": [],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Alarmas activas y pendientes de reconocer",
+    "mode": "pending"
+  },
+  "historico": {
+    "categories": [],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Histórico de alarmas",
+    "mode": "history"
+  },
+  "eventos": {
+    "categories": [],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Registro de eventos",
+    "mode": "events"
+  },
+  "visor": {
+    "categories": [],
+    "min_priority": 1,
+    "allow_ack": true,
+    "columns": [
+      "priority",
+      "category",
+      "message",
+      "state",
+      "entered_at",
+      "returned_at",
+      "ack_at",
+      "actor"
+    ],
+    "title": "Alarmas activas y pendientes de reconocer",
+    "mode": "pending"
+  }
+}

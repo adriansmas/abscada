@@ -1,17 +1,22 @@
-"""OPC UA application certificates and trust lists, per installation. No Qt.
+"""OPC UA application certificates and trust lists, saved with the project. No Qt.
 
-    <project>/runtime/pki/own/        this installation's certificate (DER) and key (PEM, 0600)
-    <project>/runtime/pki/trusted/    peer certificates the administrator accepted
-    <project>/runtime/pki/rejected/   peers that tried to connect and were not trusted yet
+    <project>/pki/own/        the project's certificate (DER) and private key (PEM, 0600)
+    <project>/pki/trusted/    peer certificates the administrator accepted
+    <project>/pki/rejected/   peers that tried to connect and were not trusted yet
 
-An unknown peer is never trusted automatically: its certificate lands in ``rejected`` and
-an administrator moves it to ``trusted`` (Studio does this from the connection form).
+They travel with the project, as in TIA Portal: a copy on another PC keeps the identity
+the PLCs already trust. The application URI is derived from the project folder name, not
+from the host, for the same reason. An unknown peer is never trusted automatically: its
+certificate lands in ``rejected`` and an administrator moves it to ``trusted``.
+Version 0.5.0b2 kept all this in ``runtime/pki``; it moves the first time it is used.
 """
 from __future__ import annotations
 
 import datetime
 import hashlib
 import os
+import re
+import shutil
 import socket
 from pathlib import Path
 
@@ -19,12 +24,27 @@ PKI = ("own", "trusted", "rejected")
 
 
 def pki_root(project_root):
-    return Path(project_root) / "runtime" / "pki"
+    root = Path(project_root) / "pki"
+    legacy = Path(project_root) / "runtime" / "pki"
+    if legacy.is_dir() and not root.exists():
+        shutil.move(str(legacy), str(root))
+    return root
 
 
-def application_uri(project, role):
-    host = socket.gethostname().lower()
-    return f"urn:{host}:abscada:{role}"
+def application_uri(project_root, role):
+    name = re.sub(r"[^a-z0-9._-]+", "-", Path(project_root).resolve().name.lower()).strip("-") or "proyecto"
+    return f"urn:abscada:{name}:{role}"
+
+
+def certificate_uri(der: bytes) -> str:
+    from cryptography import x509
+    certificate = x509.load_der_x509_certificate(der)
+    try:
+        names = certificate.extensions.get_extension_for_class(x509.SubjectAlternativeName).value
+    except x509.ExtensionNotFound:
+        return ""
+    uris = names.get_values_for_type(x509.UniformResourceIdentifier)
+    return uris[0] if uris else ""
 
 
 def fingerprint(der: bytes) -> str:
@@ -41,7 +61,8 @@ def ensure_own_certificate(project_root, uri, common_name, years=5):
     own = pki_root(project_root) / "own"
     role = uri.rsplit(":", 1)[-1]
     certificate_path, key_path = own / f"{role}.der", own / f"{role}.pem"
-    if certificate_path.exists() and key_path.exists():
+    # A renamed project folder means a new application URI: the old certificate no longer matches it.
+    if certificate_path.exists() and key_path.exists() and certificate_uri(certificate_path.read_bytes()) == uri:
         return certificate_path, key_path
     own.mkdir(parents=True, exist_ok=True)
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)

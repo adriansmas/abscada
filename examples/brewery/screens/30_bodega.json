@@ -1,0 +1,572 @@
+{
+  "title": "Bodega · fermentación y guarda",
+  "width": 1400,
+  "height": 830,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "titulo",
+      "kind": "text",
+      "x": 14,
+      "y": 8,
+      "w": 900,
+      "h": 30,
+      "text": "BODEGA · FERMENTACIÓN Y GUARDA",
+      "font_size": 20,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "subtitulo",
+      "kind": "text",
+      "x": 14,
+      "y": 36,
+      "w": 900,
+      "h": 18,
+      "text": "Las fases siguen la receta copiada al iniciar el lote (1 día de fermentación = 1 min) · «Mando…» abre cada fermentador",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "FV1_t",
+      "kind": "text",
+      "x": 10,
+      "y": 64,
+      "w": 300,
+      "h": 20,
+      "text": "FV1 · cilindrocónico 12 hl",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "tile_FV1",
+      "kind": "faceplate",
+      "x": 10,
+      "y": 86,
+      "w": 318,
+      "h": 236,
+      "template": "fermentador",
+      "bindings": {
+        "fase": "FV1.Fase",
+        "temperatura": "FV1.Temperatura",
+        "consigna": "FV1.ConsignaTemp",
+        "densidad": "FV1.Densidad",
+        "objetivo": "FV1.DensidadObjetivo",
+        "presion": "FV1.Presion",
+        "nivel": "FV1.Nivel",
+        "dia": "FV1.Dia",
+        "lote": "FV1.Lote",
+        "receta": "FV1.NombreReceta",
+        "alarma": "FV1.Alarma",
+        "valvula": "FV1.ValvulaGlicol",
+        "automatico": "FV1.Automatico",
+        "consigna_manual": "FV1.ConsignaManual",
+        "vaciar": "FV1.OrdenVaciar",
+        "atenuacion": "FV1.Atenuacion",
+        "original": "FV1.DensidadOriginal"
+      }
+    },
+    {
+      "id": "FV1_extra",
+      "kind": "rectangle",
+      "x": 336,
+      "y": 86,
+      "w": 130,
+      "h": 236,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "FV1_v_t",
+      "kind": "text",
+      "x": 346,
+      "y": 92,
+      "w": 110,
+      "h": 18,
+      "text": "GLICOL",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "FV1_v",
+      "kind": "bar",
+      "x": 362,
+      "y": 114,
+      "w": 36,
+      "h": 120,
+      "tag": "FV1.ValvulaGlicol",
+      "min": 0,
+      "max": 100,
+      "color": "@Glicol",
+      "dynamics": {}
+    },
+    {
+      "id": "FV1_v_v",
+      "kind": "text",
+      "x": 346,
+      "y": 240,
+      "w": 110,
+      "h": 24,
+      "text": "",
+      "tag": "FV1.ValvulaGlicol",
+      "unit": "%",
+      "decimals": 0,
+      "font_size": 12,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "FV1_parada",
+      "kind": "lamp",
+      "x": 346,
+      "y": 272,
+      "w": 20,
+      "h": 20,
+      "tag": "FV1.FermentacionParada",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "FV1_parada_t",
+      "kind": "text",
+      "x": 374,
+      "y": 271,
+      "w": 92,
+      "h": 22,
+      "text": "Parada",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "FV1_modo",
+      "kind": "text_list",
+      "x": 346,
+      "y": 296,
+      "w": 110,
+      "h": 22,
+      "tag": "FV1.Automatico",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@Texto",
+      "texts": [
+        {
+          "value": "true",
+          "text": "RECETA"
+        },
+        {
+          "value": "false",
+          "text": "MANUAL"
+        }
+      ],
+      "default_text": "—",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "FV1.Automatico",
+              "op": "eq",
+              "value": false,
+              "bad": false
+            },
+            "style": {
+              "text_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "FV1_tend",
+      "kind": "trend",
+      "x": 10,
+      "y": 330,
+      "w": 456,
+      "h": 500,
+      "view": "fermentacion_fv1"
+    },
+    {
+      "id": "FV2_t",
+      "kind": "text",
+      "x": 475,
+      "y": 64,
+      "w": 300,
+      "h": 20,
+      "text": "FV2 · cilindrocónico 12 hl",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "tile_FV2",
+      "kind": "faceplate",
+      "x": 475,
+      "y": 86,
+      "w": 318,
+      "h": 236,
+      "template": "fermentador",
+      "bindings": {
+        "fase": "FV2.Fase",
+        "temperatura": "FV2.Temperatura",
+        "consigna": "FV2.ConsignaTemp",
+        "densidad": "FV2.Densidad",
+        "objetivo": "FV2.DensidadObjetivo",
+        "presion": "FV2.Presion",
+        "nivel": "FV2.Nivel",
+        "dia": "FV2.Dia",
+        "lote": "FV2.Lote",
+        "receta": "FV2.NombreReceta",
+        "alarma": "FV2.Alarma",
+        "valvula": "FV2.ValvulaGlicol",
+        "automatico": "FV2.Automatico",
+        "consigna_manual": "FV2.ConsignaManual",
+        "vaciar": "FV2.OrdenVaciar",
+        "atenuacion": "FV2.Atenuacion",
+        "original": "FV2.DensidadOriginal"
+      }
+    },
+    {
+      "id": "FV2_extra",
+      "kind": "rectangle",
+      "x": 801,
+      "y": 86,
+      "w": 130,
+      "h": 236,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "FV2_v_t",
+      "kind": "text",
+      "x": 811,
+      "y": 92,
+      "w": 110,
+      "h": 18,
+      "text": "GLICOL",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "FV2_v",
+      "kind": "bar",
+      "x": 827,
+      "y": 114,
+      "w": 36,
+      "h": 120,
+      "tag": "FV2.ValvulaGlicol",
+      "min": 0,
+      "max": 100,
+      "color": "@Glicol",
+      "dynamics": {}
+    },
+    {
+      "id": "FV2_v_v",
+      "kind": "text",
+      "x": 811,
+      "y": 240,
+      "w": 110,
+      "h": 24,
+      "text": "",
+      "tag": "FV2.ValvulaGlicol",
+      "unit": "%",
+      "decimals": 0,
+      "font_size": 12,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "FV2_parada",
+      "kind": "lamp",
+      "x": 811,
+      "y": 272,
+      "w": 20,
+      "h": 20,
+      "tag": "FV2.FermentacionParada",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "FV2_parada_t",
+      "kind": "text",
+      "x": 839,
+      "y": 271,
+      "w": 92,
+      "h": 22,
+      "text": "Parada",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "FV2_modo",
+      "kind": "text_list",
+      "x": 811,
+      "y": 296,
+      "w": 110,
+      "h": 22,
+      "tag": "FV2.Automatico",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@Texto",
+      "texts": [
+        {
+          "value": "true",
+          "text": "RECETA"
+        },
+        {
+          "value": "false",
+          "text": "MANUAL"
+        }
+      ],
+      "default_text": "—",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "FV2.Automatico",
+              "op": "eq",
+              "value": false,
+              "bad": false
+            },
+            "style": {
+              "text_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "FV2_tend",
+      "kind": "trend",
+      "x": 475,
+      "y": 330,
+      "w": 456,
+      "h": 500,
+      "view": "fermentacion_fv2"
+    },
+    {
+      "id": "FV3_t",
+      "kind": "text",
+      "x": 940,
+      "y": 64,
+      "w": 300,
+      "h": 20,
+      "text": "FV3 · cilindrocónico 12 hl",
+      "font_size": 13,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "tile_FV3",
+      "kind": "faceplate",
+      "x": 940,
+      "y": 86,
+      "w": 318,
+      "h": 236,
+      "template": "fermentador",
+      "bindings": {
+        "fase": "FV3.Fase",
+        "temperatura": "FV3.Temperatura",
+        "consigna": "FV3.ConsignaTemp",
+        "densidad": "FV3.Densidad",
+        "objetivo": "FV3.DensidadObjetivo",
+        "presion": "FV3.Presion",
+        "nivel": "FV3.Nivel",
+        "dia": "FV3.Dia",
+        "lote": "FV3.Lote",
+        "receta": "FV3.NombreReceta",
+        "alarma": "FV3.Alarma",
+        "valvula": "FV3.ValvulaGlicol",
+        "automatico": "FV3.Automatico",
+        "consigna_manual": "FV3.ConsignaManual",
+        "vaciar": "FV3.OrdenVaciar",
+        "atenuacion": "FV3.Atenuacion",
+        "original": "FV3.DensidadOriginal"
+      }
+    },
+    {
+      "id": "FV3_extra",
+      "kind": "rectangle",
+      "x": 1266,
+      "y": 86,
+      "w": 130,
+      "h": 236,
+      "color": "@Panel",
+      "stroke_color": "@Borde",
+      "stroke_width": 1,
+      "filled": true,
+      "editor_locked": true
+    },
+    {
+      "id": "FV3_v_t",
+      "kind": "text",
+      "x": 1276,
+      "y": 92,
+      "w": 110,
+      "h": 18,
+      "text": "GLICOL",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "FV3_v",
+      "kind": "bar",
+      "x": 1292,
+      "y": 114,
+      "w": 36,
+      "h": 120,
+      "tag": "FV3.ValvulaGlicol",
+      "min": 0,
+      "max": 100,
+      "color": "@Glicol",
+      "dynamics": {}
+    },
+    {
+      "id": "FV3_v_v",
+      "kind": "text",
+      "x": 1276,
+      "y": 240,
+      "w": 110,
+      "h": 24,
+      "text": "",
+      "tag": "FV3.ValvulaGlicol",
+      "unit": "%",
+      "decimals": 0,
+      "font_size": 12,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "FV3_parada",
+      "kind": "lamp",
+      "x": 1276,
+      "y": 272,
+      "w": 20,
+      "h": 20,
+      "tag": "FV3.FermentacionParada",
+      "lamp_colors": {
+        "on": "@Disparo",
+        "off": "@Paro",
+        "bad": "@Aviso"
+      }
+    },
+    {
+      "id": "FV3_parada_t",
+      "kind": "text",
+      "x": 1304,
+      "y": 271,
+      "w": 92,
+      "h": 22,
+      "text": "Parada",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "FV3_modo",
+      "kind": "text_list",
+      "x": 1276,
+      "y": 296,
+      "w": 110,
+      "h": 22,
+      "tag": "FV3.Automatico",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@Texto",
+      "texts": [
+        {
+          "value": "true",
+          "text": "RECETA"
+        },
+        {
+          "value": "false",
+          "text": "MANUAL"
+        }
+      ],
+      "default_text": "—",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "FV3.Automatico",
+              "op": "eq",
+              "value": false,
+              "bad": false
+            },
+            "style": {
+              "text_color": "@Aviso"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "FV3_tend",
+      "kind": "trend",
+      "x": 940,
+      "y": 330,
+      "w": 456,
+      "h": 500,
+      "view": "fermentacion_fv3"
+    }
+  ],
+  "on_open": [
+    "apertura"
+  ],
+  "folder": "Proceso"
+}

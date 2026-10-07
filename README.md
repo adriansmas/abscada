@@ -1,6 +1,6 @@
 # abSCADA
 
-SCADA de escritorio libre **GPL-3.0-or-later**, construido con Python y PySide6. Studio para diseñar proyectos y Runtime para operarlos en una ventana independiente, con comunicación Siemens S7 y Modbus TCP, alarmas persistentes, históricos SQLite y tendencias con varios ejes. Los proyectos son archivos JSON legibles y editables desde VS Code.
+SCADA de escritorio libre **GPL-3.0-or-later**, construido con Python y PySide6. Studio para diseñar proyectos y Runtime para operarlos en una ventana independiente, con comunicación Siemens S7, Modbus TCP, Beckhoff TwinCAT ADS y OPC UA cifrado, usuarios y roles, alarmas persistentes, históricos SQLite y tendencias con varios ejes. Los proyectos son archivos JSON legibles y editables desde VS Code.
 
 ![Studio: composición de pantallas](docs/editor-layout.png)
 
@@ -12,7 +12,7 @@ Desde la raíz del repositorio, con Python 3.11 o posterior:
 
 ```powershell
 python -m venv .venv
-.venv\Scripts\python -m pip install -e ".[dev,s7,modbus]"
+.venv\Scripts\python -m pip install -e ".[dev,s7,modbus,opcua]"
 .venv\Scripts\python -m abscada examples/plant
 ```
 
@@ -20,7 +20,7 @@ En Linux:
 
 ```bash
 python3 -m venv .venv
-.venv/bin/python -m pip install -e '.[dev,s7,modbus]'
+.venv/bin/python -m pip install -e '.[dev,s7,modbus,opcua]'
 .venv/bin/python -m abscada examples/plant
 ```
 
@@ -35,31 +35,37 @@ Qt necesita una sesión gráfica y las bibliotecas de sistema correspondientes a
 
 Genera `dist/abSCADA/abscada.exe` y `dist/abSCADA-<versión>-windows.zip`. El mismo proceso se ejecuta en GitHub Actions: **Actions → Windows build → Run workflow**, o al subir una etiqueta `v*`, que publica además una *release*. La guía para quien prueba la beta está en [docs/BETA.md](docs/BETA.md).
 
-Los proyectos se abren desde su archivo `.abscada`. Sin argumentos se muestra una pantalla de inicio con proyectos recientes y ejemplos; `abscada --simulador hydro|ads|laboratorio|s7` arranca un PLC simulado.
+Los proyectos se abren desde su archivo `.abscada`. Sin argumentos se muestra una pantalla de inicio con proyectos recientes y ejemplos; `abscada --simulador hydro|cerveceria|ads|laboratorio|s7` arranca un PLC simulado.
 
 ## Diseñar y ejecutar
 
 La [especificación de bibliotecas](docs/LIBRARY_AUTHORING_SPEC.md) detalla controles, propiedades y criterios de adaptación desde WinCC Unified.
 
-**Bibliotecas de faceplates:** crea y publica componentes desde Studio, vincúlalos con un alias y actualiza sus versiones explícitamente desde **Bibliotecas…**. Cada proyecto conserva las plantillas y sus imágenes para funcionar sin el archivo original. Incluye [guía de bibliotecas](docs/FACEPLATE_LIBRARIES.md) y proyecto de autoría `examples/library_author`.
+**Librerías:** la sección **Librerías** de Studio reúne los objetos reutilizables. La del **proyecto** se ordena en carpetas; la **estándar** viene con la aplicación (35 símbolos SVG y objetos animados de bomba, motor, ventilador, válvula, interruptor y depósito con nivel) y es de solo lectura; las **externas** se vinculan con un alias y una versión desde **Proyecto → Librerías externas…**. Los objetos se arrastran al lienzo o se eligen con un buscador. Consulta la [guía de librerías](docs/FACEPLATE_LIBRARIES.md) y el proyecto de autoría `examples/library_author`.
+
+**Usuarios y roles:** con **Proyecto → Usuarios y roles** el runtime arranca sin sesión y pide usuario para mandos, consignas, scripts y reconocimiento de alarmas. Los roles combinan permisos (`operate`, `acknowledge`, `recipes`, `manage_users`, `opcua`) y cada control puede exigir uno concreto. Roles, cuentas (solo huellas scrypt), contraseñas de conexión y certificados OPC UA se guardan en el proyecto. Consulta [formato de proyecto](docs/PROJECT_FORMAT.md#usuarios-y-roles) y [bastionado](docs/HARDENING.md).
+
+**OPC UA:** cliente con firma y cifrado por defecto y confianza explícita de certificados, y servidor propio que publica las variables del proyecto con inicio de sesión de abSCADA y escrituras auditadas. Consulta [protocolos](docs/PROTOCOLS.md).
 
 **Ejemplo completo:** [Laboratorio SCADA](examples/showcase/README.md), con 21 pantallas, variables internas, S7 y Modbus, todos los controles gráficos, faceplates, emergentes, alarmas, registros e históricos. Abre con `.\run.ps1 examples/showcase`. Su guía incluye los mapas PLC y las herramientas externas de prueba.
 
 **Ejemplo industrial:** [CH Valdearenas](examples/hydro/README.md), SCADA de una central hidroeléctrica con dos grupos Francis de 10 MW: 23 pantallas, 173 variables, 3 PLC S7 y un contador Modbus, secuencias de arranque/parada, protecciones, unifilar de 66 kV, 43 alarmas, control de planta y ventanas de mando y alarmas para varios monitores. Arranca el simulador con `tools/hydro_plc.py` y abre `.\run.ps1 examples/hydro`.
 
+**Ejemplo por lotes:** [La Tolva](examples/brewery/README.md), SCADA de una microcervecería de 10 hl: cocción en 12 pasos por recetas, tres fermentadores con su curva de fermentación, servicios y panel del instructor. Lee el PLC por OPC UA cifrado, publica sus datos con el servidor OPC UA propio y trae usuarios y roles activados (solo el maestro cervecero modifica recetas). Arranca el simulador con `abscada --simulador cerveceria` y abre `.\run.ps1 examples/brewery`.
+
 **Beckhoff TwinCAT ADS:** cliente ADS propio, sin TwinCAT en el PC del SCADA. Acceso por símbolo (`MAIN.rVelocidad`) o por grupo:offset. Ejemplo en [examples/beckhoff](examples/beckhoff/README.md), que se prueba con `python -m abscada.ads_simulator`.
 
 **Indicador analógico:** control `gauge` con esfera de 240°, semicírculo o termómetro, y zonas de aviso y alarma.
 
-**Nuevo documento** ofrece Pantalla, Layout y Faceplate con nombre, título y dimensiones. **Guardar proyecto / Ctrl+S** guarda el conjunto. **Versiones…** activa el historial Git local; después cada guardado con cambios crea una versión. Consulta [creación y guardado](docs/PROJECT_WORKFLOW.md).
+**Nuevo documento** ofrece Pantalla, Layout y Objeto de librería con nombre, título y dimensiones. **Guardar proyecto / Ctrl+S** guarda el conjunto. **Versiones…** activa el historial Git local; después cada guardado con cambios crea una versión. Consulta [creación y guardado](docs/PROJECT_WORKFLOW.md).
 
 **Scripts y tareas** permite Python de inicio, apertura de pantalla, botones y tareas periódicas, con límite de ejecución y diagnóstico. Las fuentes permanecen en archivos `.py`. Consulta [la API y los eventos](docs/SCRIPTING.md).
 
 1. Abre la demo en **abSCADA Studio**. La etiqueta **MODO DISEÑO** siempre permanece visible.
-2. El explorador **Proyecto** reúne pantallas, faceplates, variables, conexiones y registros. **Objetos** permite seleccionar elementos de la pantalla, incluso cuando se solapan. Las herramientas de dibujo están debajo.
+2. El explorador **Proyecto** reúne pantallas y librerías. **Objetos** permite seleccionar elementos de la pantalla, incluso cuando se solapan. Las herramientas de dibujo están debajo.
 3. Las propiedades permanecen visibles. Sin selección se editan título, dimensiones, fondo, pantalla inicial y cuadrícula. Con un objeto seleccionado se editan sus propiedades. El primer clic selecciona; una pulsación posterior permite mover. Los ocho tiradores cambian el tamaño.
 4. **Línea** se dibuja con dos clics. **Polilínea** y **Tubería** se dibujan por puntos; Enter, doble clic o botón derecho terminan el trazado. Esc cancela. Los vértices se arrastran o se editan desde el inspector. Hay color, grosor, estilo, flechas, rectángulos y elipses.
-5. Usa **Orden**, **Alinear**, **Duplicar**, **Eliminar**, deshacer/rehacer, Ctrl+rueda, zoom porcentual y botón central para recorrer el lienzo. Las flechas mueven 1 px; Shift+flecha utiliza el paso de cuadrícula. Guarda con Ctrl+S. Doble clic en un faceplate abre su plantilla; sus parámetros se editan desde **Ajustes avanzados…**.
+5. Usa **Orden**, **Alinear**, **Duplicar**, **Eliminar**, deshacer/rehacer, Ctrl+rueda, zoom porcentual y botón central para recorrer el lienzo. Las flechas mueven 1 px; Shift+flecha utiliza el paso de cuadrícula. Guarda con Ctrl+S. Doble clic en un objeto de librería abre su plantilla; sus parámetros se editan desde **Ajustes avanzados…**.
 6. En **Variables**, **Tipos de datos** y **Conexiones**, usa los formularios para crear o editar definiciones. Las estructuras aparecen como grupos desplegables, incluidas las anidadas. El filtro abre los grupos con coincidencias. Usa **Enlace…** en cualquier campo para elegir conexión, ubicación, valor inicial y acceso sin JSON. Al crear una estructura, su valor inicial completo todavía se introduce como objeto JSON; después se edita por campos mediante formularios.
 7. Pulsa **Abrir runtime**. Se abre otra ventana con la pantalla de operación, sin herramientas de ingeniería. Pulsa los botones o haz doble clic en una entrada para escribir valores.
 8. Studio sigue abierto y permite continuar editando. Su lienzo no recibe valores iniciales ni valores en vivo: muestra marcadores `—` y pilotos neutros. Runtime utiliza una copia del proyecto tomada al iniciarlo; los cambios de diseño se verán después de cerrarlo y volverlo a abrir.
@@ -123,9 +129,9 @@ El servidor escucha exclusivamente en `127.0.0.1:1102`. Abre **Conexiones** para
 
 ## Alcance actual
 
-Incluye Studio y Runtime separados, caja de herramientas visible con clic y arrastrar/soltar, inspector de propiedades, cuadrícula, selección múltiple, duplicado/eliminación, deshacer/rehacer, zoom, redimensionado, preview de faceplates, formularios para variables/tipos/conexiones, condiciones y estados visuales, S7 DB y Modbus TCP. El núcleo de adquisición sigue funcionando sin GUI.
+Incluye Studio y Runtime separados, caja de herramientas visible con clic y arrastrar/soltar, inspector de propiedades, cuadrícula, selección múltiple, duplicado/eliminación, deshacer/rehacer, zoom, redimensionado, librerías de objetos con carpetas y librería estándar, formularios para variables/tipos/conexiones, condiciones y estados visuales, S7 DB, Modbus TCP, TwinCAT ADS y OPC UA, y usuarios con roles y auditoría. El núcleo de adquisición sigue funcionando sin GUI.
 
-Scripts y tareas permite eventos de inicio, apertura de pantalla, botones y tareas periódicas en Python. Siguen pendientes faceplates anidados, permisos de usuario, empaquetado instalable y validación con un PLC físico. La nueva interfaz no implica que la adquisición a gran escala o el uso industrial estén validados.
+Scripts y tareas permite eventos de inicio, apertura de pantalla, botones y tareas periódicas en Python. Siguen pendientes los objetos de librería anidados, el instalador y la validación con un PLC físico. La nueva interfaz no implica que la adquisición a gran escala o el uso industrial estén validados.
 
 ## Licencia
 

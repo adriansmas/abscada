@@ -18,19 +18,19 @@ Pendiente de ingeniería: copiar/pegar entre documentos, expresiones visuales co
 
 Implementado: trabajador, ciclo y cola por conexión; metadatos de configuración y enlace por protocolo; enlaces estructurados; Modbus TCP con áreas, codificación y orden de bytes/registros; integración S7 y Modbus simultánea y prueba de aislamiento ante conexión bloqueada.
 
-Pendiente: lecturas agrupadas DB/registros, freshness y last-good timestamp, métricas, benchmarks, confirmación correlacionada, cancelación de operaciones activas y pruebas de desconexión durante una escritura. OPC UA y TwinCAT ADS requieren suscripciones/notificaciones y configuración de sesión propias; el diseño se recoge en PROTOCOLS.md.
+Pendiente: lecturas agrupadas DB/registros, freshness y last-good timestamp, métricas, benchmarks, confirmación correlacionada, cancelación de operaciones activas y pruebas de desconexión durante una escritura. OPC UA (cliente cifrado y servidor propio) y TwinCAT ADS están implementados con lectura periódica; las suscripciones y notificaciones siguen pendientes (PROTOCOLS.md).
 
 ## 0.4 — Funciones SCADA (implementadas parcialmente)
 
 Implementado: alarmas digitales/numéricas, categorías, prioridades, histéresis y retardos, ocurrencias y eventos persistentes, ACK y recuperación; ficheros de registro con frecuencia común, asignación única por variable y particiones SQLite diarias, retención y backup; tendencias con curvas/ejes configurables, visibilidad, consulta, cursor, zoom y CSV; visores incrustados, gráficas en tiempo real independientes del registro, consulta histórica entre días, navegación mediante botones del proyecto y auditoría básica de escrituras.
 
-Pendiente: usuarios/roles y autorización, shelving, alarmas PLC nativas, pruebas de pérdida de energía/disco lleno y benchmarks de carga/archivo.
+Implementado en 0.5: usuarios, roles y permisos por control, con cuentas en el proyecto y auditoría por usuario. Pendiente: shelving, alarmas PLC nativas, pruebas de pérdida de energía/disco lleno y benchmarks de carga/archivo.
 
 ## 0.5 — Componentes y programación
 
 Implementado: eventos de inicio y apertura de pantallas, scripts invocados desde botones, tareas cíclicas, editor Python, proceso de ejecución separado con timeout, diagnóstico, guardado conjunto con detección de cambios externos y versiones Git locales.
 
-Pendiente: calendarios diarios/semanales, límites de recursos del sistema, auditoría persistente de scripts, faceplates anidados, propiedades visuales parametrizadas y versionado de bibliotecas. Los scripts actuales son código de confianza del proyecto; el proceso independiente no es una sandbox de seguridad.
+Pendiente: calendarios diarios/semanales, límites de recursos del sistema, auditoría persistente de scripts, faceplates anidados, propiedades visuales parametrizadas; las bibliotecas externas versionadas ya están implementadas. Los scripts actuales son código de confianza del proyecto; el proceso independiente no es una sandbox de seguridad.
 
 ## 1.0 — Distribución y validación industrial
 
