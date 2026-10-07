@@ -43,6 +43,31 @@ Incorporar el tipo a `KINDS`, validación del proyecto, paleta, renderizador y p
 
 Decidir si es compatible con v1. Si no lo es, incrementar versión e implementar migración explícita con respaldo. Añadir fixture del formato anterior y una prueba de migración. No convertir automáticamente un archivo desconocido ni deserializar código ejecutable.
 
+## Publicar una versión
+
+Mientras trabajas, apunta cada cambio visible en `CHANGELOG.md`, bajo `## [Sin publicar]` (secciones *Añadido*, *Cambiado*, *Corregido* y *Seguridad*). Para publicar, con todo en commit y en la rama `main`:
+
+```powershell
+.\publicar-version.ps1 --beta --dry-run   # comprobar sin tocar nada
+.\publicar-version.ps1 --beta             # 0.5.0b1 -> 0.5.0b2
+.\publicar-version.ps1 --patch            # beta -> 0.5.0 estable
+.\publicar-version.ps1 0.6.0rc1 --watch   # versión explícita y seguir la compilación
+```
+
+El script (`tools/release.py`):
+1. **Comprueba** que estás en `main`, sin cambios pendientes, al día con GitHub, con la etiqueta libre y con notas en `[Sin publicar]`.
+2. **Ejecuta las pruebas.**
+3. **Cambia la versión** en `__init__.py` y `pyproject.toml`, y fecha la sección del registro de cambios.
+4. **Pide confirmación**, hace commit, crea la etiqueta `v…` y sube las dos cosas.
+
+A partir de ahí trabaja `release.yml` en GitHub, unos 10 minutos:
+- comprueba que la etiqueta coincide con la versión;
+- prueba, compila y prueba el `.exe`;
+- genera SBOM, sumas y atestación;
+- crea la release con el ZIP y las notas de esa versión del `CHANGELOG.md`. Las versiones `a`, `b` y `rc` se marcan como pre-versión.
+
+No hay que editar nada en GitHub. Si algo falla en CI, la etiqueta ya existe pero no hay release: corrige, haz commit y publica la siguiente versión. No reutilices una etiqueta.
+
 ## Convenciones
 
 Código propio GPL-3.0-or-later. Mantener nombres de API en inglés, mensajes de interfaz y documentación en español. Evitar dependencias nuevas cuando el estándar de Python o Qt ya cubran la necesidad. Usar tipado y pruebas para contratos importantes. No prometer capacidad de producción ni compatibilidad de CPU sin evidencia.
