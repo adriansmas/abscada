@@ -38,7 +38,7 @@ jobs:
           python -m venv sbom-env
           sbom-env/bin/python -m pip install -q -r requirements-lock.txt .
           cyclonedx-py environment sbom-env/bin/python --of JSON -o sbom.cdx.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: sbom
           path: sbom.cdx.json
