@@ -4,6 +4,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 
 ## [Sin publicar]
 
+## [0.5.0b3] - 2026-10-07
+
 ### Cambiado
 - Retirado el botón verde «+ Crear» de Studio; los documentos se crean desde el menú contextual del árbol.
 - Retiradas las paletas de colores: cada objeto y estado conserva su HEX explícito. Los ocho ejemplos y generadores usan colores locales; las referencias de proyectos antiguos se convierten al abrirlos.
