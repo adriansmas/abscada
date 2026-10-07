@@ -29,7 +29,7 @@ a = Analysis(
     ],
     # Simulators, protocol adapters and Qt modules are imported lazily by name.
     hiddenimports=collect_submodules("abscada") + collect_submodules("snap7") + collect_submodules("pyModbusTCP")
-    + ["PySide6.QtSvg", "PySide6.QtCharts"],
+    + collect_submodules("asyncua") + ["PySide6.QtSvg", "PySide6.QtCharts"],
     excludes=["tkinter", "PySide6.QtWebEngineCore", "PySide6.QtWebEngineWidgets", "PySide6.Qt3DCore",
               "PySide6.QtQuick", "PySide6.QtQml", "PySide6.QtMultimedia", "pytest"],
     noarchive=False,

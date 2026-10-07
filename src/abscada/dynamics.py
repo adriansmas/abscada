@@ -132,7 +132,7 @@ def compatible(element,tag):
 
 
 def issues(project):
-    known={'id','kind','x','y','w','h','text','tag','font_size','bold','text_align','text_color','border_color','color','unit','decimals','min','max','action','value','screen','modal','target_container','script','source','view','template','bindings','points','stroke_color','stroke_width','stroke_style','arrows','filled','texts','default_text','dynamics','lamp_colors','visible','editor_locked','editor_hidden','group','description','press_value','release_value','gauge_style','warning','alarm','title','window'}
+    known={'id','kind','x','y','w','h','text','tag','font_size','bold','text_align','text_color','border_color','color','unit','decimals','min','max','action','value','screen','modal','target_container','script','source','view','template','bindings','points','stroke_color','stroke_width','stroke_style','arrows','filled','texts','default_text','dynamics','lamp_colors','visible','editor_locked','editor_hidden','group','description','press_value','release_value','gauge_style','warning','alarm','title','window','permission'}
     result=[]
     for collection in (project.screens,project.faceplates):
         for name,document in collection.items():

@@ -12,6 +12,7 @@ class Field:
     maximum: int | None = None
     choices: tuple = ()  # (stored value, display label, compatible logical types)
     kinds: tuple = ()
+    optional: bool = False  # text fields only: an empty value is allowed
 
     def options(self, kind=None):
         return [(value, label) for value, label, kinds in self.choices
@@ -23,7 +24,7 @@ class Field:
                 raise ValueError(f"{self.label}: se esperaba un entero")
             if not self.minimum <= value <= self.maximum:
                 raise ValueError(f"{self.label}: fuera de rango")
-        elif not isinstance(value, str) or not value.strip():
+        elif not isinstance(value, str) or (not value.strip() and not self.optional):
             raise ValueError(f"{self.label}: valor vacío o inválido")
         if self.choices and value not in [v for v, _ in self.options(kind)]:
             raise ValueError(f"{self.label}: valor incompatible con {kind or 'el protocolo'}")

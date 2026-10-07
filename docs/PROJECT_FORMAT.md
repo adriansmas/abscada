@@ -262,6 +262,37 @@ Un botón de navegación añade `"action":"screen", "screen":"history", "target_
 Las fuentes residen en scripts/<nombre>.py; automation.json define startup, timeout_seconds y tasks. Los eventos de pantalla se guardan en on_open. Ver [Scripts y tareas](SCRIPTING.md) para la API y [Guardado y versiones](PROJECT_WORKFLOW.md) para Git y el guardado conjunto.
 
 
+## Usuarios y roles
+
+`security.json` (opcional; solo se escribe si difiere del valor por defecto):
+
+```json
+{"enabled": true, "session_timeout_minutes": 15, "password_min_length": 10,
+ "max_failed_logins": 5, "lockout_minutes": 5,
+ "roles": [{"id": "operator", "name": "Operador", "permissions": ["operate", "acknowledge"]}]}
+```
+
+Permisos: `operate` (mandos, consignas y scripts de botón), `acknowledge` (reconocer alarmas), `manage_users` (gestionar cuentas) y `opcua` (iniciar sesión por OPC UA). Con `enabled: false`, el valor por defecto, todo está permitido como en versiones anteriores.
+
+Las **cuentas no forman parte del proyecto**. Se guardan en `runtime/users.json` de cada instalación, solo con hash scrypt, y se gestionan en Proyecto → Usuarios y roles → Cuentas.
+
+Un botón o una entrada puede exigir un permiso concreto con `"permission": "manage_users"`. Sin esa propiedad, los controles que escriben y los scripts piden `operate`, y la navegación no pide nada.
+
+## Servidor OPC UA
+
+`opcua_server.json` (opcional):
+
+```json
+{"enabled": true, "port": 4840, "security": ["Basic256Sha256_SignAndEncrypt"], "allow_anonymous": false}
+```
+
+Endpoint `opc.tcp://<equipo>:<port>/abscada`, namespace `urn:abscada:<nombre del proyecto>`, una variable por tag con NodeId `ns=<índice>;s=<nombre del tag>` dentro de `Objects/abSCADA`, y la calidad como StatusCode.
+
+- **Acceso**: los clientes inician sesión con cuentas de abSCADA con el permiso `opcua`; para escribir necesitan además `operate`.
+- **Escrituras**: son órdenes auditadas que pasan por la cola de la conexión; el valor publicado cambia cuando el runtime lo observa.
+- **Anónimo**: siempre de solo lectura, y solo si `allow_anonymous` es true.
+- **Políticas** válidas: `Basic256Sha256_SignAndEncrypt`, `Aes256_Sha256_RsaPss_SignAndEncrypt`, `Aes128_Sha256_RsaOaep_SignAndEncrypt`, `Basic256Sha256_Sign` y `None` (solo pruebas).
+
 ## Condiciones y colores
 
 Un elemento puede contener `dynamics.visible` y `dynamics.enabled` como `{ "tag": "Pump1.running", "op": "eq", "value": true, "bad": false }`. Los operadores son `eq`, `ne`, `gt`, `ge`, `lt`, `le`; las comparaciones ordenadas requieren números. `dynamics.states` es una lista ordenada de `{ "when": condición, "style": apariencia }`, donde gana la primera coincidencia. `default`, `bad` y `disabled` contienen apariencias; `disabled_reason` contiene el motivo visible en tooltip. Las propiedades de apariencia se validan según el objeto. `lamp_colors` define `on`, `off` y `bad`.
