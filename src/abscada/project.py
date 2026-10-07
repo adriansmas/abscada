@@ -7,6 +7,7 @@ import math
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from dataclasses import dataclass, field
+from .i18n import tr
 
 PRIMITIVES = {"bool", "int", "float", "string"}
 from .text_lists import validate_text_list
@@ -23,28 +24,28 @@ def coerce(value, kind):
             return value
         if value in (0, 1, "true", "false", "True", "False"):
             return value in (1, "true", "True")
-        raise ValueError("Se esperaba un booleano")
+        raise ValueError(tr("Se esperaba un booleano"))
     if kind == "int":
         try:
             number = Decimal(str(value))
         except InvalidOperation:
-            raise ValueError("Se esperaba un entero") from None
+            raise ValueError(tr("Se esperaba un entero")) from None
         if isinstance(value, bool) or not number.is_finite() or number != number.to_integral_value():
-            raise ValueError("Se esperaba un entero")
+            raise ValueError(tr("Se esperaba un entero"))
         return int(number)
     if kind == "float":
         try:
             result = float(value)
         except (ValueError, TypeError, OverflowError):
-            raise ValueError("Se esperaba un número real") from None
+            raise ValueError(tr("Se esperaba un número real")) from None
         if not math.isfinite(result):
-            raise ValueError("Valor numérico no finito")
+            raise ValueError(tr("Valor numérico no finito"))
         return result
     if kind == "string":
         if not isinstance(value, str):
-            raise ValueError("Se esperaba un texto")
+            raise ValueError(tr("Se esperaba un texto"))
         return value
-    raise ValueError(f"Tipo desconocido: {kind}")
+    raise ValueError(tr("Tipo desconocido: {kind}", kind=kind))
 
 
 def read_json(path):
@@ -84,7 +85,7 @@ class Project:
         root, manifest_file = locate(path)
         manifest = read_json(root / manifest_file)
         if manifest.get("schema_version") != 1:
-            raise ValueError("Versión de proyecto no soportada (se requiere 1)")
+            raise ValueError(tr("Versión de proyecto no soportada (se requiere 1)"))
         project = cls(root, manifest, read_json(root / "types.json"),
                       read_json(root / "variables.json"), read_json(root / "connections.json"),
                       {p.stem: read_json(p) for p in sorted((root / "screens").glob("*.json"))},
@@ -115,7 +116,7 @@ class Project:
                 relative_name = name.partition(".")[2]
                 overrides = source.get("overrides", {}).get(relative_name, {})
                 if set(overrides) - {"writable"}:
-                    raise ValueError(f"{name}: override solo admite writable")
+                    raise ValueError(tr("{name}: override solo admite writable", name=name))
                 tag.update(overrides)
                 tag.update(name=name, type=kind, initial=coerce(value, kind))
                 binding = source.get("bindings", {}).get(name)
@@ -124,12 +125,12 @@ class Project:
                 result[name] = tag
                 return
             if kind in stack or kind not in self.types:
-                raise ValueError(f"Tipo inválido o recursivo: {kind}")
+                raise ValueError(tr("Tipo inválido o recursivo: {kind}", kind=kind))
             if not isinstance(value, dict):
-                raise ValueError(f"{name}: el valor de una estructura debe ser un objeto")
+                raise ValueError(tr("{name}: el valor de una estructura debe ser un objeto", name=name))
             fields = self.types[kind]
             if set(value) != set(fields):
-                raise ValueError(f"{name}: los campos no coinciden con el tipo {kind}")
+                raise ValueError(tr("{name}: los campos no coinciden con el tipo {kind}", name=name, kind=kind))
             for field, field_type in fields.items():
                 expand(f"{name}.{field}", field_type, value[field], source, stack + (kind,))
 
@@ -144,19 +145,19 @@ class Project:
         for collection in (self.screens, self.faceplates, self.scripts):
             filenames(collection)
         if not isinstance(self.manifest.get("name"), str) or not self.manifest["name"]:
-            raise ValueError("El proyecto necesita un nombre")
+            raise ValueError(tr("El proyecto necesita un nombre"))
         names = [v["name"] for v in self.variables]
         if len(names) != len(set(names)) or any(not n or "." in n for n in names):
-            raise ValueError("Nombres de variables vacíos, duplicados o con puntos")
+            raise ValueError(tr("Nombres de variables vacíos, duplicados o con puntos"))
         for name, fields in self.types.items():
             if not name or name in PRIMITIVES or not isinstance(fields, dict) or not fields:
-                raise ValueError(f"Definición de tipo inválida: {name}")
+                raise ValueError(tr("Definición de tipo inválida: {name}", name=name))
             for field, kind in fields.items():
                 if not field or "." in field or kind not in PRIMITIVES | self.types.keys():
-                    raise ValueError(f"Campo inválido: {name}.{field}")
+                    raise ValueError(tr("Campo inválido: {name}.{field}", name=name, field=field))
             def check_type(kind, stack):
                 if kind in stack:
-                    raise ValueError(f"Tipo recursivo: {kind}")
+                    raise ValueError(tr("Tipo recursivo: {kind}", kind=kind))
                 if kind in self.types:
                     for child in self.types[kind].values():
                         check_type(child, stack + (kind,))
@@ -166,73 +167,73 @@ class Project:
         from .operation_windows import validate_popup_button, validate_popup_writes, validate_window, validate_display
         from .security import validate_element_permission
         palette=self.manifest.get('palette',{})
-        if not isinstance(palette,dict): raise ValueError('Paleta inválida')
+        if not isinstance(palette,dict): raise ValueError(tr('Paleta inválida'))
         for key,value in palette.items():
-            if not isinstance(key,str) or not key.strip(): raise ValueError('Nombre de color vacío')
+            if not isinstance(key,str) or not key.strip(): raise ValueError(tr('Nombre de color vacío'))
             dynamics.validate_color(value,{})
         from .operational_config import validate_operations
         try:
             validate_operations(self, tags)
         except (KeyError, TypeError, AttributeError) as exc:
-            raise ValueError(f"Definición de operaciones inválida: {exc}") from exc
+            raise ValueError(tr("Definición de operaciones inválida: {exc}", exc=exc)) from exc
         connections = {c["id"]: c for c in self.connections}
         if len(connections) != len(self.connections):
-            raise ValueError("Conexiones duplicadas")
+            raise ValueError(tr("Conexiones duplicadas"))
         from .connectors import REGISTRY, definition
         for connection in self.connections:
             if not isinstance(connection["id"], str) or not connection["id"].strip():
-                raise ValueError("Las conexiones necesitan un nombre")
+                raise ValueError(tr("Las conexiones necesitan un nombre"))
             if connection.get("protocol") not in REGISTRY:
-                raise ValueError(f"Protocolo desconocido: {connection.get('protocol')}")
+                raise ValueError(tr("Protocolo desconocido: {get}", get=connection.get('protocol')))
             cycle = connection.get("poll_ms", 250)
             if isinstance(cycle, bool) or not isinstance(cycle, int) or not 50 <= cycle <= 60000:
-                raise ValueError("poll_ms debe estar entre 50 y 60000")
+                raise ValueError(tr("poll_ms debe estar entre 50 y 60000"))
             definition(connection["protocol"]).validate_connection(connection)
         for name, tag in tags.items():
             if not isinstance(tag.get("writable", False), bool):
-                raise ValueError(f"{name}: writable debe ser booleano")
+                raise ValueError(tr("{name}: writable debe ser booleano", name=name))
             binding = tag.get("binding")
             if binding:
                 if binding["connection"] not in connections:
-                    raise ValueError(f"{name}: conexión inexistente")
+                    raise ValueError(tr("{name}: conexión inexistente", name=name))
                 if binding.get("version", 1) != definition(connections[binding["connection"]]["protocol"]).version:
-                    raise ValueError(f"{name}: versión de enlace no soportada")
+                    raise ValueError(tr("{name}: versión de enlace no soportada", name=name))
                 definition(connections[binding["connection"]]["protocol"]).validate_binding(
                     binding["address"], tag["type"], tag.get("writable", False))
         if not self.screens or self.manifest.get("startup_screen") not in self.screens:
-            raise ValueError("Pantalla inicial inexistente")
+            raise ValueError(tr("Pantalla inicial inexistente"))
         for name, document in {**self.screens, **{f'faceplate:{k}': v for k, v in self.faceplates.items()}}.items():
             for dimension in ("width", "height"):
                 value = document.get(dimension)
                 if isinstance(value,bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 < value <= 10000:
-                    raise ValueError(f"{name}: dimensiones inválidas")
+                    raise ValueError(tr("{name}: dimensiones inválidas", name=name))
             from .operational_config import color, number
             color(dynamics.resolve_color(document.get("background", "#ffffff"),palette))
             number(document.get("grid_size", 10), 1, 200)
             if not isinstance(document.get("grid_size", 10), int):
-                raise ValueError("La cuadrícula necesita un tamaño entero")
+                raise ValueError(tr("La cuadrícula necesita un tamaño entero"))
             for option in ("show_grid", "snap_to_grid"):
                 if not isinstance(document.get(option, True), bool):
-                    raise ValueError("Opción de cuadrícula inválida")
+                    raise ValueError(tr("Opción de cuadrícula inválida"))
             if not isinstance(document.get("title", ""), str):
-                raise ValueError("Título de pantalla inválido")
+                raise ValueError(tr("Título de pantalla inválido"))
             ids = set()
             parameters = document.get("parameters", {}) if name.startswith("faceplate:") else {}
             if not isinstance(parameters,dict) or any(not isinstance(key,str) or not key.strip() or kind not in PRIMITIVES for key,kind in parameters.items()):
-                raise ValueError('Parámetros de objeto de librería inválidos')
+                raise ValueError(tr('Parámetros de objeto de librería inválidos'))
             for element in document["elements"]:
                 if not isinstance(element["id"], str) or not element["id"].strip():
-                    raise ValueError("Los elementos necesitan un nombre")
+                    raise ValueError(tr("Los elementos necesitan un nombre"))
                 if element["id"] in ids or element["kind"] not in KINDS:
-                    raise ValueError(f"{name}: elemento duplicado o desconocido")
+                    raise ValueError(tr("{name}: elemento duplicado o desconocido", name=name))
                 ids.add(element["id"])
                 for key in ("x", "y", "w", "h"):
                     if isinstance(element[key],bool) or not isinstance(element[key], (float, int)) or not math.isfinite(element[key]) or abs(element[key]) > 10000:
-                        raise ValueError(f"{name}: geometría inválida")
+                        raise ValueError(tr("{name}: geometría inválida", name=name))
                 if element["w"] <= 0 or element["h"] <= 0:
-                    raise ValueError(f"{name}: tamaño inválido")
+                    raise ValueError(tr("{name}: tamaño inválido", name=name))
                 if element.get("text_align", "center") not in {"left", "center", "right"} or not isinstance(element.get("bold",False),bool):
-                    raise ValueError("Formato de texto inválido")
+                    raise ValueError(tr("Formato de texto inválido"))
                 try: dynamics.validate(element,tags,parameters,palette)
                 except (ValueError,TypeError,KeyError) as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
                 visual=element.get('dynamics',{})
@@ -241,87 +242,87 @@ class Project:
                 validate_drawing(element)
                 for key in ('text','unit','color','text_color','border_color'):
                     if key in element and not isinstance(element[key],str):
-                        raise ValueError(f'{key}: se esperaba texto')
+                        raise ValueError(tr("{key}: se esperaba texto", key=key))
                 for color_key in ("stroke_color",):
                     if color_key in element:
                         color(dynamics.resolve_color(element[color_key],palette))
                 tag = element.get("tag", "")
-                if not isinstance(tag,str):raise ValueError(f'{name} / {element["id"]}: la referencia de variable debe ser texto')
+                if not isinstance(tag,str):raise ValueError(tr("{name} / {id}: la referencia de variable debe ser texto", name=name, id=element["id"]))
                 if tag and tag not in tags and not (tag.startswith("$") and tag[1:] in parameters):
-                    raise ValueError(f"{name}: variable inexistente {tag}")
+                    raise ValueError(tr("{name}: variable inexistente {tag}", name=name, tag=tag))
                 tag_type = tags[tag]["type"] if tag in tags else parameters.get(tag.lstrip("$"))
                 try: validate_element_permission(element)
                 except ValueError as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
                 if element['kind'] == 'button':
                     action = element.get('action','toggle')
                     if action not in {'toggle','set','momentary','press_release','screen','popup','faceplate_popup','close_popup','script'}:
-                        raise ValueError('Acción de botón desconocida')
+                        raise ValueError(tr('Acción de botón desconocida'))
                     if action == 'faceplate_popup':
                         try: validate_popup_button(element, self, tags, parameters)
                         except (ValueError, TypeError) as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
                     if action in {'popup','faceplate_popup'}:
                         validate_window(element.get('window', {}))
                         if not isinstance(element.get('modal', False), bool):
-                            raise ValueError("El modo modal debe ser booleano")
+                            raise ValueError(tr("El modo modal debe ser booleano"))
                     if action in {'toggle','momentary'} and tag and tag_type != 'bool':
-                        raise ValueError('Alternar o pulsador momentáneo requiere una variable bool')
+                        raise ValueError(tr('Alternar o pulsador momentáneo requiere una variable bool'))
                     if action=='press_release':
                         for key in ('press_value','release_value'):
-                            if key not in element:raise ValueError('Falta el valor al pulsar o soltar')
+                            if key not in element:raise ValueError(tr('Falta el valor al pulsar o soltar'))
                             if tag:coerce(element[key],tag_type)
                     if action == 'set':
                         if 'value' not in element:
-                            raise ValueError('El botón necesita un valor de escritura')
+                            raise ValueError(tr('El botón necesita un valor de escritura'))
                         if tag: coerce(element['value'],tag_type)
                 if dynamics.writable_control(element) and tag in tags and not tags[tag].get('writable',False):
-                    raise ValueError(f'{name} / {element["id"]}: variable de solo lectura: {tag}')
+                    raise ValueError(tr("{name} / {id}: variable de solo lectura: {tag}", name=name, id=element["id"], tag=tag))
                 if element["kind"] == "text_list":
                     validate_text_list(element, tag_type)
                 if tag and element["kind"] == "lamp" and tag_type != "bool":
-                    raise ValueError("Un piloto requiere una variable bool")
+                    raise ValueError(tr("Un piloto requiere una variable bool"))
                 if tag and element["kind"] == "bar" and tag_type not in {"int", "float"}:
-                    raise ValueError("Una barra requiere una variable numérica")
+                    raise ValueError(tr("Una barra requiere una variable numérica"))
                 if element["kind"] == "bar" and element.get("max", 100) <= element.get("min", 0):
-                    raise ValueError("El máximo de una barra debe ser mayor que el mínimo")
+                    raise ValueError(tr("El máximo de una barra debe ser mayor que el mínimo"))
                 if element["kind"] == "gauge":
                     if tag and tag_type not in {"int", "float"}:
-                        raise ValueError("Un indicador requiere una variable numérica")
+                        raise ValueError(tr("Un indicador requiere una variable numérica"))
                     from .gauges import validate as validate_gauge
                     validate_gauge(element)
                 if element["kind"] == "button" and element.get("action") in {"screen", "popup"} and element.get("screen") not in self.screens:
-                    raise ValueError("Pantalla de destino inexistente")
+                    raise ValueError(tr("Pantalla de destino inexistente"))
                 if element["kind"] == "button" and element.get("action") == "popup" and not isinstance(element.get("modal", False), bool):
-                    raise ValueError("El modo modal debe ser booleano")
+                    raise ValueError(tr("El modo modal debe ser booleano"))
                 if element["kind"] == "image":
                     self.asset(element.get("source", ""))
                 if element["kind"] in {"trend", "alarm_view"}:
                     views = self.trends if element["kind"] == "trend" else self.alarm_views
                     if element.get("view") not in views:
-                        raise ValueError("Configuración del visor inexistente")
+                        raise ValueError(tr("Configuración del visor inexistente"))
                     if name.startswith("faceplate:"):
-                        raise ValueError("Los visores deben colocarse directamente en una pantalla")
+                        raise ValueError(tr("Los visores deben colocarse directamente en una pantalla"))
                     if element["w"] < 400 or element["h"] < 280:
-                        raise ValueError("El visor necesita al menos 400 × 280")
+                        raise ValueError(tr("El visor necesita al menos 400 × 280"))
                 if not isinstance(element.get("font_size", 15), int) or not 8 <= element.get("font_size", 15) <= 72:
-                    raise ValueError("font_size debe ser un entero entre 8 y 72")
+                    raise ValueError(tr("font_size debe ser un entero entre 8 y 72"))
                 if element["kind"] in {"text", "input"} and (not isinstance(element.get("decimals", 2), int) or not 0 <= element.get("decimals", 2) <= 10):
-                    raise ValueError("decimals debe estar entre 0 y 10")
+                    raise ValueError(tr("decimals debe estar entre 0 y 10"))
                 if element["kind"] == "faceplate":
                     template = self.faceplates.get(element.get("template"))
                     if template is None or name.startswith("faceplate:"):
-                        raise ValueError("Objeto de librería inexistente o anidado (no soportado en v1)")
+                        raise ValueError(tr("Objeto de librería inexistente o anidado (no soportado en v1)"))
                     bindings = element.get("bindings", {})
                     if set(bindings) != set(template.get("parameters", {})):
-                        raise ValueError("Parámetros del objeto de librería incompletos")
+                        raise ValueError(tr("Parámetros del objeto de librería incompletos"))
                     for parameter, kind in template["parameters"].items():
                         if bindings[parameter] not in tags or tags[bindings[parameter]]["type"] != kind:
-                            raise ValueError(f"Tipo incorrecto en parámetro {parameter}")
+                            raise ValueError(tr("Tipo incorrecto en parámetro {parameter}", parameter=parameter))
 
         for screen in self.screens:
             for element in self.elements(screen):
                 tag=element.get('tag')
                 if dynamics.writable_control(element) and tag in tags and not tags[tag].get('writable',False):
-                    raise ValueError(f'{screen} / {element["id"]}: variable de solo lectura: {tag}')
+                    raise ValueError(tr("{screen} / {id}: variable de solo lectura: {tag}", screen=screen, id=element["id"], tag=tag))
                 if element['kind'] == 'button' and element.get('action') == 'faceplate_popup':
                     try: validate_popup_writes(element, self, tags)
                     except ValueError as exc: raise ValueError(f'{screen} / {element["id"]}: {exc}') from exc
@@ -342,7 +343,7 @@ class Project:
     def set_binding(self, name, binding):
         """Configure one primitive leaf, including a field within a structure."""
         if name not in self.tags():
-            raise ValueError(f"Variable inexistente: {name}")
+            raise ValueError(tr("Variable inexistente: {name}", name=name))
         root_name, separator, relative = name.partition(".")
         source = next(v for v in self.variables if v["name"] == root_name)
         if separator:
@@ -385,7 +386,7 @@ class Project:
             return asset(self, relative)
         path = (self.root / relative).resolve()
         if not path.is_relative_to(self.root):
-            raise ValueError("La imagen debe estar dentro del proyecto")
+            raise ValueError(tr("La imagen debe estar dentro del proyecto"))
         return path
 
     def elements(self, screen):

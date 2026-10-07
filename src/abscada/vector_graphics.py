@@ -3,6 +3,7 @@ import math
 from PySide6.QtCore import Qt, QPointF, QRectF
 from PySide6.QtGui import QColor, QPainterPath, QPen, QPolygonF
 from .drawing import PATH_KINDS, SHAPE_KINDS
+from .i18n import tr
 
 
 def element_path(element):
@@ -57,7 +58,7 @@ class DrawingInteraction:
         if kind:
             self.scene().clearSelection()
         self.viewport().update()
-        self.host.statusBar().showMessage({"pipe":"Tubería", "line":"Línea", "polyline":"Polilínea"}.get(kind,"Selección"))
+        self.host.statusBar().showMessage({"pipe":tr("Tubería"), "line":tr("Línea"), "polyline":tr("Polilínea")}.get(kind,tr("Selección")))
         if hasattr(self.host, "select_tool_button"):
             self.host.select_tool_button.setVisible(bool(kind))
 

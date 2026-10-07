@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLayout
 from PySide6.QtCore import Qt
 from .graphics import CanvasScene, CanvasView, ElementItem
 from .screen_layouts import containers
+from .i18n import tr
 
 
 class EmbeddedCanvasView(CanvasView):
@@ -47,7 +48,7 @@ class ScreenContainer(QWidget):
     def select_screen(self, screen):
         document = self.project.screens[screen]
         if containers(document):
-            raise ValueError('No se puede abrir un layout dentro de un contenedor')
+            raise ValueError(tr('No se puede abrir un layout dentro de un contenedor'))
         self.document_name = screen
         self.window.release_momentaries()
         self.scene.clear()

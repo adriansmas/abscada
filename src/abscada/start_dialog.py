@@ -9,21 +9,22 @@ from PySide6.QtWidgets import (QCheckBox, QDialog, QFileDialog, QHBoxLayout, QIn
 from . import __version__
 from .app_paths import documents_root, examples_root
 from .project_files import SUFFIX, is_project, locate, new_project_location
+from .i18n import tr
 
 MAX_RECENT = 10
 FILTER = f"Proyecto abSCADA (*{SUFFIX});;Proyecto antiguo (project.json)"
 
 # Shipped examples, in the order a newcomer should try them.
 EXAMPLES = [
-    ("hydro", "Central hidroeléctrica · CH Valdearenas",
-     "SCADA completo de dos grupos Francis: secuencias, protecciones, unifilar, alarmas y tendencias."),
-    ("brewery", "Microcervecería por lotes · La Tolva",
-     "Cocción por recetas, fermentación, OPC UA cifrado, usuarios y roles."),
-    ("beckhoff", "Banco de ensayo Beckhoff (TwinCAT ADS)",
-     "Indicadores de aguja, mando y alarmas sobre un PLC Beckhoff simulado."),
-    ("showcase", "Laboratorio SCADA", "Todos los controles, estados, objetos de librería, gráficas, alarmas y scripts."),
-    ("plant", "Planta de bombeo", "Ejemplo básico con layout, depósito, bombas, alarmas y registros."),
-    ("library_author", "Autoría de bibliotecas", "Cómo crear y publicar librerías de objetos reutilizables."),
+    ("hydro", tr("Central hidroeléctrica · CH Valdearenas"),
+     tr("SCADA completo de dos grupos Francis: secuencias, protecciones, unifilar, alarmas y tendencias.")),
+    ("brewery", tr("Microcervecería por lotes · La Tolva"),
+     tr("Cocción por recetas, fermentación, OPC UA cifrado, usuarios y roles.")),
+    ("beckhoff", tr("Banco de ensayo Beckhoff (TwinCAT ADS)"),
+     tr("Indicadores de aguja, mando y alarmas sobre un PLC Beckhoff simulado.")),
+    ("showcase", tr("Laboratorio SCADA"), tr("Todos los controles, estados, objetos de librería, gráficas, alarmas y scripts.")),
+    ("plant", tr("Planta de bombeo"), tr("Ejemplo básico con layout, depósito, bombas, alarmas y registros.")),
+    ("library_author", tr("Autoría de bibliotecas"), tr("Cómo crear y publicar librerías de objetos reutilizables.")),
 ]
 
 
@@ -59,7 +60,7 @@ def example_copy(folder):
 # -- pickers used by the start screen and by Studio --------------------------------
 def ask_open_project(parent):
     start = str(documents_root()) if documents_root().exists() else ""
-    path, _ = QFileDialog.getOpenFileName(parent, "Abrir proyecto", start, FILTER)
+    path, _ = QFileDialog.getOpenFileName(parent, tr("Abrir proyecto"), start, FILTER)
     return path or None
 
 
@@ -67,16 +68,16 @@ def ask_new_project(parent):
     """Ask a name and location; create the project folder with its .abscada file."""
     from .project import Project
     documents_root().mkdir(parents=True, exist_ok=True)
-    chosen, _ = QFileDialog.getSaveFileName(parent, "Nuevo proyecto · nombre y ubicación",
-                                            str(documents_root() / f"Mi SCADA{SUFFIX}"), f"Proyecto abSCADA (*{SUFFIX})")
+    chosen, _ = QFileDialog.getSaveFileName(parent, tr("Nuevo proyecto · nombre y ubicación"),
+                                            str(documents_root() / (tr("Mi SCADA") + SUFFIX)), tr("Proyecto abSCADA (*{SUFFIX})", SUFFIX=SUFFIX))
     if not chosen:
         return None
     try:
         folder, manifest_file = new_project_location(chosen)
     except ValueError as exc:
-        QMessageBox.warning(parent, "Nuevo proyecto", str(exc))
+        QMessageBox.warning(parent, tr("Nuevo proyecto"), str(exc))
         return None
-    title, ok = QInputDialog.getText(parent, "Nuevo proyecto", "Título del proyecto", text=Path(manifest_file).stem)
+    title, ok = QInputDialog.getText(parent, tr("Nuevo proyecto"), tr("Título del proyecto"), text=Path(manifest_file).stem)
     if not ok or not title.strip():
         return None
     project = Project(folder, dict(schema_version=1, name=title.strip(), startup_screen="main"),
@@ -91,37 +92,37 @@ class StartDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.selected = None
-        self.setWindowTitle(f"abSCADA {__version__}")
+        self.setWindowTitle(tr("abSCADA {__version__}", __version__=__version__))
         self.resize(820, 520)
         layout = QHBoxLayout(self)
 
         side = QVBoxLayout()
-        title = QLabel(f"<h2>abSCADA</h2><p>SCADA libre · versión {__version__}</p>")
+        title = QLabel(tr("<h2>abSCADA</h2><p>SCADA libre · versión {__version__}</p>", __version__=__version__))
         title.setTextFormat(Qt.TextFormat.RichText)
         side.addWidget(title)
-        for text, handler in (("Nuevo proyecto…", self.new_project), ("Abrir proyecto…", self.open_project)):
+        for text, handler in ((tr("Nuevo proyecto…"), self.new_project), (tr("Abrir proyecto…"), self.open_project)):
             button = QPushButton(text)
             button.setMinimumHeight(38)
             button.clicked.connect(handler)
             side.addWidget(button)
         side.addStretch()
-        side.addWidget(QLabel(f"Proyectos y ejemplos en:\n{documents_root()}"))
+        side.addWidget(QLabel(tr("Proyectos y ejemplos en:\n{documents_root}", documents_root=documents_root())))
         layout.addLayout(side, 1)
 
         lists = QVBoxLayout()
-        lists.addWidget(QLabel("<b>Recientes</b>"))
+        lists.addWidget(QLabel(tr("<b>Recientes</b>")))
         self.recent = QListWidget()
         for path in recent_projects():
             item = QListWidgetItem(f"{Path(path).stem}\n{Path(path).parent}")
             item.setData(Qt.ItemDataRole.UserRole, path)
             self.recent.addItem(item)
         if not self.recent.count():
-            self.recent.addItem("Todavía no has abierto ningún proyecto")
+            self.recent.addItem(tr("Todavía no has abierto ningún proyecto"))
             self.recent.setEnabled(False)
         self.recent.itemActivated.connect(lambda item: self.finish(item.data(Qt.ItemDataRole.UserRole)))
         lists.addWidget(self.recent, 1)
 
-        lists.addWidget(QLabel("<b>Ejemplos</b> · se copian a Documentos para que puedas modificarlos"))
+        lists.addWidget(QLabel(tr("<b>Ejemplos</b> · se copian a Documentos para que puedas modificarlos")))
         self.examples = QListWidget()
         for folder, name, description in EXAMPLES:
             if is_project(examples_root() / folder):
@@ -133,11 +134,11 @@ class StartDialog(QDialog):
         row = QWidget()
         bottom = QHBoxLayout(row)
         bottom.setContentsMargins(0, 0, 0, 0)
-        self.with_simulator = QCheckBox("Arrancar también su PLC simulado")
+        self.with_simulator = QCheckBox(tr("Arrancar también su PLC simulado"))
         self.with_simulator.setChecked(True)
         bottom.addWidget(self.with_simulator)
         bottom.addStretch()
-        open_example = QPushButton("Abrir ejemplo")
+        open_example = QPushButton(tr("Abrir ejemplo"))
         open_example.clicked.connect(lambda: self.open_example(self.examples.currentItem()))
         bottom.addWidget(open_example)
         lists.addWidget(row)
@@ -152,20 +153,20 @@ class StartDialog(QDialog):
         try:
             self.finish(ask_new_project(self))
         except Exception as exc:
-            QMessageBox.critical(self, "Nuevo proyecto", str(exc))
+            QMessageBox.critical(self, tr("Nuevo proyecto"), str(exc))
 
     def open_project(self):
         self.finish(ask_open_project(self))
 
     def open_example(self, item):
         if item is None:
-            QMessageBox.information(self, "Ejemplos", "Selecciona un ejemplo de la lista")
+            QMessageBox.information(self, tr("Ejemplos"), tr("Selecciona un ejemplo de la lista"))
             return
         folder = item.data(Qt.ItemDataRole.UserRole)
         try:
             path = example_copy(folder)
         except OSError as exc:
-            QMessageBox.critical(self, "Ejemplos", f"No se pudo copiar el ejemplo: {exc}")
+            QMessageBox.critical(self, tr("Ejemplos"), tr("No se pudo copiar el ejemplo: {exc}", exc=exc))
             return
         if self.with_simulator.isChecked():
             from .simulators import for_example
@@ -175,6 +176,6 @@ class StartDialog(QDialog):
                 try:
                     simulator_manager.start(simulator.id)
                 except Exception as exc:
-                    QMessageBox.warning(self, "Simulador",
-                                        f"No se pudo arrancar «{simulator.title}»: {exc}\n\nEl proyecto se abrirá igualmente.")
+                    QMessageBox.warning(self, tr("Simulador"),
+                                        tr("No se pudo arrancar «{title}»: {exc}\n\nEl proyecto se abrirá igualmente.", title=simulator.title, exc=exc))
         self.finish(str(path))

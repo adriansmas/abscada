@@ -15,6 +15,7 @@ from .operational_config import ALARM_COLUMNS, DEFAULT_ALARM_COLUMNS
 from PySide6.QtCharts import QChart, QChartView, QLineSeries, QDateTimeAxis, QValueAxis
 from .alarms import state
 from .storage import ArchiveReader, database_path, ProjectSampleReader
+from .i18n import tr
 
 READERS = ThreadPoolExecutor(max_workers=3, thread_name_prefix="abscada-query")
 COMMANDS = ThreadPoolExecutor(max_workers=1, thread_name_prefix="abscada-operator")
@@ -36,7 +37,7 @@ def date_edit(seconds):
 
 
 def csv_export(parent, rows, columns, filename):
-    path, _ = QFileDialog.getSaveFileName(parent, "Exportar CSV", filename, "CSV (*.csv)")
+    path, _ = QFileDialog.getSaveFileName(parent, tr("Exportar CSV"), filename, tr("CSV (*.csv)"))
     if not path:
         return
     try:
@@ -45,29 +46,29 @@ def csv_export(parent, rows, columns, filename):
             for row in rows:
                 writer.writerow([row.get(key, "") for key in columns])
     except OSError as exc:
-        QMessageBox.warning(parent, "Exportación", str(exc))
+        QMessageBox.warning(parent, tr("Exportación"), str(exc))
 
 
 class AlarmViewer(QWidget):
     def __init__(self, project, runtime=None, config=None):
         super().__init__()
         self.project, self.runtime = project, runtime
-        self.config = config or dict(title="Alarmas", mode="pending", categories=[], min_priority=1, allow_ack=True)
+        self.config = config or dict(title=tr("Alarmas"), mode="pending", categories=[], min_priority=1, allow_ack=True)
         self.reader = ArchiveReader(database_path(project))
         self.future = None; self.next_query = 0; self.rows = []; self.token = None
         layout = QVBoxLayout(self); layout.setContentsMargins(8, 6, 8, 6)
         toolbar = QHBoxLayout()
         self.mode = QComboBox()
-        for key, label in (("pending", "Pendientes"), ("active", "Activas"), ("history", "Histórico"), ("events", "Eventos")):
+        for key, label in (("pending", tr("Pendientes")), ("active", tr("Activas")), ("history", tr("Histórico")), ("events", tr("Eventos"))):
             self.mode.addItem(label, key)
         self.mode.setCurrentIndex(max(0, self.mode.findData(self.config.get("mode", "pending"))))
-        self.category = QComboBox(); self.category.addItem("Todas las categorías", "")
+        self.category = QComboBox(); self.category.addItem(tr("Todas las categorías"), "")
         allowed = self.config.get("categories", [])
         for category in project.alarms["categories"]:
             if not allowed or category["id"] in allowed:
                 self.category.addItem(category["name"], category["id"])
-        self.search = QLineEdit(); self.search.setPlaceholderText("Mensaje, variable o ID…")
-        self.priority = QSpinBox(); self.priority.setRange(1, 1000); self.priority.setPrefix("Prioridad ≥ ")
+        self.search = QLineEdit(); self.search.setPlaceholderText(tr("Mensaje, variable o ID…"))
+        self.priority = QSpinBox(); self.priority.setRange(1, 1000); self.priority.setPrefix(tr("Prioridad ≥ "))
         self.priority.setValue(self.config.get("min_priority", 1))
         for widget in (self.mode, self.category, self.priority, self.search):
             toolbar.addWidget(widget, 1 if widget is self.search else 0)
@@ -76,10 +77,10 @@ class AlarmViewer(QWidget):
         self.date_controls = QWidget(); self.date_controls.setLayout(row)
         row.setContentsMargins(0,0,0,0)
         self.start = date_edit(time.time()-86400); self.end = date_edit(time.time())
-        row.addWidget(QLabel("Desde")); row.addWidget(self.start); row.addWidget(QLabel("Hasta")); row.addWidget(self.end)
-        self.apply = QPushButton("Consultar"); self.apply.clicked.connect(self.reload); row.addWidget(self.apply)
+        row.addWidget(QLabel(tr("Desde"))); row.addWidget(self.start); row.addWidget(QLabel(tr("Hasta"))); row.addWidget(self.end)
+        self.apply = QPushButton(tr("Consultar")); self.apply.clicked.connect(self.reload); row.addWidget(self.apply)
         row.addStretch()
-        self.export = QPushButton("CSV"); self.export.clicked.connect(self.export_csv); toolbar.addWidget(self.export)
+        self.export = QPushButton(tr("CSV")); self.export.clicked.connect(self.export_csv); toolbar.addWidget(self.export)
         layout.addWidget(self.date_controls)
         self.table = QTableWidget(0, 10)
         self.table.setHorizontalHeaderLabels([label for _,label in ALARM_COLUMNS])
@@ -90,7 +91,7 @@ class AlarmViewer(QWidget):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         self.table.setSortingEnabled(True)
-        columns = QToolButton(); columns.setText("Columnas")
+        columns = QToolButton(); columns.setText(tr("Columnas"))
         menu = QMenu(columns)
         for index,(key,title) in enumerate(ALARM_COLUMNS):
             action = menu.addAction(title); action.setCheckable(True)
@@ -102,11 +103,11 @@ class AlarmViewer(QWidget):
         layout.addWidget(self.table, 1)
         footer = QHBoxLayout()
         self.count = QLabel(); footer.addWidget(self.count); footer.addStretch()
-        self.actor = QLineEdit("Operador"); self.actor.setMaximumWidth(170)
-        self.actor.setPlaceholderText("Operador")
-        self.comment = QLineEdit(); self.comment.setPlaceholderText("Comentario de ACK")
-        self.ack = QPushButton("ACK selección"); self.ack.clicked.connect(self.ack_selected)
-        self.ack_visible = QPushButton("ACK visibles"); self.ack_visible.clicked.connect(self.ack_all_visible)
+        self.actor = QLineEdit(tr("Operador")); self.actor.setMaximumWidth(170)
+        self.actor.setPlaceholderText(tr("Operador"))
+        self.comment = QLineEdit(); self.comment.setPlaceholderText(tr("Comentario de ACK"))
+        self.ack = QPushButton(tr("ACK selección")); self.ack.clicked.connect(self.ack_selected)
+        self.ack_visible = QPushButton(tr("ACK visibles")); self.ack_visible.clicked.connect(self.ack_all_visible)
         for widget in (self.actor, self.comment, self.ack, self.ack_visible):
             footer.addWidget(widget)
             widget.setVisible(runtime is not None and self.config.get("allow_ack", True))
@@ -151,7 +152,7 @@ class AlarmViewer(QWidget):
             args = self.parameters()
             if args[0] in {"history","events"} and args[3]>=args[4]:
                 self.rows=[]; self.populate()
-                self.count.setText("El inicio debe ser anterior al final")
+                self.count.setText(tr("El inicio debe ser anterior al final"))
                 return
             self.future = READERS.submit(lambda: (args, self.reader.alarms(*args)))
             self.next_query = time.monotonic()+1
@@ -166,7 +167,7 @@ class AlarmViewer(QWidget):
         samples = self.runtime.snapshot() if self.runtime else {}
         for index, alarm in enumerate(rows):
             event = alarm.get("event")
-            status = {"incoming": "Entrada", "outgoing": "Salida", "ack": "ACK", "disabled": "Deshabilitada"}.get(event, event) if event else state(alarm)
+            status = {"incoming": tr("Entrada"), "outgoing": tr("Salida"), "ack": "ACK", "disabled": tr("Deshabilitada")}.get(event, event) if event else state(alarm)
             quality = samples[alarm["tag"]].quality if alarm["tag"] in samples else "—"
             texts = [alarm["priority"], names.get(alarm["category"], alarm["category"]), alarm["message"], alarm["tag"], status,
                      stamp(alarm["entered_at"]), stamp(alarm["returned_at"]), stamp(alarm["ack_at"]), alarm.get("actor") or alarm.get("ack_by") or "—", quality]
@@ -183,7 +184,7 @@ class AlarmViewer(QWidget):
             if alarm["id"] in selected:
                 self.table.selectRow(index)
         self.table.setSortingEnabled(True)
-        self.count.setText(f"{len(rows)} registros" + (" · límite 2000; acota la consulta" if len(self.rows) == 2000 else ""))
+        self.count.setText(f"{len(rows)} registros" + (tr(" · límite 2000; acota la consulta") if len(self.rows) == 2000 else ""))
         enabled = self.runtime is not None and self.runtime.operations is not None and self.config.get("allow_ack", True) and getattr(self, 'ack_future', None) is None
         self.ack.setEnabled(enabled); self.ack_visible.setEnabled(enabled)
         security = getattr(self.runtime, "security", None)
@@ -191,7 +192,7 @@ class AlarmViewer(QWidget):
             # The ACK is signed by the logged-in operator, not by a free text field.
             session = self.runtime.session
             self.actor.setReadOnly(True)
-            self.actor.setText(session.user if session else "Sin sesión")
+            self.actor.setText(session.user if session else tr("Sin sesión"))
 
     def acknowledge(self, ids):
         if getattr(self, 'ack_future', None) is not None or not self.runtime or not self.runtime.operations:
@@ -201,7 +202,7 @@ class AlarmViewer(QWidget):
         if security is not None and security.enabled:
             session = self.runtime.session
             if not security.permits(session, "acknowledge"):
-                self.count.setText("Inicia sesión con un usuario que pueda reconocer alarmas")
+                self.count.setText(tr("Inicia sesión con un usuario que pueda reconocer alarmas"))
                 return
             security.touch(session)
             actor = session.user
@@ -271,19 +272,19 @@ class TrendViewer(QWidget):
         layout = QVBoxLayout(self); layout.setContentsMargins(6, 4, 6, 4)
         toolbar = QHBoxLayout()
         self.source = QComboBox()
-        self.source.addItem("Tiempo real", "live"); self.source.addItem("Histórico", "history")
+        self.source.addItem(tr("Tiempo real"), "live"); self.source.addItem(tr("Histórico"), "history")
         self.source.setCurrentIndex(0 if runtime else 1)
         self.source.setEnabled(runtime is not None)
         toolbar.addWidget(self.source)
-        self.live = QCheckBox("Seguir"); self.live.setChecked(True)
+        self.live = QCheckBox(tr("Seguir")); self.live.setChecked(True)
         self.start = date_edit(time.time()-config.get("window_seconds", 600)); self.end = date_edit(time.time())
         self.start.setMaximumWidth(180); self.end.setMaximumWidth(180)
         for widget in (self.live, self.start, self.end):
             toolbar.addWidget(widget)
-        self.query = QPushButton("Consultar"); self.query.clicked.connect(self.reload); toolbar.addWidget(self.query)
+        self.query = QPushButton(tr("Consultar")); self.query.clicked.connect(self.reload); toolbar.addWidget(self.query)
         toolbar.addStretch(1)
-        fit = QPushButton("Restablecer zoom"); fit.clicked.connect(lambda: self.chart.zoomReset()); toolbar.addWidget(fit)
-        export = QPushButton("CSV"); export.clicked.connect(self.export_csv); toolbar.addWidget(export)
+        fit = QPushButton(tr("Restablecer zoom")); fit.clicked.connect(lambda: self.chart.zoomReset()); toolbar.addWidget(fit)
+        export = QPushButton(tr("CSV")); export.clicked.connect(self.export_csv); toolbar.addWidget(export)
         layout.addLayout(toolbar)
         self.chart = QChart(); self.chart.setTitle(config["title"])
         self.chart.legend().hide(); self.chart.setBackgroundBrush(QColor("#ffffff"))
@@ -307,7 +308,7 @@ class TrendViewer(QWidget):
             self.curve_visible[curve["id"]] = check
             check.toggled.connect(self.draw)
             toggles.addWidget(check)
-        toggles.addStretch(); toggles.addWidget(QLabel("Ejes:"))
+        toggles.addStretch(); toggles.addWidget(QLabel(tr("Ejes:")))
         for axis in config["axes"]:
             check = QCheckBox(axis.get("title", axis["id"]))
             check.setChecked(axis.get("visible", True))
@@ -329,9 +330,9 @@ class TrendViewer(QWidget):
         if self.export_future and self.export_future.done():
             try:
                 count = self.export_future.result()
-                self.readout.setText(f"CSV exportado: {count} registros")
+                self.readout.setText(tr("CSV exportado: {count} registros", count=count))
             except Exception as exc:
-                QMessageBox.warning(self, "Exportación", str(exc))
+                QMessageBox.warning(self, tr("Exportación"), str(exc))
             self.export_future = None
         if self.future and self.future.done():
             try:
@@ -358,7 +359,7 @@ class TrendViewer(QWidget):
                 end = now if self.live.isChecked() else self.end.dateTime().toMSecsSinceEpoch()/1000
                 start = end-self.config.get("window_seconds", 600) if self.live.isChecked() else self.start.dateTime().toMSecsSinceEpoch()/1000
                 if start >= end:
-                    self.readout.setText("El inicio debe ser anterior al final"); return
+                    self.readout.setText(tr("El inicio debe ser anterior al final")); return
                 self.data = {tag: [row for row in buffer if start <= row["recorded_at"] <= end] for tag, buffer in self.buffer.items()}
                 self.range = (start, end)
                 if self.isVisible():
@@ -368,7 +369,7 @@ class TrendViewer(QWidget):
             end = time.time() if self.live.isChecked() else self.end.dateTime().toMSecsSinceEpoch()/1000
             start = end-self.config.get("window_seconds", 600) if self.live.isChecked() else self.start.dateTime().toMSecsSinceEpoch()/1000
             if start >= end:
-                self.readout.setText("El inicio debe ser anterior al final"); return
+                self.readout.setText(tr("El inicio debe ser anterior al final")); return
             generation = self.generation
             tags = {c["tag"] for c in self.config["curves"]}
             self.future = READERS.submit(lambda: (generation, start, end, {tag: self.reader.samples(tag, start, end) for tag in tags}))
@@ -406,7 +407,7 @@ class TrendViewer(QWidget):
             if axis.get("auto", True) and values:
                 lo, hi = min(values), max(values); pad = max((hi-lo)*0.08, abs(hi)*0.01, 0.1)
                 self.axes[axis["id"]].setRange(lo-pad, hi+pad)
-        self.readout.setText(f"{count} puntos · {stamp(self.range[0])} — {stamp(self.range[1])}")
+        self.readout.setText(tr("{count} puntos · {stamp} — {stamp2}", count=count, stamp=stamp(self.range[0]), stamp2=stamp(self.range[1])))
 
     def cursor(self, timestamp):
         values = [stamp(timestamp)]
@@ -425,7 +426,7 @@ class TrendViewer(QWidget):
             return
         if self.export_future:
             return
-        path, _ = QFileDialog.getSaveFileName(self, "Exportar CSV", "tendencia.csv", "CSV (*.csv)")
+        path, _ = QFileDialog.getSaveFileName(self, tr("Exportar CSV"), "tendencia.csv", tr("CSV (*.csv)"))
         if not path:
             return
         start, end = self.range
@@ -434,7 +435,7 @@ class TrendViewer(QWidget):
         def export():
             rows = live_rows if live_rows is not None else [row for tag in tags for row in self.reader.raw_samples(tag, start, end)]
             if len(rows) > 100000:
-                raise ValueError("La exportación supera 100000 registros; acota el intervalo")
+                raise ValueError(tr("La exportación supera 100000 registros; acota el intervalo"))
             rows.sort(key=lambda row: (row["recorded_at"], row["tag"]))
             for row in rows:
                 row["recorded_at"] = utc(row["recorded_at"]); row["source_at"] = utc(row["source_at"])

@@ -4,6 +4,7 @@ import sqlite3
 import heapq
 from datetime import datetime, timezone
 from pathlib import Path
+from .i18n import tr
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS samples(
@@ -111,7 +112,7 @@ class RuntimeLease:
                 fcntl.flock(self.file, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError as exc:
             self.file.close(); self.file = None
-            raise RuntimeError("Ya existe un runtime registrando este proyecto") from exc
+            raise RuntimeError(tr("Ya existe un runtime registrando este proyecto")) from exc
 
     def close(self):
         if self.file:
@@ -127,7 +128,7 @@ class Repository:
         version = self.connection.execute("PRAGMA user_version").fetchone()[0]
         if version not in (0, 1):
             self.connection.close()
-            raise ValueError("Versión de base de datos no soportada")
+            raise ValueError(tr("Versión de base de datos no soportada"))
         self.connection.execute("PRAGMA journal_mode=WAL")
         self.connection.execute("PRAGMA synchronous=FULL")
         self.connection.execute("PRAGMA foreign_keys=ON")
@@ -160,7 +161,7 @@ class Repository:
 
     def acknowledge(self, instances, now, actor, comment=""):
         if not actor.strip():
-            raise ValueError("El reconocimiento necesita un operador")
+            raise ValueError(tr("El reconocimiento necesita un operador"))
         changed = 0
         for instance in set(instances):
             cursor = self.connection.execute("UPDATE alarm_instances SET ack_at=?,ack_by=? WHERE id=? AND ack_at IS NULL AND ack_required=1", (now, actor, instance))
@@ -208,7 +209,7 @@ class ArchiveReader:
         import tempfile
         target = Path(destination).resolve()
         if target == self.path.resolve() or not self.path.exists():
-            raise ValueError("Selecciona otro archivo; el archivo operativo debe existir")
+            raise ValueError(tr("Selecciona otro archivo; el archivo operativo debe existir"))
         handle, temporary = tempfile.mkstemp(suffix=".sqlite3", dir=target.parent)
         os.close(handle)
         source, output = None, None

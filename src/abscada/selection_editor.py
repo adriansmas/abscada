@@ -6,6 +6,7 @@ from .dialogs import EditorDialog
 from .dynamic_editor import available_tags
 from .dynamics import compatible,COLOR_KEYS
 from .graphic_properties import ColorField
+from .i18n import tr
 
 
 STYLE_KEYS=COLOR_KEYS|{'font_size','bold','text_align','lamp_colors','stroke_width','stroke_style','filled'}
@@ -15,19 +16,19 @@ def select_tag(studio):
     items=studio.scene.selectedItems()
     if len(items)!=1:return
     element=items[0].element
-    dialog=EditorDialog(studio);dialog.setWindowTitle('Seleccionar variable');dialog.resize(700,460)
-    box=QVBoxLayout(dialog);search=QLineEdit();search.setPlaceholderText('Buscar variable, tipo o conexión');box.addWidget(search)
-    tree=QTreeWidget();tree.setHeaderLabels(['Variable','Tipo','Acceso','Conexión / ubicación']);box.addWidget(tree)
+    dialog=EditorDialog(studio);dialog.setWindowTitle(tr('Seleccionar variable'));dialog.resize(700,460)
+    box=QVBoxLayout(dialog);search=QLineEdit();search.setPlaceholderText(tr('Buscar variable, tipo o conexión'));box.addWidget(search)
+    tree=QTreeWidget();tree.setHeaderLabels([tr('Variable'),tr('Tipo'),tr('Acceso'),tr('Conexión / ubicación')]);box.addWidget(tree)
     from .connectors import binding_summary
     def refresh():
         tree.clear();groups={}
         for name,tag in available_tags(studio).items():
             binding=tag.get('binding',{});location=binding_summary(binding,studio.project.connections,tag['type']) if binding else 'Local'
-            text=[name,tag['type'],'Escribible' if tag.get('writable') else 'Solo lectura',binding.get('connection','')+' '+location]
+            text=[name,tag['type'],tr('Escribible') if tag.get('writable') else tr('Solo lectura'),binding.get('connection','')+' '+location]
             if search.text().casefold() not in ' '.join(text).casefold():continue
             row=QTreeWidgetItem(text);row.setData(0,Qt.ItemDataRole.UserRole,name)
             if not compatible(element,tag):
-                row.setDisabled(True);row.setToolTip(0,'Tipo o acceso incompatible con este objeto')
+                row.setDisabled(True);row.setToolTip(0,tr('Tipo o acceso incompatible con este objeto'))
             root=name.split('.')[0]
             if '.' in name:
                 if root not in groups:groups[root]=QTreeWidgetItem([root]);tree.addTopLevelItem(groups[root]);groups[root].setExpanded(True)
@@ -37,7 +38,7 @@ def select_tag(studio):
     search.textChanged.connect(refresh);refresh()
     def validate():
         item=tree.currentItem()
-        if not item or item.isDisabled() or not item.data(0,Qt.ItemDataRole.UserRole):raise ValueError('Selecciona una variable compatible')
+        if not item or item.isDisabled() or not item.data(0,Qt.ItemDataRole.UserRole):raise ValueError(tr('Selecciona una variable compatible'))
     dialog.validator=validate;studio.dialog_buttons(dialog,box)
     tree.itemDoubleClicked.connect(lambda *_:dialog.accept())
     if dialog.exec()==EditorDialog.DialogCode.Accepted:
@@ -48,8 +49,8 @@ class CommonProperties(QWidget):
     def __init__(self,studio):
         super().__init__();self.studio=studio;self.syncing=False;self.fields={}
         form=QFormLayout(self);form.setContentsMargins(0,0,0,0)
-        self.info=QLabel('Valores distintos: campo vacío');form.addRow(self.info)
-        for key,title in [('w','Ancho'),('h','Alto'),('font_size','Tamaño de texto'),('color','Fondo'),('text_color','Color de texto'),('border_color','Borde'),('stroke_color','Trazo')]:
+        self.info=QLabel(tr('Valores distintos: campo vacío'));form.addRow(self.info)
+        for key,title in [('w',tr('Ancho')),('h',tr('Alto')),('font_size',tr('Tamaño de texto')),('color',tr('Fondo')),('text_color',tr('Color de texto')),('border_color',tr('Borde')),('stroke_color',tr('Trazo'))]:
             if key in COLOR_KEYS:
                 field=ColorField(lambda k=key:self.apply(k))
             else:

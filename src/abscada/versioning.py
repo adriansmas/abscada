@@ -3,6 +3,7 @@ import subprocess
 import sys
 from pathlib import Path
 from .project_storage import documents
+from .i18n import tr
 
 
 class ProjectGit:
@@ -14,7 +15,7 @@ class ProjectGit:
         result = subprocess.run(['git','--literal-pathspecs','-C',str(self.root),*args],capture_output=True,text=True,encoding='utf-8',
             errors='replace',timeout=30,creationflags=subprocess.CREATE_NO_WINDOW if sys.platform=='win32' else 0)
         if result.returncode:
-            raise ValueError(result.stderr.strip() or result.stdout.strip() or 'Error de Git')
+            raise ValueError(result.stderr.strip() or result.stdout.strip() or tr('Error de Git'))
         return result.stdout
 
     def enabled(self):
@@ -27,9 +28,9 @@ class ProjectGit:
         for line in ('/runtime/','/.abscada-save-*/','/.abscada-recovery-*/','/.abscada-save.lock','__pycache__/','*.pyc'):
             if line not in text.splitlines(): text += '\n'+line+'\n'
         ignore.write_text(text,encoding='utf-8',newline='\n')
-        self.commit('Proyecto inicial')
+        self.commit(tr('Proyecto inicial'))
 
-    def commit(self, message='Guardar proyecto'):
+    def commit(self, message=tr('Guardar proyecto')):
         if not self.enabled(): return None
         paths = set(documents(self.project)) | {'.gitignore'}
         paths.update(p.relative_to(self.root).as_posix() for p in (self.root/'assets').rglob('*') if p.is_file() and not p.is_symlink())
@@ -46,7 +47,7 @@ class ProjectGit:
         return self.run('rev-parse','--short','HEAD').strip()
 
     def history(self):
-        if not self.enabled(): return 'Control de versiones desactivado'
+        if not self.enabled(): return tr('Control de versiones desactivado')
         return self.run('log','-30','--date=local','--format=%h  %ad  %s')
 
     def diff(self):

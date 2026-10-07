@@ -6,13 +6,14 @@ from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, QPushButton, QTableWidg
     QLineEdit, QListWidget, QListWidgetItem, QDialogButtonBox, QAbstractItemView, QHeaderView)
 from .dialogs import EditorDialog
 from . import faceplate_libraries as libraries
+from .i18n import tr
 
 
 class PublishDialog(EditorDialog):
     def __init__(self, host):
         super().__init__(host)
         self.host = host
-        self.setWindowTitle('Publicar librería')
+        self.setWindowTitle(tr('Publicar librería'))
         self.resize(550, 520)
         layout = QVBoxLayout(self)
         form = QFormLayout()
@@ -20,7 +21,7 @@ class PublishDialog(EditorDialog):
         self.version = QLineEdit('1.0.0')
         self.author = QLineEdit()
         self.license = QLineEdit('GPL-3.0-or-later')
-        for title, field in [('Nombre',self.name),('Versión',self.version),('Autor',self.author),('Licencia',self.license)]:
+        for title, field in [(tr('Nombre'),self.name),(tr('Versión'),self.version),(tr('Autor'),self.author),(tr('Licencia'),self.license)]:
             form.addRow(title, field)
         layout.addLayout(form)
         self.faces = QListWidget()
@@ -33,19 +34,19 @@ class PublishDialog(EditorDialog):
             self.faces.addItem(item)
         layout.addWidget(self.faces)
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Save).setText('Publicar…')
+        buttons.button(QDialogButtonBox.StandardButton.Save).setText(tr('Publicar…'))
         buttons.accepted.connect(self.publish)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
 
     def publish(self):
         names = [self.faces.item(i).text() for i in range(self.faces.count()) if self.faces.item(i).checkState() == Qt.CheckState.Checked]
-        target, _ = QFileDialog.getSaveFileName(self, 'Archivo de biblioteca nuevo', '', 'Biblioteca abSCADA (*.abscada-library.json)')
+        target, _ = QFileDialog.getSaveFileName(self, tr('Archivo de biblioteca nuevo'), '', tr('Biblioteca abSCADA (*.abscada-library.json)'))
         if not target:
             return
         try:
             libraries.export_library(self.host.project, names, target, self.name.text().strip(), self.version.text().strip(), self.author.text().strip(), self.license.text().strip())
-            self.host.statusBar().showMessage('Biblioteca publicada: ' + target, 8000)
+            self.host.statusBar().showMessage(tr('Biblioteca publicada: ') + target, 8000)
             self.accept()
         except Exception as exc:
             self.host.error(exc)
@@ -55,11 +56,11 @@ class LibraryDialog(EditorDialog):
     def __init__(self, host):
         super().__init__(host)
         self.host = host
-        self.setWindowTitle('Librerías externas')
+        self.setWindowTitle(tr('Librerías externas'))
         self.resize(900, 610)
         layout = QVBoxLayout(self)
         self.table = QTableWidget(0, 4)
-        self.table.setHorizontalHeaderLabels(['Alias', 'Biblioteca', 'Versión', 'Origen'])
+        self.table.setHorizontalHeaderLabels([tr('Alias'), tr('Biblioteca'), tr('Versión'), tr('Origen')])
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -67,7 +68,7 @@ class LibraryDialog(EditorDialog):
         self.table.horizontalHeader().setStretchLastSection(True)
         layout.addWidget(self.table)
         row = QHBoxLayout()
-        for title, callback in [('Vincular…',self.link),('Actualizar desde…',self.update),('Desvincular',self.unlink),('Publicar biblioteca…',lambda:PublishDialog(host).exec())]:
+        for title, callback in [(tr('Vincular…'),self.link),(tr('Actualizar desde…'),self.update),(tr('Desvincular'),self.unlink),(tr('Publicar biblioteca…'),lambda:PublishDialog(host).exec())]:
             button = QPushButton(title)
             button.clicked.connect(callback)
             row.addWidget(button)
@@ -103,17 +104,17 @@ class LibraryDialog(EditorDialog):
         entry = self.host.project.libraries[alias]
         package = entry['package']
         rows = []
-        types = {'bool':'Booleano','int':'Entero','float':'Real','string':'Texto'}
+        types = {'bool':tr('Booleano'),'int':tr('Entero'),'float':tr('Real'),'string':tr('Texto')}
         for name, doc in package['faceplates'].items():
-            parameters = '<br>'.join(escape(key)+' · '+types[kind] for key,kind in doc.get('parameters',{}).items()) or 'Sin parámetros'
+            parameters = '<br>'.join(escape(key)+' · '+types[kind] for key,kind in doc.get('parameters',{}).items()) or tr('Sin parámetros')
             rows.append('<tr><td><b>'+escape(alias+'__'+name)+'</b><br>'+escape(doc.get('title',''))+'</td><td>'+parameters+'</td></tr>')
         self.details.setHtml('<h3>'+escape(package['name'])+' · '+escape(package['version'])+'</h3>'
             +'<p>Autor: '+escape(str(package.get('author',''))) +'<br>Licencia: '+escape(str(package.get('license','')))+'</p>'
-            +'<table cellpadding="8"><tr><th align="left">Objeto</th><th align="left">Parámetros</th></tr>'+''.join(rows)+'</table>')
+            +tr('<table cellpadding="8"><tr><th align="left">Objeto</th><th align="left">Parámetros</th></tr>')+''.join(rows)+'</table>')
         self.details.setToolTip('SHA-256: '+entry['sha256'])
 
     def source(self, initial=''):
-        return QFileDialog.getOpenFileName(self, 'Librería', initial, 'Biblioteca abSCADA (*.json)')[0]
+        return QFileDialog.getOpenFileName(self, tr('Librería'), initial, tr('Biblioteca abSCADA (*.json)'))[0]
 
     def apply(self, operation):
         if self.host.mutate(operation):
@@ -123,7 +124,7 @@ class LibraryDialog(EditorDialog):
         source = self.source()
         if not source:
             return
-        alias, ok = QInputDialog.getText(self, 'Vincular biblioteca', 'Alias en este proyecto', text='equipos')
+        alias, ok = QInputDialog.getText(self, tr('Vincular biblioteca'), tr('Alias en este proyecto'), text=tr('equipos'))
         if ok:
             self.apply(lambda:libraries.link(self.host.project, source, alias.strip()))
 

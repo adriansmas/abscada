@@ -4,12 +4,13 @@ from PySide6.QtWidgets import (QDialog,QVBoxLayout,QFormLayout,QLineEdit,QSpinBo
                               QLabel,QPushButton,QPlainTextEdit,QHBoxLayout,QTabWidget)
 from .versioning import ProjectGit
 from .dialogs import EditorDialog as QDialog
+from .i18n import tr
 
 
 class NewDocumentDialog(QDialog):
     def __init__(self,host,faceplate=False):
         super().__init__(host); self.host=host; self.faceplate=faceplate
-        self.setWindowTitle('Nuevo objeto de librería' if faceplate else 'Nueva pantalla')
+        self.setWindowTitle(tr('Nuevo objeto de librería') if faceplate else tr('Nueva pantalla'))
         self.resize(430,300); body=QVBoxLayout(self); form=QFormLayout()
         self.name=QLineEdit(); self.name.setObjectName('documentName')
         self.title=QLineEdit(); self.title.setObjectName('documentTitle')
@@ -18,10 +19,10 @@ class NewDocumentDialog(QDialog):
         from .project_settings import screen_size
         width,height=(320,180) if faceplate else screen_size(host.project)
         self.width.setValue(width); self.height.setValue(height)
-        for label,field in [('Nombre de archivo',self.name),('Título',self.title),('Ancho (px)',self.width),('Alto (px)',self.height)]: form.addRow(label,field)
+        for label,field in [(tr('Nombre de archivo'),self.name),(tr('Título'),self.title),(tr('Ancho (px)'),self.width),(tr('Alto (px)'),self.height)]: form.addRow(label,field)
         body.addLayout(form); self.error=QLabel(); body.addWidget(self.error)
         buttons=QDialogButtonBox(QDialogButtonBox.StandardButton.Ok|QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Ok).setText('Crear')
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText(tr('Crear'))
         buttons.accepted.connect(self.accept); buttons.rejected.connect(self.reject); body.addWidget(buttons)
 
     def accept(self):
@@ -32,7 +33,7 @@ class NewDocumentDialog(QDialog):
         except ValueError as exc:
             self.error.setText(str(exc)); return
         if not re.fullmatch(r'[A-Za-z0-9_-]+',name) or name.casefold() in {n.casefold() for n in collection}:
-            self.error.setText('Nombre inválido o ya existente'); return
+            self.error.setText(tr('Nombre inválido o ya existente')); return
         super().accept()
 
     def document(self):
@@ -43,14 +44,14 @@ class NewDocumentDialog(QDialog):
 
 class VersionDialog(QDialog):
     def __init__(self,host):
-        super().__init__(host); self.host=host; self.setWindowTitle('Versiones del proyecto'); self.resize(780,520)
+        super().__init__(host); self.host=host; self.setWindowTitle(tr('Versiones del proyecto')); self.resize(780,520)
         layout=QVBoxLayout(self); bar=QHBoxLayout()
-        self.enable=QPushButton('Activar Git'); self.enable.clicked.connect(self.initialize); bar.addWidget(self.enable)
-        save=QPushButton('Guardar proyecto y crear versión'); save.clicked.connect(self.save); bar.addWidget(save)
-        refresh=QPushButton('Actualizar'); refresh.clicked.connect(self.refresh); bar.addWidget(refresh)
+        self.enable=QPushButton(tr('Activar Git')); self.enable.clicked.connect(self.initialize); bar.addWidget(self.enable)
+        save=QPushButton(tr('Guardar proyecto y crear versión')); save.clicked.connect(self.save); bar.addWidget(save)
+        refresh=QPushButton(tr('Actualizar')); refresh.clicked.connect(self.refresh); bar.addWidget(refresh)
         layout.addLayout(bar); tabs=QTabWidget(); layout.addWidget(tabs)
-        self.history=QPlainTextEdit(); self.history.setReadOnly(True); tabs.addTab(self.history,'Historial')
-        self.changes=QPlainTextEdit(); self.changes.setReadOnly(True); tabs.addTab(self.changes,'Última versión')
+        self.history=QPlainTextEdit(); self.history.setReadOnly(True); tabs.addTab(self.history,tr('Historial'))
+        self.changes=QPlainTextEdit(); self.changes.setReadOnly(True); tabs.addTab(self.changes,tr('Última versión'))
         self.refresh()
 
     def refresh(self):

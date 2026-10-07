@@ -23,13 +23,14 @@ import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
+from .i18n import tr
 
 PERMISSIONS = {
-    "operate": "Mandos y consignas",
-    "acknowledge": "Reconocer alarmas",
-    "recipes": "Recetas y parámetros de proceso",
-    "manage_users": "Gestionar usuarios",
-    "opcua": "Acceso por OPC UA",
+    "operate": tr("Mandos y consignas"),
+    "acknowledge": tr("Reconocer alarmas"),
+    "recipes": tr("Recetas y parámetros de proceso"),
+    "manage_users": tr("Gestionar usuarios"),
+    "opcua": tr("Acceso por OPC UA"),
 }
 
 DEFAULT_ROLES = [
@@ -52,37 +53,37 @@ _SCRYPT = dict(n=2 ** 14, r=8, p=1, dklen=32)
 def _integer(config, key, low, high):
     value = config.get(key)
     if isinstance(value, bool) or not isinstance(value, int) or not low <= value <= high:
-        raise ValueError(f"Seguridad: {key} debe ser un entero entre {low} y {high}")
+        raise ValueError(tr("Seguridad: {key} debe ser un entero entre {low} y {high}", key=key, low=low, high=high))
 
 
 def validate_security(security):
     if not isinstance(security, dict) or set(security) - set(default_security()):
-        raise ValueError("Configuración de seguridad inválida")
+        raise ValueError(tr("Configuración de seguridad inválida"))
     if not isinstance(security.get("enabled"), bool):
-        raise ValueError("Seguridad: enabled debe ser booleano")
+        raise ValueError(tr("Seguridad: enabled debe ser booleano"))
     _integer(security, "session_timeout_minutes", 0, 24 * 60)
     _integer(security, "password_min_length", 8, 128)
     _integer(security, "max_failed_logins", 1, 100)
     _integer(security, "lockout_minutes", 1, 24 * 60)
     roles = security.get("roles")
     if not isinstance(roles, list) or not roles:
-        raise ValueError("Seguridad: define al menos un rol")
+        raise ValueError(tr("Seguridad: define al menos un rol"))
     ids = set()
     for role in roles:
         if not isinstance(role, dict) or set(role) != {"id", "name", "permissions"}:
-            raise ValueError("Seguridad: rol inválido")
+            raise ValueError(tr("Seguridad: rol inválido"))
         if not isinstance(role["id"], str) or not _NAME.match(role["id"]) or role["id"] in ids:
-            raise ValueError(f"Seguridad: identificador de rol inválido o repetido: {role.get('id')}")
+            raise ValueError(tr("Seguridad: identificador de rol inválido o repetido: {get}", get=role.get('id')))
         ids.add(role["id"])
         if not isinstance(role["name"], str) or not role["name"].strip():
-            raise ValueError("Seguridad: el rol necesita un nombre")
+            raise ValueError(tr("Seguridad: el rol necesita un nombre"))
         if not isinstance(role["permissions"], list) or set(role["permissions"]) - set(PERMISSIONS):
-            raise ValueError(f"Seguridad: permiso desconocido en el rol {role['id']}")
+            raise ValueError(tr("Seguridad: permiso desconocido en el rol {id}", id=role['id']))
 
 
 def validate_element_permission(element):
     if "permission" in element and element["permission"] not in PERMISSIONS:
-        raise ValueError(f"Permiso desconocido: {element['permission']}")
+        raise ValueError(tr("Permiso desconocido: {permission}", permission=element['permission']))
 
 
 def required_permission(element):
@@ -119,11 +120,11 @@ def verify_password(password, record):
 
 def check_password_policy(name, password, policy):
     if not isinstance(password, str) or len(password) < policy["password_min_length"]:
-        raise ValueError(f"La contraseña necesita al menos {policy['password_min_length']} caracteres")
+        raise ValueError(tr("La contraseña necesita al menos {password_min_length} caracteres", password_min_length=policy['password_min_length']))
     if password.strip().lower() == name.lower():
-        raise ValueError("La contraseña no puede ser el nombre de usuario")
+        raise ValueError(tr("La contraseña no puede ser el nombre de usuario"))
     if len(set(password)) < 4:
-        raise ValueError("La contraseña es demasiado simple")
+        raise ValueError(tr("La contraseña es demasiado simple"))
 
 
 USERS_FILE = "users.json"
@@ -154,7 +155,7 @@ class UserStore:
             return dict(version=1, users=[])
         data = json.loads(self.path.read_text(encoding="utf-8"))
         if data.get("version") != 1 or not isinstance(data.get("users"), list):
-            raise ValueError("Archivo de usuarios con formato desconocido")
+            raise ValueError(tr("Archivo de usuarios con formato desconocido"))
         return data
 
     def _migrate(self):
@@ -195,19 +196,19 @@ class UserStore:
         data = self.load()
         user = self.find(name, data)
         if user is None:
-            raise KeyError(f"Usuario inexistente: {name}")
+            raise KeyError(tr("Usuario inexistente: {name}", name=name))
         change(user)
         self.save(data)
         return user
 
     def create(self, name, password, roles, policy, full_name="", must_change=True):
         if not _NAME.match(name or ""):
-            raise ValueError("Nombre de usuario inválido: letras, números, punto, guion y guion bajo")
+            raise ValueError(tr("Nombre de usuario inválido: letras, números, punto, guion y guion bajo"))
         check_password_policy(name, password, policy)
         self._check_roles(roles, policy)
         data = self.load()
         if self.find(name, data):
-            raise ValueError(f"El usuario ya existe: {name}")
+            raise ValueError(tr("El usuario ya existe: {name}", name=name))
         now = time.time()
         data["users"].append(dict(name=name, full_name=full_name, roles=list(roles), password=hash_password(password),
                                   must_change=must_change, disabled=False, created=now, password_changed=now))
@@ -240,7 +241,7 @@ class UserStore:
         data = self.load()
         user = self.find(name, data)
         if user is None:
-            raise KeyError(f"Usuario inexistente: {name}")
+            raise KeyError(tr("Usuario inexistente: {name}", name=name))
         data["users"].remove(user)
         self.save(data)
 
@@ -248,7 +249,7 @@ class UserStore:
     def _check_roles(roles, policy):
         known = {r["id"] for r in policy["roles"]}
         if not isinstance(roles, (list, tuple)) or not roles or set(roles) - known:
-            raise ValueError("Asigna al menos un rol existente")
+            raise ValueError(tr("Asigna al menos un rol existente"))
 
     def authenticate(self, name, password, policy, now=None):
         now = time.time() if now is None else now
@@ -257,15 +258,15 @@ class UserStore:
         if user is None:
             # Spend the same time as a real check so response time does not reveal accounts.
             verify_password(password or "", _DUMMY)
-            raise AuthenticationError("Usuario o contraseña incorrectos")
+            raise AuthenticationError(tr("Usuario o contraseña incorrectos"))
         if user.get("disabled"):
-            raise AuthenticationError("Usuario desactivado")
+            raise AuthenticationError(tr("Usuario desactivado"))
         key = user["name"].lower()
         with self._lock:
             failed, locked_until = self.attempts.get(key, (0, 0))
         if locked_until > now:
             minutes = int((locked_until - now) // 60) + 1
-            raise AuthenticationError(f"Usuario bloqueado por intentos fallidos; espera {minutes} min")
+            raise AuthenticationError(tr("Usuario bloqueado por intentos fallidos; espera {minutes} min", minutes=minutes))
         if not verify_password(password or "", user["password"]):
             with self._lock:
                 failed += 1
@@ -273,7 +274,7 @@ class UserStore:
                     self.attempts[key] = (0, now + policy["lockout_minutes"] * 60)
                 else:
                     self.attempts[key] = (failed, 0)
-            raise AuthenticationError("Usuario o contraseña incorrectos")
+            raise AuthenticationError(tr("Usuario o contraseña incorrectos"))
         self.unlock(key)
         return dict(user)
 

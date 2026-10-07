@@ -9,6 +9,7 @@ from logging.handlers import RotatingFileHandler
 
 from . import __version__
 from .app_paths import frozen, log_dir
+from .i18n import tr
 
 log = logging.getLogger("abscada")
 
@@ -69,9 +70,9 @@ def show_crash_dialog(exc_type, exc_value, tb):
     app = QApplication.instance()
     if app is None or QThread.currentThread() is not app.thread():
         return
-    box = QMessageBox(QMessageBox.Icon.Critical, "abSCADA · error inesperado",
-                      f"Se ha producido un error inesperado:\n\n{exc_value}\n\n"
-                      f"Se ha guardado el detalle en:\n{log_file()}\n\n"
-                      "Puedes seguir trabajando, pero guarda el proyecto y reinicia si algo no responde.")
-    box.setDetailedText(f"abSCADA {__version__}\n{platform.platform()}\n\n{report(exc_type, exc_value, tb)}")
+    box = QMessageBox(QMessageBox.Icon.Critical, tr("abSCADA · error inesperado"),
+                      tr("Se ha producido un error inesperado:\n\n{error}\n\nSe ha guardado el detalle en:\n{log}\n\n"
+                         "Puedes seguir trabajando, pero guarda el proyecto y reinicia si algo no responde.",
+                         error=exc_value, log=log_file()))
+    box.setDetailedText(tr("abSCADA {__version__}\n{platform}\n\n{report}", __version__=__version__, platform=platform.platform(), report=report(exc_type, exc_value, tb)))
     box.exec()

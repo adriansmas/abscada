@@ -11,6 +11,7 @@ import copy
 import json
 from functools import lru_cache
 from pathlib import Path
+from .i18n import tr
 
 SYSTEM = "estandar"
 PREFIX = SYSTEM + "__"
@@ -56,9 +57,9 @@ def check(project):
     for name, document in project.faceplates.items():
         if name.startswith(PREFIX):
             if name not in _templates():
-                raise ValueError(f"El prefijo «{PREFIX}» está reservado a la librería estándar: {name}")
+                raise ValueError(tr("El prefijo «{PREFIX}» está reservado a la librería estándar: {name}", PREFIX=PREFIX, name=name))
             if document != _templates()[name]:
-                raise ValueError(f"{name}: objeto de la librería estándar, de solo lectura")
+                raise ValueError(tr("{name}: objeto de la librería estándar, de solo lectura", name=name))
 
 
 def asset(relative):
@@ -66,7 +67,7 @@ def asset(relative):
     resource_name(relative)
     path = (FOLDER / relative).resolve()
     if not path.is_relative_to(FOLDER.resolve()) or not path.is_file():
-        raise ValueError("Recurso inexistente en la librería estándar: " + relative)
+        raise ValueError(tr("Recurso inexistente en la librería estándar: ") + relative)
     return path
 
 

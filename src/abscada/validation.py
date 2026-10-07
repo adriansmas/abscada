@@ -1,5 +1,6 @@
 """Portable project identifiers shared by model and authoring dialogs."""
 import re
+from .i18n import tr
 
 
 def filename(name):
@@ -7,7 +8,7 @@ def filename(name):
     if (not isinstance(name,str) or not name.strip() or name in {'.','..'} or
         re.search(r'[<>:"/\\|?*\x00-\x1f]',name) or name.endswith((' ','.')) or
         name.split('.')[0].upper() in reserved):
-        raise ValueError('Nombre de archivo inválido o reservado')
+        raise ValueError(tr('Nombre de archivo inválido o reservado'))
 
 
 def filenames(names):
@@ -15,5 +16,5 @@ def filenames(names):
     for name in names:
         filename(name)
         if name.casefold() in seen:
-            raise ValueError('Nombres de archivo duplicados (mayúsculas/minúsculas)')
+            raise ValueError(tr('Nombres de archivo duplicados (mayúsculas/minúsculas)'))
         seen.add(name.casefold())

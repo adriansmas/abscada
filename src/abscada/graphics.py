@@ -9,11 +9,12 @@ from PySide6.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsView, QGr
 from .text_lists import display_text
 from .drawing import PATH_KINDS, SHAPE_KINDS, world_points, set_points
 from .vector_graphics import element_path, paint_vector, DrawingInteraction
+from .i18n import tr
 
-PALETTE = {"text": "Texto", "lamp": "Piloto", "button": "Botón",
-           "input": "Entrada", "bar": "Barra", "gauge": "Indicador", "image": "Imagen", "faceplate": "Objeto de librería",
-           "trend": "Tendencia", "alarm_view": "Alarmas", "line": "Línea", "polyline": "Polilínea",
-           "pipe": "Tubería", "rectangle": "Rectángulo", "ellipse": "Elipse", "text_list": "Lista de textos", "screen_container": "Contenedor de pantalla"}
+PALETTE = {"text": tr("Texto"), "lamp": tr("Piloto"), "button": tr("Botón"),
+           "input": tr("Entrada"), "bar": tr("Barra"), "gauge": tr("Indicador"), "image": tr("Imagen"), "faceplate": tr("Objeto de librería"),
+           "trend": tr("Tendencia"), "alarm_view": tr("Alarmas"), "line": tr("Línea"), "polyline": tr("Polilínea"),
+           "pipe": tr("Tubería"), "rectangle": tr("Rectángulo"), "ellipse": tr("Elipse"), "text_list": tr("Lista de textos"), "screen_container": tr("Contenedor de pantalla")}
 
 
 def tool_icon(kind):
@@ -209,7 +210,7 @@ def draw_element(painter, e, host, rect=None):
         painter.setBrush(QColor("#f3f6fa"))
         painter.drawRoundedRect(rect, 5, 5)
         painter.setPen(QColor("#8092a7"))
-        painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, "Imagen")
+        painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, tr("Imagen"))
         return
     if kind == "button":
         painter.setBrush(QColor(e.get("color", "#e6f3f1")))
@@ -308,7 +309,7 @@ class CanvasView(DrawingInteraction, QGraphicsView):
         field = self.host.zoom_field; field.blockSignals(True)
         percent = f"{round(self.transform().m11()*100)}%"
         if self.auto_fit:
-            field.setItemText(0,f"Encajar ({percent})"); field.setCurrentIndex(0)
+            field.setItemText(0,tr("Encajar ({percent})", percent=percent)); field.setCurrentIndex(0)
         else:
             index = field.findText(percent)
             if index < 0:
@@ -421,8 +422,8 @@ class ElementItem(QGraphicsObject):
         self.setOpacity(1 if enabled or self.element.get("dynamics",{}).get("disabled") else .55)
         sample=self.host.samples.get(self.element.get('tag'))
         detail=self.element.get('tag',self.element['id'])
-        if sample and sample.quality!='good': detail+=' · Último valor; calidad '+{'bad':'mala','uncertain':'incierta'}.get(sample.quality,sample.quality)
-        if not enabled: detail+=' · '+self.element.get('dynamics',{}).get('disabled_reason','No se cumple el permiso de operación')
+        if sample and sample.quality!='good': detail+=tr(' · Último valor; calidad ')+{'bad':'mala','uncertain':'incierta'}.get(sample.quality,sample.quality)
+        if not enabled: detail+=' · '+self.element.get('dynamics',{}).get('disabled_reason',tr('No se cumple el permiso de operación'))
         self.setToolTip(detail)
         self.update()
 

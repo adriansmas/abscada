@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, Q
 from PySide6.QtGui import QColor
 from .operational_config import OPERATORS, ALARM_COLUMNS, DEFAULT_ALARM_COLUMNS
 from .dialogs import EditorDialog as QDialog
+from .i18n import tr
 
 
 def control(kind, value, options=()):
@@ -59,7 +60,7 @@ class ColorControl(QWidget):
         button = QPushButton("…"); button.setFixedWidth(36); button.clicked.connect(self.choose); layout.addWidget(button)
 
     def choose(self):
-        selected = QColorDialog.getColor(QColor(self.input.text()), self, "Color")
+        selected = QColorDialog.getColor(QColor(self.input.text()), self, tr("Color"))
         if selected.isValid():
             self.input.setText(selected.name())
 
@@ -85,7 +86,7 @@ class RecordDialog(QDialog):
             form.addRow(label, widget)
         layout.addLayout(form)
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Save).setText("Aceptar")
+        buttons.button(QDialogButtonBox.StandardButton.Save).setText(tr("Aceptar"))
         buttons.accepted.connect(self.accept); buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
 
@@ -100,13 +101,13 @@ class RecordsPage(QWidget):
         self.columns, self.fields, self.title, self.identity = columns, fields, title, identity
         layout = QVBoxLayout(self); layout.setContentsMargins(0, 6, 0, 0)
         toolbar = QHBoxLayout()
-        for text, callback in (("+ Añadir", lambda: self.edit(None)), ("Editar…", self.edit_selected), ("Eliminar", self.delete)):
+        for text, callback in ((tr("+ Añadir"), lambda: self.edit(None)), (tr("Editar…"), self.edit_selected), (tr("Eliminar"), self.delete)):
             button = QPushButton(text); button.clicked.connect(callback); toolbar.addWidget(button)
-            if text == "+ Añadir":
+            if text == tr("+ Añadir"):
                 button.setObjectName("primary")
         toolbar.addStretch()
         # Search box apart from the buttons: it only filters the list.
-        self.search = QLineEdit(); self.search.setPlaceholderText("🔍 Filtrar la lista…"); self.search.setObjectName("searchField")
+        self.search = QLineEdit(); self.search.setPlaceholderText(tr("🔍 Filtrar la lista…")); self.search.setObjectName("searchField")
         self.search.setClearButtonEnabled(True); self.search.setFixedWidth(280)
         self.search.textChanged.connect(self.refresh)
         toolbar.addWidget(self.search)
@@ -133,22 +134,21 @@ class RecordsPage(QWidget):
         self.rows = [row for row in everything if needle in str(row).casefold()]
         self.notice.setVisible(bool(needle))
         if needle:
-            self.notice.setText(f"Filtro «{self.search.text()}»: se muestran {len(self.rows)} de {len(everything)} · "
-                                f"<a href='clear'>Quitar el filtro</a>")
+            self.notice.setText(tr("Filtro «{text}»: se muestran {len} de {len2} · <a href='clear'>Quitar el filtro</a>", text=self.search.text(), len=len(self.rows), len2=len(everything)))
         self.table.setSortingEnabled(False)
         self.table.setRowCount(len(self.rows))
         for index, row in enumerate(self.rows):
             for column, (key, _) in enumerate(self.columns):
                 val = row.get(key, "")
-                translated = {"cyclic":"Cíclico","change":"Por cambio","left":"Izquierda","right":"Derecha",
-                    "pending":"Pendientes","active":"Activas","history":"Histórico","events":"Eventos"}
+                translated = {"cyclic":tr("Cíclico"),"change":tr("Por cambio"),"left":tr("Izquierda"),"right":tr("Derecha"),
+                    "pending":tr("Pendientes"),"active":tr("Activas"),"history":tr("Histórico"),"events":tr("Eventos")}
                 if key=="condition":
                     val=OPERATORS.get(val,val)
                 elif key in {"mode","side"}:
                     val=translated.get(val,val)
                 if isinstance(val, list):
                     val = ", ".join(str(v) for v in val)
-                item = QTableWidgetItem("Sí" if val is True else "No" if val is False else str(val))
+                item = QTableWidgetItem(tr("Sí") if val is True else tr("No") if val is False else str(val))
                 item.setData(Qt.ItemDataRole.UserRole,row[self.identity])
                 if isinstance(val,(int,float)) and not isinstance(val,bool):
                     item.setData(Qt.ItemDataRole.DisplayRole,val)
@@ -213,7 +213,7 @@ def choice(key, label, choices, default=None):
 
 
 def color_field(default="#147d75"):
-    return "color", "Color", "color", default, ()
+    return "color", tr("Color"), "color", default, ()
 
 
 class OperationalEngineering:
@@ -223,20 +223,20 @@ class OperationalEngineering:
         self.host, self.pages = host, []
         self.alarms = QTabWidget()
         self.alarm_definitions = self.records(lambda: host.project.alarms["items"], lambda rows: host.project.alarms.__setitem__("items", rows),
-            [("id", "ID"), ("message", "Mensaje"), ("tag", "Variable"), ("category", "Categoría"), ("condition", "Condición"), ("threshold", "Umbral"), ("priority", "Prioridad"), ("enabled", "Habilitada")], self.alarm_fields, "Alarma")
+            [("id", "ID"), ("message", tr("Mensaje")), ("tag", tr("Variable")), ("category", tr("Categoría")), ("condition", tr("Condición")), ("threshold", tr("Umbral")), ("priority", tr("Prioridad")), ("enabled", tr("Habilitada"))], self.alarm_fields, tr("Alarma"))
         self.alarm_definitions.prepare_dialog = self.configure_alarm_dialog
         self.categories = self.records(lambda: host.project.alarms["categories"], lambda rows: host.project.alarms.__setitem__("categories", rows),
-            [("id", "ID"), ("name", "Nombre"), ("color", "Color")], lambda: [text("id", "ID"), text("name", "Nombre"), color_field("#d74c4c")], "Categoría de alarmas")
-        self.alarms.addTab(self.alarm_definitions, "Alarmas")
-        self.alarms.addTab(self.categories, "Categorías")
+            [("id", "ID"), ("name", tr("Nombre")), ("color", tr("Color"))], lambda: [text("id", "ID"), text("name", tr("Nombre")), color_field("#d74c4c")], tr("Categoría de alarmas"))
+        self.alarms.addTab(self.alarm_definitions, tr("Alarmas"))
+        self.alarms.addTab(self.categories, tr("Categorías"))
         # Retention lives in «Ajustes del proyecto → Registros»; the SQLite copy in «Herramientas».
         self.historian = QWidget(); layout = QVBoxLayout(self.historian); layout.setContentsMargins(0, 0, 0, 0)
-        hint = QLabel("Cada fichero de registro guarda un grupo de variables con su frecuencia. Las gráficas los consultan "
-                      "para mostrar el histórico.")
+        hint = QLabel(tr("Cada fichero de registro guarda un grupo de variables con su frecuencia. Las gráficas los consultan "
+                      "para mostrar el histórico."))
         hint.setWordWrap(True); hint.setObjectName("muted"); layout.addWidget(hint)
         self.logs = self.records(lambda: self.host.project.historian["files"],
             lambda rows: self.host.project.historian.__setitem__("files", rows),
-            [("id", "Fichero"), ("name", "Nombre"), ("interval_ms", "Frecuencia (ms)"), ("variables", "Variables")], self.log_fields, "Fichero de registro")
+            [("id", tr("Fichero")), ("name", tr("Nombre")), ("interval_ms", tr("Frecuencia (ms)")), ("variables", tr("Variables"))], self.log_fields, tr("Fichero de registro"))
         layout.addWidget(self.logs)
         # Trends and alarm viewers are configured from their control on the screen (configure_viewer).
         self.refresh()
@@ -265,22 +265,22 @@ class OperationalEngineering:
 
     def alarm_fields(self):
         categories = [(c["id"], c["name"]) for c in self.host.project.alarms["categories"]]
-        return [text("id", "ID"), text("message", "Mensaje"), choice("tag", "Variable", self.tags({"bool", "int", "float"})),
-            choice("category", "Categoría", categories), choice("condition", "Condición", list(OPERATORS.items()), "high"),
-            numeric("threshold", "Umbral"), numeric("hysteresis", "Histéresis"), numeric("on_delay_ms", "Retardo entrada (ms)", integer=True),
-            numeric("off_delay_ms", "Retardo salida (ms)", integer=True), numeric("priority", "Prioridad (1–1000)", 500, True),
-            boolean("ack_required", "Requiere ACK"), boolean("enabled", "Habilitada")]
+        return [text("id", "ID"), text("message", tr("Mensaje")), choice("tag", tr("Variable"), self.tags({"bool", "int", "float"})),
+            choice("category", tr("Categoría"), categories), choice("condition", tr("Condición"), list(OPERATORS.items()), "high"),
+            numeric("threshold", tr("Umbral")), numeric("hysteresis", tr("Histéresis")), numeric("on_delay_ms", tr("Retardo entrada (ms)"), integer=True),
+            numeric("off_delay_ms", tr("Retardo salida (ms)"), integer=True), numeric("priority", "Prioridad (1–1000)", 500, True),
+            boolean("ack_required", tr("Requiere ACK")), boolean("enabled", tr("Habilitada"))]
 
     def alarm_view_fields(self):
-        return [text("title", "Título", "Alarmas"),
-            choice("mode", "Vista inicial", [("pending", "Pendientes"), ("active", "Activas"), ("history", "Histórico"), ("events", "Eventos")], "pending"),
-            numeric("min_priority", "Prioridad mínima", 1, True),
-            ("categories", "Categorías", "multi", [], [(c["id"],c["name"]) for c in self.host.project.alarms["categories"]]),
-            ("columns", "Columnas", "multi", DEFAULT_ALARM_COLUMNS, ALARM_COLUMNS), boolean("allow_ack", "Permitir ACK")]
+        return [text("title", tr("Título"), tr("Alarmas")),
+            choice("mode", tr("Vista inicial"), [("pending", tr("Pendientes")), ("active", tr("Activas")), ("history", tr("Histórico")), ("events", tr("Eventos"))], "pending"),
+            numeric("min_priority", tr("Prioridad mínima"), 1, True),
+            ("categories", tr("Categorías"), "multi", [], [(c["id"],c["name"]) for c in self.host.project.alarms["categories"]]),
+            ("columns", tr("Columnas"), "multi", DEFAULT_ALARM_COLUMNS, ALARM_COLUMNS), boolean("allow_ack", tr("Permitir ACK"))]
 
     def edit_alarm_view(self, name):
         """Configuration of one alarm viewer control (each control owns its configuration)."""
-        dialog = RecordDialog(self.host, "Configurar visor de alarmas", self.alarm_view_fields(), self.host.project.alarm_views[name])
+        dialog = RecordDialog(self.host, tr("Configurar visor de alarmas"), self.alarm_view_fields(), self.host.project.alarm_views[name])
         def accept():
             data = dialog.data()
             if self.host.mutate(lambda: self.host.project.alarm_views[name].update(data)):
@@ -290,9 +290,9 @@ class OperationalEngineering:
         dialog.exec()
 
     def log_fields(self):
-        return [text("id", "Fichero", "registro_"+uuid.uuid4().hex[:6]), text("name", "Nombre", "Registro"),
-            numeric("interval_ms", "Frecuencia (ms)", 1000, True),
-            ("variables", "Variables", "multi", [], self.tags())]
+        return [text("id", tr("Fichero"), "registro_"+uuid.uuid4().hex[:6]), text("name", tr("Nombre"), tr("Registro")),
+            numeric("interval_ms", tr("Frecuencia (ms)"), 1000, True),
+            ("variables", tr("Variables"), "multi", [], self.tags())]
 
     def backup(self):
         from .storage import ArchiveReader, database_path
@@ -300,14 +300,14 @@ class OperationalEngineering:
         sources = [database_path(self.host.project)] + sorted((self.host.project.root / "runtime" / "records").rglob("*.sqlite3"))
         sources = [p for p in sources if p.exists()]
         if not sources:
-            self.host.error("No hay archivos SQLite para copiar")
+            self.host.error(tr("No hay archivos SQLite para copiar"))
             return
         labels = [str(p.relative_to(self.host.project.root / "runtime")) for p in sources]
-        selected, ok = QInputDialog.getItem(self.host, "Copia SQLite", "Archivo", labels, 0, False)
+        selected, ok = QInputDialog.getItem(self.host, tr("Copia SQLite"), tr("Archivo"), labels, 0, False)
         if not ok:
             return
         source = sources[labels.index(selected)]
-        filename, _ = QFileDialog.getSaveFileName(self.host, "Copia SQLite", source.name, "SQLite (*.sqlite3)")
+        filename, _ = QFileDialog.getSaveFileName(self.host, tr("Copia SQLite"), source.name, tr("SQLite (*.sqlite3)"))
         if not filename:
             return
         future = READERS.submit(ArchiveReader(source).backup, filename)
@@ -317,7 +317,7 @@ class OperationalEngineering:
                 return
             timer.stop(); timer.deleteLater()
             try:
-                future.result(); self.host.statusBar().showMessage("Copia SQLite guardada", 5000)
+                future.result(); self.host.statusBar().showMessage(tr("Copia SQLite guardada"), 5000)
             except Exception as exc:
                 self.host.error(exc)
         timer.timeout.connect(completed); timer.start(100)
@@ -329,12 +329,12 @@ class OperationalEngineering:
     def edit_trend(self, name):
         """Configuration of one trend control (each control owns its configuration)."""
         draft = copy.deepcopy(self.host.project.trends[name])
-        dialog = QDialog(self.host); dialog.setWindowTitle("Configurar gráfica"); dialog.resize(880, 570)
+        dialog = QDialog(self.host); dialog.setWindowTitle(tr("Configurar gráfica")); dialog.resize(880, 570)
         layout = QVBoxLayout(dialog); form = QFormLayout()
         title = QLineEdit(draft["title"])
         title.setObjectName("trendTitle")
         seconds = QSpinBox(); seconds.setRange(10, 31536000); seconds.setValue(draft.get("window_seconds", 600))
-        for label, widget in (("Título", title), ("Ventana (s)", seconds)):
+        for label, widget in ((tr("Título"), title), (tr("Ventana (s)"), seconds)):
             form.addRow(label, widget)
         layout.addLayout(form); tabs = QTabWidget(); layout.addWidget(tabs)
         class DraftHost:
@@ -342,19 +342,19 @@ class OperationalEngineering:
                 callback(); axes.refresh(); curves.refresh(); return True
         holder = DraftHost()
         axes = RecordsPage(holder, lambda: draft["axes"], lambda rows: draft.__setitem__("axes", rows),
-            [("id", "ID"), ("title", "Título"), ("side", "Lado"), ("auto", "Auto"), ("min", "Mínimo"), ("max", "Máximo"), ("visible", "Visible")],
-            lambda: [text("id", "ID"), text("title", "Título"), choice("side", "Lado", [("left", "Izquierda"), ("right", "Derecha")], "left"),
-                boolean("auto", "Escala automática"), numeric("min", "Mínimo"), numeric("max", "Máximo", 100), boolean("visible", "Visible")], "Eje")
+            [("id", "ID"), ("title", tr("Título")), ("side", tr("Lado")), ("auto", tr("Auto")), ("min", tr("Mínimo")), ("max", tr("Máximo")), ("visible", tr("Visible"))],
+            lambda: [text("id", "ID"), text("title", tr("Título")), choice("side", tr("Lado"), [("left", tr("Izquierda")), ("right", tr("Derecha"))], "left"),
+                boolean("auto", tr("Escala automática")), numeric("min", tr("Mínimo")), numeric("max", tr("Máximo"), 100), boolean("visible", tr("Visible"))], tr("Eje"))
         curves = RecordsPage(holder, lambda: draft["curves"], lambda rows: draft.__setitem__("curves", rows),
-            [("id", "ID"), ("tag", "Variable"), ("axis", "Eje"), ("color", "Color"), ("width", "Grosor"), ("visible", "Visible")],
-            lambda: [text("id", "ID", "curve_"+uuid.uuid4().hex[:6]), choice("tag", "Variable", self.tags({"int", "float", "bool"})),
-                choice("axis", "Eje", [(a["id"], a.get("title", a["id"])) for a in draft["axes"]]), color_field(),
-                numeric("width", "Grosor", 2), boolean("visible", "Visible")], "Curva")
+            [("id", "ID"), ("tag", tr("Variable")), ("axis", tr("Eje")), ("color", tr("Color")), ("width", tr("Grosor")), ("visible", tr("Visible"))],
+            lambda: [text("id", "ID", "curve_"+uuid.uuid4().hex[:6]), choice("tag", tr("Variable"), self.tags({"int", "float", "bool"})),
+                choice("axis", tr("Eje"), [(a["id"], a.get("title", a["id"])) for a in draft["axes"]]), color_field(),
+                numeric("width", tr("Grosor"), 2), boolean("visible", tr("Visible"))], tr("Curva"))
         # Draft dialogs are parented to their QWidget page, not the draft controller.
         axes.host = curves.host = holder
-        tabs.addTab(axes, "Ejes"); tabs.addTab(curves, "Curvas")
+        tabs.addTab(axes, tr("Ejes")); tabs.addTab(curves, tr("Curvas"))
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Save).setText("Aceptar")
+        buttons.button(QDialogButtonBox.StandardButton.Save).setText(tr("Aceptar"))
         def save():
             draft.update(title=title.text().strip(), window_seconds=seconds.value())
             if self.host.mutate(lambda: self.host.project.trends.__setitem__(name, copy.deepcopy(draft))):

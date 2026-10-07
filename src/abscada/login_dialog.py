@@ -1,12 +1,13 @@
 """Operator login and first-login password change for the runtime."""
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QFormLayout, QLabel, QLineEdit, QVBoxLayout
+from .i18n import tr
 
 
 class LoginDialog(QDialog):
     def __init__(self, runtime, parent=None, reason=""):
         super().__init__(parent)
         self.runtime, self.session = runtime, None
-        self.setWindowTitle("Iniciar sesión")
+        self.setWindowTitle(tr("Iniciar sesión"))
         layout = QVBoxLayout(self)
         if reason:
             note = QLabel(reason); note.setWordWrap(True); layout.addWidget(note)
@@ -14,12 +15,12 @@ class LoginDialog(QDialog):
         self.user = QLineEdit(); self.user.setObjectName("login_user")
         self.password = QLineEdit(); self.password.setObjectName("login_password")
         self.password.setEchoMode(QLineEdit.EchoMode.Password)
-        form.addRow("Usuario", self.user); form.addRow("Contraseña", self.password)
+        form.addRow(tr("Usuario"), self.user); form.addRow(tr("Contraseña"), self.password)
         self.error = QLabel(); self.error.setStyleSheet("color: #ad3030;"); self.error.setWordWrap(True)
         layout.addWidget(self.error)
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Ok).setText("Iniciar sesión")
-        buttons.button(QDialogButtonBox.StandardButton.Cancel).setText("Cancelar")
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText(tr("Iniciar sesión"))
+        buttons.button(QDialogButtonBox.StandardButton.Cancel).setText(tr("Cancelar"))
         buttons.accepted.connect(self.accept); buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
 
@@ -35,7 +36,7 @@ class LoginDialog(QDialog):
             change = ChangePasswordDialog(self.runtime, session, self)
             if change.exec() != QDialog.DialogCode.Accepted:
                 self.runtime.logout()
-                self.error.setText("Debes cambiar la contraseña para continuar")
+                self.error.setText(tr("Debes cambiar la contraseña para continuar"))
                 return
         self.session = session
         super().accept()
@@ -45,27 +46,26 @@ class ChangePasswordDialog(QDialog):
     def __init__(self, runtime, session, parent=None):
         super().__init__(parent)
         self.runtime, self.session = runtime, session
-        self.setWindowTitle("Cambiar contraseña")
+        self.setWindowTitle(tr("Cambiar contraseña"))
         layout = QVBoxLayout(self)
         policy = runtime.security.policy
-        layout.addWidget(QLabel(f"Primer acceso de {session.user}: elige una contraseña propia "
-                                f"(mínimo {policy['password_min_length']} caracteres)."))
+        layout.addWidget(QLabel(tr("Primer acceso de {user}: elige una contraseña propia (mínimo {password_min_length} caracteres).", user=session.user, password_min_length=policy['password_min_length'])))
         form = QFormLayout(); layout.addLayout(form)
         self.first, self.second = QLineEdit(), QLineEdit()
         for field, name in ((self.first, "new_password"), (self.second, "repeat_password")):
             field.setEchoMode(QLineEdit.EchoMode.Password); field.setObjectName(name)
-        form.addRow("Nueva contraseña", self.first); form.addRow("Repetir", self.second)
+        form.addRow(tr("Nueva contraseña"), self.first); form.addRow(tr("Repetir"), self.second)
         self.error = QLabel(); self.error.setStyleSheet("color: #ad3030;"); self.error.setWordWrap(True)
         layout.addWidget(self.error)
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Ok).setText("Guardar")
-        buttons.button(QDialogButtonBox.StandardButton.Cancel).setText("Cancelar")
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText(tr("Guardar"))
+        buttons.button(QDialogButtonBox.StandardButton.Cancel).setText(tr("Cancelar"))
         buttons.accepted.connect(self.accept); buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
 
     def accept(self):
         if self.first.text() != self.second.text():
-            self.error.setText("Las contraseñas no coinciden")
+            self.error.setText(tr("Las contraseñas no coinciden"))
             return
         security = self.runtime.security
         try:

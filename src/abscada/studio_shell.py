@@ -2,10 +2,11 @@
 from PySide6.QtCore import QPointF, QRectF, QSize, Qt
 from PySide6.QtGui import QAction, QColor, QFont, QIcon, QKeySequence, QPainter, QPen, QPixmap, QPolygonF
 from PySide6.QtWidgets import QListWidget, QListWidgetItem
+from .i18n import N_, tr
 
 # key, title shown under the icon. «faceplates» and «types» live inside «screens» and «variables».
-SECTIONS = (("screens", "Pantallas"), ("variables", "Variables"), ("connections", "Conexiones"), ("alarms", "Alarmas"),
-            ("historian", "Registros"), ("automation", "Scripts"), ("diagnostics", "Diagnóstico"))
+SECTIONS = (("screens", tr("Pantallas")), ("variables", tr("Variables")), ("connections", tr("Conexiones")), ("alarms", tr("Alarmas")),
+            ("historian", tr("Registros")), ("automation", tr("Scripts")), ("diagnostics", tr("Diagnóstico")))
 RAIL_OF = {"faceplates": "screens", "types": "variables"}
 
 
@@ -91,52 +92,83 @@ def build_menus(studio):
         return item
 
     bar = studio.menuBar()
-    file = bar.addMenu("&Archivo")
-    studio.new_action = action(file, "Nuevo proyecto…", studio.new_project, "Ctrl+N")
-    studio.open_action = action(file, "Abrir proyecto…", lambda: studio.open_project(), "Ctrl+O")
-    recent = file.addMenu("Proyectos recientes")
+    file = bar.addMenu(tr("&Archivo"))
+    studio.new_action = action(file, tr("Nuevo proyecto…"), studio.new_project, "Ctrl+N")
+    studio.open_action = action(file, tr("Abrir proyecto…"), lambda: studio.open_project(), "Ctrl+O")
+    recent = file.addMenu(tr("Proyectos recientes"))
     recent.aboutToShow.connect(lambda: studio.fill_recent_menu(recent))
     file.addSeparator()
-    studio.save_action = action(file, "Guardar", studio.save_project, "Ctrl+S")
-    action(file, "Recargar desde disco", studio.reload_project)
-    action(file, "Versiones del proyecto…", lambda: VersionDialog(studio).exec())
+    studio.save_action = action(file, tr("Guardar"), studio.save_project, "Ctrl+S")
+    action(file, tr("Recargar desde disco"), studio.reload_project)
+    action(file, tr("Versiones del proyecto…"), lambda: VersionDialog(studio).exec())
     file.addSeparator()
-    action(file, "Salir", studio.close)
+    action(file, tr("Salir"), studio.close)
 
-    edit = bar.addMenu("&Edición")
-    studio.undo_action = action(edit, "Deshacer", studio.undo)
+    edit = bar.addMenu(tr("&Edición"))
+    studio.undo_action = action(edit, tr("Deshacer"), studio.undo)
     studio.undo_action.setShortcut(QKeySequence.StandardKey.Undo)
-    studio.redo_action = action(edit, "Rehacer", studio.redo)
+    studio.redo_action = action(edit, tr("Rehacer"), studio.redo)
     studio.redo_action.setShortcuts([QKeySequence("Ctrl+Shift+Z"), QKeySequence("Ctrl+Y")])
     edit.addSeparator()
     # Canvas actions keep their canvas-only shortcuts, so Ctrl+C still copies text in the fields.
     for canvas_action in studio.canvas_actions:
         edit.addAction(canvas_action)
 
-    project = bar.addMenu("&Proyecto")
-    action(project, "Ajustes del proyecto…", lambda: edit_project_settings(studio))
-    action(project, "Paleta de colores…", lambda: edit_palette(studio))
-    action(project, "Librerías externas…", lambda: LibraryDialog(studio).exec())
+    project = bar.addMenu(tr("&Proyecto"))
+    action(project, tr("Ajustes del proyecto…"), lambda: edit_project_settings(studio))
+    action(project, tr("Paleta de colores…"), lambda: edit_palette(studio))
+    action(project, tr("Librerías externas…"), lambda: LibraryDialog(studio).exec())
     project.addSeparator()
     from .security_editor import certificates_dialog, edit_opcua_server, edit_security
-    action(project, "Usuarios y roles…", lambda: edit_security(studio))
-    action(project, "Servidor OPC UA…", lambda: edit_opcua_server(studio))
-    action(project, "Certificados OPC UA…", lambda: certificates_dialog(studio))
+    action(project, tr("Usuarios y roles…"), lambda: edit_security(studio))
+    action(project, tr("Servidor OPC UA…"), lambda: edit_opcua_server(studio))
+    action(project, tr("Certificados OPC UA…"), lambda: certificates_dialog(studio))
     project.addSeparator()
-    action(project, "Revisar el proyecto", studio.review_project)
+    action(project, tr("Revisar el proyecto"), studio.review_project)
 
-    tools = bar.addMenu("&Herramientas")
-    action(tools, "Prueba visual…", studio.open_visual_preview)
-    action(tools, "Simuladores de PLC…", lambda: SimulatorsDialog(studio).exec())
-    action(tools, "Copia de seguridad de los registros (SQLite)…", lambda: studio.operational_editor.backup())
+    tools = bar.addMenu(tr("&Herramientas"))
+    action(tools, tr("Prueba visual…"), studio.open_visual_preview)
+    action(tools, tr("Simuladores de PLC…"), lambda: SimulatorsDialog(studio).exec())
+    action(tools, tr("Copia de seguridad de los registros (SQLite)…"), lambda: studio.operational_editor.backup())
 
-    help_menu = bar.addMenu("A&yuda")
-    action(help_menu, "Acerca de abSCADA", lambda: about(studio))
-    action(help_menu, "Abrir carpeta de registros de la aplicación", open_log_folder)
+    help_menu = bar.addMenu(tr("A&yuda"))
+    action(help_menu, tr("Acerca de abSCADA"), lambda: about(studio))
+    action(help_menu, tr("Abrir carpeta de registros de la aplicación"), open_log_folder)
+    help_menu.addSeparator()
+    add_language_menu(studio, help_menu)
 
-    toolbar = studio.addToolBar("Proyecto")
+    toolbar = studio.addToolBar(tr("Proyecto"))
     toolbar.setObjectName("mainToolbar")
     toolbar.setMovable(False)
     for item in (studio.save_action, None, studio.undo_action, studio.redo_action):
         toolbar.addSeparator() if item is None else toolbar.addAction(item)
     studio.update_history_actions()
+
+
+def add_language_menu(studio, parent):
+    """Ayuda → Idioma / Language: an application setting, applied on the next start."""
+    from PySide6.QtGui import QActionGroup
+    from PySide6.QtWidgets import QMessageBox
+    from . import i18n
+    # Always bilingual, so whoever opened the wrong language can find it.
+    menu = parent.addMenu("Idioma / Language")
+    group = QActionGroup(menu)
+    chosen = i18n.configured_language()
+    for code, name in i18n.LANGUAGES.items():
+        item = QAction(name, menu, checkable=True)
+        item.setChecked(code == chosen)
+        group.addAction(item)
+        menu.addAction(item)
+
+        def choose(checked=False, code=code, name=name):
+            if code == i18n.configured_language():
+                return
+            i18n.save_language(code)
+            QMessageBox.information(studio, "Idioma / Language",
+                                    i18n.load_catalog(code).get(RESTART, RESTART).format(language=name))
+        item.triggered.connect(choose)
+    return menu
+
+
+# Shown in the language just chosen, so it is read from that catalog.
+RESTART = N_("abSCADA se mostrará en {language} la próxima vez que lo abras.")

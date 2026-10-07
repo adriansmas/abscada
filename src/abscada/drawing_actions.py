@@ -4,6 +4,7 @@ import copy
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QListWidgetItem,QMenu,QInputDialog
 from .drawing import set_points
+from .i18n import tr
 
 
 class DrawingActions:
@@ -61,10 +62,10 @@ class DrawingActions:
 
     def layer_menu(self,position):
         menu=QMenu(self.layers)
-        for title,key in [('Bloquear / desbloquear','editor_locked'),('Ocultar / mostrar en diseño','editor_hidden')]:
+        for title,key in [(tr('Bloquear / desbloquear'),'editor_locked'),(tr('Ocultar / mostrar en diseño'),'editor_hidden')]:
             menu.addAction(title,lambda checked=False,k=key:self.toggle_layer_flag(k))
-        menu.addAction('Nombre descriptivo…',self.describe_element)
-        menu.addAction('Agrupar',self.group_elements);menu.addAction('Desagrupar',self.ungroup_elements)
+        menu.addAction(tr('Nombre descriptivo…'),self.describe_element)
+        menu.addAction(tr('Agrupar'),self.group_elements);menu.addAction(tr('Desagrupar'),self.ungroup_elements)
         menu.exec(self.layers.mapToGlobal(position))
 
     def toggle_layer_flag(self,key):
@@ -75,7 +76,7 @@ class DrawingActions:
     def describe_element(self):
         selected=self.scene.selectedItems()
         if len(selected)==1:
-            e=selected[0].element;value,ok=QInputDialog.getText(self,'Nombre descriptivo','Nombre',text=e.get('description',e['id']))
+            e=selected[0].element;value,ok=QInputDialog.getText(self,tr('Nombre descriptivo'),tr('Nombre'),text=e.get('description',e['id']))
             if ok:self.mutate(lambda:e.__setitem__('description',value))
 
     def group_elements(self):

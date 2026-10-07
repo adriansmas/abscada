@@ -4,8 +4,9 @@ The geometry helpers have no Qt dependency so they can be validated and tested
 alone; paint_gauge draws with a QPainter supplied by graphics.py.
 """
 import math
+from .i18n import tr
 
-STYLES = {"dial": "Esfera 240°", "semi": "Semicírculo 180°", "thermometer": "Termómetro"}
+STYLES = {"dial": "Esfera 240°", "semi": tr("Semicírculo 180°"), "thermometer": tr("Termómetro")}
 SWEEP = {"dial": 240.0, "semi": 180.0}
 WARNING_COLOR = "#e5a339"
 ALARM_COLOR = "#d64545"
@@ -55,18 +56,18 @@ def label(value, step):
 def validate(element):
     style = element.get("gauge_style", "dial")
     if style not in STYLES:
-        raise ValueError("Estilo de indicador desconocido")
+        raise ValueError(tr("Estilo de indicador desconocido"))
     low, high = element.get("min", 0), element.get("max", 100)
     for key in ("min", "max", "warning", "alarm"):
         if key in element and (isinstance(element[key], bool) or not isinstance(element[key], (int, float))
                                or not math.isfinite(element[key])):
-            raise ValueError(f"{key}: se esperaba un número")
+            raise ValueError(tr("{key}: se esperaba un número", key=key))
     if high <= low:
-        raise ValueError("El máximo del indicador debe ser mayor que el mínimo")
+        raise ValueError(tr("El máximo del indicador debe ser mayor que el mínimo"))
     if "warning" in element and "alarm" in element and element["alarm"] < element["warning"]:
-        raise ValueError("El umbral de alarma no puede ser menor que el de aviso")
+        raise ValueError(tr("El umbral de alarma no puede ser menor que el de aviso"))
     if not isinstance(element.get("decimals", 1), int) or not 0 <= element.get("decimals", 1) <= 10:
-        raise ValueError("decimals debe estar entre 0 y 10")
+        raise ValueError(tr("decimals debe estar entre 0 y 10"))
 
 
 # --------------------------------------------------------------------------

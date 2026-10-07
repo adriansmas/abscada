@@ -8,6 +8,7 @@
 """
 import copy
 import re
+from .i18n import tr
 
 NAME = re.compile(r"[A-Za-z0-9_-]+")
 VIEWERS = {"trend": "trends", "alarm_view": "alarm_views"}
@@ -50,11 +51,11 @@ def validate_folders(project):
     for kind, key in FOLDER_KEYS.items():
         explicit = project.manifest.get(key, [])
         if not isinstance(explicit, list) or any(not isinstance(p, str) or not p or clean_folder(p) != p for p in explicit):
-            raise ValueError(f"{key} debe ser una lista de rutas de carpeta")
+            raise ValueError(tr("{key} debe ser una lista de rutas de carpeta", key=key))
         for name, document in getattr(project, kind).items():
             folder = document.get("folder", "")
             if not isinstance(folder, str) or clean_folder(folder) != folder:
-                raise ValueError(f"{name}: carpeta inválida")
+                raise ValueError(tr("{name}: carpeta inválida", name=name))
 
 
 def _store_folders(project, paths, kind="screens"):
@@ -76,9 +77,9 @@ def _rebase(path, old, new):
 def add_folder(project, parent, name, kind="screens"):
     path = clean_folder(f"{parent}/{name}")
     if not clean_folder(name) or "/" in clean_folder(name):
-        raise ValueError("Escribe un nombre de carpeta sin «/»")
+        raise ValueError(tr("Escribe un nombre de carpeta sin «/»"))
     if path.casefold() in {f.casefold() for f in folders(project, kind)}:
-        raise ValueError("Ya existe esa carpeta")
+        raise ValueError(tr("Ya existe esa carpeta"))
     _store_folders(project, project.manifest.get(FOLDER_KEYS[kind], []) + [path], kind)
     return path
 
@@ -86,12 +87,12 @@ def add_folder(project, parent, name, kind="screens"):
 def rename_folder(project, path, name, kind="screens"):
     name = clean_folder(name)
     if not name or "/" in name:
-        raise ValueError("Escribe un nombre de carpeta sin «/»")
+        raise ValueError(tr("Escribe un nombre de carpeta sin «/»"))
     new = clean_folder(f"{parent_folder(path)}/{name}")
     if new == path:
         return new
     if new.casefold() in {f.casefold() for f in folders(project, kind)} and new.casefold() != path.casefold():
-        raise ValueError("Ya existe esa carpeta")
+        raise ValueError(tr("Ya existe esa carpeta"))
     _store_folders(project, [_rebase(p, path, new) for p in project.manifest.get(FOLDER_KEYS[kind], [])], kind)
     for document in _documents(project, kind).values():
         _set_folder(document, _rebase(document.get("folder", ""), path, new))
@@ -109,12 +110,12 @@ def delete_folder(project, path, kind="screens"):
 def move_folder(project, path, target, kind="screens"):
     """Move a folder (with its content) inside ``target`` ("" = root)."""
     if target == path or target.startswith(path + "/"):
-        raise ValueError("No se puede mover una carpeta dentro de sí misma")
+        raise ValueError(tr("No se puede mover una carpeta dentro de sí misma"))
     new = clean_folder(f"{target}/{path.rpartition('/')[2]}")
     if new == path:
         return new
     if new.casefold() in {f.casefold() for f in folders(project, kind)}:
-        raise ValueError("Ya existe una carpeta con ese nombre en el destino")
+        raise ValueError(tr("Ya existe una carpeta con ese nombre en el destino"))
     _store_folders(project, [_rebase(p, path, new) for p in project.manifest.get(FOLDER_KEYS[kind], [])] + [new], kind)
     for document in _documents(project, kind).values():
         _set_folder(document, _rebase(document.get("folder", ""), path, new))
@@ -131,16 +132,16 @@ def _set_folder(document, folder):
 def move_screen(project, name, folder):
     folder = clean_folder(folder)
     if folder and folder not in folders(project):
-        raise ValueError("Carpeta inexistente")
+        raise ValueError(tr("Carpeta inexistente"))
     _set_folder(project.screens[name], folder)
 
 
 def move_faceplate(project, name, folder):
     folder = clean_folder(folder)
     if name not in _documents(project, "faceplates"):
-        raise ValueError("Los objetos de la librería estándar y de librerías vinculadas no se pueden mover")
+        raise ValueError(tr("Los objetos de la librería estándar y de librerías vinculadas no se pueden mover"))
     if folder and folder not in folders(project, "faceplates"):
-        raise ValueError("Carpeta inexistente")
+        raise ValueError(tr("Carpeta inexistente"))
     _set_folder(project.faceplates[name], folder)
 
 
@@ -152,11 +153,11 @@ def is_layout(document):
 
 def check_new_name(project, name, collection="screens"):
     if not NAME.fullmatch(name or ""):
-        raise ValueError("Usa solo letras sin acentos, números, «_» y «-»")
+        raise ValueError(tr("Usa solo letras sin acentos, números, «_» y «-»"))
     from .validation import filename
     filename(name)
     if name.casefold() in {n.casefold() for n in getattr(project, collection)}:
-        raise ValueError(f"Ya existe «{name}»")
+        raise ValueError(tr("Ya existe «{name}»", name=name))
 
 
 def _editable_documents(project):
@@ -176,9 +177,9 @@ def screen_references(project, name):
     """Human readable places that open or embed screen ``name`` (outside the screen itself)."""
     found = []
     if project.manifest.get("startup_screen") == name:
-        found.append("es la pantalla inicial")
+        found.append(tr("es la pantalla inicial"))
     if any(w.get("screen") == name for w in project.manifest.get("display", {}).get("windows", [])):
-        found.append("ventana de arranque en Monitores…")
+        found.append(tr("ventana de arranque en Monitores…"))
     for collection, document_name, document in _editable_documents(project):
         if (collection, document_name) == ("screens", name):
             continue
@@ -200,7 +201,7 @@ def rename_screen(project, old, new):
     if new.casefold() != old.casefold():
         check_new_name(project, new)
     elif not NAME.fullmatch(new):
-        raise ValueError("Usa solo letras sin acentos, números, «_» y «-»")
+        raise ValueError(tr("Usa solo letras sin acentos, números, «_» y «-»"))
     project.screens = {new if key == old else key: value for key, value in project.screens.items()}
     if project.manifest.get("startup_screen") == old:
         project.manifest["startup_screen"] = new
@@ -227,10 +228,10 @@ def duplicate_screen(project, name, new):
 
 def delete_screen(project, name):
     if len(project.screens) == 1:
-        raise ValueError("El proyecto necesita al menos una pantalla")
+        raise ValueError(tr("El proyecto necesita al menos una pantalla"))
     used = screen_references(project, name)
     if used:
-        raise ValueError(f"No se puede eliminar «{name}» porque se usa en:\n· " + "\n· ".join(used))
+        raise ValueError(tr("No se puede eliminar «{name}» porque se usa en:\n· ", name=name) + "\n· ".join(used))
     release_viewers(project, project.screens[name]["elements"], removing_screen=name)
     del project.screens[name]
 
@@ -253,7 +254,7 @@ def rename_faceplate(project, old, new):
     if new.casefold() != old.casefold():
         check_new_name(project, new, "faceplates")
     elif not NAME.fullmatch(new):
-        raise ValueError("Usa solo letras sin acentos, números, «_» y «-»")
+        raise ValueError(tr("Usa solo letras sin acentos, números, «_» y «-»"))
     project.faceplates = {new if key == old else key: value for key, value in project.faceplates.items()}
     for _, _, document in _editable_documents(project):
         for element in document["elements"]:
@@ -276,7 +277,7 @@ def duplicate_faceplate(project, name, new):
 def delete_faceplate(project, name):
     used = faceplate_references(project, name)
     if used:
-        raise ValueError(f"No se puede eliminar «{name}» porque se usa en:\n· " + "\n· ".join(used))
+        raise ValueError(tr("No se puede eliminar «{name}» porque se usa en:\n· ", name=name) + "\n· ".join(used))
     del project.faceplates[name]
 
 

@@ -10,6 +10,7 @@ from .graphics import CanvasScene, CanvasView, ElementItem
 from .runtime import Runtime
 from .viewers import AlarmViewer, TrendViewer
 from .operation_windows import MAIN_MODE, popup_key, popup_title, settings_key
+from .i18n import tr
 
 
 def monitors():
@@ -65,13 +66,13 @@ class RuntimeWindow(QMainWindow):
         if self.session_label is None:
             return
         session = self.runtime.session
-        self.session_label.setText(f"Usuario: {session.display}" if session else "Sin sesión · solo lectura")
-        self.session_button.setText("Cerrar sesión" if session else "Iniciar sesión")
+        self.session_label.setText(tr("Usuario: {user}", user=session.display) if session else tr("Sin sesión · solo lectura"))
+        self.session_button.setText(tr("Cerrar sesión") if session else tr("Iniciar sesión"))
 
     def toggle_session(self):
         if self.runtime.session:
             self.runtime.logout()
-            self.statusBar().showMessage("Sesión cerrada", 5000)
+            self.statusBar().showMessage(tr("Sesión cerrada"), 5000)
         else:
             self.request_login()
         self.update_session_widgets()
@@ -92,11 +93,11 @@ class RuntimeWindow(QMainWindow):
         if security.permits(self.runtime.session, permission):
             return True
         if self.runtime.session and not security.expired(self.runtime.session):
-            raise PermissionError(f"El usuario {self.runtime.session.user} no tiene el permiso «{PERMISSIONS[permission]}»")
-        if not self.request_login(f"Esta orden necesita el permiso «{PERMISSIONS[permission]}»."):
+            raise PermissionError(tr("El usuario {user} no tiene el permiso «{permissions_permissi}»", user=self.runtime.session.user, permissions_permissi=PERMISSIONS[permission]))
+        if not self.request_login(tr("Esta orden necesita el permiso «{permissions_permissi}».", permissions_permissi=PERMISSIONS[permission])):
             return False
         if not security.permits(self.runtime.session, permission):
-            raise PermissionError(f"El usuario {self.runtime.session.user} no tiene el permiso «{PERMISSIONS[permission]}»")
+            raise PermissionError(tr("El usuario {user} no tiene el permiso «{permissions_permissi}»", user=self.runtime.session.user, permissions_permissi=PERMISSIONS[permission]))
         return True
 
     def start(self):
@@ -131,7 +132,7 @@ class RuntimeWindow(QMainWindow):
         screens = monitors()
         if number <= len(screens):
             return screens[number - 1]
-        self.diagnostic.emit(f"Monitor {number} no disponible; se usa el principal")
+        self.diagnostic.emit(tr("Monitor {number} no disponible; se usa el principal", number=number))
         return QGuiApplication.primaryScreen()
 
     def place(self, width, height, options=None, anchor=None, cascade=0):
@@ -161,14 +162,14 @@ class RuntimeWindow(QMainWindow):
     def open_popup(self, screen, modal=False, window=None):
         root = self.owner or self
         if screen not in root.project.screens:
-            raise ValueError("Pantalla emergente inexistente")
+            raise ValueError(tr("Pantalla emergente inexistente"))
         return root.present(screen, dict(screen=screen), modal, window)
 
     def open_faceplate(self, template, bindings, title="", modal=False, window=None):
         """Faceplate of one equipment in its own window; each equipment gets its own."""
         root = self.owner or self
         if template not in root.project.faceplates:
-            raise ValueError("Objeto de librería emergente inexistente")
+            raise ValueError(tr("Objeto de librería emergente inexistente"))
         bindings = dict(bindings)
         target = dict(faceplate=dict(template=template, bindings=bindings,
                                      title=popup_title(root.project, template, bindings, title)))
@@ -268,8 +269,8 @@ class RuntimeWindow(QMainWindow):
                     continue
                 self.last_script_log = result['time']
                 if result['status'] == 'error':
-                    detail = result['message'].strip().splitlines() or ['Error de ejecución']
-                    text = f"Script {result['script']}: {detail[-1]}"
+                    detail = result['message'].strip().splitlines() or [tr('Error de ejecución')]
+                    text = tr("Script {script}: {detail}", script=result['script'], detail=detail[-1])
                     self.diagnostic.emit(text)
                     self.statusBar().showMessage(text, 15000)
                     for popup in self.popups.values():
@@ -280,7 +281,7 @@ class RuntimeWindow(QMainWindow):
             self.release_momentaries()
             self.runtime.logout("session_timeout")
             self.update_session_widgets()
-            self.statusBar().showMessage("Sesión cerrada por inactividad", 15000)
+            self.statusBar().showMessage(tr("Sesión cerrada por inactividad"), 15000)
         if not self.owner and self.runtime.opcua and self.runtime.opcua.error:
             self.statusBar().showMessage(self.runtime.opcua.error)
         for name, success, message in ([] if self.owner else self.runtime.write_results()):
@@ -297,7 +298,7 @@ class RuntimeWindow(QMainWindow):
         elif target:
             destination = self.containers.get(target)
             if destination is None:
-                raise ValueError(f'El contenedor {target} no está en esta ventana')
+                raise ValueError(tr("El contenedor {target} no está en esta ventana", target=target))
         else:
             destination = source or self
         destination.select_screen(screen)
@@ -317,7 +318,7 @@ class RuntimeWindow(QMainWindow):
             if not wait and not future.done():pending.append((name,future));continue
             try:future.result(timeout=max(0,deadline-time.monotonic()) if wait else 0)
             except Exception as exc:
-                message=f'Liberación no confirmada por el transporte: {name}. {exc}'
+                message=tr("Liberación no confirmada por el transporte: {name}. {exc}", name=name, exc=exc)
                 self.diagnostic.emit(message);self.statusBar().showMessage(message,15000)
         self.release_futures=pending
 
@@ -334,24 +335,24 @@ class RuntimeWindow(QMainWindow):
                     try:
                         tag=self.runtime.tags[element['tag']]
                         if tag.get('binding') and self.runtime.snapshot()[element['tag']].quality!='good':
-                            raise ValueError('Sin comunicación; liberación no enviada')
+                            raise ValueError(tr('Sin comunicación; liberación no enviada'))
                         # Releases are never refused: a pressed command must always be able to stop.
                         future=self.runtime.write(element['tag'],element.get('release_value',False),
                                                   actor=self.runtime.security.actor(self.runtime.session),origin='hmi')
                         self.release_futures.append((element['tag'],future))
                     except Exception as exc:
-                        message=f"No se pudo enviar la liberación de {element['tag']}: {exc}"
+                        message=tr("No se pudo enviar la liberación de {tag}: {exc}", tag=element['tag'], exc=exc)
                         self.diagnostic.emit(message); self.statusBar().showMessage(message,15000)
                 return
             from .dynamics import permitted
             samples=self.runtime.snapshot()
             if not permitted(element,samples,'visible') or not permitted(element,samples,'enabled'):
-                raise ValueError(element.get('dynamics',{}).get('disabled_reason','No se cumple el permiso de operación'))
+                raise ValueError(element.get('dynamics',{}).get('disabled_reason',tr('No se cumple el permiso de operación')))
             if phase == 'press':
                 # No modal dialog while the mouse holds a momentary button: just refuse.
                 from .security import required_permission
                 if not self.runtime.security.permits(self.runtime.session, required_permission(element)):
-                    (self.owner or self).statusBar().showMessage("Inicia sesión con un usuario autorizado para usar este pulsador", 8000)
+                    (self.owner or self).statusBar().showMessage(tr("Inicia sesión con un usuario autorizado para usar este pulsador"), 8000)
                     return
             elif not self.authorize(element):
                 return
@@ -362,7 +363,7 @@ class RuntimeWindow(QMainWindow):
             if action in {"screen", "popup"}:
                 target = element.get("screen", "")
                 if target not in self.project.screens:
-                    raise ValueError("Pantalla inexistente")
+                    raise ValueError(tr("Pantalla inexistente"))
                 if action == "popup":
                     self.defer(lambda: self.open_popup(target, element.get("modal", False), element.get("window")))
                 else:
@@ -385,17 +386,17 @@ class RuntimeWindow(QMainWindow):
                 return
             name = element.get("tag", "")
             if name not in self.runtime.tags:
-                raise ValueError("Este control no tiene una variable configurada")
+                raise ValueError(tr("Este control no tiene una variable configurada"))
             sample = self.runtime.snapshot()[name]
             if self.runtime.tags[name].get("binding") and sample.quality != "good":
-                raise ValueError("La variable no tiene una lectura válida")
+                raise ValueError(tr("La variable no tiene una lectura válida"))
             if entry:
-                value, ok = QInputDialog.getText(self, "Escribir valor", name, text=str(sample.value))
+                value, ok = QInputDialog.getText(self, tr("Escribir valor"), name, text=str(sample.value))
                 if not ok:
                     return
             elif element.get("action", "toggle") == "toggle":
                 if self.runtime.tags[name]["type"] != "bool":
-                    raise ValueError("La acción alternar necesita una variable bool")
+                    raise ValueError(tr("La acción alternar necesita una variable bool"))
                 value = not sample.value
             elif element.get('action') in {'momentary','press_release'}:
                 if phase!='press': return
@@ -403,14 +404,14 @@ class RuntimeWindow(QMainWindow):
             elif element.get("action") == "set":
                 value = element["value"]
             else:
-                raise ValueError("Acción de botón desconocida")
+                raise ValueError(tr("Acción de botón desconocida"))
             if entry:
                 from .value_editor import engineering_value
                 value=engineering_value(value,self.runtime.tags[name]['type'])
             self.runtime.command(name, value, self.runtime.session)
             if element.get('action') in {'momentary','press_release'}: self.momentary[id(element)]=element
         except Exception as exc:
-            QMessageBox.warning(self, "Operación no realizada", str(exc))
+            QMessageBox.warning(self, tr("Operación no realizada"), str(exc))
 
     def closeEvent(self, event):
         try:

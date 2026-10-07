@@ -25,6 +25,8 @@ a = Analysis(
     datas=example_datas() + [
         # Standard library: SVG symbols and catalogue, read at run time from the package folder.
         (str(ROOT / "src" / "abscada" / "standard_library"), "abscada/standard_library"),
+        # Application translations (Ayuda → Idioma), read at run time from the package folder.
+        (str(ROOT / "src" / "abscada" / "locales"), "abscada/locales"),
         (str(ROOT / "packaging" / "abscada.ico"), "packaging"),
         (str(ROOT / "docs" / "BETA.md"), "docs"),
         (str(ROOT / "LICENSE"), "."),

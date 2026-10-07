@@ -19,6 +19,7 @@ import re
 import shutil
 import socket
 from pathlib import Path
+from .i18n import tr
 
 PKI = ("own", "trusted", "rejected")
 
@@ -138,5 +139,4 @@ class UntrustedCertificate(ConnectionError):
     def __init__(self, der, path):
         self.der, self.path = der, path
         info = describe(der)
-        super().__init__(f"Certificado del servidor no confiable ({info['subject']}, huella {info['fingerprint'][:16]}…). "
-                         "Revísalo y acéptalo en la conexión para continuar.")
+        super().__init__(tr("Certificado del servidor no confiable ({subject}, huella {info_fingerprint_16}…). Revísalo y acéptalo en la conexión para continuar.", subject=info['subject'], info_fingerprint_16=info['fingerprint'][:16]))

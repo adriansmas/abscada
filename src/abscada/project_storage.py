@@ -5,6 +5,7 @@ import tempfile
 import hashlib
 import uuid
 from pathlib import Path
+from .i18n import tr
 
 
 def documents(project):
@@ -26,7 +27,7 @@ def documents(project):
             if folder == 'faceplates' and owner(project, name):
                 continue
             if Path(name).name != name or name in ('.','..') or '/' in name or '\\' in name:
-                raise ValueError('Nombre de documento inválido')
+                raise ValueError(tr('Nombre de documento inválido'))
             data[f'{folder}/{name}.json'] = value
     result = {name: (json.dumps(value,ensure_ascii=False,indent=2,allow_nan=False)+'\n').encode('utf-8') for name,value in data.items()}
     result.update({f'scripts/{name}.py': source.encode('utf-8') for name,source in project.scripts.items()})
@@ -52,11 +53,11 @@ def save_project(project):
     try:
         descriptor = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
     except FileExistsError:
-        raise ValueError('Hay otro guardado en curso. Si la aplicación se cerró inesperadamente, revisa y elimina .abscada-save.lock') from None
+        raise ValueError(tr('Hay otro guardado en curso. Si la aplicación se cerró inesperadamente, revisa y elimina .abscada-save.lock')) from None
     os.close(descriptor)
     try:
         if getattr(project,'_disk_root',None) == root and disk_state(root) != project._disk_state:
-            raise ValueError('Los archivos han cambiado fuera de Studio. Recarga el proyecto antes de guardar para evitar sobrescribirlos')
+            raise ValueError(tr('Los archivos han cambiado fuera de Studio. Recarga el proyecto antes de guardar para evitar sobrescribirlos'))
         _write_project(project)
         remember_disk(project)
     finally:
@@ -75,7 +76,7 @@ def _write_project(project):
     targets = set(content) | stale
     for name in targets:
         if not (root/name).resolve().is_relative_to(root):
-            raise ValueError('Archivo del proyecto fuera de su carpeta')
+            raise ValueError(tr('Archivo del proyecto fuera de su carpeta'))
     previous = {name:(root/name).read_bytes() if (root/name).exists() else None for name in targets}
     changed = [name for name in sorted(targets) if previous[name] != content.get(name)]
     applied = []
@@ -106,5 +107,5 @@ def _write_project(project):
             if restore_errors:
                 recovery=root/('.abscada-recovery-'+uuid.uuid4().hex)
                 os.rename(stage,recovery)
-                raise OSError(f'Falló el guardado y su restauración. Copias recuperables en {recovery}: {failure}') from failure
+                raise OSError(tr("Falló el guardado y su restauración. Copias recuperables en {recovery}: {failure}", recovery=recovery, failure=failure)) from failure
             raise

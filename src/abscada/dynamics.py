@@ -2,6 +2,7 @@
 import copy
 import operator
 import re
+from .i18n import tr
 
 OPS={'eq':operator.eq,'ne':operator.ne,'gt':operator.gt,'ge':operator.ge,'lt':operator.lt,'le':operator.le}
 COLOR_KEYS={'color','text_color','border_color','stroke_color'}
@@ -19,7 +20,7 @@ def style_keys(kind):
 
 def resolve_color(value, palette):
     if isinstance(value,str) and value.startswith('@'):
-        if value[1:] not in palette: raise ValueError(f'Color de paleta inexistente: {value}')
+        if value[1:] not in palette: raise ValueError(tr("Color de paleta inexistente: {value}", value=value))
         return palette[value[1:]]
     return value
 
@@ -27,7 +28,7 @@ def resolve_color(value, palette):
 def validate_color(value,palette):
     value=resolve_color(value,palette)
     if not isinstance(value,str) or not re.fullmatch(r'#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?',value):
-        raise ValueError('Usa un color HEX #RRGGBB, #AARRGGBB o una referencia @paleta')
+        raise ValueError(tr('Usa un color HEX #RRGGBB, #AARRGGBB o una referencia @paleta'))
 
 
 def test(condition,samples):
@@ -88,36 +89,36 @@ def validate(element,tags,parameters,palette):
     kinds={name:t['type'] for name,t in tags.items()}|{'$'+key:value for key,value in parameters.items()}
     def condition(c):
         if not isinstance(c,dict) or set(c)-{'tag','op','value','bad'} or c.get('tag') not in kinds or c.get('op') not in OPS:
-            raise ValueError('Condición inválida: revisa variable y operador')
+            raise ValueError(tr('Condición inválida: revisa variable y operador'))
         kind=kinds[c['tag']]
-        if kind not in {'int','float'} and c['op'] not in {'eq','ne'}: raise ValueError('Ese tipo solo admite igual o distinto')
-        if 'value' not in c or coerce(c['value'],kind)!=c['value']: raise ValueError('Valor de condición incompatible')
-        if not isinstance(c.get('bad',False),bool): raise ValueError('Comportamiento de mala calidad inválido')
+        if kind not in {'int','float'} and c['op'] not in {'eq','ne'}: raise ValueError(tr('Ese tipo solo admite igual o distinto'))
+        if 'value' not in c or coerce(c['value'],kind)!=c['value']: raise ValueError(tr('Valor de condición incompatible'))
+        if not isinstance(c.get('bad',False),bool): raise ValueError(tr('Comportamiento de mala calidad inválido'))
     def style(s):
-        if not isinstance(s,dict) or set(s)-style_keys(element['kind']): raise ValueError('Propiedad de apariencia no aplicable a este objeto')
+        if not isinstance(s,dict) or set(s)-style_keys(element['kind']): raise ValueError(tr('Propiedad de apariencia no aplicable a este objeto'))
         for key,value in s.items():
-            if not isinstance(value,str): raise ValueError('La apariencia necesita textos o colores')
+            if not isinstance(value,str): raise ValueError(tr('La apariencia necesita textos o colores'))
             if key in COLOR_KEYS: validate_color(value,palette)
     d=element.get('dynamics',{})
-    if not isinstance(d,dict) or set(d)-{'visible','enabled','states','default','bad','disabled','disabled_reason'}: raise ValueError('Dinámica visual desconocida')
+    if not isinstance(d,dict) or set(d)-{'visible','enabled','states','default','bad','disabled','disabled_reason'}: raise ValueError(tr('Dinámica visual desconocida'))
     for key in ('visible','enabled'):
         if key in d: condition(d[key])
-    if not isinstance(d.get('disabled_reason',''),str): raise ValueError('Motivo de bloqueo inválido')
+    if not isinstance(d.get('disabled_reason',''),str): raise ValueError(tr('Motivo de bloqueo inválido'))
     for key in ('default','bad','disabled'):
         if key in d: style(d[key])
     states=d.get('states',[])
-    if not isinstance(states,list) or len(states)>128: raise ValueError('Máximo 128 estados por objeto')
+    if not isinstance(states,list) or len(states)>128: raise ValueError(tr('Máximo 128 estados por objeto'))
     for state in states:
-        if not isinstance(state,dict) or set(state)!={'when','style'}: raise ValueError('Estado inválido')
+        if not isinstance(state,dict) or set(state)!={'when','style'}: raise ValueError(tr('Estado inválido'))
         condition(state['when']); style(state['style'])
     for color in element.get('lamp_colors',{}).values(): validate_color(color,palette)
-    if set(element.get('lamp_colors',{}))-{'on','off','bad'}: raise ValueError('Estado de piloto desconocido')
+    if set(element.get('lamp_colors',{}))-{'on','off','bad'}: raise ValueError(tr('Estado de piloto desconocido'))
     for key in COLOR_KEYS:
         if key in element and element[key].startswith('@'): validate_color(element[key],palette)
     for key in ('visible','editor_locked','editor_hidden'):
-        if key in element and not isinstance(element[key],bool): raise ValueError(f'{key} debe ser booleano')
+        if key in element and not isinstance(element[key],bool): raise ValueError(tr("{key} debe ser booleano", key=key))
     for key in ('group','description'):
-        if key in element and not isinstance(element[key],str): raise ValueError(f'{key} debe ser texto')
+        if key in element and not isinstance(element[key],str): raise ValueError(tr("{key} debe ser texto", key=key))
 
 
 def writable_control(element):
@@ -137,8 +138,8 @@ def issues(project):
     for collection in (project.screens,project.faceplates):
         for name,document in collection.items():
             for e in document['elements']:
-                if writable_control(e) and not e.get('tag'): result.append(f'{name} / {e["id"]}: mando sin variable')
-                for key in sorted(set(e)-known): result.append(f'{name} / {e["id"]}: propiedad no reconocida «{key}»')
+                if writable_control(e) and not e.get('tag'): result.append(tr("{name} / {id}: mando sin variable", name=name, id=e["id"]))
+                for key in sorted(set(e)-known): result.append(tr("{name} / {id}: propiedad no reconocida «{key}»", name=name, id=e["id"], key=key))
     return result
 
 

@@ -5,6 +5,7 @@ import sys
 
 from .app_paths import log_dir, simulator_command
 from .simulators import SIMULATORS
+from .i18n import tr
 
 _processes = {}
 
@@ -21,7 +22,7 @@ def log_path(simulator_id):
 def start(simulator_id):
     """Start a simulator once; raise if it exits immediately (e.g. its ports are busy)."""
     if simulator_id not in SIMULATORS:
-        raise ValueError(f"Simulador desconocido: {simulator_id}")
+        raise ValueError(tr("Simulador desconocido: {simulator_id}", simulator_id=simulator_id))
     if running(simulator_id):
         return _processes[simulator_id]
     log_dir().mkdir(parents=True, exist_ok=True)
@@ -36,7 +37,7 @@ def start(simulator_id):
         _processes[simulator_id] = process
         return process
     detail = log_path(simulator_id).read_text(encoding="utf-8", errors="replace").strip().splitlines()
-    raise RuntimeError(detail[-1] if detail else f"El simulador terminó con código {process.returncode}")
+    raise RuntimeError(detail[-1] if detail else tr("El simulador terminó con código {returncode}", returncode=process.returncode))
 
 
 def stop(simulator_id):

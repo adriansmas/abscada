@@ -1,5 +1,6 @@
 """Release modal editor dialogs after callers have read their result fields."""
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QLineEdit
+from .i18n import tr
 
 
 class EditorDialog(QDialog):
@@ -24,10 +25,10 @@ class EditorDialog(QDialog):
 
     def exec(self):
         for box in self.findChildren(QDialogButtonBox):
-            for key, title in ((QDialogButtonBox.StandardButton.Cancel, 'Cancelar'),
-                               (QDialogButtonBox.StandardButton.Save, 'Aceptar'),
-                               (QDialogButtonBox.StandardButton.Ok, 'Aceptar'),
-                               (QDialogButtonBox.StandardButton.Close, 'Cerrar')):
+            for key, title in ((QDialogButtonBox.StandardButton.Cancel, tr('Cancelar')),
+                               (QDialogButtonBox.StandardButton.Save, tr('Aceptar')),
+                               (QDialogButtonBox.StandardButton.Ok, tr('Aceptar')),
+                               (QDialogButtonBox.StandardButton.Close, tr('Cerrar'))):
                 if box.button(key): box.button(key).setText(title)
         try:
             return super().exec()

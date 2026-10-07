@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QSplitter,QListWi
     QPushButton,QInputDialog,QDialog,QTabWidget,QLabel)
 from .engineering import RecordsPage, RecordDialog
 from .scripting import validate_scripts
+from .i18n import tr
 
 
 class AutomationEditor(QTabWidget):
@@ -16,26 +17,26 @@ class AutomationEditor(QTabWidget):
         self.edit_timer.timeout.connect(self.end_edit_group)
         page=QWidget(); layout=QVBoxLayout(page)
         actions=QHBoxLayout()
-        for text, callback in [('Nuevo script',self.add),('Eliminar',self.remove),('Comprobar',self.check),('Eventos de inicio…',self.startup)]:
+        for text, callback in [(tr('Nuevo script'),self.add),(tr('Eliminar'),self.remove),(tr('Comprobar'),self.check),(tr('Eventos de inicio…'),self.startup)]:
             b=QPushButton(text); b.clicked.connect(callback); actions.addWidget(b)
         actions.addStretch(); layout.addLayout(actions)
         split=QSplitter(); self.list=QListWidget(); self.list.setMaximumWidth(260)
         from .python_editor import PythonHighlighter, PythonCodeEditor
         self.code=PythonCodeEditor(); self.code.setFont(QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont))
         self.highlighter=PythonHighlighter(self.code.document())
-        self.code.setTabStopDistance(32); self.code.setPlaceholderText('Selecciona o crea un script Python')
+        self.code.setTabStopDistance(32); self.code.setPlaceholderText(tr('Selecciona o crea un script Python'))
         self.code.setEnabled(False)
         split.addWidget(self.list); split.addWidget(self.code); layout.addWidget(split,1)
         self.result=QLabel(); self.result.setWordWrap(True); self.result.setMaximumHeight(48); layout.addWidget(self.result)
         self.list.currentTextChanged.connect(self.select); self.code.textChanged.connect(self.changed)
-        self.addTab(page,'Scripts Python')
+        self.addTab(page,tr('Scripts Python'))
         self.tasks=RecordsPage(host,lambda:host.project.automation.get('tasks',[]),
             lambda rows:host.project.automation.__setitem__('tasks',rows),
-            [('id','Tarea'),('script','Script'),('interval_ms','Periodo (ms)'),('enabled','Activa')],
-            lambda:[('id','Nombre','text','',()),('script','Script','choice','',[(n,n) for n in host.project.scripts]),
-                    ('interval_ms','Periodo (ms)','int',1000,()),('enabled','Activa','bool',True,())], 'Tarea')
-        self.addTab(self.tasks,'Tareas cíclicas')
-        self.diagnostics=QPlainTextEdit(); self.diagnostics.setReadOnly(True); self.addTab(self.diagnostics,'Ejecuciones')
+            [('id',tr('Tarea')),('script',tr('Script')),('interval_ms',tr('Periodo (ms)')),('enabled',tr('Activa'))],
+            lambda:[('id',tr('Nombre'),'text','',()),('script',tr('Script'),'choice','',[(n,n) for n in host.project.scripts]),
+                    ('interval_ms',tr('Periodo (ms)'),'int',1000,()),('enabled',tr('Activa'),'bool',True,())], tr('Tarea'))
+        self.addTab(self.tasks,tr('Tareas cíclicas'))
+        self.diagnostics=QPlainTextEdit(); self.diagnostics.setReadOnly(True); self.addTab(self.diagnostics,tr('Ejecuciones'))
         self.timer=QTimer(self); self.timer.timeout.connect(self.refresh_diagnostics); self.timer.start(500)
         self.refresh()
 
@@ -71,9 +72,9 @@ class AutomationEditor(QTabWidget):
         self.edit_group=False; self.edit_timer.stop()
 
     def add(self):
-        name,ok=QInputDialog.getText(self,'Nuevo script','Nombre de archivo (sin .py)')
+        name,ok=QInputDialog.getText(self,tr('Nuevo script'),tr('Nombre de archivo (sin .py)'))
         if not ok: return
-        if name in self.host.project.scripts: self.host.error('El script ya existe'); return
+        if name in self.host.project.scripts: self.host.error(tr('El script ya existe')); return
         if self.host.mutate(lambda:self.host.project.scripts.__setitem__(name,'# API: ctx.read, ctx.quality, ctx.write, ctx.state\nprint(ctx.event)\n')):
             self.current=name; self.refresh()
 
@@ -84,13 +85,13 @@ class AutomationEditor(QTabWidget):
 
     def check(self):
         try:
-            validate_scripts(self.host.project); self.result.setText('Sintaxis y referencias correctas')
+            validate_scripts(self.host.project); self.result.setText(tr('Sintaxis y referencias correctas'))
         except ValueError as exc: self.result.setText(str(exc))
 
     def startup(self):
-        d=RecordDialog(self,'Inicio del runtime',[
-            ('startup','Scripts (orden de la lista)','multi',[],[(n,n) for n in self.host.project.scripts]),
-            ('timeout_seconds','Límite por ejecución (s)','number',10,())], self.host.project.automation)
+        d=RecordDialog(self,tr('Inicio del runtime'),[
+            ('startup',tr('Scripts (orden de la lista)'),'multi',[],[(n,n) for n in self.host.project.scripts]),
+            ('timeout_seconds',tr('Límite por ejecución (s)'),'number',10,())], self.host.project.automation)
         if d.exec()==QDialog.DialogCode.Accepted:
             self.host.mutate(lambda:self.host.project.automation.update(d.data()))
 
