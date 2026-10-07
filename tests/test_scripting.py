@@ -39,9 +39,10 @@ def test_periodic_tasks_disable_stop_and_no_overlap(operational_project):
 
 
 def test_stop_kills_running_script(operational_project):
-    p=operational_project;p.scripts={'loop':'while True: pass'};p.automation['startup']=['loop']
+    # Stopping must kill the script, not wait for its run limit: far below the limit, with room for slow CI.
+    p=operational_project;p.scripts={'loop':'while True: pass'};p.automation.update(startup=['loop'],timeout_seconds=60)
     r=Runtime(p);r.start();time.sleep(.2)
-    start=time.monotonic();r.stop();assert time.monotonic()-start<2
+    start=time.monotonic();r.stop();assert time.monotonic()-start<15
 
 
 @pytest.mark.parametrize('source', ['if:', 'def x('])

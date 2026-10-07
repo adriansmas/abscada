@@ -9,6 +9,10 @@ from .storage import Repository, RuntimeLease, database_path
 from .i18n import tr
 
 
+# Opening the archive syncs SQLite to disk and recovers the alarm state; on a slow disk, or with
+# an antivirus scanning new files, that can take several seconds without anything being wrong.
+START_TIMEOUT = 30
+
 class Operations:
     def __init__(self, project):
         self.project = project
@@ -27,7 +31,7 @@ class Operations:
         self.stopping.clear(); self.ready.clear(); self.error = ""
         self.thread = Thread(target=self._run, name="abscada-archive", daemon=True)
         self.thread.start()
-        if not self.ready.wait(5) or self.error:
+        if not self.ready.wait(START_TIMEOUT) or self.error:
             raise RuntimeError(self.error or tr("El archivo no responde"))
 
     def submit(self, tag, sample):

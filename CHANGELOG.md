@@ -5,6 +5,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 ## [Sin publicar]
 
 ### Cambiado
+- El runtime espera hasta 30 s, en lugar de 5, a que el archivo SQLite esté listo al arrancar: en discos lentos o con el antivirus revisando archivos nuevos fallaba sin motivo.
 - **«Faceplates» pasa a llamarse «Librerías»**, y cada plantilla, «objeto de librería». El formato de archivo no cambia (`faceplates/*.json`), así que los proyectos existentes abren igual. «Bibliotecas de faceplates» pasa a ser «Librerías externas».
 
 ### Añadido
