@@ -16,6 +16,7 @@ import socket
 import struct
 
 from .protocol_definition import Field, ProtocolDefinition
+from .i18n import tr
 
 AMS_TCP_PORT = 48898
 SOURCE_PORT = 32905
@@ -35,13 +36,13 @@ TYPES = {
 }
 
 ERRORS = {
-    0x6: "puerto ADS de destino no encontrado (¿runtime PLC parado o puerto 851/801 incorrecto?)",
-    0x7: "AMS Net ID de destino no encontrado",
-    0x700: "error general del dispositivo", 0x701: "servicio no soportado", 0x702: "grupo de índice no válido",
-    0x703: "offset no válido", 0x704: "lectura/escritura no permitida", 0x705: "tamaño de datos incorrecto",
-    0x706: "valor de datos no válido", 0x707: "dispositivo no preparado", 0x708: "dispositivo ocupado",
-    0x710: "símbolo no encontrado", 0x711: "versión de símbolos no válida (programa del PLC cambiado)",
-    0x745: "tiempo de espera agotado", 0x74C: "acceso denegado",
+    0x6: tr("puerto ADS de destino no encontrado (¿runtime PLC parado o puerto 851/801 incorrecto?)"),
+    0x7: tr("AMS Net ID de destino no encontrado"),
+    0x700: tr("error general del dispositivo"), 0x701: tr("servicio no soportado"), 0x702: tr("grupo de índice no válido"),
+    0x703: tr("offset no válido"), 0x704: tr("lectura/escritura no permitida"), 0x705: tr("tamaño de datos incorrecto"),
+    0x706: tr("valor de datos no válido"), 0x707: tr("dispositivo no preparado"), 0x708: "dispositivo ocupado",
+    0x710: tr("símbolo no encontrado"), 0x711: tr("versión de símbolos no válida (programa del PLC cambiado)"),
+    0x745: tr("tiempo de espera agotado"), 0x74C: "acceso denegado",
 }
 STALE_HANDLE = {0x710, 0x711, 0x702}
 
@@ -59,7 +60,7 @@ class AdsError(ConnectionError):
 
 def net_id_bytes(text):
     if not _NET_ID.match(text or "") or any(int(p) > 255 for p in text.split(".")):
-        raise ValueError(f"AMS Net ID inválido: {text!r} (ejemplo 5.80.201.232.1.1)")
+        raise ValueError(tr("AMS Net ID inválido: {text!r} (ejemplo 5.80.201.232.1.1)", text=text))
     return bytes(int(p) for p in text.split("."))
 
 
@@ -76,7 +77,7 @@ def encode(address, kind, value):
     if kind == "int":
         low, high = _int_range(fmt)
         if not low <= int(value) <= high:
-            raise ValueError(f"{value} no cabe en {address['encoding']}")
+            raise ValueError(tr("{value} no cabe en {encoding}", value=value, encoding=address['encoding']))
     return struct.pack("<" + fmt, value)
 
 
@@ -103,16 +104,16 @@ def normalize(address, kind):
     if isinstance(address, str):
         return {"symbol": address}
     if not isinstance(address, dict):
-        raise ValueError("ADS necesita un símbolo o grupo:offset")
+        raise ValueError(tr("ADS necesita un símbolo o grupo:offset"))
     return dict(address)
 
 
 def check_binding(address, kind, writable):
     symbol = address["symbol"].strip()
     if not (raw_address(symbol) or _SYMBOL.match(symbol)):
-        raise ValueError(f"Símbolo ADS inválido: {symbol!r}; ejemplos MAIN.bMarcha, GVL.aDatos[3] o 0x4020:0")
+        raise ValueError(tr("Símbolo ADS inválido: {symbol!r}; ejemplos MAIN.bMarcha, GVL.aDatos[3] o 0x4020:0", symbol=symbol))
     if TYPES[address["encoding"]][2] != kind:
-        raise ValueError("Tipo SCADA incompatible con el tipo del PLC")
+        raise ValueError(tr("Tipo SCADA incompatible con el tipo del PLC"))
 
 
 def describe(address, kind):
@@ -122,16 +123,16 @@ def describe(address, kind):
 
 
 DEFINITION = ProtocolDefinition(
-    "Beckhoff TwinCAT ADS",
-    (Field("host", "IP del PLC", "192.168.1.100"),
-     Field("port", "Puerto TCP", AMS_TCP_PORT, 1, 65535),
-     Field("ams_net_id", "AMS Net ID del PLC", "192.168.1.100.1.1"),
-     Field("ams_port", "Puerto ADS (851 TC3 · 801 TC2)", 851, 1, 65535),
-     Field("local_ams_net_id", "AMS Net ID local (auto = IP + .1.1)", "auto"),
-     Field("timeout_ms", "Timeout (ms)", 1000, 100, 10000)),
-    (Field("symbol", "Símbolo o grupo:offset", "MAIN.variable"),
-     Field("encoding", "Tipo PLC", "REAL", choices=tuple((name, name, (spec[2],)) for name, spec in TYPES.items())),
-     Field("length", "Longitud STRING", 80, 1, 255, kinds=("string",))),
+    tr("Beckhoff TwinCAT ADS"),
+    (Field("host", tr("IP del PLC"), "192.168.1.100"),
+     Field("port", tr("Puerto TCP"), AMS_TCP_PORT, 1, 65535),
+     Field("ams_net_id", tr("AMS Net ID del PLC"), "192.168.1.100.1.1"),
+     Field("ams_port", tr("Puerto ADS (851 TC3 · 801 TC2)"), 851, 1, 65535),
+     Field("local_ams_net_id", tr("AMS Net ID local (auto = IP + .1.1)"), "auto"),
+     Field("timeout_ms", tr("Timeout (ms)"), 1000, 100, 10000)),
+    (Field("symbol", tr("Símbolo o grupo:offset"), "MAIN.variable"),
+     Field("encoding", tr("Tipo PLC"), "REAL", choices=tuple((name, name, (spec[2],)) for name, spec in TYPES.items())),
+     Field("length", tr("Longitud STRING"), 80, 1, 255, kinds=("string",))),
     normalize, check_binding, describe)
 
 
@@ -170,13 +171,13 @@ class AdsClient:
         while len(chunks) < count:
             chunk = self.sock.recv(count - len(chunks))
             if not chunk:
-                raise ConnectionError("El PLC cerró la conexión ADS")
+                raise ConnectionError(tr("El PLC cerró la conexión ADS"))
             chunks += chunk
         return bytes(chunks)
 
     def request(self, command, payload=b""):
         if not self.sock:
-            raise ConnectionError("Conexión ADS no abierta")
+            raise ConnectionError(tr("Conexión ADS no abierta"))
         self.invoke = (self.invoke + 1) & 0xFFFFFFFF
         header = struct.pack("<6sH6sHHHIII", self.target, self.target_port, self.source, SOURCE_PORT,
                              command, STATE_REQUEST, len(payload), 0, self.invoke)
@@ -242,7 +243,7 @@ class TwinCatADS:
         self.client.open()
         ads_state, _ = self.client.read_state()
         if ads_state != 5:
-            raise ConnectionError(f"El PLC no está en RUN (estado ADS {ads_state})")
+            raise ConnectionError(tr("El PLC no está en RUN (estado ADS {ads_state})", ads_state=ads_state))
 
     def _access(self, address, operation):
         """Run operation(group, offset) on a symbol handle, re-resolving it once if stale."""

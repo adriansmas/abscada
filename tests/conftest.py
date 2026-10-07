@@ -1,7 +1,11 @@
 """Test-only PLC server. Application transport is always real S7 TCP."""
+import os
 import socket
 from pathlib import Path
 import pytest
+
+# Messages are asserted in Spanish, the source language, whatever the developer's own setting.
+os.environ["ABSCADA_LANG"] = "es"
 from abscada.project import Project
 from abscada.s7_simulator import create_server
 

@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (QComboBox, QFormLayout, QGroupBox, QHBoxLayout, Q
                                QSpinBox, QTabWidget, QVBoxLayout, QWidget)
 
 from .dialogs import EditorDialog
+from .i18n import tr
 
 DEFAULT_SIZE = (1280, 720)
 
@@ -22,10 +23,10 @@ def screen_size(project):
 def validate_settings(project):
     defaults = project.manifest.get("screen_defaults", {})
     if not isinstance(defaults, dict) or set(defaults) - {"width", "height"}:
-        raise ValueError("screen_defaults admite width y height")
+        raise ValueError(tr("screen_defaults admite width y height"))
     for value in defaults.values():
         if isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= 10000:
-            raise ValueError("El tamaño de las pantallas nuevas debe estar entre 1 y 10000 px")
+            raise ValueError(tr("El tamaño de las pantallas nuevas debe estar entre 1 y 10000 px"))
 
 
 def scale_screens(project, width, height, names):
@@ -44,55 +45,55 @@ def scale_screens(project, width, height, names):
 def edit_project_settings(studio):
     from .display_editor import DisplayPanel, apply_display
     project = studio.project
-    dialog = EditorDialog(studio); dialog.setWindowTitle("Ajustes del proyecto"); dialog.resize(780, 560)
+    dialog = EditorDialog(studio); dialog.setWindowTitle(tr("Ajustes del proyecto")); dialog.resize(780, 560)
     layout = QVBoxLayout(dialog)
     tabs = QTabWidget(); layout.addWidget(tabs)
 
     general = QWidget(); body = QVBoxLayout(general)
-    identity = QGroupBox("Proyecto"); form = QFormLayout(identity)
+    identity = QGroupBox(tr("Proyecto")); form = QFormLayout(identity)
     name = QLineEdit(project.manifest["name"]); name.setObjectName("projectName")
     startup = QComboBox(); startup.setObjectName("startupScreen"); startup.addItems(list(project.screens))
     startup.setCurrentText(project.manifest["startup_screen"])
-    form.addRow("Nombre", name)
-    form.addRow("Pantalla de inicio", startup)
+    form.addRow(tr("Nombre"), name)
+    form.addRow(tr("Pantalla de inicio"), startup)
     body.addWidget(identity)
 
-    size = QGroupBox("Tamaño de las pantallas"); form = QFormLayout(size)
+    size = QGroupBox(tr("Tamaño de las pantallas")); form = QFormLayout(size)
     width, height = QSpinBox(), QSpinBox()
     for field, value in zip((width, height), screen_size(project)):
         field.setRange(1, 10000); field.setValue(value)
     width.setObjectName("screenWidth"); height.setObjectName("screenHeight")
     width.setFixedWidth(100); height.setFixedWidth(100)
     row = QHBoxLayout(); row.addWidget(width); row.addWidget(QLabel("×")); row.addWidget(height)
-    monitor = QPushButton("Usar la resolución de este monitor")
+    monitor = QPushButton(tr("Usar la resolución de este monitor"))
     def use_monitor():
         geometry = (studio.screen() or QGuiApplication.primaryScreen()).geometry()
         width.setValue(geometry.width()); height.setValue(geometry.height())
     monitor.clicked.connect(use_monitor); row.addWidget(monitor); row.addStretch()
-    form.addRow("Pantallas nuevas (px)", row)
-    resize = QPushButton("Escalar las pantallas existentes a este tamaño…")
+    form.addRow(tr("Pantallas nuevas (px)"), row)
+    resize = QPushButton(tr("Escalar las pantallas existentes a este tamaño…"))
     resize.setObjectName("scaleScreens")
     form.addRow(resize)
-    note = QLabel("Diseña las pantallas con la resolución del monitor de operación. En el runtime se escalan "
-                  "a la ventana según la pestaña «Operación».")
+    note = QLabel(tr("Diseña las pantallas con la resolución del monitor de operación. En el runtime se escalan "
+                  "a la ventana según la pestaña «Operación»."))
     note.setWordWrap(True); note.setObjectName("muted"); form.addRow(note)
     body.addWidget(size); body.addStretch()
-    tabs.addTab(general, "General")
+    tabs.addTab(general, tr("General"))
 
     display = DisplayPanel(studio)
-    tabs.addTab(display, "Operación")
+    tabs.addTab(display, tr("Operación"))
 
     records = QWidget(); form = QFormLayout(records)
     retention, alarm_retention = QSpinBox(), QSpinBox()
     for field, value in ((retention, project.historian.get("retention_days", 90)), (alarm_retention, project.alarms.get("retention_days", 365))):
-        field.setRange(1, 36500); field.setValue(value); field.setSuffix(" días"); field.setFixedWidth(130)
+        field.setRange(1, 36500); field.setValue(value); field.setSuffix(tr(" días")); field.setFixedWidth(130)
     retention.setObjectName("historianRetention"); alarm_retention.setObjectName("alarmRetention")
-    form.addRow("Conservar valores registrados", retention)
-    form.addRow("Conservar alarmas y eventos", alarm_retention)
-    note = QLabel("Los días más antiguos se borran automáticamente. Para guardar una copia de los datos usa "
-                  "Herramientas → Copia de seguridad de los registros.")
+    form.addRow(tr("Conservar valores registrados"), retention)
+    form.addRow(tr("Conservar alarmas y eventos"), alarm_retention)
+    note = QLabel(tr("Los días más antiguos se borran automáticamente. Para guardar una copia de los datos usa "
+                  "Herramientas → Copia de seguridad de los registros."))
     note.setWordWrap(True); note.setObjectName("muted"); form.addRow(note)
-    tabs.addTab(records, "Registros")
+    tabs.addTab(records, tr("Registros"))
 
     scale_request = []
     def ask_scale():
@@ -100,14 +101,12 @@ def edit_project_settings(studio):
         target = (width.value(), height.value())
         names = [n for n, d in project.screens.items() if (d["width"], d["height"]) != target]
         if not names:
-            QMessageBox.information(dialog, "Escalar pantallas", "Todas las pantallas tienen ya ese tamaño.")
+            QMessageBox.information(dialog, tr("Escalar pantallas"), tr("Todas las pantallas tienen ya ese tamaño."))
             return
-        if QMessageBox.question(dialog, "Escalar pantallas",
-                                f"Se cambiará el tamaño de {len(names)} pantallas a {target[0]} × {target[1]} px, moviendo y "
-                                "escalando sus elementos (los textos mantienen su tamaño de letra). Se aplica al pulsar "
-                                "Aceptar y se puede deshacer con Ctrl+Z. ¿Continuar?") == QMessageBox.StandardButton.Yes:
+        if QMessageBox.question(dialog, tr("Escalar pantallas"),
+                                tr("Se cambiará el tamaño de {len} pantallas a {target_0} × {target_1} px, moviendo y escalando sus elementos (los textos mantienen su tamaño de letra). Se aplica al pulsar Aceptar y se puede deshacer con Ctrl+Z. ¿Continuar?", len=len(names), target_0=target[0], target_1=target[1])) == QMessageBox.StandardButton.Yes:
             scale_request[:] = [names]
-            resize.setText(f"Se escalarán {len(names)} pantallas al aceptar")
+            resize.setText(tr("Se escalarán {len} pantallas al aceptar", len=len(names)))
     resize.clicked.connect(ask_scale)
 
     def apply(target):

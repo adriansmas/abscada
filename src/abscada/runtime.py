@@ -8,6 +8,7 @@ import time
 from .project import coerce
 from .connectors import create
 from .security import SecurityService
+from .i18n import tr
 
 
 @dataclass(frozen=True)
@@ -64,7 +65,7 @@ class Runtime:
         their session and records who asked for it. Scripts call ``write`` directly."""
         if not self.security.permits(session, permission):
             self.audit("write_denied", name, session, f"{origin}: {value}")
-            raise PermissionError("Sin permiso para esta orden: inicia sesión con un usuario autorizado")
+            raise PermissionError(tr("Sin permiso para esta orden: inicia sesión con un usuario autorizado"))
         self.security.touch(session)
         return self.write(name, value, actor=self.security.actor(session), origin=origin)
 
@@ -91,12 +92,12 @@ class Runtime:
     def write(self, name, value, actor="", origin="script"):
         tag = self.tags[name]
         if not tag.get("writable", False):
-            raise ValueError(f"Variable de solo lectura: {name}")
+            raise ValueError(tr("Variable de solo lectura: {name}", name=name))
         value = coerce(value, tag["type"])
         completion=Future()
         if tag.get("binding"):
             if self._stop.is_set() or not self._thread or not self._thread.is_alive():
-                raise ValueError("El runtime está detenido")
+                raise ValueError(tr("El runtime está detenido"))
             self._writes[tag["binding"]["connection"]].put_nowait((name, value,completion))
         else:
             self._set(name, value, "good")
@@ -117,7 +118,7 @@ class Runtime:
             return
         if any(thread and thread.is_alive() for thread in
                (self._thread, self.scripts.thread, self.operations.thread if self.operations else None)):
-            raise RuntimeError("El runtime anterior sigue terminando")
+            raise RuntimeError(tr("El runtime anterior sigue terminando"))
         self._lease.acquire()
         self._stop.clear()
         with self._lock:
@@ -160,13 +161,13 @@ class Runtime:
         if self._thread and self._thread.ident is not None:
             self._thread.join(timeout)
             if self._thread.is_alive():
-                errors.append(TimeoutError("La comunicación sigue terminando; no iniciar otro runtime"))
+                errors.append(TimeoutError(tr("La comunicación sigue terminando; no iniciar otro runtime")))
         if not self._thread or not self._thread.is_alive():
             for name, tag in self.tags.items():
                 if tag.get('binding'):
-                    self._set(name, self.snapshot()[name].value, 'uncertain', 'Runtime detenido')
+                    self._set(name, self.snapshot()[name].value, 'uncertain', tr('Runtime detenido'))
             with self._lock:
-                self._status = {c['id']: 'Detenido' for c in self.project.connections}
+                self._status = {c['id']: tr('Detenido') for c in self.project.connections}
         if self.operations:
             try:
                 self.operations.stop(timeout)
@@ -207,7 +208,7 @@ class Runtime:
                             value = adapter.read(tag["binding"]["address"], tag["type"])
                             self._set(name, coerce(value, tag["type"]), "good")
                         with self._lock:
-                            self._status[cid] = "Conectado"
+                            self._status[cid] = tr("Conectado")
                     except Exception as exc:
                         for name in tags:
                             self._set(name, self.snapshot()[name].value, "bad", str(exc))
@@ -232,11 +233,11 @@ class Runtime:
                     tag = tags[name]
                     try:
                         if adapter is None or self.snapshot()[name].quality != "good":
-                            raise ConnectionError("Conexión no disponible; escritura descartada")
+                            raise ConnectionError(tr("Conexión no disponible; escritura descartada"))
                         adapter.write(tag["binding"]["address"], tag["type"], value)
                         completion.set_result(True)
                         due = 0
-                        result = (name, True, "Escritura enviada; pendiente de lectura")
+                        result = (name, True, tr("Escritura enviada; pendiente de lectura"))
                     except Exception as exc:
                         completion.set_exception(exc)
                         result = (name, False, str(exc))
@@ -255,6 +256,6 @@ class Runtime:
             while True:
                 try:
                     _,_,completion=queue.get_nowait()
-                    if not completion.done():completion.set_exception(RuntimeError('Runtime detenido antes de enviar la escritura'))
+                    if not completion.done():completion.set_exception(RuntimeError(tr('Runtime detenido antes de enviar la escritura')))
                 except Empty:
                     break

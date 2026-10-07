@@ -4,31 +4,32 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
     QDialogButtonBox, QLabel)
 from .text_lists import validate_text_list
 from .dialogs import EditorDialog as QDialog
+from .i18n import tr
 
 
 class TextListDialog(QDialog):
     def __init__(self, element, kind, parent=None):
         super().__init__(parent)
         self.kind = kind
-        self.setWindowTitle('Lista de textos')
+        self.setWindowTitle(tr('Lista de textos'))
         self.resize(560, 420)
         layout = QVBoxLayout(self)
         self.table = QTableWidget(0, 2)
-        self.table.setHorizontalHeaderLabels(['Valor', 'Texto'])
+        self.table.setHorizontalHeaderLabels([tr('Valor'), tr('Texto')])
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
         layout.addWidget(self.table)
         actions = QHBoxLayout()
-        add = QPushButton('Añadir'); add.clicked.connect(lambda: self.add_row())
-        remove = QPushButton('Eliminar'); remove.clicked.connect(self.remove_rows)
+        add = QPushButton(tr('Añadir')); add.clicked.connect(lambda: self.add_row())
+        remove = QPushButton(tr('Eliminar')); remove.clicked.connect(self.remove_rows)
         actions.addWidget(add); actions.addWidget(remove); actions.addStretch()
         layout.addLayout(actions)
         self.default = QLineEdit(element.get('default_text', '—'))
-        form = QFormLayout(); form.addRow('Texto por defecto', self.default)
+        form = QFormLayout(); form.addRow(tr('Texto por defecto'), self.default)
         layout.addLayout(form)
         self.error = QLabel(); self.error.setStyleSheet('color: #b43838;'); self.error.setWordWrap(True)
         layout.addWidget(self.error)
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Save).setText("Aceptar")
+        buttons.button(QDialogButtonBox.StandardButton.Save).setText(tr("Aceptar"))
         buttons.accepted.connect(self.accept); buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
         for row in element.get('texts', []):

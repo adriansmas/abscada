@@ -6,6 +6,7 @@ import time
 from .alarms import AlarmEngine
 from . import recording
 from .storage import Repository, RuntimeLease, database_path
+from .i18n import tr
 
 
 class Operations:
@@ -27,7 +28,7 @@ class Operations:
         self.thread = Thread(target=self._run, name="abscada-archive", daemon=True)
         self.thread.start()
         if not self.ready.wait(5) or self.error:
-            raise RuntimeError(self.error or "El archivo no responde")
+            raise RuntimeError(self.error or tr("El archivo no responde"))
 
     def submit(self, tag, sample):
         if self.error or self.stopping.is_set() or not self.thread or not self.thread.is_alive():
@@ -35,11 +36,11 @@ class Operations:
         try:
             self.queue.put_nowait(("sample", tag, sample))
         except Full:
-            self.error = "Cola de archivo llena: hay pérdida de registros; revisar carga y disco"
+            self.error = tr("Cola de archivo llena: hay pérdida de registros; revisar carga y disco")
 
     def command(self, action, *args):
         if self.error or self.stopping.is_set() or not self.thread or not self.thread.is_alive():
-            raise RuntimeError(self.error or "El archivo está detenido")
+            raise RuntimeError(self.error or tr("El archivo está detenido"))
         future = Future()
         self.queue.put_nowait((action, args, future))
         try:
@@ -56,14 +57,14 @@ class Operations:
             try:
                 self.queue.put_nowait(("audit", action, target, actor, detail))
             except Full:
-                self.error = "Cola de auditoría llena"
+                self.error = tr("Cola de auditoría llena")
 
     def stop(self, timeout=5):
         self.stopping.set()
         if self.thread:
             self.thread.join(timeout)
             if self.thread.is_alive():
-                raise TimeoutError("El archivo sigue cerrando")
+                raise TimeoutError(tr("El archivo sigue cerrando"))
 
     def _run(self):
         lease = RuntimeLease(self.path.with_suffix(".lock"))
@@ -111,7 +112,7 @@ class Operations:
                             if action == "ack":
                                 result = repository.acknowledge(args[0], wall, args[1], args[2])
                             else:
-                                raise ValueError("Orden de archivo desconocida")
+                                raise ValueError(tr("Orden de archivo desconocida"))
                             repository.connection.commit()
                             self.revision += 1
                             future.set_result(result)
@@ -156,19 +157,19 @@ class Operations:
             repository.connection.commit()
             self.revision += 1
         except Exception as exc:
-            self.error = f"Archivo SQLite: {exc}"
+            self.error = tr("Archivo SQLite: {exc}", exc=exc)
         finally:
             self.ready.set()
             for archive in archives.values():
                 try:
                     archive.close()
                 except Exception as exc:
-                    self.error = f"Archivo SQLite: {exc}"
+                    self.error = tr("Archivo SQLite: {exc}", exc=exc)
             try:
                 if repository:
                     repository.close()
             except Exception as exc:
-                self.error = f"Archivo SQLite: {exc}"
+                self.error = tr("Archivo SQLite: {exc}", exc=exc)
             finally:
                 lease.close()
             while True:
@@ -177,4 +178,4 @@ class Operations:
                 except Empty:
                     break
                 if len(item) == 3 and isinstance(item[2], Future) and not item[2].done():
-                    item[2].set_exception(RuntimeError(self.error or "Archivo cerrado"))
+                    item[2].set_exception(RuntimeError(self.error or tr("Archivo cerrado")))

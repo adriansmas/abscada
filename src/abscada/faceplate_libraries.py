@@ -11,6 +11,7 @@ import re
 import tempfile
 from pathlib import Path, PurePosixPath
 from .validation import filenames
+from .i18n import tr
 
 _cache = None
 
@@ -21,12 +22,12 @@ def digest(package):
 
 def identifier(value):
     if not isinstance(value, str) or not re.fullmatch(r'[A-Za-z][A-Za-z0-9_-]{0,39}', value):
-        raise ValueError('El alias admite letras, números, _ y -; comienza con una letra (máximo 40)')
+        raise ValueError(tr('El alias admite letras, números, _ y -; comienza con una letra (máximo 40)'))
 
 
 def resource_name(name):
     if not isinstance(name, str) or '\\' in name or ':' in name or any(p in ('', '.', '..') for p in name.split('/')) or PurePosixPath(name).is_absolute():
-        raise ValueError('Ruta de recurso de biblioteca inválida')
+        raise ValueError(tr('Ruta de recurso de biblioteca inválida'))
     for part in name.split('/'):
         filenames([part])
 
@@ -42,7 +43,7 @@ def transform(value, assets, palette=None, alias=None):
             result[key] = assets(item) if callable(assets) else f'library://{alias}/{item}'
         elif palette is not None and (key.endswith('color') or key in ('background', 'on', 'off', 'bad')) and isinstance(item, str) and item.startswith('@'):
             if item[1:] not in palette:
-                raise ValueError('Color de paleta inexistente: ' + item)
+                raise ValueError(tr('Color de paleta inexistente: ') + item)
             result[key] = palette[item[1:]]
         else:
             result[key] = transform(item, assets, palette, alias)
@@ -51,20 +52,20 @@ def transform(value, assets, palette=None, alias=None):
 
 def validate_package(package):
     if not isinstance(package, dict) or package.get('schema_version') != 1:
-        raise ValueError('Versión de biblioteca no soportada')
+        raise ValueError(tr('Versión de biblioteca no soportada'))
     for key in ('name', 'version'):
         if not isinstance(package.get(key), str) or not package[key].strip():
-            raise ValueError('La biblioteca necesita nombre y versión')
+            raise ValueError(tr('La biblioteca necesita nombre y versión'))
     faces, assets = package.get('faceplates'), package.get('assets')
     if not isinstance(faces, dict) or not faces or not isinstance(assets, dict):
-        raise ValueError('La librería necesita objetos y recursos válidos')
+        raise ValueError(tr('La librería necesita objetos y recursos válidos'))
     filenames(faces)
     for name, encoded in assets.items():
         resource_name(name)
         try:
             base64.b64decode(encoded, validate=True)
         except (ValueError, TypeError) as exc:
-            raise ValueError('Recurso base64 inválido: ' + name) from exc
+            raise ValueError(tr('Recurso base64 inválido: ') + name) from exc
     # A library cannot depend on variables, scripts, views or screens in a consumer.
     from .project import Project
     project = Project(Path.cwd(), dict(name='Library validation', startup_screen='main'), {}, [], [],
@@ -75,7 +76,7 @@ def validate_package(package):
             return system_asset(name.removeprefix(f'library://{SYSTEM}/'))
         resource_name(name)
         if name not in assets:
-            raise ValueError('Falta el recurso de biblioteca: ' + name)
+            raise ValueError(tr('Falta el recurso de biblioteca: ') + name)
         return Path(name)
     project.asset = asset
     project.validate()
@@ -84,7 +85,7 @@ def validate_package(package):
 def export_library(project, names, target, name, version, author='', license=''):
     """Publish a new immutable package. Existing files are never overwritten."""
     if not names or any(n not in project.faceplates for n in names):
-        raise ValueError('Selecciona al menos un objeto de librería existente')
+        raise ValueError(tr('Selecciona al menos un objeto de librería existente'))
     assets = {}
     def capture(source):
         raw = project.asset(source).read_bytes()
@@ -119,18 +120,18 @@ def hydrate(project):
     from .system_library import inject
     inject(project)
     if not isinstance(project.libraries, dict):
-        raise ValueError('Las bibliotecas deben ser un objeto')
+        raise ValueError(tr('Las bibliotecas deben ser un objeto'))
     for alias, entry in project.libraries.items():
         identifier(alias)
         if not isinstance(entry,dict) or not isinstance(entry.get('package'),dict) or not isinstance(entry.get('source'),str):
-            raise ValueError('Vínculo de biblioteca inválido: ' + alias)
+            raise ValueError(tr('Vínculo de biblioteca inválido: ') + alias)
         package = entry['package']
         validate_package(package)
         if digest(package) != entry.get('sha256'):
-            raise ValueError(f'{alias}: la huella de la biblioteca no coincide')
+            raise ValueError(tr("{alias}: la huella de la biblioteca no coincide", alias=alias))
         for name, document in expected_faces(alias, package).items():
             if name in project.faceplates:
-                raise ValueError('Colisión con un objeto de librería local: ' + name)
+                raise ValueError(tr('Colisión con un objeto de librería local: ') + name)
             project.faceplates[name] = document
 
 
@@ -140,20 +141,20 @@ def validate_links(project):
     inject(project)
     check(project)
     if not isinstance(project.libraries, dict):
-        raise ValueError('Las bibliotecas deben ser un objeto')
+        raise ValueError(tr('Las bibliotecas deben ser un objeto'))
     if SYSTEM in project.libraries:
-        raise ValueError(f'El alias «{SYSTEM}» está reservado a la librería estándar')
+        raise ValueError(tr("El alias «{SYSTEM}» está reservado a la librería estándar", SYSTEM=SYSTEM))
     filenames(project.libraries)
     for alias, entry in project.libraries.items():
         identifier(alias)
         if not isinstance(entry,dict) or not isinstance(entry.get('package'),dict) or not isinstance(entry.get('source'),str):
-            raise ValueError('Vínculo de biblioteca inválido: ' + alias)
+            raise ValueError(tr('Vínculo de biblioteca inválido: ') + alias)
         package = entry['package']
         if digest(package) != entry.get('sha256'):
-            raise ValueError(f'{alias}: biblioteca modificada; utiliza Actualizar')
+            raise ValueError(tr("{alias}: biblioteca modificada; utiliza Actualizar", alias=alias))
         for name, document in expected_faces(alias, package).items():
             if project.faceplates.get(name) != document:
-                raise ValueError(f'{name}: plantilla vinculada de solo lectura')
+                raise ValueError(tr("{name}: plantilla vinculada de solo lectura", name=name))
 
 
 def link(project, source, alias, update=False):
@@ -164,18 +165,18 @@ def link(project, source, alias, update=False):
     candidate = copy.deepcopy(project)
     existing = candidate.libraries.get(alias)
     if bool(existing) != bool(update):
-        raise ValueError('El alias ya existe' if existing else 'Biblioteca no vinculada')
+        raise ValueError(tr('El alias ya existe') if existing else tr('Biblioteca no vinculada'))
     if existing:
         if package['name'] != existing['package']['name']:
-            raise ValueError('La actualización pertenece a otra biblioteca')
+            raise ValueError(tr('La actualización pertenece a otra biblioteca'))
         if package['version'] == existing['package']['version'] and digest(package) != existing['sha256']:
-            raise ValueError('Una versión publicada es inmutable; publica una versión nueva')
+            raise ValueError(tr('Una versión publicada es inmutable; publica una versión nueva'))
         for name in expected_faces(alias, existing['package']):
             candidate.faceplates.pop(name, None)
     candidate.libraries[alias] = dict(source=str(source), sha256=digest(package), package=package)
     for name, doc in expected_faces(alias, package).items():
         if any(n.casefold() == name.casefold() for n in candidate.faceplates):
-            raise ValueError('Colisión de nombre de objeto de librería: ' + name)
+            raise ValueError(tr('Colisión de nombre de objeto de librería: ') + name)
         candidate.faceplates[name] = doc
     candidate.validate()  # Checks every existing instance against the new interface.
     project.libraries, project.faceplates = candidate.libraries, candidate.faceplates
@@ -185,7 +186,7 @@ def unlink(project, alias):
     names = set(expected_faces(alias, project.libraries[alias]['package']))
     used = [screen for screen, doc in project.screens.items() if any(e.get('template') in names for e in doc['elements'])]
     if used:
-        raise ValueError('Biblioteca en uso en: ' + ', '.join(used))
+        raise ValueError(tr('Biblioteca en uso en: ') + ', '.join(used))
     del project.libraries[alias]
     for name in names:
         del project.faceplates[name]
@@ -198,11 +199,11 @@ def asset(project, uri):
     if separator and alias == SYSTEM:
         return system_asset(name)
     if not separator or alias not in project.libraries:
-        raise ValueError('Biblioteca de recurso inexistente')
+        raise ValueError(tr('Biblioteca de recurso inexistente'))
     resource_name(name)
     encoded = project.libraries[alias]['package']['assets'].get(name)
     if encoded is None:
-        raise ValueError('Recurso de biblioteca inexistente: ' + name)
+        raise ValueError(tr('Recurso de biblioteca inexistente: ') + name)
     raw = base64.b64decode(encoded, validate=True)
     if _cache is None:
         _cache = tempfile.TemporaryDirectory(prefix='abscada-library-assets-')

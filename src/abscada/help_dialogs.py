@@ -9,28 +9,29 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QGridLayout, QLabel, Q
 from . import __version__, simulator_manager
 from .app_paths import frozen, log_dir
 from .simulators import SIMULATORS
+from .i18n import tr
 
 
 def build_info():
     try:
         from ._build_info import BUILD
     except ImportError:
-        BUILD = "desarrollo (código fuente)"
+        BUILD = tr("desarrollo (código fuente)")
     return BUILD
 
 
 class SimulatorsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Simuladores de PLC")
+        self.setWindowTitle(tr("Simuladores de PLC"))
         self.resize(640, 300)
         layout = QVBoxLayout(self)
-        layout.addWidget(QLabel("PLC simulados para probar los ejemplos y para formación, sin equipos reales.\n"
-                                "No los arranques en un equipo conectado a una instalación real. Se detienen al cerrar abSCADA."))
+        layout.addWidget(QLabel(tr("PLC simulados para probar los ejemplos y para formación, sin equipos reales.\n"
+                                "No los arranques en un equipo conectado a una instalación real. Se detienen al cerrar abSCADA.")))
         grid = QGridLayout()
         self.rows = {}
         for row, simulator in enumerate(SIMULATORS.values()):
-            grid.addWidget(QLabel(f"<b>{simulator.title}</b><br><small>{simulator.endpoints}</small>"), row, 0)
+            grid.addWidget(QLabel(tr("<b>{title}</b><br><small>{endpoints}</small>", title=simulator.title, endpoints=simulator.endpoints)), row, 0)
             state = QLabel()
             grid.addWidget(state, row, 1)
             button = QPushButton()
@@ -38,7 +39,7 @@ class SimulatorsDialog(QDialog):
             grid.addWidget(button, row, 2)
             self.rows[simulator.id] = (state, button)
         layout.addLayout(grid)
-        logs = QPushButton("Abrir carpeta de registros")
+        logs = QPushButton(tr("Abrir carpeta de registros"))
         logs.clicked.connect(open_log_folder)
         layout.addWidget(logs)
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
@@ -52,8 +53,8 @@ class SimulatorsDialog(QDialog):
     def refresh(self):
         for simulator_id, (state, button) in self.rows.items():
             on = simulator_manager.running(simulator_id)
-            state.setText("<span style='color:#147d75'>● en marcha</span>" if on else "○ parado")
-            button.setText("Detener" if on else "Arrancar")
+            state.setText(tr("<span style='color:#147d75'>● en marcha</span>") if on else "○ parado")
+            button.setText(tr("Detener") if on else tr("Arrancar"))
 
     def toggle(self, simulator_id):
         try:
@@ -62,7 +63,7 @@ class SimulatorsDialog(QDialog):
             else:
                 simulator_manager.start(simulator_id)
         except Exception as exc:
-            QMessageBox.warning(self, "Simulador", str(exc))
+            QMessageBox.warning(self, tr("Simulador"), str(exc))
         self.refresh()
 
 
@@ -72,10 +73,5 @@ def open_log_folder():
 
 
 def about(parent=None):
-    QMessageBox.about(parent, "Acerca de abSCADA",
-                      f"<h3>abSCADA {__version__}</h3>"
-                      f"<p>SCADA de escritorio libre · GPL-3.0-or-later</p>"
-                      f"<p>Compilación: {build_info()}<br>"
-                      f"{'Ejecutable' if frozen() else 'Python'} {platform.python_version()} · {platform.platform()}</p>"
-                      f"<p>Registros: {log_dir()}</p>"
-                      "<p>Esta es una versión beta: guarda a menudo y envía los fallos con el registro adjunto.</p>")
+    QMessageBox.about(parent, tr("Acerca de abSCADA"),
+                      tr("<h3>abSCADA {__version__}</h3><p>SCADA de escritorio libre · GPL-3.0-or-later</p><p>Compilación: {build_info}<br>{ejecutable_if_frozen} {python_version} · {platform}</p><p>Registros: {log_dir}</p><p>Esta es una versión beta: guarda a menudo y envía los fallos con el registro adjunto.</p>", __version__=__version__, build_info=build_info(), ejecutable_if_frozen='Ejecutable' if frozen() else 'Python', python_version=platform.python_version(), platform=platform.platform(), log_dir=log_dir()))

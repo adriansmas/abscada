@@ -8,6 +8,7 @@ from PySide6.QtCore import QRectF, QSize, Qt
 from PySide6.QtGui import QColor, QIcon, QPainter, QPixmap
 from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QLabel, QLineEdit, QStyle, QTreeWidget, QTreeWidgetItem,
                                QVBoxLayout)
+from .i18n import tr
 
 ROLE = Qt.ItemDataRole.UserRole
 TEMPLATE_MIME = "application/x-abscada-template"
@@ -20,16 +21,16 @@ def sections(project):
     from .faceplate_libraries import owner
     from .system_library import SYSTEM, _templates
     local = [(doc.get("folder", ""), name, name) for name, doc in project.faceplates.items() if not owner(project, name)]
-    result = [("Proyecto", ("group", "faceplates"),
-               "Objetos de este proyecto: se editan y se ordenan en carpetas (clic derecho)", local)]
+    result = [(tr("Proyecto"), ("group", "faceplates"),
+               tr("Objetos de este proyecto: se editan y se ordenan en carpetas (clic derecho)"), local)]
     standard = [(doc.get("folder", ""), name, doc.get("title", name)) for name, doc in _templates().items()]
-    result.append(("Estándar (sistema)", ("library", SYSTEM),
-                   "Librería del sistema, de solo lectura. Arrastra un objeto al lienzo para usarlo; "
-                   "«Copiar al proyecto» para modificarlo.", standard))
+    result.append((tr("Estándar (sistema)"), ("library", SYSTEM),
+                   tr("Librería del sistema, de solo lectura. Arrastra un objeto al lienzo para usarlo; "
+                   "«Copiar al proyecto» para modificarlo."), standard))
     for alias, entry in project.libraries.items():
         from .faceplate_libraries import expected_faces
         items = [("", name, name.removeprefix(alias + "__")) for name in expected_faces(alias, entry["package"])]
-        result.append((f"{alias} · {entry['package']['version']}", ("library", alias), "Librería vinculada · solo lectura", items))
+        result.append((f"{alias} · {entry['package']['version']}", ("library", alias), tr("Librería vinculada · solo lectura"), items))
     for _, _, _, items in result:
         items.sort(key=lambda item: (item[0].casefold(), item[2].casefold()))
     return result
@@ -80,7 +81,7 @@ def fill(project, parent, add, folder_icon, include_empty_folders=True):
             folder_value = ("lfolder", path) if value == ("group", "faceplates") else ("libfolder", value[1], path)
             folders[path] = add(folders[screen_tree.parent_folder(path)], path.rpartition("/")[2], folder_value, folder_icon, "")
         for folder, name, label in items:
-            tip = "Arrastra al lienzo para añadirlo a la pantalla" + ("" if value == ("group", "faceplates") else " · solo lectura")
+            tip = tr("Arrastra al lienzo para añadirlo a la pantalla") + ("" if value == ("group", "faceplates") else " · solo lectura")
             add(folders.get(folder, section), label, ("faceplates", name), template_icon(project, name), tip)
     return nodes
 
@@ -90,10 +91,10 @@ class LibraryPicker(QDialog):
 
     def __init__(self, parent, project):
         super().__init__(parent)
-        self.setWindowTitle("Insertar objeto de librería")
+        self.setWindowTitle(tr("Insertar objeto de librería"))
         self.resize(460, 560)
         layout = QVBoxLayout(self)
-        self.filter = QLineEdit(); self.filter.setPlaceholderText("Buscar: válvula, depósito, motor…")
+        self.filter = QLineEdit(); self.filter.setPlaceholderText(tr("Buscar: válvula, depósito, motor…"))
         self.filter.setObjectName("library_filter")
         layout.addWidget(self.filter)
         self.tree = QTreeWidget(); self.tree.setHeaderHidden(True); self.tree.setIconSize(QSize(28, 28))
@@ -113,10 +114,10 @@ class LibraryPicker(QDialog):
         self.tree.expandToDepth(1)
         self.tree.itemDoubleClicked.connect(lambda item, _: self.accept() if self.selected() else None)
         self.filter.textChanged.connect(self.apply_filter)
-        layout.addWidget(QLabel("Doble clic para insertar. También puedes arrastrar objetos desde el árbol del proyecto."))
+        layout.addWidget(QLabel(tr("Doble clic para insertar. También puedes arrastrar objetos desde el árbol del proyecto.")))
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Ok).setText("Insertar")
-        buttons.button(QDialogButtonBox.StandardButton.Cancel).setText("Cancelar")
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText(tr("Insertar"))
+        buttons.button(QDialogButtonBox.StandardButton.Cancel).setText(tr("Cancelar"))
         buttons.accepted.connect(lambda: self.accept() if self.selected() else None)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)

@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 
 from . import __version__
+from .i18n import tr
 
 
 def main(argv=None):
@@ -47,7 +48,7 @@ def main(argv=None):
         except (ValueError, KeyError, TypeError, OSError) as exc:
             parser.exit(2, f"Proyecto inválido: {exc}\n")
     elif args.validate or args.headless or args.runtime:
-        parser.error("indica el archivo .abscada del proyecto")
+        parser.error(tr("indica el archivo .abscada del proyecto"))
 
     if args.validate:
         print(f"Proyecto válido: {project.manifest['name']} · {len(project.tags())} variables")
@@ -85,7 +86,7 @@ def main(argv=None):
         try:
             project = Project.load(dialog.selected)
         except (ValueError, KeyError, TypeError, OSError) as exc:
-            QMessageBox.critical(None, "Abrir proyecto", f"No se pudo abrir el proyecto:\n{exc}")
+            QMessageBox.critical(None, tr("Abrir proyecto"), tr("No se pudo abrir el proyecto:\n{exc}", exc=exc))
     remember_project(project.manifest_path)
     from .ui import Window
     window = Window(project)

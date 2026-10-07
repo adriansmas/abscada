@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QVBoxLayout, QFormLayout, QLineEdit, QComboBox, QC
 from .dialogs import EditorDialog
 from .value_editor import ValueEditor, StructureEditor, FieldError
 from .protocol_editor import BindingEditor
+from .i18n import tr
 
 
 class VariableForms:
@@ -13,13 +14,13 @@ class VariableForms:
         dialog=EditorDialog(self); dialog.setWindowTitle('Variable · '+name); dialog.resize(560,330)
         layout=QVBoxLayout(dialog); form=QFormLayout(); layout.addLayout(form)
         initial=ValueEditor(tag['type'],tag['initial']); initial.edit.setObjectName('tagInitial')
-        writable=QCheckBox('Permitir escritura'); writable.setChecked(tag.get('writable',False))
-        connection=QComboBox(); connection.setObjectName('tagConnection'); connection.addItem('Local','')
+        writable=QCheckBox(tr('Permitir escritura')); writable.setChecked(tag.get('writable',False))
+        connection=QComboBox(); connection.setObjectName('tagConnection'); connection.addItem(tr('Local'),'')
         configs={c['id']:c for c in self.project.connections}
         for cid,c in configs.items(): connection.addItem(f"{cid} · {c.get('host','')}",cid)
         binding=tag.get('binding',{})
         connection.setCurrentIndex(max(0,connection.findData(binding.get('connection',''))))
-        form.addRow('Valor inicial',initial); form.addRow('Acceso',writable); form.addRow('Conexión',connection)
+        form.addRow(tr('Valor inicial'),initial); form.addRow(tr('Acceso'),writable); form.addRow(tr('Conexión'),connection)
         endpoint=BindingEditor(connection,configs,tag['type'],binding or None); layout.addWidget(endpoint)
         def apply(project): project.configure_tag(name,initial.value(),writable.isChecked(),endpoint.binding())
         def validate():
@@ -35,19 +36,19 @@ class VariableForms:
                                 dict(name='',type='float',initial=0.,writable=False))
         if duplicate:
             previous['name']=''; previous.pop('binding',None); previous.pop('bindings',None)
-        dialog=EditorDialog(self); dialog.setWindowTitle('Duplicar variable' if duplicate else 'Nueva variable' if index is None else 'Editar variable')
+        dialog=EditorDialog(self); dialog.setWindowTitle(tr('Duplicar variable') if duplicate else tr('Nueva variable') if index is None else tr('Editar variable'))
         dialog.resize(650,460); layout=QVBoxLayout(dialog); form=QFormLayout(); layout.addLayout(form)
         name=QLineEdit(previous['name']); name.setReadOnly(index is not None); name.setObjectName('variableName')
         kind=QComboBox(); kind.addItems(['bool','int','float','string']+list(self.project.types)); kind.setCurrentText(previous['type'])
         initial=ValueEditor(previous['type'] if previous['type'] not in self.project.types else 'float',
                             previous['initial'] if previous['type'] not in self.project.types else 0.)
-        writable=QCheckBox('Permitir escritura'); writable.setChecked(previous.get('writable',False))
-        connection=QComboBox(); connection.addItem('Local','')
+        writable=QCheckBox(tr('Permitir escritura')); writable.setChecked(previous.get('writable',False))
+        connection=QComboBox(); connection.addItem(tr('Local'),'')
         configs={c['id']:c for c in self.project.connections}
         for cid in configs: connection.addItem(cid,cid)
         binding=previous.get('binding',{})
         connection.setCurrentIndex(max(0,connection.findData(binding.get('connection',''))))
-        for title,field in [('Nombre',name),('Tipo',kind),('Valor inicial',initial),('Acceso',writable),('Conexión',connection)]: form.addRow(title,field)
+        for title,field in [(tr('Nombre'),name),(tr('Tipo'),kind),(tr('Valor inicial'),initial),(tr('Acceso'),writable),(tr('Conexión'),connection)]: form.addRow(title,field)
         structure=StructureEditor(self.project); layout.addWidget(structure)
         endpoint=BindingEditor(connection,configs,kind.currentText(),binding or None); layout.addWidget(endpoint)
         drafts={}; active=None
@@ -70,7 +71,7 @@ class VariableForms:
             if structured: endpoint.hide()
         state(); kind.currentTextChanged.connect(state)
         if duplicate:
-            info=QLabel('La copia se crea sin enlaces PLC. Revisa y asigna las direcciones de sus campos.'); info.setWordWrap(True); layout.addWidget(info)
+            info=QLabel(tr('La copia se crea sin enlaces PLC. Revisa y asigna las direcciones de sus campos.')); info.setWordWrap(True); layout.addWidget(info)
             original=duplicate.get('bindings',{}) or ({duplicate['name']:duplicate['binding']} if duplicate.get('binding') else {})
             from .connectors import binding_summary
             details=QLabel('\n'.join(f'{key}: {value["connection"]} · {binding_summary(value,self.project.connections,self.project.tags()[key]["type"])}' for key,value in original.items()))
@@ -91,7 +92,7 @@ class VariableForms:
             else: project.variables[index]=value
         def validate():
             if not name.text().strip() or '.' in name.text() or (index is None and any(v['name']==name.text().strip() for v in self.project.variables)):
-                raise FieldError('Nombre vacío, duplicado o con puntos',name)
+                raise FieldError(tr('Nombre vacío, duplicado o con puntos'),name)
             candidate=copy.deepcopy(self.project); apply(candidate); candidate.validate()
         dialog.validator=validate; self.dialog_buttons(dialog,layout)
         if dialog.exec()==EditorDialog.DialogCode.Accepted: self.mutate(lambda:apply(self.project))

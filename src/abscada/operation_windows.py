@@ -3,6 +3,7 @@
 Monitors are numbered from 1 in project files, as operators see them.
 """
 import hashlib
+from .i18n import tr
 
 MODES = {"normal", "maximized", "fullscreen"}
 # The operation window opens maximized unless the project says otherwise.
@@ -16,47 +17,47 @@ def monitor_number(value):
     if value is None:
         return None
     if isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= MAX_MONITORS:
-        raise ValueError(f"El monitor debe ser un número entre 1 y {MAX_MONITORS}")
+        raise ValueError(tr("El monitor debe ser un número entre 1 y {MAX_MONITORS}", MAX_MONITORS=MAX_MONITORS))
     return value
 
 
 def validate_window(options):
     """Placement of a pop-up opened from a button."""
     if not isinstance(options, dict) or set(options) - {"monitor", "on_top", "mode"}:
-        raise ValueError("Opciones de ventana inválidas")
+        raise ValueError(tr("Opciones de ventana inválidas"))
     monitor_number(options.get("monitor"))
     if options.get("mode", "normal") not in MODES:
-        raise ValueError("Modo de ventana desconocido")
+        raise ValueError(tr("Modo de ventana desconocido"))
     if not isinstance(options.get("on_top", False), bool):
-        raise ValueError("«Siempre encima» debe ser booleano")
+        raise ValueError(tr("«Siempre encima» debe ser booleano"))
 
 
 def validate_display(project):
     """manifest.display = {main: {monitor, mode, scale}, windows: [{screen, monitor, mode, on_top}]}"""
     display = project.manifest.get("display", {})
     if not isinstance(display, dict) or set(display) - {"main", "windows"}:
-        raise ValueError("Configuración de monitores inválida")
+        raise ValueError(tr("Configuración de monitores inválida"))
     main = display.get("main", {})
     if not isinstance(main, dict) or set(main) - {"monitor", "mode", "scale"}:
-        raise ValueError("Configuración de la ventana principal inválida")
+        raise ValueError(tr("Configuración de la ventana principal inválida"))
     monitor_number(main.get("monitor"))
     if main.get("mode", MAIN_MODE) not in MODES:
-        raise ValueError("Modo de ventana desconocido")
+        raise ValueError(tr("Modo de ventana desconocido"))
     if main.get("scale", "fit") not in SCALES:
-        raise ValueError("Escalado desconocido")
+        raise ValueError(tr("Escalado desconocido"))
     windows = display.get("windows", [])
     if not isinstance(windows, list):
-        raise ValueError("La lista de ventanas de arranque es inválida")
+        raise ValueError(tr("La lista de ventanas de arranque es inválida"))
     for window in windows:
         if not isinstance(window, dict) or set(window) - {"screen", "monitor", "mode", "on_top"}:
-            raise ValueError("Ventana de arranque inválida")
+            raise ValueError(tr("Ventana de arranque inválida"))
         if window.get("screen") not in project.screens:
-            raise ValueError(f"Ventana de arranque: pantalla inexistente {window.get('screen')}")
+            raise ValueError(tr("Ventana de arranque: pantalla inexistente {get}", get=window.get('screen')))
         monitor_number(window.get("monitor"))
         if window.get("mode", "normal") not in MODES:
-            raise ValueError("Modo de ventana desconocido")
+            raise ValueError(tr("Modo de ventana desconocido"))
         if not isinstance(window.get("on_top", False), bool):
-            raise ValueError("«Siempre encima» debe ser booleano")
+            raise ValueError(tr("«Siempre encima» debe ser booleano"))
 
 
 def validate_popup_button(element, project, tags, parameters):
@@ -67,23 +68,23 @@ def validate_popup_button(element, project, tags, parameters):
     """
     template = project.faceplates.get(element.get("template"))
     if template is None:
-        raise ValueError("Objeto de librería emergente inexistente")
+        raise ValueError(tr("Objeto de librería emergente inexistente"))
     bindings = element.get("bindings", {})
     expected = template.get("parameters", {})
     if not isinstance(bindings, dict) or set(bindings) != set(expected):
-        raise ValueError("Parámetros del objeto emergente incompletos")
+        raise ValueError(tr("Parámetros del objeto emergente incompletos"))
     for parameter, kind in expected.items():
         source = bindings[parameter]
         if not isinstance(source, str):
-            raise ValueError(f"Parámetro {parameter}: se esperaba una variable")
+            raise ValueError(tr("Parámetro {parameter}: se esperaba una variable", parameter=parameter))
         if source.startswith("$"):
             actual = parameters.get(source[1:])
         else:
             actual = tags[source]["type"] if source in tags else None
         if actual != kind:
-            raise ValueError(f"Tipo incorrecto en parámetro {parameter} del objeto emergente")
+            raise ValueError(tr("Tipo incorrecto en parámetro {parameter} del objeto emergente", parameter=parameter))
     if not isinstance(element.get("title", ""), str):
-        raise ValueError("Título de ventana inválido")
+        raise ValueError(tr("Título de ventana inválido"))
 
 
 def validate_popup_writes(element, project, tags):
@@ -92,7 +93,7 @@ def validate_popup_writes(element, project, tags):
     template = project.faceplates[element["template"]]
     for parameter, source in element.get("bindings", {}).items():
         if parameter_writable(template, parameter) and not tags.get(source, {}).get("writable", False):
-            raise ValueError(f"Objeto emergente: variable de solo lectura {source}")
+            raise ValueError(tr("Objeto emergente: variable de solo lectura {source}", source=source))
 
 
 def resolve_popup_bindings(child, instance_bindings):

@@ -1,6 +1,7 @@
 """Recording files own membership and cadence, independently of screen controls."""
 import re
 from datetime import datetime, timezone, timedelta
+from .i18n import tr
 
 
 def files(project):
@@ -28,9 +29,9 @@ def assignment(project, tag):
 def assign(project, tag, file_id):
     migrate(project)
     if file_id and file_id not in {f["id"] for f in files(project)}:
-        raise ValueError("Fichero de registro inexistente")
+        raise ValueError(tr("Fichero de registro inexistente"))
     if tag not in project.tags():
-        raise ValueError("Variable inexistente")
+        raise ValueError(tr("Variable inexistente"))
     for file in files(project):
         file["variables"] = [v for v in file["variables"] if v != tag]
         if file["id"] == file_id:
@@ -39,9 +40,9 @@ def assign(project, tag, file_id):
 
 def path(project, identifier, timestamp=None):
     if not isinstance(identifier, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", identifier):
-        raise ValueError("El ID del fichero solo admite letras, números, _ y -")
+        raise ValueError(tr("El ID del fichero solo admite letras, números, _ y -"))
     if identifier.upper().split(".")[0] in {"CON", "PRN", "AUX", "NUL", *[f"COM{i}" for i in range(1, 10)], *[f"LPT{i}" for i in range(1, 10)]}:
-        raise ValueError("Nombre de fichero reservado")
+        raise ValueError(tr("Nombre de fichero reservado"))
     directory = project.root / "runtime" / "records" / identifier
     if timestamp is None:
         return directory

@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QFormLayout, QHBoxLayout,
     QGroupBox, QLineEdit, QSpinBox, QDoubleSpinBox, QCheckBox, QPushButton,
     QComboBox, QColorDialog, QTableWidget, QTableWidgetItem, QHeaderView, QMenu,QToolButton, QLabel)
 from .drawing import PATH_KINDS, SHAPE_KINDS, world_points, set_points
+from .i18n import tr
 
 
 class ColorField(QWidget):
@@ -14,7 +15,7 @@ class ColorField(QWidget):
         row = QHBoxLayout(self); row.setContentsMargins(0,0,0,0)
         self.input = QLineEdit(); self.input.editingFinished.connect(callback)
         self.input.textChanged.connect(self.update_swatch)
-        self.input.setPlaceholderText('#RRGGBB o @paleta')
+        self.input.setPlaceholderText(tr('#RRGGBB o @paleta'))
         self.swatch = QPushButton(); self.swatch.setFixedWidth(28)
         self.palette_button=QToolButton();self.palette_button.setArrowType(Qt.ArrowType.DownArrow);self.palette_button.setFixedWidth(22)
         row.addWidget(self.input); row.addWidget(self.swatch);row.addWidget(self.palette_button)
@@ -31,7 +32,7 @@ class ColorField(QWidget):
             from .dynamics import resolve_color
             try: current=resolve_color(self.input.text(),self.project_palette())
             except ValueError: current='#ffffff'
-            color = QColorDialog.getColor(QColor(current), self, 'Color exacto · HEX / RGB')
+            color = QColorDialog.getColor(QColor(current), self, tr('Color exacto · HEX / RGB'))
             if color.isValid():
                 value=color.name();self.setText(value)
                 settings=QSettings('abSCADA','Studio');recent=settings.value('recentColors',[]) or []
@@ -56,7 +57,7 @@ class ColorField(QWidget):
         color=QColor(value)
         self.swatch.setStyleSheet(f'background: {color.name()};' if color.isValid() else '')
         self.input.setToolTip(('Vinculado a paleta · ' if self.input.text().startswith('@') else 'Color local · ')+
-            (f'{color.name()} · RGB {color.red()}, {color.green()}, {color.blue()}' if color.isValid() else 'Sin color'))
+            (f'{color.name()} · RGB {color.red()}, {color.green()}, {color.blue()}' if color.isValid() else tr('Sin color')))
 
     def showEvent(self,event):
         self.update_swatch();super().showEvent(event)
@@ -69,37 +70,37 @@ class ScreenProperties(QWidget):
     def __init__(self, host):
         super().__init__(); self.host = host; self.syncing = False
         layout = QVBoxLayout(self); layout.setContentsMargins(0,0,0,0)
-        general = QGroupBox("Pantalla"); form = QFormLayout(general)
+        general = QGroupBox(tr("Pantalla")); form = QFormLayout(general)
         self.name = QLineEdit(); self.name.setReadOnly(True)
         self.title = QLineEdit(); self.title.editingFinished.connect(self.apply)
-        form.addRow("Documento", self.name); form.addRow("Título", self.title)
+        form.addRow(tr("Documento"), self.name); form.addRow(tr("Título"), self.title)
         # The start screen is chosen in the project tree (right click) or in «Ajustes del proyecto».
-        self.startup = QLabel("▶ Pantalla de inicio del runtime"); self.startup.setObjectName("muted"); form.addRow(self.startup)
+        self.startup = QLabel(tr("▶ Pantalla de inicio del runtime")); self.startup.setObjectName("muted"); form.addRow(self.startup)
         layout.addWidget(general)
-        size = QGroupBox("Lienzo"); form = QFormLayout(size)
+        size = QGroupBox(tr("Lienzo")); form = QFormLayout(size)
         self.width, self.height = QSpinBox(), QSpinBox()
-        for label, field in (("Ancho (px)", self.width), ("Alto (px)", self.height)):
+        for label, field in ((tr("Ancho (px)"), self.width), (tr("Alto (px)"), self.height)):
             field.setRange(1,10000); field.editingFinished.connect(self.apply); form.addRow(label,field)
-        self.background = ColorField(self.apply); form.addRow("Fondo", self.background)
+        self.background = ColorField(self.apply); form.addRow(tr("Fondo"), self.background)
         layout.addWidget(size)
-        grid = QGroupBox("Cuadrícula"); form = QFormLayout(grid)
+        grid = QGroupBox(tr("Cuadrícula")); form = QFormLayout(grid)
         self.grid_size = QSpinBox(); self.grid_size.setRange(1,200)
         self.grid_size.editingFinished.connect(self.apply)
-        self.show_grid = QCheckBox("Mostrar cuadrícula"); self.show_grid.clicked.connect(self.apply)
+        self.show_grid = QCheckBox(tr("Mostrar cuadrícula")); self.show_grid.clicked.connect(self.apply)
         # «Ajustar a cuadrícula» is in the bar above the canvas.
-        form.addRow("Paso (px)", self.grid_size); form.addRow(self.show_grid)
+        form.addRow(tr("Paso (px)"), self.grid_size); form.addRow(self.show_grid)
         layout.addWidget(grid)
-        advanced = QPushButton("Ajustes avanzados…"); advanced.clicked.connect(host.edit_graphic_document)
+        advanced = QPushButton(tr("Ajustes avanzados…")); advanced.clicked.connect(host.edit_graphic_document)
         layout.addWidget(advanced)
-        self.events_button = QPushButton("Al abrir pantalla…")
+        self.events_button = QPushButton(tr("Al abrir pantalla…"))
         self.events_button.clicked.connect(self.edit_events)
         layout.addWidget(self.events_button)
 
     def edit_events(self):
         from .engineering import RecordDialog
         from PySide6.QtWidgets import QDialog
-        dialog = RecordDialog(self, 'Apertura de pantalla', [
-            ('on_open', 'Scripts', 'multi', [], [(n,n) for n in self.host.project.scripts])], self.host.document())
+        dialog = RecordDialog(self, tr('Apertura de pantalla'), [
+            ('on_open', tr('Scripts'), 'multi', [], [(n,n) for n in self.host.project.scripts])], self.host.document())
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self.host.mutate(lambda: self.host.document().update(dialog.data()))
 
@@ -128,28 +129,28 @@ class ScreenProperties(QWidget):
 
 class DrawingProperties(QGroupBox):
     def __init__(self, host):
-        super().__init__("Trazo"); self.host = host; self.syncing = False
+        super().__init__(tr("Trazo")); self.host = host; self.syncing = False
         layout = QVBoxLayout(self); form = QFormLayout(); self.form=form
         self.color = ColorField(self.apply)
         self.width = QDoubleSpinBox(); self.width.setRange(1,100); self.width.setDecimals(1); self.width.editingFinished.connect(self.apply)
         self.style = QComboBox()
-        for title, key in (("Continuo","solid"),("Discontinuo","dash"),("Punteado","dot")):
+        for title, key in ((tr("Continuo"),"solid"),(tr("Discontinuo"),"dash"),(tr("Punteado"),"dot")):
             self.style.addItem(title,key)
         self.style.activated.connect(self.apply)
         self.arrows = QComboBox()
-        for title, key in (("Sin flechas","none"),("Al inicio","start"),("Al final","end"),("Ambos","both")):
+        for title, key in ((tr("Sin flechas"),"none"),(tr("Al inicio"),"start"),(tr("Al final"),"end"),(tr("Ambos"),"both")):
             self.arrows.addItem(title,key)
         self.arrows.activated.connect(self.apply)
-        self.filled = QCheckBox("Relleno"); self.filled.clicked.connect(self.apply)
-        for title, field in (("Color", self.color),("Grosor",self.width),("Estilo",self.style),("Extremos",self.arrows)):
+        self.filled = QCheckBox(tr("Relleno")); self.filled.clicked.connect(self.apply)
+        for title, field in ((tr("Color"), self.color),(tr("Grosor"),self.width),(tr("Estilo"),self.style),(tr("Extremos"),self.arrows)):
             form.addRow(title,field)
         form.addRow(self.filled); layout.addLayout(form)
-        self.points = QTableWidget(0,2); self.points.setHorizontalHeaderLabels(["X", "Y"])
+        self.points = QTableWidget(0,2); self.points.setHorizontalHeaderLabels([tr("X"), tr("Y")])
         self.points.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.points.setMaximumHeight(160); self.points.itemChanged.connect(self.apply_points)
         layout.addWidget(self.points)
         self.point_buttons = QWidget(); row = QHBoxLayout(self.point_buttons); row.setContentsMargins(0,0,0,0)
-        for text, callback in (("+ Punto",self.add_point),("− Punto",self.remove_point),("Invertir",self.reverse)):
+        for text, callback in ((tr("+ Punto"),self.add_point),("− Punto",self.remove_point),(tr("Invertir"),self.reverse)):
             button = QPushButton(text); button.clicked.connect(callback); row.addWidget(button)
         layout.addWidget(self.point_buttons)
 
@@ -189,7 +190,7 @@ class DrawingProperties(QGroupBox):
             points = [[float(self.points.item(r,c).text()) for c in range(2)] for r in range(self.points.rowCount())]
             self.host.mutate(lambda: set_points(element, points))
         except (ValueError, AttributeError) as exc:
-            self.host.error("Coordenadas inválidas"); self.refresh(element)
+            self.host.error(tr("Coordenadas inválidas")); self.refresh(element)
 
     def add_point(self):
         element = self.selected()

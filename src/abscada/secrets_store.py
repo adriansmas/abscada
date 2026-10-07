@@ -19,6 +19,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
+from .i18n import tr
 
 SECRETS_FILE = "secrets.json"
 _ENTROPY = b"abSCADA connection secret v1"
@@ -41,13 +42,13 @@ def unprotect(text: str) -> bytes:
         return base64.b64decode(text[6:])
     if text.startswith("dpapi:"):
         return _dpapi_unprotect(base64.b64decode(text[6:]))
-    raise ValueError("Secreto con formato desconocido: vuelve a introducirlo")
+    raise ValueError(tr("Secreto con formato desconocido: vuelve a introducirlo"))
 
 
 def _dpapi_unprotect(data: bytes) -> bytes:
     """Read a 0.5.0b2 secret. Only works for the same Windows account on the same PC."""
     if sys.platform != "win32":
-        raise ValueError("Secreto cifrado en otro equipo con Windows: vuelve a introducirlo")
+        raise ValueError(tr("Secreto cifrado en otro equipo con Windows: vuelve a introducirlo"))
     import ctypes
     from ctypes import wintypes
 
@@ -64,7 +65,7 @@ def _dpapi_unprotect(data: bytes) -> bytes:
     # CRYPTPROTECT_UI_FORBIDDEN: never show a prompt from a service or the runtime.
     if not ctypes.windll.crypt32.CryptUnprotectData(ctypes.byref(source), None, ctypes.byref(entropy), None, None,
                                                     0x1, ctypes.byref(target)):
-        raise ValueError("Secreto cifrado por otra cuenta de Windows: vuelve a introducirlo")
+        raise ValueError(tr("Secreto cifrado por otra cuenta de Windows: vuelve a introducirlo"))
     try:
         return ctypes.string_at(target.pbData, target.cbData)
     finally:

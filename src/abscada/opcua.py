@@ -18,13 +18,14 @@ import asyncio
 import re
 
 from .protocol_definition import Field, ProtocolDefinition
+from .i18n import tr
 
 SECURITY = (
-    ("Basic256Sha256_SignAndEncrypt", "Basic256Sha256 · firma y cifrado", ()),
-    ("Aes256_Sha256_RsaPss_SignAndEncrypt", "Aes256-Sha256-RsaPss · firma y cifrado", ()),
-    ("Aes128_Sha256_RsaOaep_SignAndEncrypt", "Aes128-Sha256-RsaOaep · firma y cifrado", ()),
+    ("Basic256Sha256_SignAndEncrypt", tr("Basic256Sha256 · firma y cifrado"), ()),
+    ("Aes256_Sha256_RsaPss_SignAndEncrypt", tr("Aes256-Sha256-RsaPss · firma y cifrado"), ()),
+    ("Aes128_Sha256_RsaOaep_SignAndEncrypt", tr("Aes128-Sha256-RsaOaep · firma y cifrado"), ()),
     ("Basic256Sha256_Sign", "Basic256Sha256 · solo firma", ()),
-    ("None", "Sin seguridad (solo pruebas)", ()),
+    ("None", tr("Sin seguridad (solo pruebas)"), ()),
 )
 
 _NODE = re.compile(r"^(?:ns=\d+|nsu=[^;]+);(?:i=\d+|s=.+|g=[0-9A-Fa-f-]{36}|b=[A-Za-z0-9+/=]+)$")
@@ -34,13 +35,13 @@ def normalize(address, kind):
     if isinstance(address, str):
         return dict(node=address.strip())
     if not isinstance(address, dict):
-        raise ValueError("OPC UA necesita el NodeId de la variable")
+        raise ValueError(tr("OPC UA necesita el NodeId de la variable"))
     return dict(address)
 
 
 def check_binding(address, kind, writable):
     if not _NODE.match(address.get("node", "")):
-        raise ValueError('NodeId inválido; ejemplos: ns=3;s="DB_Motor"."Velocidad", ns=2;i=1001, nsu=http://…;s=Nivel')
+        raise ValueError(tr('NodeId inválido; ejemplos: ns=3;s="DB_Motor"."Velocidad", ns=2;i=1001, nsu=http://…;s=Nivel'))
 
 
 def describe(address, kind):
@@ -49,11 +50,11 @@ def describe(address, kind):
 
 DEFINITION = ProtocolDefinition(
     "OPC UA",
-    (Field("endpoint", "Endpoint", "opc.tcp://127.0.0.1:4840"),
-     Field("security", "Seguridad", "Basic256Sha256_SignAndEncrypt", choices=SECURITY),
-     Field("username", "Usuario (vacío = anónimo)", "", optional=True),
-     Field("timeout_ms", "Timeout (ms)", 4000, 500, 60000)),
-    (Field("node", "NodeId", 'ns=3;s="DB".Variable'),),
+    (Field("endpoint", tr("Endpoint"), "opc.tcp://127.0.0.1:4840"),
+     Field("security", tr("Seguridad"), "Basic256Sha256_SignAndEncrypt", choices=SECURITY),
+     Field("username", tr("Usuario (vacío = anónimo)"), "", optional=True),
+     Field("timeout_ms", tr("Timeout (ms)"), 4000, 500, 60000)),
+    (Field("node", tr("NodeId"), 'ns=3;s="DB".Variable'),),
     normalize, check_binding, describe)
 
 _INTEGERS = {"SByte", "Byte", "Int16", "UInt16", "Int32", "UInt32", "Int64", "UInt64"}
@@ -80,7 +81,7 @@ class OpcUaClient:
 
     def connect(self):
         if self.root is None:
-            raise RuntimeError("Conector OPC UA sin carpeta de proyecto (certificados y contraseñas)")
+            raise RuntimeError(tr("Conector OPC UA sin carpeta de proyecto (certificados y contraseñas)"))
         self.loop = asyncio.new_event_loop()
         try:
             self._run(self._connect())
@@ -118,7 +119,7 @@ class OpcUaClient:
         if username:
             password = SecretStore(secrets_path(self.root)).get(connection_secret_key(self.config["id"]))
             if password is None:
-                raise PermissionError("Falta la contraseña de esta conexión: introdúcela en Studio (Conexiones)")
+                raise PermissionError(tr("Falta la contraseña de esta conexión: introdúcela en Studio (Conexiones)"))
             client.set_user(username)
             client.set_password(password)
         try:
@@ -148,7 +149,7 @@ class OpcUaClient:
         node = self._node(address)
         value = self._run(node.read_data_value())
         if not value.StatusCode.is_good():
-            raise ConnectionError(f"Calidad OPC UA {value.StatusCode.name}")
+            raise ConnectionError(tr("Calidad OPC UA {name}", name=value.StatusCode.name))
         result = value.Value.Value
         if kind == "string" and result is not None and not isinstance(result, str):
             result = getattr(result, "Text", None) or str(result)

@@ -6,18 +6,19 @@ from PySide6.QtCore import QSettings
 from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QGroupBox, QComboBox, QCheckBox,
                                QTableWidget, QHeaderView, QPushButton, QLabel, QWidget)
 from .operation_windows import MAX_MONITORS, MAIN_MODE, settings_key
+from .i18n import tr
 
-MODE_TITLES = [("normal", "Ventana"), ("maximized", "Maximizada"), ("fullscreen", "Pantalla completa")]
-SCALE_TITLES = [("fit", "Ajustar a la ventana manteniendo la proporción"),
-                ("stretch", "Rellenar toda la ventana (puede deformar)"),
-                ("none", "Tamaño real (100 %, con barras de desplazamiento)")]
+MODE_TITLES = [("normal", tr("Ventana")), ("maximized", tr("Maximizada")), ("fullscreen", tr("Pantalla completa"))]
+SCALE_TITLES = [("fit", tr("Ajustar a la ventana manteniendo la proporción")),
+                ("stretch", tr("Rellenar toda la ventana (puede deformar)")),
+                ("none", tr("Tamaño real (100 %, con barras de desplazamiento)"))]
 
 
 def monitor_field(value, automatic):
     field = QComboBox()
     field.addItem(automatic, 0)
     for number in range(1, MAX_MONITORS + 1):
-        field.addItem(f"Monitor {number}", number)
+        field.addItem(tr("Monitor {number}", number=number), number)
     field.setCurrentIndex(max(0, field.findData(value or 0)))
     return field
 
@@ -45,9 +46,10 @@ def placement(monitor, mode, default_mode="normal"):
 
 def detected_monitors():
     from .runtime_window import monitors
-    rows = [f"Monitor {i}: {s.geometry().width()} × {s.geometry().height()}" for i, s in enumerate(monitors(), 1)]
-    return "Este equipo: " + ("; ".join(rows) or "sin monitores detectados") + \
-        ". La numeración va de izquierda a derecha."
+    rows = [tr("Monitor {number}: {width} × {height}", number=i, width=s.geometry().width(), height=s.geometry().height())
+            for i, s in enumerate(monitors(), 1)]
+    return tr("Este equipo: ") + ("; ".join(rows) or tr("sin monitores detectados")) + \
+        tr(". La numeración va de izquierda a derecha.")
 
 
 def forget_positions(project):
@@ -63,18 +65,18 @@ class DisplayPanel(QWidget):
         main_settings = display.get("main", {})
         layout = QVBoxLayout(self)
         info = QLabel(detected_monitors()); info.setWordWrap(True); layout.addWidget(info)
-        main = QGroupBox("Ventana principal del runtime"); form = QFormLayout(main)
-        self.main_monitor = monitor_field(main_settings.get("monitor"), "Automático")
+        main = QGroupBox(tr("Ventana principal del runtime")); form = QFormLayout(main)
+        self.main_monitor = monitor_field(main_settings.get("monitor"), tr("Automático"))
         self.main_mode = mode_field(main_settings.get("mode"), MAIN_MODE)
         self.main_scale = choice_field(SCALE_TITLES, main_settings.get("scale", "fit"))
         self.main_scale.setObjectName("runtimeScale")
-        form.addRow("Monitor", self.main_monitor); form.addRow("Al abrir", self.main_mode); form.addRow("Escalado", self.main_scale)
-        hint = QLabel("Las pantallas se dibujan en vectorial: textos, líneas y controles se escalan sin perder nitidez.")
+        form.addRow(tr("Monitor"), self.main_monitor); form.addRow(tr("Al abrir"), self.main_mode); form.addRow(tr("Escalado"), self.main_scale)
+        hint = QLabel(tr("Las pantallas se dibujan en vectorial: textos, líneas y controles se escalan sin perder nitidez."))
         hint.setWordWrap(True); hint.setObjectName("muted"); form.addRow(hint)
         layout.addWidget(main)
-        layout.addWidget(QLabel("Ventanas adicionales que se abren al arrancar (por ejemplo alarmas en otro monitor):"))
+        layout.addWidget(QLabel(tr("Ventanas adicionales que se abren al arrancar (por ejemplo alarmas en otro monitor):")))
         self.table = table = QTableWidget(0, 4)
-        table.setHorizontalHeaderLabels(["Pantalla", "Monitor", "Modo", "Siempre encima"])
+        table.setHorizontalHeaderLabels([tr("Pantalla"), tr("Monitor"), tr("Modo"), tr("Siempre encima")])
         table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         layout.addWidget(table)
         self.screens = list(studio.project.screens)
@@ -82,8 +84,8 @@ class DisplayPanel(QWidget):
         for window in display.get("windows", []):
             self.add(window)
         buttons = QHBoxLayout(); layout.addLayout(buttons)
-        for title, callback in (("Añadir ventana", lambda: self.add()), ("Eliminar", lambda: table.removeRow(table.currentRow())),
-                                ("Olvidar posiciones guardadas", lambda: forget_positions(studio.project))):
+        for title, callback in ((tr("Añadir ventana"), lambda: self.add()), (tr("Eliminar"), lambda: table.removeRow(table.currentRow())),
+                                (tr("Olvidar posiciones guardadas"), lambda: forget_positions(studio.project))):
             button = QPushButton(title); button.clicked.connect(callback); buttons.addWidget(button)
         buttons.addStretch()
 
@@ -93,7 +95,7 @@ class DisplayPanel(QWidget):
         screen = QComboBox(); screen.addItems(self.screens)
         screen.setCurrentText(window.get("screen", self.startup))
         on_top = QCheckBox(); on_top.setChecked(window.get("on_top", False))
-        for column, widget in enumerate((screen, monitor_field(window.get("monitor"), "Automático"),
+        for column, widget in enumerate((screen, monitor_field(window.get("monitor"), tr("Automático")),
                                          mode_field(window.get("mode")), on_top)):
             self.table.setCellWidget(row, column, widget)
 

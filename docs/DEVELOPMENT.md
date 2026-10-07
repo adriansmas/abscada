@@ -39,6 +39,26 @@ El registro no ejecuta plugins externos encontrados en archivos del proyecto. No
 
 Incorporar el tipo a `KINDS`, validación del proyecto, paleta, renderizador y pruebas. Mantener la representación como datos. Las acciones deben pasar por `Runtime.write`, nunca llamar a una conexión desde un evento Qt.
 
+## Textos de la aplicación e idiomas
+
+La interfaz se escribe en español, el idioma de origen, y cada texto visible pasa por `tr()` de `abscada/i18n.py`. Las traducciones están en `src/abscada/locales/<idioma>.json`, que relaciona el texto en español con el traducido. El usuario elige el idioma en **Ayuda → Idioma / Language**. Se guarda en `settings.json`, dentro de la carpeta de estado de abSCADA, y se aplica al volver a abrir el programa. `ABSCADA_LANG=en` lo fuerza para una prueba.
+
+- Texto fijo: `tr("Guardar")`. Con datos: `tr("¿Eliminar la cuenta {name}?", name=name)`; nunca una f-string dentro de `tr()`, porque cambiaría el texto que se busca en el catálogo.
+- Un texto que debe mostrarse en otro idioma que el activo se marca con `N_("…")` y se traduce con `i18n.load_catalog(código)`.
+- No traduzcas claves, nombres de tipos (`bool`, `float`…), identificadores ni datos que se guardan en el proyecto y se comparan después (por ejemplo, los roles por defecto de `security.py`).
+- `script_runner.py` se ejecuta como archivo suelto en otro proceso: no puede importar `tr`.
+
+```powershell
+.venv\Scripts\python tools/i18n_check.py               # textos traducidos y sin uso por idioma
+.venv\Scripts\python tools/i18n_check.py --leftovers   # literales en español fuera de tr()
+.venv\Scripts\python tools/i18n_check.py --export en   # añade a en.json los textos nuevos, vacíos, para traducirlos
+.venv\Scripts\python tools/i18n_wrap.py src/abscada/nuevo.py   # envuelve en tr() los textos de un módulo nuevo
+```
+
+`tests/test_i18n.py` falla si un texto no tiene traducción o si sus marcadores `{…}` no coinciden. Para añadir un idioma, crea `locales/<código>.json` con `--export <código>`, tradúcelo y añade el código a `LANGUAGES`.
+
+Los textos de **los proyectos** (pantallas, alarmas, recetas) no pasan por aquí: son datos del proyecto.
+
 ## Antes de cambiar el formato
 
 Decidir si es compatible con v1. Si no lo es, incrementar versión e implementar migración explícita con respaldo. Añadir fixture del formato anterior y una prueba de migración. No convertir automáticamente un archivo desconocido ni deserializar código ejecutable.

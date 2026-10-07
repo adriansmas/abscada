@@ -5,6 +5,7 @@ from typing import Protocol
 import re
 import struct
 from .protocol_definition import Field, ProtocolDefinition
+from .i18n import tr
 
 
 class Connector(Protocol):
@@ -37,10 +38,10 @@ def parse_address(text, value_type=None):
     standard = re.fullmatch(r"%?DB(\d+)\.DB([XBWD])(\d+)(?:\.(\d))?", text)
     match = standard or re.fullmatch(r"DB(\d+)\.(X|B|W|D|R)(\d+)(?:\.(\d))?", text)
     if not match:
-        raise ValueError(f"Dirección S7 inválida: {text}; ejemplos %DB1.DBW0, %DB1.DBD4 o %DB1.DBX0.0")
+        raise ValueError(tr("Dirección S7 inválida: {text}; ejemplos %DB1.DBW0, %DB1.DBD4 o %DB1.DBX0.0", text=text))
     db, kind, offset, bit = match.groups()
     if int(db) < 1 or (kind == "X" and (bit is None or int(bit) > 7)) or (kind != "X" and bit is not None):
-        raise ValueError(f"Dirección S7 inválida: {text}")
+        raise ValueError(tr("Dirección S7 inválida: {text}", text=text))
     if standard and kind == "D" and value_type == "float":
         kind = "R"
     return Address(int(db), int(offset), kind, int(bit or 0))
@@ -93,7 +94,7 @@ def normalize_s7(address, kind):
 
 def check_s7(address, kind, writable):
     if address["offset"] + {"bool": 1, "uint8": 1, "int16": 2, "int32": 4, "float32": 4}[address["encoding"]] > 65536:
-        raise ValueError("El dato excede el rango del DB")
+        raise ValueError(tr("El dato excede el rango del DB"))
 
 
 def describe_s7(address, kind):
@@ -103,14 +104,14 @@ def describe_s7(address, kind):
 
 
 S7.definition = ProtocolDefinition(
-    "Siemens S7",
-    (Field("host", "IP / host", "127.0.0.1"), Field("port", "Puerto TCP", 102, 1, 65535),
-     Field("rack", "Rack", 0, 0, 7), Field("slot", "Slot", 1, 0, 31)),
-    (Field("db", "DB", 1, 1, 65535), Field("offset", "Byte", 0, 0, 65535),
-     Field("encoding", "Codificación", "float32", choices=(("bool", "BOOL", ("bool",)),
+    tr("Siemens S7"),
+    (Field("host", tr("IP / host"), "127.0.0.1"), Field("port", tr("Puerto TCP"), 102, 1, 65535),
+     Field("rack", tr("Rack"), 0, 0, 7), Field("slot", tr("Slot"), 1, 0, 31)),
+    (Field("db", tr("DB"), 1, 1, 65535), Field("offset", tr("Byte"), 0, 0, 65535),
+     Field("encoding", tr("Codificación"), "float32", choices=(("bool", "BOOL", ("bool",)),
           ("uint8", "BYTE", ("int",)), ("int16", "INT", ("int",)),
           ("int32", "DINT", ("int",)), ("float32", "REAL", ("float",)))),
-     Field("bit", "Bit", 0, 0, 7, kinds=("bool",))), normalize_s7, check_s7, describe_s7)
+     Field("bit", tr("Bit"), 0, 0, 7, kinds=("bool",))), normalize_s7, check_s7, describe_s7)
 
 from .modbus import ModbusTCP
 from .ads import TwinCatADS
@@ -142,7 +143,7 @@ def binding_summary(binding, connections, kind):
 
 def register(protocol, factory):
     if protocol in REGISTRY:
-        raise ValueError(f"Protocolo ya registrado: {protocol}")
+        raise ValueError(tr("Protocolo ya registrado: {protocol}", protocol=protocol))
     if not isinstance(getattr(factory, "definition", None), ProtocolDefinition):
-        raise ValueError("El adaptador necesita una ProtocolDefinition")
+        raise ValueError(tr("El adaptador necesita una ProtocolDefinition"))
     REGISTRY[protocol] = factory

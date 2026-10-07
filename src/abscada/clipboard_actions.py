@@ -9,6 +9,7 @@ import uuid
 
 from PySide6.QtCore import QMimeData
 from PySide6.QtWidgets import QApplication
+from .i18n import tr
 
 MIME = "application/x-abscada-elements"
 
@@ -33,7 +34,7 @@ class ClipboardActions:
         data.setData(MIME, payload.encode("utf-8"))
         data.setText(payload)
         QApplication.clipboard().setMimeData(data)
-        self.statusBar().showMessage(f"{len(elements)} elemento(s) copiado(s)", 3000)
+        self.statusBar().showMessage(tr("{len} elemento(s) copiado(s)", len=len(elements)), 3000)
         return True
 
     def cut_elements(self):
@@ -45,7 +46,7 @@ class ClipboardActions:
             return
         data = QApplication.clipboard().mimeData()
         if data is None or not data.hasFormat(MIME):
-            self.statusBar().showMessage("No hay elementos copiados", 3000)
+            self.statusBar().showMessage(tr("No hay elementos copiados"), 3000)
             return
         try:
             payload = json.loads(bytes(data.data(MIME)).decode("utf-8"))
@@ -78,4 +79,4 @@ class ClipboardActions:
                         element["view"] = view
             self.document()["elements"].extend(elements)
         if self.mutate(paste, selected_ids=[e["id"] for e in elements]):
-            self.statusBar().showMessage(f"{len(elements)} elemento(s) pegado(s)", 3000)
+            self.statusBar().showMessage(tr("{len} elemento(s) pegado(s)", len=len(elements)), 3000)

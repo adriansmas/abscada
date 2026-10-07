@@ -1,5 +1,6 @@
 """Alarm state machine. Acknowledgement belongs to occurrences, not PLC commands."""
 import time
+from .i18n import tr
 
 
 def condition(alarm, value, active=False):
@@ -70,5 +71,5 @@ class AlarmEngine:
 
 def state(row):
     if row["returned_at"] is None:
-        return "Activa · pendiente ACK" if row["ack_required"] and row["ack_at"] is None else "Activa"
-    return "Retornada · pendiente ACK" if row["ack_required"] and row["ack_at"] is None else "Cerrada"
+        return tr("Activa · pendiente ACK") if row["ack_required"] and row["ack_at"] is None else tr("Activa")
+    return tr("Retornada · pendiente ACK") if row["ack_required"] and row["ack_at"] is None else tr("Cerrada")

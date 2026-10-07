@@ -8,32 +8,33 @@ from pathlib import Path
 from threading import Thread, Event, Lock
 from queue import Queue, Empty, Full
 from collections import deque
+from .i18n import tr
 
 
 def validate_scripts(project):
     for name, source in project.scripts.items():
         if not re.fullmatch(r'[A-Za-z0-9_-]+', name) or not isinstance(source, str):
-            raise ValueError('Nombre o contenido de script inválido')
+            raise ValueError(tr('Nombre o contenido de script inválido'))
         try:
             compile(source, f'scripts/{name}.py', 'exec')
         except SyntaxError as exc:
-            raise ValueError(f'{name}, línea {exc.lineno}: {exc.msg}') from exc
+            raise ValueError(tr("{name}, línea {lineno}: {msg}", name=name, lineno=exc.lineno, msg=exc.msg)) from exc
     def references(items):
         if not isinstance(items, list) or any(not isinstance(n, str) or n not in project.scripts for n in items):
-            raise ValueError('Referencia a script inexistente')
+            raise ValueError(tr('Referencia a script inexistente'))
     references(project.automation.get('startup', []))
     timeout = project.automation.get('timeout_seconds', 10)
     if type(timeout) not in (int, float) or not 0.1 <= timeout <= 300:
-        raise ValueError('El límite de ejecución debe estar entre 0,1 y 300 segundos')
+        raise ValueError(tr('El límite de ejecución debe estar entre 0,1 y 300 segundos'))
     ids = set()
     for task in project.automation.get('tasks', []):
         if not isinstance(task.get('id'), str) or not task['id'].strip() or task['id'] in ids:
-            raise ValueError('Nombre de tarea vacío o duplicado')
+            raise ValueError(tr('Nombre de tarea vacío o duplicado'))
         ids.add(task['id']); references([task.get('script')])
         if type(task.get('interval_ms')) is not int or not 100 <= task['interval_ms'] <= 86400000:
-            raise ValueError('El periodo de tarea debe estar entre 100 y 86400000 ms')
+            raise ValueError(tr('El periodo de tarea debe estar entre 100 y 86400000 ms'))
         if not isinstance(task.get('enabled', True), bool):
-            raise ValueError('Estado de tarea inválido')
+            raise ValueError(tr('Estado de tarea inválido'))
     for document in project.screens.values():
         references(document.get('on_open', []))
     for document in list(project.screens.values()) + list(project.faceplates.values()):
@@ -63,13 +64,13 @@ class ScriptService:
 
     def submit(self, name, event='manual', screen=''):
         if name not in self.project.scripts:
-            raise ValueError('Script inexistente')
+            raise ValueError(tr('Script inexistente'))
         if self.stop_event.is_set():
             return
         try:
             self.queue.put_nowait((name, event, screen))
         except Full:
-            self.log(name, 'error', 'Cola de eventos llena; evento descartado')
+            self.log(name, 'error', tr('Cola de eventos llena; evento descartado'))
 
     def start(self):
         if self.thread and self.thread.is_alive():
@@ -83,7 +84,7 @@ class ScriptService:
         if self.thread:
             self.thread.join(timeout)
             if self.thread.is_alive():
-                raise TimeoutError('Los scripts siguen terminando')
+                raise TimeoutError(tr('Los scripts siguen terminando'))
         while not self.queue.empty():
             try: self.queue.get_nowait()
             except Empty: break
@@ -128,20 +129,20 @@ class ScriptService:
                     payload = None
                     if self.stop_event.is_set() or time.monotonic() >= deadline:
                         process.kill(); process.communicate()
-                        raise TimeoutError('Ejecución cancelada' if self.stop_event.is_set() else 'Tiempo de ejecución excedido')
+                        raise TimeoutError(tr('Ejecución cancelada') if self.stop_event.is_set() else tr('Tiempo de ejecución excedido'))
             result = json.loads(output) if process.returncode == 0 else dict(ok=False,error=error)
             if not result['ok']:
-                raise ValueError(result.get('error', 'Error de script'))
+                raise ValueError(result.get('error', tr('Error de script')))
             if self.stop_event.is_set(): return
             # Validate every requested write before applying any of them.
             from .project import coerce
             for tag, value in result['actions']:
                 definition = self.runtime.tags[tag]
                 if not definition.get('writable'):
-                    raise ValueError(f'{tag}: solo lectura')
+                    raise ValueError(tr("{tag}: solo lectura", tag=tag))
                 coerce(value, definition['type'])
                 if definition.get('binding') and self.runtime.snapshot()[tag].quality != 'good':
-                    raise ValueError(f'{tag}: lectura no válida')
+                    raise ValueError(tr("{tag}: lectura no válida", tag=tag))
             for tag, value in result['actions']:
                 self.runtime.write(tag, value)
             self.state[name] = result['state']

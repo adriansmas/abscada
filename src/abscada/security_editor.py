@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDialogButtonBox, 
                                QSpinBox, QTableWidget, QTableWidgetItem, QTabWidget, QVBoxLayout, QWidget)
 from .dialogs import EditorDialog
 from .security import PERMISSIONS, UserStore, users_path
+from .i18n import tr
 
 
 def _spin(value, low, high):
@@ -21,33 +22,33 @@ def _spin(value, low, high):
 def edit_security(studio):
     project = studio.project
     policy = copy.deepcopy(project.security)
-    dialog = EditorDialog(studio); dialog.setWindowTitle("Usuarios y roles"); dialog.resize(1080, 560)
+    dialog = EditorDialog(studio); dialog.setWindowTitle(tr("Usuarios y roles")); dialog.resize(1080, 560)
     layout = QVBoxLayout(dialog)
     tabs = QTabWidget(); layout.addWidget(tabs)
 
     # -- policy -------------------------------------------------------------
     page = QWidget(); form = QFormLayout(page)
-    enabled = QCheckBox("Exigir inicio de sesión en el runtime"); enabled.setObjectName("security_enabled")
+    enabled = QCheckBox(tr("Exigir inicio de sesión en el runtime")); enabled.setObjectName("security_enabled")
     enabled.setChecked(policy["enabled"])
     timeout = _spin(policy["session_timeout_minutes"], 0, 1440)
     length = _spin(policy["password_min_length"], 8, 128)
     failures = _spin(policy["max_failed_logins"], 1, 100)
     lockout = _spin(policy["lockout_minutes"], 1, 1440)
     form.addRow(enabled)
-    form.addRow("Cierre por inactividad (min, 0 = nunca)", timeout)
-    form.addRow("Longitud mínima de contraseña", length)
-    form.addRow("Intentos fallidos antes de bloquear", failures)
-    form.addRow("Duración del bloqueo (min)", lockout)
-    note = QLabel("Sin seguridad, cualquiera puede operar desde el runtime (comportamiento anterior). "
+    form.addRow(tr("Cierre por inactividad (min, 0 = nunca)"), timeout)
+    form.addRow(tr("Longitud mínima de contraseña"), length)
+    form.addRow(tr("Intentos fallidos antes de bloquear"), failures)
+    form.addRow(tr("Duración del bloqueo (min)"), lockout)
+    note = QLabel(tr("Sin seguridad, cualquiera puede operar desde el runtime (comportamiento anterior). "
                   "Con seguridad, el runtime arranca sin sesión y en solo lectura; mandos, consignas, scripts "
-                  "y reconocimientos piden un usuario con permiso, y quedan auditados con su nombre.")
+                  "y reconocimientos piden un usuario con permiso, y quedan auditados con su nombre."))
     note.setWordWrap(True); form.addRow(note)
-    tabs.addTab(page, "Política")
+    tabs.addTab(page, tr("Política"))
 
     # -- roles --------------------------------------------------------------
     page = QWidget(); box = QVBoxLayout(page)
     roles = QTableWidget(0, 2 + len(PERMISSIONS)); roles.setObjectName("roles_table")
-    roles.setHorizontalHeaderLabels(["Identificador", "Nombre"] + list(PERMISSIONS.values()))
+    roles.setHorizontalHeaderLabels([tr("Identificador"), tr("Nombre")] + list(PERMISSIONS.values()))
     # Permission names are long: show them whole (one per column) and let the table scroll.
     header = roles.horizontalHeader()
     header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
@@ -67,19 +68,19 @@ def edit_security(studio):
     for role in policy["roles"]:
         add_role(role)
     row = QHBoxLayout(); box.addLayout(row)
-    for title, callback in (("Añadir rol", lambda: add_role()), ("Eliminar rol", lambda: roles.removeRow(roles.currentRow()))):
+    for title, callback in ((tr("Añadir rol"), lambda: add_role()), (tr("Eliminar rol"), lambda: roles.removeRow(roles.currentRow()))):
         button = QPushButton(title); button.clicked.connect(callback); row.addWidget(button)
     row.addStretch()
-    tabs.addTab(page, "Roles")
+    tabs.addTab(page, tr("Roles"))
 
     # -- accounts (saved with the project, written at once) ------------------
     store = UserStore(users_path(project.root))
     page = QWidget(); box = QVBoxLayout(page)
-    info = QLabel("Cuentas del proyecto, en users.json: viajan con él. Solo se guarda la huella de cada contraseña "
-                  "(scrypt). Los cambios se graban al momento, sin pulsar Guardar.")
+    info = QLabel(tr("Cuentas del proyecto, en users.json: viajan con él. Solo se guarda la huella de cada contraseña "
+                  "(scrypt). Los cambios se graban al momento, sin pulsar Guardar."))
     info.setWordWrap(True); box.addWidget(info)
     accounts = QTableWidget(0, 4); accounts.setObjectName("accounts_table")
-    accounts.setHorizontalHeaderLabels(["Usuario", "Nombre", "Roles", "Estado"])
+    accounts.setHorizontalHeaderLabels([tr("Usuario"), tr("Nombre"), tr("Roles"), tr("Estado")])
     accounts.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
     accounts.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
     accounts.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
@@ -90,7 +91,7 @@ def edit_security(studio):
         users = store.users()
         accounts.setRowCount(len(users))
         for i, user in enumerate(users):
-            state = "Desactivado" if user.get("disabled") else "Cambiar contraseña al entrar" if user.get("must_change") else "Activo"
+            state = tr("Desactivado") if user.get("disabled") else tr("Cambiar contraseña al entrar") if user.get("must_change") else tr("Activo")
             for column, text in enumerate((user["name"], user.get("full_name", ""), ", ".join(user["roles"]), state)):
                 accounts.setItem(i, column, QTableWidgetItem(text))
 
@@ -136,15 +137,15 @@ def edit_security(studio):
 
     def delete():
         name = selected()
-        if name and QMessageBox.question(dialog, "Eliminar usuario", f"¿Eliminar la cuenta {name}?") == QMessageBox.StandardButton.Yes:
+        if name and QMessageBox.question(dialog, tr("Eliminar usuario"), tr("¿Eliminar la cuenta {name}?", name=name)) == QMessageBox.StandardButton.Yes:
             run(lambda: store.delete(name))
 
     row = QHBoxLayout(); box.addLayout(row)
-    for title, callback in (("Nuevo usuario…", new_account), ("Restablecer contraseña…", reset_password),
-                            ("Roles…", change_roles), ("Activar / desactivar", toggle_disabled), ("Eliminar", delete)):
+    for title, callback in ((tr("Nuevo usuario…"), new_account), (tr("Restablecer contraseña…"), reset_password),
+                            (tr("Roles…"), change_roles), (tr("Activar / desactivar"), toggle_disabled), (tr("Eliminar"), delete)):
         button = QPushButton(title); button.clicked.connect(callback); row.addWidget(button)
     row.addStretch()
-    tabs.addTab(page, "Cuentas")
+    tabs.addTab(page, tr("Cuentas"))
     refresh_accounts()
 
     def read_roles():
@@ -166,9 +167,9 @@ def edit_security(studio):
             admins = [u for u in store.users() if not u.get("disabled") and
                       "manage_users" in {p for r in candidate.security["roles"] if r["id"] in u["roles"] for p in r["permissions"]}]
             if not store.users():
-                raise ValueError("Crea al menos un usuario en Cuentas antes de exigir inicio de sesión")
+                raise ValueError(tr("Crea al menos un usuario en Cuentas antes de exigir inicio de sesión"))
             if not admins:
-                raise ValueError("Al menos una cuenta activa debe tener un rol con «Gestionar usuarios»")
+                raise ValueError(tr("Al menos una cuenta activa debe tener un rol con «Gestionar usuarios»"))
     dialog.validator = validate
     studio.dialog_buttons(dialog, layout)
     if dialog.exec() == EditorDialog.DialogCode.Accepted and data() != project.security:
@@ -179,33 +180,33 @@ def edit_security(studio):
 class AccountDialog(QDialog):
     def __init__(self, parent, policy, name="", password_only=False, roles_only=False, current=()):
         super().__init__(parent)
-        self.setWindowTitle("Usuario")
+        self.setWindowTitle(tr("Usuario"))
         layout = QVBoxLayout(self); form = QFormLayout(); layout.addLayout(form)
         self.name = QLineEdit(name); self.name.setReadOnly(bool(name)); self.name.setObjectName("account_name")
         self.full_name = QLineEdit(); self.full_name.setObjectName("account_full_name")
         self.password, self.repeat = QLineEdit(), QLineEdit()
         for field, key in ((self.password, "account_password"), (self.repeat, "account_repeat")):
             field.setEchoMode(QLineEdit.EchoMode.Password); field.setObjectName(key)
-        self.must_change = QCheckBox("Pedir una contraseña nueva en el primer acceso"); self.must_change.setChecked(True)
+        self.must_change = QCheckBox(tr("Pedir una contraseña nueva en el primer acceso")); self.must_change.setChecked(True)
         self.role_list = QListWidget(); self.role_list.setObjectName("account_roles")
         for role in policy["roles"]:
             item = QListWidgetItem(f"{role['name']} ({role['id']})"); item.setData(Qt.ItemDataRole.UserRole, role["id"])
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             item.setCheckState(Qt.CheckState.Checked if role["id"] in current else Qt.CheckState.Unchecked)
             self.role_list.addItem(item)
-        form.addRow("Usuario", self.name)
+        form.addRow(tr("Usuario"), self.name)
         if not password_only and not roles_only:
-            form.addRow("Nombre completo", self.full_name)
+            form.addRow(tr("Nombre completo"), self.full_name)
         if not roles_only:
-            form.addRow("Contraseña", self.password); form.addRow("Repetir", self.repeat); form.addRow(self.must_change)
-            form.addRow(QLabel(f"Mínimo {policy['password_min_length']} caracteres. La contraseña no se guarda: solo su huella (scrypt)."))
+            form.addRow(tr("Contraseña"), self.password); form.addRow(tr("Repetir"), self.repeat); form.addRow(self.must_change)
+            form.addRow(QLabel(tr("Mínimo {password_min_length} caracteres. La contraseña no se guarda: solo su huella (scrypt).", password_min_length=policy['password_min_length'])))
         if not password_only:
-            form.addRow("Roles", self.role_list)
+            form.addRow(tr("Roles"), self.role_list)
         self.roles_only, self.error = roles_only, QLabel()
         self.error.setStyleSheet("color: #ad3030;"); layout.addWidget(self.error)
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Ok).setText("Aceptar")
-        buttons.button(QDialogButtonBox.StandardButton.Cancel).setText("Cancelar")
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText(tr("Aceptar"))
+        buttons.button(QDialogButtonBox.StandardButton.Cancel).setText(tr("Cancelar"))
         buttons.accepted.connect(self.accept); buttons.rejected.connect(self.reject); layout.addWidget(buttons)
 
     def roles(self):
@@ -214,7 +215,7 @@ class AccountDialog(QDialog):
 
     def accept(self):
         if not self.roles_only and self.password.text() != self.repeat.text():
-            self.error.setText("Las contraseñas no coinciden"); return
+            self.error.setText(tr("Las contraseñas no coinciden")); return
         super().accept()
 
 
@@ -222,26 +223,24 @@ def edit_opcua_server(studio):
     from .opcua_server import SECURITY, endpoint
     project = studio.project
     config = copy.deepcopy(project.opcua_server)
-    dialog = EditorDialog(studio); dialog.setWindowTitle("Servidor OPC UA"); dialog.resize(560, 480)
+    dialog = EditorDialog(studio); dialog.setWindowTitle(tr("Servidor OPC UA")); dialog.resize(560, 480)
     layout = QVBoxLayout(dialog); form = QFormLayout(); layout.addLayout(form)
-    enabled = QCheckBox("Publicar las variables por OPC UA mientras corre el runtime"); enabled.setChecked(config["enabled"])
+    enabled = QCheckBox(tr("Publicar las variables por OPC UA mientras corre el runtime")); enabled.setChecked(config["enabled"])
     enabled.setObjectName("opcua_enabled")
     port = _spin(config["port"], 1, 65535); port.setObjectName("opcua_port")
     policies = QListWidget(); policies.setObjectName("opcua_policies")
-    titles = {"None": "Sin seguridad (solo pruebas)", "Basic256Sha256_Sign": "Basic256Sha256 · solo firma"}
+    titles = {"None": tr("Sin seguridad (solo pruebas)"), "Basic256Sha256_Sign": "Basic256Sha256 · solo firma"}
     for key in SECURITY:
-        item = QListWidgetItem(titles.get(key, key.rsplit("_", 1)[0].replace("_", "-") + " · firma y cifrado"))
+        item = QListWidgetItem(titles.get(key, key.rsplit("_", 1)[0].replace("_", "-") + tr(" · firma y cifrado")))
         item.setData(Qt.ItemDataRole.UserRole, key)
         item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
         item.setCheckState(Qt.CheckState.Checked if key in config["security"] else Qt.CheckState.Unchecked)
         policies.addItem(item)
-    anonymous = QCheckBox("Permitir lectura anónima (nunca escritura)"); anonymous.setChecked(config["allow_anonymous"])
-    form.addRow(enabled); form.addRow("Puerto TCP", port); form.addRow("Políticas", policies); form.addRow(anonymous)
-    help_text = QLabel(f"Endpoint: {endpoint(config).replace('0.0.0.0', '<IP de este equipo>')}. Los clientes inician sesión "
-                       "con cuentas de abSCADA cuyo rol tenga «Acceso por OPC UA»; para escribir también necesitan "
-                       "«Mandos y consignas». El certificado de cada cliente debe aceptarse en Certificados.")
+    anonymous = QCheckBox(tr("Permitir lectura anónima (nunca escritura)")); anonymous.setChecked(config["allow_anonymous"])
+    form.addRow(enabled); form.addRow(tr("Puerto TCP"), port); form.addRow(tr("Políticas"), policies); form.addRow(anonymous)
+    help_text = QLabel(tr("Endpoint: {replace}. Los clientes inician sesión con cuentas de abSCADA cuyo rol tenga «Acceso por OPC UA»; para escribir también necesitan «Mandos y consignas». El certificado de cada cliente debe aceptarse en Certificados.", replace=endpoint(config).replace('0.0.0.0', '<IP de este equipo>')))
     help_text.setWordWrap(True); layout.addWidget(help_text)
-    certificates = QPushButton("Certificados…"); certificates.clicked.connect(lambda: certificates_dialog(studio))
+    certificates = QPushButton(tr("Certificados…")); certificates.clicked.connect(lambda: certificates_dialog(studio))
     layout.addWidget(certificates)
 
     def data():
@@ -252,7 +251,7 @@ def edit_opcua_server(studio):
     def validate():
         candidate = copy.deepcopy(project); candidate.opcua_server = data(); candidate.validate()
         if candidate.opcua_server["enabled"] and not candidate.security["enabled"] and not candidate.opcua_server["allow_anonymous"]:
-            raise ValueError("Sin usuarios activados nadie podría conectarse: activa la seguridad (Usuarios…) o la lectura anónima")
+            raise ValueError(tr("Sin usuarios activados nadie podría conectarse: activa la seguridad (Usuarios…) o la lectura anónima"))
     dialog.validator = validate
     studio.dialog_buttons(dialog, layout)
     if dialog.exec() == EditorDialog.DialogCode.Accepted and data() != project.opcua_server:
@@ -263,13 +262,13 @@ def edit_opcua_server(studio):
 def certificates_dialog(studio):
     from . import pki
     root = studio.project.root
-    dialog = QDialog(studio); dialog.setWindowTitle("Certificados OPC UA de este equipo"); dialog.resize(760, 460)
+    dialog = QDialog(studio); dialog.setWindowTitle(tr("Certificados OPC UA de este equipo")); dialog.resize(760, 460)
     layout = QVBoxLayout(dialog)
-    note = QLabel("Rechazados: servidores o clientes que intentaron conectar y aún no son de confianza. Comprueba la "
-                  "huella con el otro equipo antes de aceptar.")
+    note = QLabel(tr("Rechazados: servidores o clientes que intentaron conectar y aún no son de confianza. Comprueba la "
+                  "huella con el otro equipo antes de aceptar."))
     note.setWordWrap(True); layout.addWidget(note)
     lists = {}
-    for name, title in (("rejected", "Rechazados"), ("trusted", "De confianza")):
+    for name, title in (("rejected", tr("Rechazados")), ("trusted", tr("De confianza"))):
         layout.addWidget(QLabel(title))
         widget = QListWidget(); widget.setObjectName("certificates_" + name); lists[name] = widget; layout.addWidget(widget)
 
@@ -277,7 +276,7 @@ def certificates_dialog(studio):
         for name, widget in lists.items():
             widget.clear()
             for info in pki.listing(root, name):
-                item = QListWidgetItem(f"{info['subject']} · {info['uri']} · huella {info['fingerprint']} · válido hasta {info['valid_until'][:10]}")
+                item = QListWidgetItem(tr("{subject} · {uri} · huella {fingerprint} · válido hasta {info_valid_until_10}", subject=info['subject'], uri=info['uri'], fingerprint=info['fingerprint'], info_valid_until_10=info['valid_until'][:10]))
                 item.setData(Qt.ItemDataRole.UserRole, str(info["path"])); widget.addItem(item)
 
     def trust():
@@ -292,10 +291,10 @@ def certificates_dialog(studio):
             from pathlib import Path
             Path(item.data(Qt.ItemDataRole.UserRole)).unlink(missing_ok=True); refresh()
     row = QHBoxLayout(); layout.addLayout(row)
-    for title, callback in (("Confiar en el seleccionado", trust), ("Quitar confianza", remove)):
+    for title, callback in ((tr("Confiar en el seleccionado"), trust), (tr("Quitar confianza"), remove)):
         button = QPushButton(title); button.clicked.connect(callback); row.addWidget(button)
     row.addStretch()
-    close = QPushButton("Cerrar"); close.clicked.connect(dialog.accept); row.addWidget(close)
+    close = QPushButton(tr("Cerrar")); close.clicked.connect(dialog.accept); row.addWidget(close)
     refresh()
     dialog.exec()
 
@@ -303,11 +302,10 @@ def certificates_dialog(studio):
 def set_connection_password(parent, project_root, connection_id):
     from .secrets_store import SecretStore, connection_secret_key, secrets_path
     if not connection_id:
-        QMessageBox.information(parent, "Contraseña", "Pon nombre a la conexión antes de guardar su contraseña")
+        QMessageBox.information(parent, tr("Contraseña"), tr("Pon nombre a la conexión antes de guardar su contraseña"))
         return False
-    password, ok = QInputDialog.getText(parent, "Contraseña de la conexión",
-                                        f"Contraseña para {connection_id} (vacía = borrar). Se guarda al momento en el proyecto "
-                                        "(secrets.json), codificada pero no cifrada.", QLineEdit.EchoMode.Password)
+    password, ok = QInputDialog.getText(parent, tr("Contraseña de la conexión"),
+                                        tr("Contraseña para {connection_id} (vacía = borrar). Se guarda al momento en el proyecto (secrets.json), codificada pero no cifrada.", connection_id=connection_id), QLineEdit.EchoMode.Password)
     if ok:
         SecretStore(secrets_path(project_root)).set(connection_secret_key(connection_id), password)
     return ok

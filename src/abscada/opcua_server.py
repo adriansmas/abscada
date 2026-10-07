@@ -18,6 +18,7 @@ from __future__ import annotations
 import asyncio
 import datetime
 import threading
+from .i18n import tr
 
 SECURITY = ("Basic256Sha256_SignAndEncrypt", "Aes256_Sha256_RsaPss_SignAndEncrypt",
             "Aes128_Sha256_RsaOaep_SignAndEncrypt", "Basic256Sha256_Sign", "None")
@@ -30,16 +31,16 @@ def default_server():
 
 def validate_server(config):
     if not isinstance(config, dict) or set(config) - set(default_server()):
-        raise ValueError("Configuración del servidor OPC UA inválida")
+        raise ValueError(tr("Configuración del servidor OPC UA inválida"))
     for key in ("enabled", "allow_anonymous"):
         if not isinstance(config.get(key, False), bool):
-            raise ValueError(f"Servidor OPC UA: {key} debe ser booleano")
+            raise ValueError(tr("Servidor OPC UA: {key} debe ser booleano", key=key))
     port = config.get("port", 4840)
     if isinstance(port, bool) or not isinstance(port, int) or not 1 <= port <= 65535:
-        raise ValueError("Servidor OPC UA: puerto entre 1 y 65535")
+        raise ValueError(tr("Servidor OPC UA: puerto entre 1 y 65535"))
     security = config.get("security", [])
     if not isinstance(security, list) or not security or set(security) - set(SECURITY):
-        raise ValueError("Servidor OPC UA: elige al menos una política de seguridad válida")
+        raise ValueError(tr("Servidor OPC UA: elige al menos una política de seguridad válida"))
 
 
 def endpoint(config):
@@ -66,7 +67,7 @@ class OpcUaServer:
         self.thread.start()
         if not self.ready.wait(timeout) or self.error:
             self.stop()
-            raise RuntimeError(self.error or "El servidor OPC UA no arranca")
+            raise RuntimeError(self.error or tr("El servidor OPC UA no arranca"))
 
     def stop(self, timeout=5):
         if self.loop and self.stopping and not self.loop.is_closed():
@@ -74,14 +75,14 @@ class OpcUaServer:
         if self.thread:
             self.thread.join(timeout)
             if self.thread.is_alive():
-                raise TimeoutError("El servidor OPC UA sigue cerrando")
+                raise TimeoutError(tr("El servidor OPC UA sigue cerrando"))
 
     def _thread(self):
         self.loop = asyncio.new_event_loop()
         try:
             self.loop.run_until_complete(self._main())
         except Exception as exc:
-            self.error = f"Servidor OPC UA: {exc}"
+            self.error = tr("Servidor OPC UA: {exc}", exc=exc)
         finally:
             self.ready.set()
             self.loop.close()
@@ -210,10 +211,10 @@ class OpcUaServer:
         try:
             for tag, value in requests:
                 if not self.runtime.tags[tag].get("writable"):
-                    raise ValueError(f"Variable de solo lectura: {tag}")
+                    raise ValueError(tr("Variable de solo lectura: {tag}", tag=tag))
                 coerce(value, self.runtime.tags[tag]["type"])
                 if not self.runtime.security.permits(session, "operate"):
-                    raise PermissionError("sin permiso de mando")
+                    raise PermissionError(tr("sin permiso de mando"))
         except (ValueError, PermissionError) as exc:
             self.runtime.audit("write_denied", requests[0][0] if requests else "", session, f"opcua: {exc}")
             return False

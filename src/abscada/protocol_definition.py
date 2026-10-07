@@ -1,6 +1,7 @@
 """Protocol-owned configuration schemas, independent of Qt and network libraries."""
 from dataclasses import dataclass
 from typing import Callable
+from .i18n import tr
 
 
 @dataclass(frozen=True)
@@ -21,13 +22,13 @@ class Field:
     def validate(self, value, kind=None):
         if isinstance(self.default, int):
             if isinstance(value, bool) or not isinstance(value, int):
-                raise ValueError(f"{self.label}: se esperaba un entero")
+                raise ValueError(tr("{label}: se esperaba un entero", label=self.label))
             if not self.minimum <= value <= self.maximum:
-                raise ValueError(f"{self.label}: fuera de rango")
+                raise ValueError(tr("{label}: fuera de rango", label=self.label))
         elif not isinstance(value, str) or (not value.strip() and not self.optional):
-            raise ValueError(f"{self.label}: valor vacío o inválido")
+            raise ValueError(tr("{label}: valor vacío o inválido", label=self.label))
         if self.choices and value not in [v for v, _ in self.options(kind)]:
-            raise ValueError(f"{self.label}: valor incompatible con {kind or 'el protocolo'}")
+            raise ValueError(tr("{label}: valor incompatible con {kind_or_el_protocolo}", label=self.label, kind_or_el_protocolo=kind or 'el protocolo'))
 
 
 @dataclass(frozen=True)
@@ -52,11 +53,11 @@ class ProtocolDefinition:
 
     def validate_binding(self, address, kind, writable):
         if not self.supports_type(kind):
-            raise ValueError(f"{self.label}: tipo SCADA no soportado: {kind}")
+            raise ValueError(tr("{label}: tipo SCADA no soportado: {kind}", label=self.label, kind=kind))
         address = self.normalize(address, kind)
         fields = self.fields_for(kind)
         if not isinstance(address, dict) or set(address) - {f.key for f in fields}:
-            raise ValueError("Campos de enlace desconocidos o incompatibles")
+            raise ValueError(tr("Campos de enlace desconocidos o incompatibles"))
         for field in fields:
             options = field.options(kind)
             default = field.default if not options or field.default in [v for v, _ in options] else options[0][0]
