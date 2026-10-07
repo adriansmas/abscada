@@ -49,7 +49,55 @@ class RuntimeWindow(QMainWindow):
         self.setCentralWidget(self.view)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.refresh)
+        self.session_label = self.session_button = None
+        if not owner and self.runtime.security.enabled:
+            from PySide6.QtWidgets import QLabel, QPushButton
+            self.session_label = QLabel(); self.session_label.setObjectName("session_label")
+            self.session_button = QPushButton(); self.session_button.setObjectName("session_button")
+            self.session_button.clicked.connect(self.toggle_session)
+            self.statusBar().addPermanentWidget(self.session_label)
+            self.statusBar().addPermanentWidget(self.session_button)
+            self.update_session_widgets()
         self.render_scene()
+
+    # -- operator session (root window only; pop-ups share it) --------------
+    def update_session_widgets(self):
+        if self.session_label is None:
+            return
+        session = self.runtime.session
+        self.session_label.setText(f"Usuario: {session.display}" if session else "Sin sesión · solo lectura")
+        self.session_button.setText("Cerrar sesión" if session else "Iniciar sesión")
+
+    def toggle_session(self):
+        if self.runtime.session:
+            self.runtime.logout()
+            self.statusBar().showMessage("Sesión cerrada", 5000)
+        else:
+            self.request_login()
+        self.update_session_widgets()
+
+    def request_login(self, reason=""):
+        from .login_dialog import LoginDialog
+        root = self.owner or self
+        dialog = LoginDialog(self.runtime, self, reason)
+        accepted = dialog.exec() == LoginDialog.DialogCode.Accepted
+        root.update_session_widgets()
+        return accepted
+
+    def authorize(self, element):
+        """Make sure the operator may use this control; offers to log in if not."""
+        from .security import PERMISSIONS, required_permission
+        permission = required_permission(element)
+        security = self.runtime.security
+        if security.permits(self.runtime.session, permission):
+            return True
+        if self.runtime.session and not security.expired(self.runtime.session):
+            raise PermissionError(f"El usuario {self.runtime.session.user} no tiene el permiso «{PERMISSIONS[permission]}»")
+        if not self.request_login(f"Esta orden necesita el permiso «{PERMISSIONS[permission]}»."):
+            return False
+        if not security.permits(self.runtime.session, permission):
+            raise PermissionError(f"El usuario {self.runtime.session.user} no tiene el permiso «{PERMISSIONS[permission]}»")
+        return True
 
     def start(self):
         if not self.owner:
@@ -228,6 +276,13 @@ class RuntimeWindow(QMainWindow):
                         popup.statusBar().showMessage(text, 15000)
         if self.runtime.operations and self.runtime.operations.error:
             self.statusBar().showMessage(self.runtime.operations.error)
+        if not self.owner and self.runtime.session and self.runtime.security.expired(self.runtime.session):
+            self.release_momentaries()
+            self.runtime.logout("session_timeout")
+            self.update_session_widgets()
+            self.statusBar().showMessage("Sesión cerrada por inactividad", 15000)
+        if not self.owner and self.runtime.opcua and self.runtime.opcua.error:
+            self.statusBar().showMessage(self.runtime.opcua.error)
         for name, success, message in ([] if self.owner else self.runtime.write_results()):
             text = f"{name}: {'OK' if success else 'ERROR'} · {message}"
             self.diagnostic.emit(text)
@@ -280,7 +335,9 @@ class RuntimeWindow(QMainWindow):
                         tag=self.runtime.tags[element['tag']]
                         if tag.get('binding') and self.runtime.snapshot()[element['tag']].quality!='good':
                             raise ValueError('Sin comunicación; liberación no enviada')
-                        future=self.runtime.write(element['tag'],element.get('release_value',False))
+                        # Releases are never refused: a pressed command must always be able to stop.
+                        future=self.runtime.write(element['tag'],element.get('release_value',False),
+                                                  actor=self.runtime.security.actor(self.runtime.session),origin='hmi')
                         self.release_futures.append((element['tag'],future))
                     except Exception as exc:
                         message=f"No se pudo enviar la liberación de {element['tag']}: {exc}"
@@ -290,6 +347,14 @@ class RuntimeWindow(QMainWindow):
             samples=self.runtime.snapshot()
             if not permitted(element,samples,'visible') or not permitted(element,samples,'enabled'):
                 raise ValueError(element.get('dynamics',{}).get('disabled_reason','No se cumple el permiso de operación'))
+            if phase == 'press':
+                # No modal dialog while the mouse holds a momentary button: just refuse.
+                from .security import required_permission
+                if not self.runtime.security.permits(self.runtime.session, required_permission(element)):
+                    (self.owner or self).statusBar().showMessage("Inicia sesión con un usuario autorizado para usar este pulsador", 8000)
+                    return
+            elif not self.authorize(element):
+                return
             action = element.get("action")
             if action == 'script':
                 self.runtime.scripts.submit(element['script'], 'button', source.document_name if source else self.document_name)
@@ -342,7 +407,7 @@ class RuntimeWindow(QMainWindow):
             if entry:
                 from .value_editor import engineering_value
                 value=engineering_value(value,self.runtime.tags[name]['type'])
-            self.runtime.write(name, value)
+            self.runtime.command(name, value, self.runtime.session)
             if element.get('action') in {'momentary','press_release'}: self.momentary[id(element)]=element
         except Exception as exc:
             QMessageBox.warning(self, "Operación no realizada", str(exc))

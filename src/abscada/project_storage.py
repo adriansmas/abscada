@@ -13,6 +13,13 @@ def documents(project):
         data[key+'.json'] = getattr(project, key)
     if project.libraries:
         data['libraries.json'] = project.libraries
+    # Optional documents: written only when they differ from the default, so projects
+    # that do not use security or the OPC UA server keep the same files as before.
+    from .security import default_security
+    from .opcua_server import default_server
+    for key, default in (('security', default_security()), ('opcua_server', default_server())):
+        if getattr(project, key) != default:
+            data[key+'.json'] = getattr(project, key)
     from .faceplate_libraries import owner
     for folder in ('screens','faceplates'):
         for name, value in getattr(project, folder).items():
@@ -59,8 +66,9 @@ def _write_project(project):
     content = documents(project)
     root = project.root.resolve(); root.mkdir(parents=True,exist_ok=True)
     stale = set()
-    if (root/'libraries.json').exists():
-        stale.add('libraries.json')
+    for optional in ('libraries.json', 'security.json', 'opcua_server.json'):
+        if (root/optional).exists():
+            stale.add(optional)
     for folder, pattern in (('screens','*.json'),('faceplates','*.json'),('scripts','*.py')):
         stale.update(p.relative_to(root).as_posix() for p in (root/folder).glob(pattern))
     targets = set(content) | stale

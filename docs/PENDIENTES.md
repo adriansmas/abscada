@@ -57,16 +57,24 @@ Lista viva, revisada el 6 de octubre de 2026. Ordenada por lo que hace falta par
 - [ ] **Probar S7 con un PLC físico**: S7-1200/1500 con acceso PUT/GET y DB no optimizados.
 - [ ] **Lecturas agrupadas**: rangos de DB en S7, *sum commands* en ADS y bloques de registros en Modbus. Ahora se lee variable a variable, lo que limita a pocos cientos de variables por equipo.
 - [ ] Notificaciones ADS, calidad *stale*, `last_good_timestamp`, métricas y benchmarks de carga.
-- [ ] OPC UA (diseñado en PROTOCOLS.md, sin implementar).
+- [x] OPC UA: cliente (conector) y servidor, con seguridad, certificados y usuarios. Ver PROTOCOLS.md.
+- [ ] OPC UA: suscripciones en el cliente, explorador de nodos en Studio y **ensayo con una S7-1500 real** (servidor integrado y su licencia).
 - [ ] Explorar la tabla de símbolos del PLC desde Studio (ADS) para no escribir los nombres a mano.
 
 ### Ingeniería y operación
-- [ ] Usuarios, roles y autorización; ACK con identidad real.
+- [x] Usuarios, roles y autorización; ACK con identidad real; auditoría con usuario y origen.
+- [ ] Activar la seguridad por defecto en el asistente de nuevo proyecto (requisito del CRA: configuración segura por defecto).
 - [ ] Copiar y pegar entre documentos; esquemas JSON para VS Code.
 - [ ] Faceplates anidados y propiedades visuales parametrizadas.
 - [ ] Alarmas: *shelving*, alarmas nativas del PLC y ACK enlazado al PLC.
 - [ ] Recetas, informes y calendarios de tareas.
 - [ ] Indicador analógico: zonas de aviso y alarma en el extremo bajo (presiones mínimas).
+
+### Seguridad (IEC 62443-4-1 y CRA, ver SECURITY_DEVELOPMENT.md)
+- [x] Fase 1: SECURITY.md, modelo de amenazas, guía de bastionado, CHANGELOG, `pip-audit`, SBOM, sumas y atestación de procedencia, Dependabot.
+- [ ] Activar en GitHub el aviso privado de vulnerabilidades (Settings → Code security).
+- [ ] Análisis estático en CI (CodeQL o Bandit).
+- [ ] Firma Authenticode del ejecutable.
 
 ### Calidad
 - [ ] Ejecutar la suite en Linux y verificar la interfaz con una sesión gráfica real.

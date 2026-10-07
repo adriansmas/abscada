@@ -11,6 +11,8 @@ from dataclasses import dataclass, field
 PRIMITIVES = {"bool", "int", "float", "string"}
 from .text_lists import validate_text_list
 from .drawing import PATH_KINDS, SHAPE_KINDS, validate_drawing
+from .security import default_security
+from .opcua_server import default_server
 
 KINDS = PATH_KINDS | SHAPE_KINDS | {"screen_container", "text", "text_list", "lamp", "button", "input", "bar", "gauge", "image", "faceplate", "trend", "alarm_view"}
 
@@ -66,6 +68,8 @@ class Project:
     scripts: dict = field(default_factory=dict)
     automation: dict = field(default_factory=lambda: dict(startup=[], tasks=[], timeout_seconds=10))
     libraries: dict = field(default_factory=dict)
+    security: dict = field(default_factory=default_security)
+    opcua_server: dict = field(default_factory=default_server)
     # Main project file inside root: "<Name>.abscada", or "project.json" for older projects.
     manifest_file: str = "project.json"
 
@@ -86,7 +90,7 @@ class Project:
                       {p.stem: read_json(p) for p in sorted((root / "screens").glob("*.json"))},
                       {p.stem: read_json(p) for p in sorted((root / "faceplates").glob("*.json"))},
                       manifest_file=manifest_file)
-        for key in ("alarms", "historian", "trends", "alarm_views", "automation", "libraries"):
+        for key in ("alarms", "historian", "trends", "alarm_views", "automation", "libraries", "security", "opcua_server"):
             if (root / f"{key}.json").exists():
                 setattr(project, key, read_json(root / f"{key}.json"))
         project.scripts = {p.stem: p.read_text(encoding="utf-8") for p in (root / "scripts").glob("*.py")}
@@ -160,6 +164,7 @@ class Project:
         tags = self.tags()
         from . import dynamics
         from .operation_windows import validate_popup_button, validate_popup_writes, validate_window, validate_display
+        from .security import validate_element_permission
         palette=self.manifest.get('palette',{})
         if not isinstance(palette,dict): raise ValueError('Paleta inválida')
         for key,value in palette.items():
@@ -245,6 +250,8 @@ class Project:
                 if tag and tag not in tags and not (tag.startswith("$") and tag[1:] in parameters):
                     raise ValueError(f"{name}: variable inexistente {tag}")
                 tag_type = tags[tag]["type"] if tag in tags else parameters.get(tag.lstrip("$"))
+                try: validate_element_permission(element)
+                except ValueError as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
                 if element['kind'] == 'button':
                     action = element.get('action','toggle')
                     if action not in {'toggle','set','momentary','press_release','screen','popup','faceplate_popup','close_popup','script'}:
@@ -319,6 +326,10 @@ class Project:
                     try: validate_popup_writes(element, self, tags)
                     except ValueError as exc: raise ValueError(f'{screen} / {element["id"]}: {exc}') from exc
         validate_display(self)
+        from .security import validate_security
+        validate_security(self.security)
+        from .opcua_server import validate_server
+        validate_server(self.opcua_server)
         from .screen_layouts import validate_layouts
         validate_layouts(self)
         from .screen_tree import validate_folders

@@ -6,7 +6,8 @@ from threading import Event, Lock, Thread
 from concurrent.futures import Future
 import time
 from .project import coerce
-from .connectors import REGISTRY
+from .connectors import create
+from .security import SecurityService
 
 
 @dataclass(frozen=True)
@@ -36,8 +37,14 @@ class Runtime:
         self._results = []
         from .scripting import ScriptService
         self.scripts = ScriptService(self)
+        self.security = SecurityService(project)
+        # Operator session of this station (HMI windows). OPC UA clients get their own.
+        self.session = None
         from .operations import Operations
-        self.operations = Operations(project) if project.alarms["items"] or project.historian.get("tags") or any(f["variables"] for f in project.historian.get("files", [])) or database_path(project).exists() else None
+        # With security or the OPC UA server on, the audit trail is required even without alarms.
+        audited = self.security.enabled or project.opcua_server.get("enabled", False)
+        self.operations = Operations(project) if audited or project.alarms["items"] or project.historian.get("tags") or any(f["variables"] for f in project.historian.get("files", [])) or database_path(project).exists() else None
+        self.opcua = None
 
     def snapshot(self):
         with self._lock:
@@ -52,7 +59,36 @@ class Runtime:
             results, self._results = self._results, []
             return results
 
-    def write(self, name, value):
+    def command(self, name, value, session, permission="operate", origin="hmi"):
+        """Write requested by a person (HMI or OPC UA client): checks the permission of
+        their session and records who asked for it. Scripts call ``write`` directly."""
+        if not self.security.permits(session, permission):
+            self.audit("write_denied", name, session, f"{origin}: {value}")
+            raise PermissionError("Sin permiso para esta orden: inicia sesión con un usuario autorizado")
+        self.security.touch(session)
+        return self.write(name, value, actor=self.security.actor(session), origin=origin)
+
+    def audit(self, action, target, session=None, detail=""):
+        if self.operations:
+            self.operations.audit(action, target, actor=self.security.actor(session), detail=detail)
+
+    def login(self, name, password):
+        try:
+            session = self.security.login(name, password)
+        except PermissionError as exc:
+            if self.operations:
+                self.operations.audit("login_failed", name or "", actor=name or "", detail=str(exc))
+            raise
+        self.session = session
+        self.audit("login", session.user, session)
+        return session
+
+    def logout(self, reason="logout"):
+        session, self.session = self.session, None
+        if session is not None:
+            self.audit(reason, session.user, session)
+
+    def write(self, name, value, actor="", origin="script"):
         tag = self.tags[name]
         if not tag.get("writable", False):
             raise ValueError(f"Variable de solo lectura: {name}")
@@ -66,7 +102,7 @@ class Runtime:
             self._set(name, value, "good")
             completion.set_result(True)
         if self.operations:
-            self.operations.audit("write_requested", name, detail=str(value))
+            self.operations.audit("write_requested", name, actor=actor, detail=f"{origin}: {value}")
         return completion
 
     def _set(self, name, value, quality, error=""):
@@ -97,6 +133,10 @@ class Runtime:
             self._thread = Thread(target=self._run, name="abscada-acquisition", daemon=True)
             self._thread.start()
             self.scripts.start()
+            if self.project.opcua_server.get("enabled"):
+                from .opcua_server import OpcUaServer
+                self.opcua = OpcUaServer(self)
+                self.opcua.start()
             self._started = True
         except Exception:
             self.stop()
@@ -106,6 +146,13 @@ class Runtime:
         self._started = False
         self._stop.set()
         errors = []
+        if self.opcua:
+            try:
+                self.opcua.stop(timeout)
+            except Exception as exc:
+                errors.append(exc)
+            self.opcua = None
+        self.logout("runtime_stop_logout")
         try:
             self.scripts.stop(timeout)
         except Exception as exc:
@@ -152,7 +199,7 @@ class Runtime:
                     due = now + connection.get("poll_ms", 250) / 1000
                     try:
                         if adapter is None:
-                            adapter = REGISTRY[connection["protocol"]](connection)
+                            adapter = create(connection, self.project.root)
                             adapter.connect()
                         for name, tag in tags.items():
                             if self._stop.is_set():

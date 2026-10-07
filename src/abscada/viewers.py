@@ -186,11 +186,26 @@ class AlarmViewer(QWidget):
         self.count.setText(f"{len(rows)} registros" + (" · límite 2000; acota la consulta" if len(self.rows) == 2000 else ""))
         enabled = self.runtime is not None and self.runtime.operations is not None and self.config.get("allow_ack", True) and getattr(self, 'ack_future', None) is None
         self.ack.setEnabled(enabled); self.ack_visible.setEnabled(enabled)
+        security = getattr(self.runtime, "security", None)
+        if security is not None and security.enabled:
+            # The ACK is signed by the logged-in operator, not by a free text field.
+            session = self.runtime.session
+            self.actor.setReadOnly(True)
+            self.actor.setText(session.user if session else "Sin sesión")
 
     def acknowledge(self, ids):
         if getattr(self, 'ack_future', None) is not None or not self.runtime or not self.runtime.operations:
             return
-        self.ack_future = COMMANDS.submit(self.runtime.operations.acknowledge, set(ids), self.actor.text().strip(), self.comment.text().strip())
+        actor = self.actor.text().strip()
+        security = getattr(self.runtime, "security", None)
+        if security is not None and security.enabled:
+            session = self.runtime.session
+            if not security.permits(session, "acknowledge"):
+                self.count.setText("Inicia sesión con un usuario que pueda reconocer alarmas")
+                return
+            security.touch(session)
+            actor = session.user
+        self.ack_future = COMMANDS.submit(self.runtime.operations.acknowledge, set(ids), actor, self.comment.text().strip())
         self.ack.setEnabled(False); self.ack_visible.setEnabled(False)
 
     def ack_selected(self):

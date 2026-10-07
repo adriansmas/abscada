@@ -1537,6 +1537,14 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             active = protocol.currentData()
             fields = ProtocolForm(definition(active).connection_fields, drafts.get(active, {}))
             layout.insertWidget(1, fields)
+            secured.setVisible(any(f.key == "username" for f in definition(active).connection_fields))
+        from .security_editor import set_connection_password, certificates_dialog
+        secured = QWidget(); secured_row = QHBoxLayout(secured); secured_row.setContentsMargins(0, 0, 0, 0)
+        for title, callback in (("Contraseña…", lambda: set_connection_password(dialog, self.project.root, identifier.text().strip())),
+                                ("Certificados…", lambda: certificates_dialog(self))):
+            secured_button = QPushButton(title); secured_button.clicked.connect(callback); secured_row.addWidget(secured_button)
+        secured_row.addStretch()
+        layout.addWidget(secured)
         protocol.currentIndexChanged.connect(state)
         state()
         def current_data():

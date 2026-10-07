@@ -8,7 +8,7 @@ Una variable es un dato del proyecto: nombre, tipo lógico, valor inicial y acce
 | --- | --- | --- | --- |
 | S7 | Host, puerto TCP, rack, slot, ciclo | DB, byte, bit para BOOL, codificación | Implementado |
 | Modbus TCP | Host, puerto TCP, Unit ID, timeout, ciclo | Área, offset base 0, codificación, orden de bytes y registros | Implementado |
-| OPC UA | Endpoint, política de seguridad, certificado y referencia a credenciales | Namespace URI, identificador del nodo y atributo | Diseño pendiente de implementar |
+| OPC UA | Endpoint, política de seguridad, usuario (contraseña fuera del proyecto), timeout | NodeId (`ns=…;s=…` o `nsu=<URI>;s=…`) | Implementado (cliente con polling; servidor propio) |
 | TwinCAT ADS | IP, puerto TCP 48898, AMS Net ID remoto/local, puerto ADS (851/801), timeout | Símbolo o index group:offset, tipo PLC, longitud de STRING | Implementado (lectura cíclica, sin notificaciones) |
 
 Esta tabla expresa configuraciones diferentes, no un formulario universal de dirección. Los tipos lógicos `int`/`float` son distintos de los tipos de transporte INT16/UINT32/REAL, etc. La codificación la decide el enlace. Una estructura SCADA puede enlazar sus campos a equipos o protocolos diferentes.
@@ -40,7 +40,7 @@ La agenda se calcula desde el comienzo del ciclo; si una lectura tarda más que 
 
 Actualmente hay lecturas individuales dentro de cada conexión. Para miles de variables se necesitan planes de lectura agrupada, medición de tiempos, presupuestos de carga y calidad stale. Un hilo por conexión es apropiado para un número moderado de equipos; miles de conexiones requerirían un ejecutor asíncrono o un servicio independiente. El número de equipos y variables que admite el sistema aún no se ha medido.
 
-## OPC UA y ADS: adquisición futura
+## OPC UA y ADS: evolución de la adquisición
 
 No basta con implementar `read` para afirmar que están resueltos. Ambos tienen funciones de notificación y gestión de sesión que deben conservarse:
 
@@ -51,6 +51,20 @@ No basta con implementar `read` para afirmar que están resueltos. Ambos tienen 
 - Añadir interfaces opcionales de exploración/importación y lectura por lotes. Estos controles necesitan editores específicos —árbol de nodos, selector de símbolos, certificados—, no únicamente los campos sencillos que genera `ProtocolForm`.
 
 La frontera estable es variable → enlace → protocolo y muestras → runtime. El contrato de transporte actual es síncrono y admite polling; habrá que ampliarlo para las suscripciones. Las pantallas y variables no tendrán que introducir campos de OPC UA o ADS.
+
+## OPC UA implementado
+
+**Cliente** (`opcua.py`, conector `opcua`, extra `.[opcua]` con `asyncua>=2.1`). Lee y escribe el atributo Value por NodeId. La forma `nsu=<URI>;…` resuelve el índice de namespace al conectar y sobrevive a servidores que reordenan su tabla. Cada trabajador tiene su propio bucle asyncio, sin hilos adicionales. La escritura usa el tipo de datos del nodo (leído una vez y guardado en caché) y no envía marcas de tiempo, porque muchos servidores, entre ellos el de la S7-1500, rechazan escrituras con timestamp.
+
+- **Seguridad**: Basic256Sha256 con firma y cifrado por defecto. Aes256-Sha256-RsaPss, Aes128-Sha256-RsaOaep y «solo firma» son opcionales; «Sin seguridad» es solo para pruebas.
+- **Certificados** (`pki.py`): cada instalación crea el suyo en `runtime/pki/own`. El del servidor solo se acepta si está en `runtime/pki/trusted`. El primer intento lo deja en `runtime/pki/rejected` y falla con su huella; se acepta en Proyecto → Certificados OPC UA o desde la conexión.
+- **Credenciales**: el usuario va en la conexión. La contraseña va en `runtime/secrets.json`, cifrada con DPAPI en Windows; se introduce con el botón Contraseña… de la conexión.
+
+**Servidor** (`opcua_server.py`, configuración en `opcua_server.json`). Ver [PROJECT_FORMAT.md](PROJECT_FORMAT.md).
+
+Pendiente: suscripciones (monitored items) en el cliente, lectura por lotes, explorador de nodos en Studio y límite de sesiones en el servidor.
+
+Siemens S7-1200/1500 con DB optimizados: usar el servidor OPC UA integrado en la CPU (requiere su licencia de runtime). El conector S7 clásico sigue necesitando PUT/GET y DB no optimizados.
 
 ## TwinCAT ADS implementado
 

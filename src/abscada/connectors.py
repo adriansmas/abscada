@@ -114,12 +114,22 @@ S7.definition = ProtocolDefinition(
 
 from .modbus import ModbusTCP
 from .ads import TwinCatADS
+from .opcua import OpcUaClient
 
-REGISTRY = {"s7": S7, "modbus_tcp": ModbusTCP, "ads": TwinCatADS}
+REGISTRY = {"s7": S7, "modbus_tcp": ModbusTCP, "ads": TwinCatADS, "opcua": OpcUaClient}
 
 
 def definition(protocol):
     return REGISTRY[protocol].definition
+
+
+def create(config, project_root=None):
+    """Instantiate an adapter. Adapters that keep per-installation files (certificates,
+    passwords) receive the project folder through ``attach``."""
+    adapter = REGISTRY[config["protocol"]](config)
+    if project_root is not None and hasattr(adapter, "attach"):
+        adapter.attach(project_root)
+    return adapter
 
 
 def binding_summary(binding, connections, kind):

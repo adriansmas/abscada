@@ -118,6 +118,11 @@ def build_menus(studio):
     action(project, "Paleta de colores…", lambda: edit_palette(studio))
     action(project, "Bibliotecas de faceplates…", lambda: LibraryDialog(studio).exec())
     project.addSeparator()
+    from .security_editor import certificates_dialog, edit_opcua_server, edit_security
+    action(project, "Usuarios y roles…", lambda: edit_security(studio))
+    action(project, "Servidor OPC UA…", lambda: edit_opcua_server(studio))
+    action(project, "Certificados OPC UA…", lambda: certificates_dialog(studio))
+    project.addSeparator()
     action(project, "Revisar el proyecto", studio.review_project)
 
     tools = bar.addMenu("&Herramientas")
