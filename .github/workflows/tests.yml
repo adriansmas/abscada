@@ -1,5 +1,7 @@
 name: Tests
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   test:
     strategy:
@@ -17,5 +19,26 @@ jobs:
       - name: Qt system dependencies
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0
-      - run: python -m pip install -e '.[dev,s7,modbus]'
+      - run: python -m pip install -e '.[dev,s7,modbus,opcua]'
       - run: python -m pytest -q
+
+  # IEC 62443-4-1 SM-9/SI-2 and CRA Annex I: know the components and their known vulnerabilities.
+  supply-chain:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python -m pip install pip-audit cyclonedx-bom
+      - name: Known vulnerabilities in the locked dependencies
+        run: pip-audit -r requirements-lock.txt --progress-spinner off
+      - name: Software bill of materials (CycloneDX)
+        run: |
+          python -m venv sbom-env
+          sbom-env/bin/python -m pip install -q -r requirements-lock.txt .
+          cyclonedx-py environment sbom-env/bin/python --of JSON -o sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.cdx.json

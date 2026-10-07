@@ -1,0 +1,14 @@
+# Security and version updates arrive as pull requests; CI runs the tests and pip-audit on each.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      python:
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
