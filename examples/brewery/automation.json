@@ -1,0 +1,20 @@
+{
+  "startup": [
+    "inicio"
+  ],
+  "timeout_seconds": 5,
+  "tasks": [
+    {
+      "id": "ciclo_1s",
+      "script": "ciclo_1s",
+      "interval_ms": 1000,
+      "enabled": true
+    },
+    {
+      "id": "seguimiento_lotes",
+      "script": "seguimiento_lotes",
+      "interval_ms": 2000,
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "users": [
+    {
+      "name": "admin",
+      "full_name": "Administrador de la planta",
+      "roles": [
+        "administrador"
+      ],
+      "password": {
+        "algorithm": "scrypt",
+        "n": 16384,
+        "r": 8,
+        "p": 1,
+        "dklen": 32,
+        "salt": "qwSfbC8iF3gcM90NCjy+Qw==",
+        "hash": "2VvqGI+HSDEVi4e1kMTIN4Nh2snaWUrWcxgvBaIXRCM="
+      },
+      "must_change": false,
+      "disabled": false,
+      "created": 1791357271.0976102,
+      "password_changed": 1791357271.0976102
+    },
+    {
+      "name": "maestro",
+      "full_name": "Maestro cervecero",
+      "roles": [
+        "maestro"
+      ],
+      "password": {
+        "algorithm": "scrypt",
+        "n": 16384,
+        "r": 8,
+        "p": 1,
+        "dklen": 32,
+        "salt": "035lZtkwZBZo3lRzqb4kOQ==",
+        "hash": "72+4dpEL8UUlcR1Bm44yjAOivF1QUUwzDZMBryyl2KI="
+      },
+      "must_change": false,
+      "disabled": false,
+      "created": 1791357271.2071426,
+      "password_changed": 1791357271.2071426
+    },
+    {
+      "name": "operador",
+      "full_name": "Operador de cocción",
+      "roles": [
+        "operador"
+      ],
+      "password": {
+        "algorithm": "scrypt",
+        "n": 16384,
+        "r": 8,
+        "p": 1,
+        "dklen": 32,
+        "salt": "KAmUN8uOmw7aQVZRZxNqEA==",
+        "hash": "hzBMTuSGPMkMw9+WTIv/azAJHCvs1c9wFCHiFKvXhpk="
+      },
+      "must_change": false,
+      "disabled": false,
+      "created": 1791357271.3536544,
+      "password_changed": 1791357271.3536544
+    },
+    {
+      "name": "mes",
+      "full_name": "Cliente MES",
+      "roles": [
+        "mes"
+      ],
+      "password": {
+        "algorithm": "scrypt",
+        "n": 16384,
+        "r": 8,
+        "p": 1,
+        "dklen": 32,
+        "salt": "+dfZOLvpg34WJlGSW599MA==",
+        "hash": "JdR7Pxs2rH0H8fm+Ziy/+mFHGn7QbDZUSgWN1+qV7cQ="
+      },
+      "must_change": false,
+      "disabled": false,
+      "created": 1791357271.4639454,
+      "password_changed": 1791357271.4639454
+    }
+  ]
+}

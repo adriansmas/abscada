@@ -17,6 +17,8 @@ FILTER = f"Proyecto abSCADA (*{SUFFIX});;Proyecto antiguo (project.json)"
 EXAMPLES = [
     ("hydro", "Central hidroeléctrica · CH Valdearenas",
      "SCADA completo de dos grupos Francis: secuencias, protecciones, unifilar, alarmas y tendencias."),
+    ("brewery", "Microcervecería por lotes · La Tolva",
+     "Cocción por recetas, fermentación, OPC UA cifrado, usuarios y roles."),
     ("beckhoff", "Banco de ensayo Beckhoff (TwinCAT ADS)",
      "Indicadores de aguja, mando y alarmas sobre un PLC Beckhoff simulado."),
     ("showcase", "Laboratorio SCADA", "Todos los controles, estados, objetos de librería, gráficas, alarmas y scripts."),
@@ -49,7 +51,7 @@ def example_copy(folder):
     if not is_project(target):
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(source, target, dirs_exist_ok=True,
-                        ignore=shutil.ignore_patterns("runtime", "__pycache__", ".git"))
+                        ignore=shutil.ignore_patterns("runtime", "pki", "__pycache__", ".git"))
     root, manifest = locate(target)
     return root / manifest
 

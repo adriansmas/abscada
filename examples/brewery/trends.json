@@ -1,0 +1,615 @@
+{
+  "coccion": {
+    "title": "Maceración y hervido",
+    "window_seconds": 600,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": 0,
+        "max": 105,
+        "visible": true
+      },
+      {
+        "id": "hl",
+        "title": "Nivel (hl)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 14,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "mt",
+        "tag": "Cocina.TempMT",
+        "axis": "c",
+        "color": "#c2872b",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "Cocina.ConsignaActual",
+        "axis": "c",
+        "color": "#5f676e",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "bk",
+        "tag": "Cocina.TempBK",
+        "axis": "c",
+        "color": "#d32f2f",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "nbk",
+        "tag": "Cocina.NivelBK",
+        "axis": "hl",
+        "color": "#4f86b8",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  },
+  "servicios": {
+    "title": "Vapor, agua caliente y glicol",
+    "window_seconds": 900,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": true,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      },
+      {
+        "id": "b",
+        "title": "Presión (bar)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 8,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "hlt",
+        "tag": "Servicios.TempHLT",
+        "axis": "c",
+        "color": "#4f86b8",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "gl",
+        "tag": "Servicios.TempGlicol",
+        "axis": "c",
+        "color": "#3c8fa6",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "af",
+        "tag": "Servicios.TempAguaFria",
+        "axis": "c",
+        "color": "#7aa6c2",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "v",
+        "tag": "Servicios.PresionVapor",
+        "axis": "b",
+        "color": "#9a6fb0",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  },
+  "perfil_receta": {
+    "title": "Último lote: temperatura de maceración",
+    "window_seconds": 600,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": 40,
+        "max": 105,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "mt",
+        "tag": "Cocina.TempMT",
+        "axis": "c",
+        "color": "#c2872b",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "Cocina.ConsignaActual",
+        "axis": "c",
+        "color": "#5f676e",
+        "width": 1,
+        "visible": true
+      }
+    ]
+  },
+  "fermentacion_fv1": {
+    "title": "FV1: curva de fermentación",
+    "window_seconds": 1800,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": -2,
+        "max": 24,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "title": "Densidad (°P) · presión (bar)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 18,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "t",
+        "tag": "FV1.Temperatura",
+        "axis": "c",
+        "color": "#d32f2f",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "FV1.ConsignaTemp",
+        "axis": "c",
+        "color": "#5f676e",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "d",
+        "tag": "FV1.Densidad",
+        "axis": "p",
+        "color": "#c2872b",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "tag": "FV1.Presion",
+        "axis": "p",
+        "color": "#3c8fa6",
+        "width": 1,
+        "visible": true
+      }
+    ]
+  },
+  "fermentacion_fv2": {
+    "title": "FV2: curva de fermentación",
+    "window_seconds": 1800,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": -2,
+        "max": 24,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "title": "Densidad (°P) · presión (bar)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 18,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "t",
+        "tag": "FV2.Temperatura",
+        "axis": "c",
+        "color": "#d32f2f",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "FV2.ConsignaTemp",
+        "axis": "c",
+        "color": "#5f676e",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "d",
+        "tag": "FV2.Densidad",
+        "axis": "p",
+        "color": "#c2872b",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "tag": "FV2.Presion",
+        "axis": "p",
+        "color": "#3c8fa6",
+        "width": 1,
+        "visible": true
+      }
+    ]
+  },
+  "fermentacion_fv3": {
+    "title": "FV3: curva de fermentación",
+    "window_seconds": 1800,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": -2,
+        "max": 24,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "title": "Densidad (°P) · presión (bar)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 18,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "t",
+        "tag": "FV3.Temperatura",
+        "axis": "c",
+        "color": "#d32f2f",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "FV3.ConsignaTemp",
+        "axis": "c",
+        "color": "#5f676e",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "d",
+        "tag": "FV3.Densidad",
+        "axis": "p",
+        "color": "#c2872b",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "tag": "FV3.Presion",
+        "axis": "p",
+        "color": "#3c8fa6",
+        "width": 1,
+        "visible": true
+      }
+    ]
+  },
+  "tendencia": {
+    "title": "Maceración y hervido",
+    "window_seconds": 600,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": 0,
+        "max": 105,
+        "visible": true
+      },
+      {
+        "id": "hl",
+        "title": "Nivel (hl)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 14,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "mt",
+        "tag": "Cocina.TempMT",
+        "axis": "c",
+        "color": "#c2872b",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "Cocina.ConsignaActual",
+        "axis": "c",
+        "color": "#5f676e",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "bk",
+        "tag": "Cocina.TempBK",
+        "axis": "c",
+        "color": "#d32f2f",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "nbk",
+        "tag": "Cocina.NivelBK",
+        "axis": "hl",
+        "color": "#4f86b8",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  },
+  "tendencia_2": {
+    "title": "FV1: curva de fermentación",
+    "window_seconds": 1800,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": -2,
+        "max": 24,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "title": "Densidad (°P) · presión (bar)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 18,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "t",
+        "tag": "FV1.Temperatura",
+        "axis": "c",
+        "color": "#d32f2f",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "FV1.ConsignaTemp",
+        "axis": "c",
+        "color": "#5f676e",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "d",
+        "tag": "FV1.Densidad",
+        "axis": "p",
+        "color": "#c2872b",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "tag": "FV1.Presion",
+        "axis": "p",
+        "color": "#3c8fa6",
+        "width": 1,
+        "visible": true
+      }
+    ]
+  },
+  "tendencia_3": {
+    "title": "FV2: curva de fermentación",
+    "window_seconds": 1800,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": -2,
+        "max": 24,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "title": "Densidad (°P) · presión (bar)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 18,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "t",
+        "tag": "FV2.Temperatura",
+        "axis": "c",
+        "color": "#d32f2f",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "FV2.ConsignaTemp",
+        "axis": "c",
+        "color": "#5f676e",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "d",
+        "tag": "FV2.Densidad",
+        "axis": "p",
+        "color": "#c2872b",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "tag": "FV2.Presion",
+        "axis": "p",
+        "color": "#3c8fa6",
+        "width": 1,
+        "visible": true
+      }
+    ]
+  },
+  "tendencia_4": {
+    "title": "FV3: curva de fermentación",
+    "window_seconds": 1800,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": false,
+        "min": -2,
+        "max": 24,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "title": "Densidad (°P) · presión (bar)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 18,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "t",
+        "tag": "FV3.Temperatura",
+        "axis": "c",
+        "color": "#d32f2f",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "sp",
+        "tag": "FV3.ConsignaTemp",
+        "axis": "c",
+        "color": "#5f676e",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "d",
+        "tag": "FV3.Densidad",
+        "axis": "p",
+        "color": "#c2872b",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "p",
+        "tag": "FV3.Presion",
+        "axis": "p",
+        "color": "#3c8fa6",
+        "width": 1,
+        "visible": true
+      }
+    ]
+  },
+  "tendencia_5": {
+    "title": "Vapor, agua caliente y glicol",
+    "window_seconds": 900,
+    "axes": [
+      {
+        "id": "c",
+        "title": "Temperatura (°C)",
+        "side": "left",
+        "auto": true,
+        "min": 0,
+        "max": 100,
+        "visible": true
+      },
+      {
+        "id": "b",
+        "title": "Presión (bar)",
+        "side": "right",
+        "auto": false,
+        "min": 0,
+        "max": 8,
+        "visible": true
+      }
+    ],
+    "curves": [
+      {
+        "id": "hlt",
+        "tag": "Servicios.TempHLT",
+        "axis": "c",
+        "color": "#4f86b8",
+        "width": 2,
+        "visible": true
+      },
+      {
+        "id": "gl",
+        "tag": "Servicios.TempGlicol",
+        "axis": "c",
+        "color": "#3c8fa6",
+        "width": 3,
+        "visible": true
+      },
+      {
+        "id": "af",
+        "tag": "Servicios.TempAguaFria",
+        "axis": "c",
+        "color": "#7aa6c2",
+        "width": 1,
+        "visible": true
+      },
+      {
+        "id": "v",
+        "tag": "Servicios.PresionVapor",
+        "axis": "b",
+        "color": "#9a6fb0",
+        "width": 2,
+        "visible": true
+      }
+    ]
+  }
+}

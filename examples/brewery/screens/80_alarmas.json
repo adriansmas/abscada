@@ -1,0 +1,101 @@
+{
+  "title": "Alarmas · Activas",
+  "width": 1400,
+  "height": 830,
+  "background": "@Fondo",
+  "grid_size": 10,
+  "show_grid": false,
+  "snap_to_grid": true,
+  "elements": [
+    {
+      "id": "titulo",
+      "kind": "text",
+      "x": 14,
+      "y": 8,
+      "w": 900,
+      "h": 30,
+      "text": "ALARMAS · ACTIVAS",
+      "font_size": 20,
+      "bold": true,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "subtitulo",
+      "kind": "text",
+      "x": 14,
+      "y": 36,
+      "w": 900,
+      "h": 18,
+      "text": "Reconocer exige sesión con el permiso «Reconocer alarmas» · el registro guarda quién hizo cada cosa",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "tab0",
+      "kind": "button",
+      "x": 1110,
+      "y": 14,
+      "w": 90,
+      "h": 32,
+      "text": "Activas",
+      "font_size": 12,
+      "bold": true,
+      "color": "@Mando",
+      "border_color": "@Mando",
+      "text_color": "#ffffff",
+      "action": "screen",
+      "screen": "80_alarmas",
+      "target_container": "contenido"
+    },
+    {
+      "id": "tab1",
+      "kind": "button",
+      "x": 1204,
+      "y": 14,
+      "w": 90,
+      "h": 32,
+      "text": "Histórico",
+      "font_size": 12,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando",
+      "action": "screen",
+      "screen": "81_alarmas_historico",
+      "target_container": "contenido"
+    },
+    {
+      "id": "tab2",
+      "kind": "button",
+      "x": 1298,
+      "y": 14,
+      "w": 90,
+      "h": 32,
+      "text": "Eventos",
+      "font_size": 12,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando",
+      "action": "screen",
+      "screen": "82_alarmas_eventos",
+      "target_container": "contenido"
+    },
+    {
+      "id": "visor",
+      "kind": "alarm_view",
+      "x": 10,
+      "y": 60,
+      "w": 1380,
+      "h": 770,
+      "view": "visor"
+    }
+  ],
+  "on_open": [
+    "apertura"
+  ],
+  "folder": "Alarmas"
+}

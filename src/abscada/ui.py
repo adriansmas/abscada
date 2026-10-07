@@ -647,14 +647,14 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         return table
 
     def build_catalogs(self):
-        for key, title, headers in (("types", "tipo", ["Tipo", "Campos", "Definición"]),
-                                    ("connections", "conexión", ["Nombre", "Protocolo", "Equipo", "Ciclo", "Configuración", "Runtime activo"])):
+        for key, title, headers in (("types", "+ Nuevo tipo", ["Tipo", "Campos", "Definición"]),
+                                    ("connections", "+ Nueva conexión", ["Nombre", "Protocolo", "Equipo", "Ciclo", "Configuración", "Runtime activo"])):
             page = QWidget()
             layout = QVBoxLayout(page)
             layout.setContentsMargins(0, 0, 0, 0)
             row = QHBoxLayout()
             row.addStretch()
-            row.addWidget(button("+ Nuevo " + title, lambda checked=False, k=key: self.edit_catalog(k, True), True))
+            row.addWidget(button(title, lambda checked=False, k=key: self.edit_catalog(k, True), True))
             row.addWidget(button("Editar…", lambda checked=False, k=key: self.edit_catalog(k, False)))
             row.addWidget(button("Eliminar", lambda checked=False, k=key: self.delete_catalog(k)))
             row.addWidget(button("JSON avanzado…", lambda checked=False, k=key: self.edit_catalog_json(k)))

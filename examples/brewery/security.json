@@ -1,0 +1,49 @@
+{
+  "enabled": true,
+  "session_timeout_minutes": 30,
+  "password_min_length": 10,
+  "max_failed_logins": 5,
+  "lockout_minutes": 5,
+  "roles": [
+    {
+      "id": "observador",
+      "name": "Observador",
+      "permissions": []
+    },
+    {
+      "id": "operador",
+      "name": "Operador de cocción",
+      "permissions": [
+        "operate",
+        "acknowledge"
+      ]
+    },
+    {
+      "id": "maestro",
+      "name": "Maestro cervecero",
+      "permissions": [
+        "operate",
+        "acknowledge",
+        "recipes"
+      ]
+    },
+    {
+      "id": "administrador",
+      "name": "Administrador",
+      "permissions": [
+        "operate",
+        "acknowledge",
+        "recipes",
+        "manage_users",
+        "opcua"
+      ]
+    },
+    {
+      "id": "mes",
+      "name": "Cliente MES (OPC UA)",
+      "permissions": [
+        "opcua"
+      ]
+    }
+  ]
+}

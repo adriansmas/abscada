@@ -1,0 +1,8 @@
+{
+  "enabled": true,
+  "port": 4850,
+  "security": [
+    "Basic256Sha256_SignAndEncrypt"
+  ],
+  "allow_anonymous": false
+}

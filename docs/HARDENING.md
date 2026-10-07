@@ -38,16 +38,17 @@ Para el integrador o el responsable de la planta. Aplica la defensa en profundid
 
 | Ruta | Contenido | Protección |
 | --- | --- | --- |
-| `<proyecto>\runtime\users.json` | Cuentas (hash scrypt, roles) | Permisos NTFS: solo la cuenta de operación y los administradores |
-| `<proyecto>\runtime\secrets.json` | Contraseñas de conexiones (DPAPI) | Solo descifrable por la misma cuenta de Windows en el mismo equipo |
-| `<proyecto>\runtime\pki\own\*.pem` | Claves privadas OPC UA | Permisos restringidos; no copiar a otros equipos |
+| `<proyecto>\users.json` | Cuentas (hash scrypt, roles) | Va con el proyecto y sus versiones. Permisos NTFS: solo la cuenta de operación y los administradores |
+| `<proyecto>\secrets.json` | Contraseñas de las conexiones, codificadas en base64 (no cifradas) | Va con el proyecto: protégelo como las credenciales que contiene |
+| `<proyecto>\pki\own\*.pem` | Clave privada del certificado OPC UA del proyecto | Va con el proyecto; permisos restringidos |
+| `<proyecto>\pki\trusted\` | Certificados de PLC y clientes aceptados | Revisa sus cambios en Git: añadir uno aquí equivale a confiar en ese equipo |
 | `<proyecto>\runtime\*.sqlite3` | Histórico, alarmas y auditoría | Copias de seguridad periódicas |
 
-`runtime\` no forma parte del proyecto ni de sus versiones Git. Al copiar un proyecto a otro puesto, las cuentas, los secretos y los certificados **no viajan**: se crean de nuevo en el puesto de destino.
+Todo lo que define el proyecto viaja con él, como en TIA Portal: cuentas, contraseñas de conexión, certificado OPC UA y listas de confianza. Al copiar el proyecto a otro puesto, los PLC siguen confiando en él y no hay que volver a escribir contraseñas. A cambio, **quien tenga una copia del proyecto o de su repositorio tiene las huellas de las cuentas, las contraseñas de los PLC y la clave privada OPC UA**. Trata la carpeta y el repositorio como información confidencial, exige contraseñas largas (`password_min_length`) y no publiques proyectos reales. Solo `runtime\` (histórico, alarmas y auditoría) queda fuera de Git.
 
 ## 5. Desmantelamiento
 
-Al retirar un puesto, borra `<proyecto>\runtime\` (cuentas, secretos, claves y archivo, después de guardar las copias que deban conservarse). Quita su certificado de las listas de confianza de los servidores y PLC con los que hablaba y revoca las cuentas de OPC UA que usaban otros sistemas.
+Al retirar un puesto, borra la carpeta del proyecto (después de guardar las copias del archivo `runtime\` que deban conservarse). Si el proyecto deja de usarse, quita su certificado de las listas de confianza de los servidores y PLC con los que hablaba y revoca las cuentas de OPC UA que usaban otros sistemas. Si sigue en uso en otros puestos y crees que la copia retirada pudo filtrarse, cambia las contraseñas de los PLC y regenera el certificado borrando `pki\own\`.
 
 ## 6. Lo que abSCADA no hace (todavía)
 

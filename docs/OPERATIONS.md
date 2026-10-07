@@ -90,11 +90,11 @@ Se confirman lotes aproximadamente cada 200 ms. ACK se confirma antes de respond
 
 La retención se ejecuta al arrancar y después cada hora. Elimina ficheros diarios cuyo día completo ha superado la retención, sin tocar el día abierto; si un lector o copia lo mantiene ocupado en Windows, reintenta en la siguiente pasada. En el archivo central elimina muestras antiguas del formato anterior y ocurrencias retornadas y reconocidas (o sin necesidad de ACK) que superen la retención desde su retorno, junto con sus eventos. Las alarmas activas y pendientes de ACK no se eliminan por retención. SQLite reutiliza páginas liberadas; borrar datos no reduce necesariamente el tamaño físico del archivo. No ejecutar VACUUM sobre el archivo de producción durante adquisición.
 
-La auditoría registra inicio/parada del runtime, solicitudes de escritura y su envío/fallo. El nombre de operador del ACK es texto introducido en el control; no acredita identidad autenticada. Usuarios, roles, autorización, auditoría inmutable y firma de registros siguen pendientes.
+La auditoría registra inicio/parada del runtime, inicios y cierres de sesión, intentos fallidos, solicitudes de escritura con el usuario y su origen (HMI, OPC UA o script), órdenes denegadas y su envío/fallo. Con usuarios activados ([Usuarios y roles](PROJECT_FORMAT.md#usuarios-y-roles)), el ACK queda a nombre del usuario de la sesión; sin ellos, el nombre de operador es texto libre y no acredita identidad. La auditoría inmutable y la firma de registros siguen pendientes.
 
 ## Límites y ampliaciones
 
-Aún faltan autenticación, redundancia, shelving/mantenimiento de alarmas, ACK asociado a PLC, tipos/arrays ampliados, expresiones, recetas e informes. Persistencia y motor están separados de Qt para evolucionar a un runtime como servicio. No se ha validado carga industrial, equipos físicos ni todas las plataformas del workflow remoto.
+Aún faltan redundancia, shelving/mantenimiento de alarmas, ACK asociado a PLC, tipos/arrays ampliados, expresiones, un gestor de recetas en el SCADA (el ejemplo de la cervecería las gestiona en el PLC) e informes. Persistencia y motor están separados de Qt para evolucionar a un runtime como servicio. No se ha validado carga industrial, equipos físicos ni todas las plataformas del workflow remoto.
 
 SQLite WAL debe usarse en almacenamiento local. Copia SQLite permite respaldar durante ejecución; copiar únicamente el fichero .sqlite3 puede omitir transacciones confirmadas que estén en el archivo WAL. Los JSON del proyecto no contienen datos históricos.
 

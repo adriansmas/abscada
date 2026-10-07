@@ -41,7 +41,7 @@ Envíalo por correo o, si tienes acceso, como *issue* en el repositorio de GitHu
 
 ## Limitaciones conocidas de esta beta
 
-- Sin usuarios ni permisos: cualquiera puede mandar órdenes desde el runtime.
+- Usuarios y roles desactivados por defecto: actívalos en Proyecto → Usuarios y roles (el ejemplo de la cervecería los trae activados con cuentas de demostración).
 - Comunicación con S7, Modbus TCP y Beckhoff ADS probada con simuladores, todavía no con PLC físicos.
 - Los tiempos del ejemplo hidroeléctrico están comprimidos a propósito: un arranque dura unos 40 s.
 - abSCADA **no es un sistema de seguridad**: no lo uses para controlar equipos reales sin las protecciones propias del PLC.

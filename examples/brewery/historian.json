@@ -1,0 +1,64 @@
+{
+  "retention_days": 365,
+  "files": [
+    {
+      "id": "coccion",
+      "name": "Sala de cocción · 2 s",
+      "interval_ms": 2000,
+      "variables": [
+        "Cocina.Paso",
+        "Cocina.TempMT",
+        "Cocina.ConsignaActual",
+        "Cocina.TempBK",
+        "Cocina.NivelMT",
+        "Cocina.NivelLT",
+        "Cocina.NivelBK",
+        "Cocina.VaporMT",
+        "Cocina.VaporBK",
+        "Cocina.NivelEspuma",
+        "Cocina.PresionLecho",
+        "Cocina.TempMostoSalida",
+        "Cocina.DensidadMosto",
+        "Cocina.Lote"
+      ]
+    },
+    {
+      "id": "bodega",
+      "name": "Bodega · 5 s",
+      "interval_ms": 5000,
+      "variables": [
+        "FV1.Temperatura",
+        "FV1.ConsignaTemp",
+        "FV1.Densidad",
+        "FV1.Presion",
+        "FV1.ValvulaGlicol",
+        "FV1.Fase",
+        "FV2.Temperatura",
+        "FV2.ConsignaTemp",
+        "FV2.Densidad",
+        "FV2.Presion",
+        "FV2.ValvulaGlicol",
+        "FV2.Fase",
+        "FV3.Temperatura",
+        "FV3.ConsignaTemp",
+        "FV3.Densidad",
+        "FV3.Presion",
+        "FV3.ValvulaGlicol",
+        "FV3.Fase"
+      ]
+    },
+    {
+      "id": "servicios",
+      "name": "Servicios · 5 s",
+      "interval_ms": 5000,
+      "variables": [
+        "Servicios.TempHLT",
+        "Servicios.NivelHLT",
+        "Servicios.PresionVapor",
+        "Servicios.TempGlicol",
+        "Servicios.NivelGlicol",
+        "Servicios.TempAguaFria"
+      ]
+    }
+  ]
+}

@@ -8,7 +8,7 @@ Una variable es un dato del proyecto: nombre, tipo lógico, valor inicial y acce
 | --- | --- | --- | --- |
 | S7 | Host, puerto TCP, rack, slot, ciclo | DB, byte, bit para BOOL, codificación | Implementado |
 | Modbus TCP | Host, puerto TCP, Unit ID, timeout, ciclo | Área, offset base 0, codificación, orden de bytes y registros | Implementado |
-| OPC UA | Endpoint, política de seguridad, usuario (contraseña fuera del proyecto), timeout | NodeId (`ns=…;s=…` o `nsu=<URI>;s=…`) | Implementado (cliente con polling; servidor propio) |
+| OPC UA | Endpoint, política de seguridad, usuario (contraseña en `secrets.json` del proyecto), timeout | NodeId (`ns=…;s=…` o `nsu=<URI>;s=…`) | Implementado (cliente con polling; servidor propio) |
 | TwinCAT ADS | IP, puerto TCP 48898, AMS Net ID remoto/local, puerto ADS (851/801), timeout | Símbolo o index group:offset, tipo PLC, longitud de STRING | Implementado (lectura cíclica, sin notificaciones) |
 
 Esta tabla expresa configuraciones diferentes, no un formulario universal de dirección. Los tipos lógicos `int`/`float` son distintos de los tipos de transporte INT16/UINT32/REAL, etc. La codificación la decide el enlace. Una estructura SCADA puede enlazar sus campos a equipos o protocolos diferentes.
@@ -44,7 +44,7 @@ Actualmente hay lecturas individuales dentro de cada conexión. Para miles de va
 
 No basta con implementar `read` para afirmar que están resueltos. Ambos tienen funciones de notificación y gestión de sesión que deben conservarse:
 
-- En OPC UA, persistir Namespace URI e identificador del nodo, resolviendo el índice de namespace al conectar. Incorporar descubrimiento de nodos, certificados, políticas de seguridad y credenciales referenciadas desde un almacén seguro. No guardar contraseñas en los documentos del proyecto.
+- En OPC UA ya se resuelve el Namespace URI al conectar y se gestionan certificados y políticas. Las contraseñas viven en `secrets.json` del proyecto, codificadas pero no cifradas. Sigue pendiente el descubrimiento de nodos en Studio.
 - En ADS, diferenciar IP, AMS Net ID y puerto ADS; gestionar rutas, resolución de símbolos, handles y su invalidación al cambiar el programa PLC.
 - Añadir una estrategia de adquisición de suscripción/notificaciones además del polling. Cada conexión mantendrá su ciclo configurado: intervalo de muestreo/publicación en la estrategia de suscripción y ciclo de lectura en polling.
 - Ampliar el contrato de muestras para preservar calidad y timestamp del servidor, junto con timestamp de recepción. La implementación actual genera calidad y timestamp en el runtime.
@@ -57,8 +57,8 @@ La frontera estable es variable → enlace → protocolo y muestras → runtime.
 **Cliente** (`opcua.py`, conector `opcua`, extra `.[opcua]` con `asyncua>=2.1`). Lee y escribe el atributo Value por NodeId. La forma `nsu=<URI>;…` resuelve el índice de namespace al conectar y sobrevive a servidores que reordenan su tabla. Cada trabajador tiene su propio bucle asyncio, sin hilos adicionales. La escritura usa el tipo de datos del nodo (leído una vez y guardado en caché) y no envía marcas de tiempo, porque muchos servidores, entre ellos el de la S7-1500, rechazan escrituras con timestamp.
 
 - **Seguridad**: Basic256Sha256 con firma y cifrado por defecto. Aes256-Sha256-RsaPss, Aes128-Sha256-RsaOaep y «solo firma» son opcionales; «Sin seguridad» es solo para pruebas.
-- **Certificados** (`pki.py`): cada instalación crea el suyo en `runtime/pki/own`. El del servidor solo se acepta si está en `runtime/pki/trusted`. El primer intento lo deja en `runtime/pki/rejected` y falla con su huella; se acepta en Proyecto → Certificados OPC UA o desde la conexión.
-- **Credenciales**: el usuario va en la conexión. La contraseña va en `runtime/secrets.json`, cifrada con DPAPI en Windows; se introduce con el botón Contraseña… de la conexión.
+- **Certificados** (`pki.py`): cada proyecto crea el suyo en `pki/own` y lo lleva consigo, con el URI de aplicación `urn:abscada:<carpeta del proyecto>:client|server`. El del servidor solo se acepta si está en `pki/trusted`. El primer intento lo deja en `pki/rejected` y falla con su huella; se acepta en Proyecto → Certificados OPC UA o desde la conexión. Si se renombra la carpeta del proyecto, cambia el URI y se genera un certificado nuevo que el PLC tendrá que volver a aceptar.
+- **Credenciales**: el usuario va en la conexión. La contraseña va en `secrets.json` del proyecto, codificada en base64 (no cifrada, porque el runtime tiene que enviarla), y se introduce con el botón Contraseña… de la conexión.
 
 **Servidor** (`opcua_server.py`, configuración en `opcua_server.json`). Ver [PROJECT_FORMAT.md](PROJECT_FORMAT.md).
 

@@ -14,7 +14,7 @@ Lista viva, revisada el 6 de octubre de 2026. Ordenada por lo que hace falta par
 - [x] **Scripts dentro del .exe.** `script_runner` lanza un intérprete Python aparte; en un ejecutable congelado `sys.executable` es el propio .exe. Hay que relanzar el .exe en «modo ejecutor de scripts».
 - [x] **Arranque sin rutas relativas.** Sin argumentos se abre `examples/plant` relativo al directorio actual. Debe abrir una pantalla de inicio (proyectos recientes, nuevo, abrir, ejemplos).
 - [x] **Ejemplos y recursos empaquetados.** Incluir `examples/` en el paquete y copiarlos a *Documentos* del usuario al abrirlos, para no escribir en *Program Files*.
-- [x] **Simuladores accesibles sin Python.** S7, central hidroeléctrica y ADS como `abscada.exe --simulador hydro|s7|ads` o desde un menú *Herramientas → Simuladores*, para que el probador pueda usar los ejemplos.
+- [x] **Simuladores accesibles sin Python.** S7, central hidroeléctrica y ADS como `abscada.exe --simulador hydro|cerveceria|s7|ads` o desde un menú *Herramientas → Simuladores*, para que el probador pueda usar los ejemplos.
 - [x] **Empaquetado con PyInstaller** en modo carpeta (`onedir`): arranca más rápido y da menos falsos positivos de antivirus que `onefile`. Icono, versión y metadatos del ejecutable. Hecho: `packaging/build_exe.py`, 133 MB en carpeta; python-snap7 3.x es Python puro (sin DLL).
 - [x] **Compilación del .exe en CI** (runner de Windows) que publique un ZIP descargable en cada versión etiquetada.
 

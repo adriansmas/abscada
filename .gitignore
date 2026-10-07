@@ -27,3 +27,6 @@ artifacts/
 *.log
 Thumbs.db
 .DS_Store
+
+# OPC UA certificates of the shipped examples: created on first use, private keys never versioned
+examples/*/pki/

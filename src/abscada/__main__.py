@@ -31,7 +31,7 @@ def main(argv=None):
     parser.add_argument("--headless", action="store_true", help="Adquirir sin interfaz y mostrar valores")
     parser.add_argument("--runtime", action="store_true", help="Abrir solo la ventana de operación")
     parser.add_argument("--seconds", type=float, default=5)
-    parser.add_argument("--simulador", metavar="ID", help="Arrancar un PLC simulado (hydro, ads, laboratorio, s7)")
+    parser.add_argument("--simulador", metavar="ID", help="Arrancar un PLC simulado (hydro, cerveceria, ads, laboratorio, s7)")
     parser.add_argument("--version", action="version", version=f"abSCADA {__version__}")
     args = parser.parse_args(argv)
 

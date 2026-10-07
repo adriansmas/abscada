@@ -22,7 +22,7 @@ Crear un SCADA de escritorio multiplataforma con un editor gráfico y proyectos 
 
 **Proyectos JSON versionados.** `project.json` declara `schema_version=1`. Tipos, variables, conexiones, pantallas y faceplates tienen documentos separados. No se guardan objetos Qt, código Python serializado ni formatos binarios opacos. Las versiones desconocidas se rechazan. Las migraciones deberán ser explícitas, probadas y con copia previa.
 
-**Conexiones y adaptadores.** La interfaz emplea “Conexiones”. El protocolo está encapsulado por el contrato `Connector`; el resto de la aplicación no debe conocer Snap7 ni direcciones DB. S7 y Modbus TCP aportan sus propias definiciones de configuración y enlace. OPC UA, ADS o MQTT deberán aportar sus esquemas y estrategias de adquisición; véase PROTOCOLS.md. La abstracción permite ampliar; no elimina las diferencias de seguridad, suscripción, descubrimiento y confirmación de cada protocolo.
+**Conexiones y adaptadores.** La interfaz emplea “Conexiones”. El protocolo está encapsulado por el contrato `Connector`; el resto de la aplicación no debe conocer Snap7 ni direcciones DB. S7 y Modbus TCP aportan sus propias definiciones de configuración y enlace. OPC UA y ADS aportan los suyos (OPC UA con certificados por proyecto en `pki.py`); MQTT u otros deberán aportar sus esquemas y estrategias de adquisición; véase PROTOCOLS.md. La seguridad de operación vive en `security.py` (roles, cuentas y sesiones, sin Qt) y el servidor OPC UA propio en `opcua_server.py`, que comparte las sesiones y la auditoría del runtime. La abstracción permite ampliar; no elimina las diferencias de seguridad, suscripción, descubrimiento y confirmación de cada protocolo.
 
 ## Capas
 

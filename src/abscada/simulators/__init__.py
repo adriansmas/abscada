@@ -1,6 +1,6 @@
 """Development PLC simulators, runnable without Python as `abscada --simulador <id>`.
 
-They serve the shipped examples over real TCP (S7, Modbus, ADS). Runtime never
+They serve the shipped examples over real TCP (S7, Modbus, ADS, OPC UA). Runtime never
 imports them: they always run as a separate process.
 """
 from dataclasses import dataclass
@@ -23,6 +23,8 @@ SIMULATORS = {
     s.id: s for s in (
         Simulator("hydro", "Central hidroeléctrica (CH Valdearenas)", "hydro",
                   "S7 :1102, :1103, :1104 · Modbus :1502", "abscada.simulators.hydro"),
+        Simulator("cerveceria", "Microcervecería por lotes (La Tolva)", "brewery",
+                  "OPC UA :4841 (cifrado)", "abscada.simulators.brewery"),
         Simulator("ads", "Banco de ensayo Beckhoff (TwinCAT ADS)", "beckhoff",
                   "ADS :48898 · puerto 851", "abscada.ads_simulator"),
         Simulator("laboratorio", "Laboratorio SCADA (S7 + Modbus)", "showcase",

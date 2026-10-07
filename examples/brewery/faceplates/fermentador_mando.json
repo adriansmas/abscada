@@ -1,0 +1,695 @@
+{
+  "title": "Mando del fermentador",
+  "width": 520,
+  "height": 470,
+  "background": "@Panel",
+  "parameters": {
+    "fase": "int",
+    "temperatura": "float",
+    "consigna": "float",
+    "densidad": "float",
+    "objetivo": "float",
+    "presion": "float",
+    "nivel": "float",
+    "dia": "float",
+    "lote": "int",
+    "receta": "string",
+    "alarma": "bool",
+    "valvula": "float",
+    "automatico": "bool",
+    "consigna_manual": "float",
+    "vaciar": "bool",
+    "atenuacion": "float",
+    "original": "float"
+  },
+  "elements": [
+    {
+      "id": "fase",
+      "kind": "text_list",
+      "x": 12,
+      "y": 12,
+      "w": 496,
+      "h": 34,
+      "tag": "$fase",
+      "font_size": 15,
+      "bold": true,
+      "text_color": "#ffffff",
+      "color": "@Paro",
+      "border_color": "@Paro",
+      "default_text": "SIN COMUNICACIÓN",
+      "texts": [
+        {
+          "value": "0",
+          "text": "VACÍO Y LIMPIO"
+        },
+        {
+          "value": "1",
+          "text": "LLENADO"
+        },
+        {
+          "value": "2",
+          "text": "FERMENTACIÓN"
+        },
+        {
+          "value": "3",
+          "text": "REPOSO DE DIACETILO"
+        },
+        {
+          "value": "4",
+          "text": "ENFRIAMIENTO (COLD CRASH)"
+        },
+        {
+          "value": "5",
+          "text": "GUARDA"
+        },
+        {
+          "value": "6",
+          "text": "LISTO PARA ENVASAR"
+        }
+      ],
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$fase",
+              "op": "eq",
+              "value": 6,
+              "bad": false
+            },
+            "style": {
+              "color": "@Mando",
+              "border_color": "@Mando"
+            }
+          },
+          {
+            "when": {
+              "tag": "$fase",
+              "op": "eq",
+              "value": 1,
+              "bad": false
+            },
+            "style": {
+              "color": "@Aviso",
+              "border_color": "@Aviso"
+            }
+          },
+          {
+            "when": {
+              "tag": "$fase",
+              "op": "gt",
+              "value": 1,
+              "bad": false
+            },
+            "style": {
+              "color": "@Marcha",
+              "border_color": "@Marcha"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "receta",
+      "kind": "text",
+      "x": 12,
+      "y": 56,
+      "w": 300,
+      "h": 28,
+      "text": "",
+      "tag": "$receta",
+      "font_size": 16,
+      "bold": true,
+      "text_align": "left",
+      "color": "@Panel",
+      "border_color": "@Panel",
+      "text_color": "@Texto"
+    },
+    {
+      "id": "lote_t",
+      "kind": "text",
+      "x": 330,
+      "y": 60,
+      "w": 60,
+      "h": 22,
+      "text": "Lote",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "lote",
+      "kind": "text",
+      "x": 388,
+      "y": 56,
+      "w": 120,
+      "h": 28,
+      "text": "",
+      "tag": "$lote",
+      "unit": "",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "center",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v0_t",
+      "kind": "text",
+      "x": 12,
+      "y": 99,
+      "w": 184,
+      "h": 22,
+      "text": "Temperatura",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v0",
+      "kind": "text",
+      "x": 202,
+      "y": 96,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "$temperatura",
+      "unit": "°C",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v1_t",
+      "kind": "text",
+      "x": 12,
+      "y": 129,
+      "w": 184,
+      "h": 22,
+      "text": "Consigna activa",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v1",
+      "kind": "text",
+      "x": 202,
+      "y": 126,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "$consigna",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v2_t",
+      "kind": "text",
+      "x": 12,
+      "y": 159,
+      "w": 184,
+      "h": 22,
+      "text": "Densidad actual",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v2",
+      "kind": "text",
+      "x": 202,
+      "y": 156,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "$densidad",
+      "unit": "°P",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v3_t",
+      "kind": "text",
+      "x": 12,
+      "y": 189,
+      "w": 184,
+      "h": 22,
+      "text": "Densidad original",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v3",
+      "kind": "text",
+      "x": 202,
+      "y": 186,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "$original",
+      "unit": "°P",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v4_t",
+      "kind": "text",
+      "x": 12,
+      "y": 219,
+      "w": 184,
+      "h": 22,
+      "text": "Densidad objetivo",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v4",
+      "kind": "text",
+      "x": 202,
+      "y": 216,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "$objetivo",
+      "unit": "°P",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v5_t",
+      "kind": "text",
+      "x": 12,
+      "y": 249,
+      "w": 184,
+      "h": 22,
+      "text": "Atenuación aparente",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v5",
+      "kind": "text",
+      "x": 202,
+      "y": 246,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "$atenuacion",
+      "unit": "%",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v6_t",
+      "kind": "text",
+      "x": 12,
+      "y": 279,
+      "w": 184,
+      "h": 22,
+      "text": "Presión de CO₂",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v6",
+      "kind": "text",
+      "x": 202,
+      "y": 276,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "$presion",
+      "unit": "bar",
+      "decimals": 2,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v7_t",
+      "kind": "text",
+      "x": 12,
+      "y": 309,
+      "w": 184,
+      "h": 22,
+      "text": "Válvula de glicol",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v7",
+      "kind": "text",
+      "x": 202,
+      "y": 306,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "$valvula",
+      "unit": "%",
+      "decimals": 0,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "v8_t",
+      "kind": "text",
+      "x": 12,
+      "y": 339,
+      "w": 184,
+      "h": 22,
+      "text": "Día de proceso",
+      "font_size": 13,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "v8",
+      "kind": "text",
+      "x": 202,
+      "y": 336,
+      "w": 110,
+      "h": 26,
+      "text": "",
+      "tag": "$dia",
+      "unit": "d",
+      "decimals": 1,
+      "font_size": 14,
+      "text_align": "right",
+      "color": "@Valor",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "dynamics": {
+        "bad": {
+          "color": "#fdf1dc",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "modo_t",
+      "kind": "text",
+      "x": 330,
+      "y": 96,
+      "w": 180,
+      "h": 18,
+      "text": "REGULACIÓN DE TEMPERATURA",
+      "font_size": 10,
+      "bold": true,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "modo",
+      "kind": "text_list",
+      "x": 330,
+      "y": 118,
+      "w": 178,
+      "h": 30,
+      "tag": "$automatico",
+      "font_size": 13,
+      "bold": true,
+      "texts": [
+        {
+          "value": "true",
+          "text": "SEGÚN RECETA"
+        },
+        {
+          "value": "false",
+          "text": "MANUAL"
+        }
+      ],
+      "default_text": "—",
+      "color": "@Aviso",
+      "text_color": "#ffffff",
+      "border_color": "@Aviso",
+      "dynamics": {
+        "states": [
+          {
+            "when": {
+              "tag": "$automatico",
+              "op": "eq",
+              "value": true
+            },
+            "style": {
+              "color": "@Linea",
+              "border_color": "@Linea"
+            }
+          }
+        ],
+        "bad": {
+          "color": "@Aviso",
+          "border_color": "@Aviso"
+        }
+      }
+    },
+    {
+      "id": "modo_b",
+      "kind": "button",
+      "x": 330,
+      "y": 154,
+      "w": 178,
+      "h": 30,
+      "text": "Receta / manual",
+      "tag": "$automatico",
+      "action": "toggle",
+      "font_size": 12,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando"
+    },
+    {
+      "id": "sp_t",
+      "kind": "text",
+      "x": 330,
+      "y": 194,
+      "w": 178,
+      "h": 20,
+      "text": "Consigna manual",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "sp",
+      "kind": "input",
+      "x": 330,
+      "y": 216,
+      "w": 178,
+      "h": 30,
+      "text": "",
+      "tag": "$consigna_manual",
+      "unit": "°C",
+      "decimals": 1,
+      "font_size": 15,
+      "text_align": "right",
+      "color": "#ffffff",
+      "border_color": "@Mando",
+      "text_color": "@Mando",
+      "bold": true,
+      "dynamics": {
+        "enabled": {
+          "tag": "$automatico",
+          "op": "eq",
+          "value": false,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#e3e6e9",
+          "text_color": "#8a949d",
+          "border_color": "@Borde"
+        },
+        "disabled_reason": "En modo receta la consigna la marca la fase"
+      }
+    },
+    {
+      "id": "valv_t",
+      "kind": "text",
+      "x": 330,
+      "y": 258,
+      "w": 178,
+      "h": 20,
+      "text": "Válvula de glicol",
+      "font_size": 12,
+      "bold": false,
+      "text_color": "@Texto",
+      "text_align": "left"
+    },
+    {
+      "id": "valv",
+      "kind": "bar",
+      "x": 330,
+      "y": 280,
+      "w": 178,
+      "h": 22,
+      "tag": "$valvula",
+      "min": 0,
+      "max": 100,
+      "color": "@Glicol",
+      "dynamics": {}
+    },
+    {
+      "id": "vaciar",
+      "kind": "button",
+      "x": 330,
+      "y": 330,
+      "w": 178,
+      "h": 40,
+      "text": "TRASEGAR A ENVASADO",
+      "tag": "$vaciar",
+      "action": "set",
+      "value": true,
+      "font_size": 13,
+      "bold": true,
+      "color": "@Mando",
+      "border_color": "@Mando",
+      "text_color": "#ffffff",
+      "dynamics": {
+        "enabled": {
+          "tag": "$fase",
+          "op": "eq",
+          "value": 6,
+          "bad": false
+        },
+        "disabled": {
+          "color": "#d7dce0",
+          "text_color": "#8a949d",
+          "border_color": "#c3c9ce"
+        },
+        "disabled_reason": "La cerveza aún no está lista para envasar"
+      }
+    },
+    {
+      "id": "nota",
+      "kind": "text",
+      "x": 12,
+      "y": 376,
+      "w": 300,
+      "h": 40,
+      "text": "Las fases avanzan solas según la receta: fermentación → diacetilo → cold crash → guarda.",
+      "font_size": 11,
+      "bold": false,
+      "text_color": "@TextoSuave",
+      "text_align": "left"
+    },
+    {
+      "id": "cerrar",
+      "kind": "button",
+      "x": 388,
+      "y": 420,
+      "w": 120,
+      "h": 38,
+      "text": "Cerrar",
+      "font_size": 13,
+      "bold": true,
+      "color": "#ffffff",
+      "border_color": "@Borde",
+      "text_color": "@Texto",
+      "action": "close_popup"
+    }
+  ]
+}
