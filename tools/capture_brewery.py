@@ -26,7 +26,7 @@ from abscada.project import Project  # noqa: E402
 from abscada.recording import path  # noqa: E402
 from abscada.runtime import Sample  # noqa: E402
 from abscada.runtime_window import RuntimeWindow  # noqa: E402
-from abscada.simulators.brewery import DT, Brewery, BreweryServer  # noqa: E402
+from plc_simulators.brewery import DT, Brewery, BreweryServer  # noqa: E402
 from abscada.storage import Repository, RuntimeLease  # noqa: E402
 from abscada.viewers import TrendViewer  # noqa: E402
 

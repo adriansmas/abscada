@@ -1,20 +1,13 @@
-"""Protocol adapters; called only from the runtime worker thread."""
+"""Protocol adapters; called only from the runtime worker thread.
+
+An adapter offers connect(), read(address, kind), write(address, kind, value) and close().
+"""
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Protocol
 import re
 import struct
 from .protocol_definition import Field, ProtocolDefinition
 from .i18n import tr
-
-
-class Connector(Protocol):
-    def connect(self): ...
-    def read(self, address: dict | str, kind: str): ...
-    def write(self, address: dict | str, kind: str, value): ...
-    def close(self): ...
-
-
 
 
 @dataclass(frozen=True)

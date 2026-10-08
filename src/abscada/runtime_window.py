@@ -352,7 +352,9 @@ class RuntimeWindow(QMainWindow):
             self.release_momentaries()
         return super().event(event)
 
-    def actuate(self, element, entry=False, source=None, phase=None):
+    def actuate(self, element, entry=False, source=None, phase=None, editor=None, text=None):
+        """``entry``: an input box. With ``editor`` (the item) the value is typed in place and comes back in
+        ``text``; without it a dialog asks for the value."""
         try:
             if element.get('action') in {'momentary','press_release'} and phase=='release':
                 if id(element) in self.momentary:
@@ -383,6 +385,10 @@ class RuntimeWindow(QMainWindow):
             elif not self.authorize(element):
                 return
             action = element.get("action")
+            if action in {'toggle', 'set', 'momentary', 'press_release'} and not element.get('tag'):
+                raise ValueError(tr("Este mando no tiene variable asignada"))
+            if action == 'faceplate_popup' and '' in element.get('bindings', {}).values():
+                raise ValueError(tr("El objeto emergente tiene parámetros sin variable asignada"))
             if action == 'set_language':
                 self.runtime.set_language(element['language'])
                 return
@@ -419,7 +425,12 @@ class RuntimeWindow(QMainWindow):
             sample = self.runtime.snapshot()[name]
             if self.runtime.tags[name].get("binding") and sample.quality != "good":
                 raise ValueError(tr("La variable no tiene una lectura válida"))
-            if entry:
+            if entry and text is not None:
+                value = text
+            elif entry and editor is not None:
+                editor(str(sample.value), lambda typed: self.actuate(element, entry=True, source=source, text=typed))
+                return
+            elif entry:
                 value, ok = QInputDialog.getText(self, tr("Escribir valor"), name, text=str(sample.value))
                 if not ok:
                     return

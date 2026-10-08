@@ -97,10 +97,9 @@ def test_studio_tree_insert_and_picker(operational_studio, monkeypatch):
     element = window.project.screens["main"]["elements"][-1]
     assert element["template"] == "estandar__deposito_vertical" and (element["w"], element["h"]) == (100, 140)
     assert (element["x"], element["y"]) == (250, 130)  # dropped by its centre
-    # An animated object asks for its variables.
-    monkeypatch.setattr(QInputDialog, "getItem", lambda *a, **k: ("Fault", True))
+    # An animated object is placed without variables; they are assigned afterwards.
     assert window.insert_library_object("estandar__valvula_estado")
-    assert window.project.screens["main"]["elements"][-1]["bindings"] == {"abierta": "Fault"}
+    assert window.project.screens["main"]["elements"][-1]["bindings"] == {"abierta": ""}  # variables are assigned afterwards
     window.save_project()
     assert not (window.project.root / "faceplates" / "estandar__valvula_estado.json").exists()
     window.undo()

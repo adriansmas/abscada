@@ -2,7 +2,7 @@
 import copy
 import time
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QMainWindow,QWidget,QHBoxLayout,QVBoxLayout,QFormLayout,QComboBox,QPushButton,QLabel,QSplitter
+from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QFormLayout, QComboBox, QPushButton, QLabel
 from .graphics import CanvasScene,CanvasView,ElementItem
 from .runtime import Sample
 from .value_editor import ValueEditor

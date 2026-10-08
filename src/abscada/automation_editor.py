@@ -3,7 +3,7 @@ import copy
 from PySide6.QtCore import QTimer, Qt
 from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QSplitter,QListWidget,QPlainTextEdit,
-    QPushButton,QInputDialog,QDialog,QTabWidget,QLabel,QLineEdit,QMenu)
+    QPushButton,QDialog,QTabWidget,QLabel,QLineEdit,QMenu)
 from .engineering import RecordsPage, RecordDialog
 from .scripting import validate_scripts
 from .i18n import tr

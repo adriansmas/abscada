@@ -20,8 +20,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from PySide6.QtWidgets import QApplication  # noqa: E402
 from abscada.project import Project  # noqa: E402
 from abscada.runtime_window import RuntimeWindow  # noqa: E402
-from hydro_map import PORTS  # noqa: E402
-from hydro_plc import HydroPLCs  # noqa: E402
+from plc_simulators.hydro_map import PORTS  # noqa: E402
+from plc_simulators.hydro import HydroPLCs  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 # Screens shown in the documentation; --publish copies them to both places.

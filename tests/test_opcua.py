@@ -8,8 +8,8 @@ from abscada.runtime import Runtime
 from abscada.secrets_store import SecretStore, connection_secret_key, secrets_path
 from abscada.security import UserStore, default_security, users_path
 from abscada.storage import ArchiveReader, database_path
-from test_operations import operational_project
 from test_core import wait_for
+from test_operations import operational_project
 
 pytest.importorskip("asyncua")
 

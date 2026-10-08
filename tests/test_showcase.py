@@ -40,7 +40,7 @@ def test_showcase_covers_controls_actions_and_roundtrip(tmp_path):
 
 
 def test_showcase_tcp_scripts_and_independent_quality(tmp_path):
-    plc = tool('showcase_plcs').LaboratoryPLCs(s7_port=free_port(), modbus_port=free_port()).start()
+    plc = __import__('plc_simulators.laboratory',fromlist=['x']).LaboratoryPLCs(s7_port=free_port(), modbus_port=free_port()).start()
     project = tool('build_showcase').build_project(tmp_path / 'project')
     project.connections[0]['port'] = plc.s7_port
     project.connections[1]['port'] = plc.modbus_port

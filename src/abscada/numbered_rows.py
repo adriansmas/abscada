@@ -16,24 +16,22 @@ class NumberedDelegate(QStyledItemDelegate):
         if number is None:
             super().paint(painter, option, index)
             return
-        opt = QStyleOptionViewItem(option)
-        self.initStyleOption(opt, index)
-        text, opt.text = opt.text, ""
         widget = option.widget
         style = widget.style() if widget else QApplication.style()
-        style.drawControl(QStyle.ControlElement.CE_ItemViewItem, opt, painter, widget)
+        opt = QStyleOptionViewItem(option)
+        self.initStyleOption(opt, index)
+        # Row background (selection, hover, stripes) over the whole width, as the style sheet defines it ...
+        style.drawPrimitive(QStyle.PrimitiveElement.PE_PanelItemViewItem, opt, painter, widget)
+        # ... then the item itself, pushed right to leave room for the number.
+        shifted = QStyleOptionViewItem(opt)
+        shifted.rect = opt.rect.adjusted(GUTTER, 0, 0, 0)
+        shifted.state &= ~QStyle.StateFlag.State_HasFocus
+        style.drawControl(QStyle.ControlElement.CE_ItemViewItem, shifted, painter, widget)
         selected = bool(opt.state & QStyle.StateFlag.State_Selected)
         painter.save()
         painter.setFont(opt.font)
         group = QPalette.ColorGroup.Normal if opt.state & QStyle.StateFlag.State_Enabled else QPalette.ColorGroup.Disabled
-        strong = opt.palette.color(group, QPalette.ColorRole.HighlightedText if selected else QPalette.ColorRole.Text)
-        muted = strong if selected else opt.palette.color(group, QPalette.ColorRole.PlaceholderText)
-        rect = opt.rect
-        painter.setPen(muted)
-        painter.drawText(QRect(rect.left() + 2, rect.top(), GUTTER - 8, rect.height()),
+        painter.setPen(opt.palette.color(group, QPalette.ColorRole.Text) if selected else opt.palette.color(group, QPalette.ColorRole.PlaceholderText))
+        painter.drawText(QRect(opt.rect.left() + 2, opt.rect.top(), GUTTER - 8, opt.rect.height()),
                          Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, str(number))
-        painter.setPen(strong)
-        painter.drawText(QRect(rect.left() + GUTTER, rect.top(), rect.width() - GUTTER, rect.height()),
-                         Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
-                         painter.fontMetrics().elidedText(text, Qt.TextElideMode.ElideRight, rect.width() - GUTTER))
         painter.restore()

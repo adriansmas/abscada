@@ -1,7 +1,6 @@
 """Local Git history restricted to project source files, never runtime data."""
 import subprocess
 import sys
-from pathlib import Path
 from .project_storage import documents
 from .i18n import tr
 
@@ -49,6 +48,3 @@ class ProjectGit:
     def history(self):
         if not self.enabled(): return tr('Control de versiones desactivado')
         return self.run('log','-30','--date=local','--format=%h  %ad  %s')
-
-    def diff(self):
-        return self.run('diff','HEAD','--',*sorted(set(documents(self.project)) | {'libraries.json'})) if self.enabled() else ''

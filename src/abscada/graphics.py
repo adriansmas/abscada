@@ -2,9 +2,10 @@
 from __future__ import annotations
 import copy
 import math
-from PySide6.QtCore import Qt, QRectF, QPointF, QTimer, QEvent
-from PySide6.QtGui import QColor, QPainter, QPen, QPixmap, QIcon, QFont, QTransform, QPainterPath, QPainterPathStroker
-from PySide6.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsView, QGraphicsScene, QGraphicsProxyWidget
+import shiboken6
+from PySide6.QtCore import Qt, QRectF, QPointF, QTimer, QEvent, Signal
+from PySide6.QtGui import QColor, QPainter, QPen, QPixmap, QIcon, QFont, QPainterPath, QPainterPathStroker
+from PySide6.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsView, QGraphicsScene, QGraphicsProxyWidget, QLineEdit
 
 from .text_lists import display_text
 from .drawing import PATH_KINDS, SHAPE_KINDS, world_points, set_points
@@ -384,6 +385,35 @@ class CanvasView(DrawingInteraction, QGraphicsView):
             super().dropEvent(event)
 
 
+class InlineEntry(QLineEdit):
+    """Box shown over an input while its value is typed: Enter writes, Esc or leaving cancels."""
+    finished = Signal(object)   # the text, or None when cancelled
+
+    def __init__(self, text, element):
+        super().__init__(text)
+        self._done = False
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setStyleSheet(f"QLineEdit {{ background: white; color: #1c3b59; border: 2px solid #147d75; border-radius: 4px;"
+                           f" font-size: {int(element.get('font_size', 15))}px; padding: 0 4px; selection-background-color: #147d75; }}")
+
+    def _finish(self, value):
+        if not self._done:
+            self._done = True
+            self.finished.emit(value)
+
+    def keyPressEvent(self, event):
+        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+            self._finish(self.text())
+        elif event.key() == Qt.Key.Key_Escape:
+            self._finish(None)
+        else:
+            super().keyPressEvent(event)
+
+    def focusOutEvent(self, event):
+        super().focusOutEvent(event)
+        self._finish(None)
+
+
 class ElementItem(QGraphicsObject):
     def __init__(self, host, element):
         super().__init__()
@@ -414,9 +444,8 @@ class ElementItem(QGraphicsObject):
                 widget = TrendViewer(host.project, host.project.trends[element["view"]], host.runtime) if element["kind"] == "trend" else AlarmViewer(host.project, host.runtime, host.project.alarm_views[element["view"]])
                 self.proxy.setWidget(widget)
                 widget.setMinimumSize(0, 0)
-                width, height = max(element["w"],1050), max(element["h"],400)
-                self.proxy.resize(width,height)
-                self.proxy.setTransform(QTransform.fromScale(element["w"]/width,element["h"]/height))
+                # Laid out at its own size: the view scales it uniformly with the rest of the screen.
+                self.proxy.resize(element["w"], element["h"])
         self.setToolTip(element.get("tag", element["id"]))
         if host.design_mode:
             self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, not element.get('editor_locked',False))
@@ -615,10 +644,36 @@ class ElementItem(QGraphicsObject):
                 self.host.actuate(self.element,phase='release'); return
             if pressed and self.element["kind"] == "button" and event.button() == Qt.MouseButton.LeftButton and QRectF(0,0,self.element['w'],self.element['h']).contains(event.pos()):
                 self.host.actuate(self.element)
+            elif pressed and self.element["kind"] == "input" and event.button() == Qt.MouseButton.LeftButton and QRectF(0,0,self.element['w'],self.element['h']).contains(event.pos()):
+                self.host.actuate(self.element, entry=True, editor=self.begin_edit)
+
+    def begin_edit(self, text, commit):
+        """Type the value of an input right on it (no dialog)."""
+        self.end_edit()
+        entry = InlineEntry(text, self.element)
+        entry.resize(int(self.element["w"]), int(self.element["h"]))
+        proxy = QGraphicsProxyWidget(self)
+        proxy.setWidget(entry)
+        proxy.setZValue(1000)
+        self.entry_proxy = proxy
+        def done(typed):
+            QTimer.singleShot(0, self.end_edit)
+            if typed is not None:
+                QTimer.singleShot(0, lambda: commit(typed))
+        entry.finished.connect(done)
+        entry.selectAll()
+        proxy.setFocus()
+        entry.setFocus()
+
+    def end_edit(self):
+        proxy = getattr(self, "entry_proxy", None)
+        self.entry_proxy = None
+        if proxy is not None and shiboken6.isValid(proxy):
+            proxy.deleteLater()   # the proxy owns the entry box and removes it with itself
 
     def mouseDoubleClickEvent(self, event):
-        if not self.host.design_mode and self.element["kind"] == "input" and event.button() == Qt.MouseButton.LeftButton:
-            self.host.actuate(self.element, entry=True)
+        if not self.host.design_mode and self.element["kind"] == "input":
+            event.accept()   # the first click already opened the entry box
         elif self.host.design_mode:
             if self.element["kind"] == "faceplate":
                 host, template = self.host, self.element["template"]

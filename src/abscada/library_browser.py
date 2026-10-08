@@ -17,7 +17,6 @@ _ICONS = {}
 
 def sections(project):
     """[(title, value, tooltip, [(folder, name, label), …]), …] — pure data, sorted for display."""
-    from . import screen_tree
     from .faceplate_libraries import owner
     from .system_library import SYSTEM, _templates
     local = [(doc.get("folder", ""), name, name) for name, doc in project.faceplates.items() if not owner(project, name)]

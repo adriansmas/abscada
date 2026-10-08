@@ -77,6 +77,8 @@ def validate_popup_button(element, project, tags, parameters):
         source = bindings[parameter]
         if not isinstance(source, str):
             raise ValueError(tr("Parámetro {parameter}: se esperaba una variable", parameter=parameter))
+        if source == "":
+            continue  # not assigned yet
         if source.startswith("$"):
             actual = parameters.get(source[1:])
         else:
@@ -92,7 +94,7 @@ def validate_popup_writes(element, project, tags):
     from .dynamics import parameter_writable
     template = project.faceplates[element["template"]]
     for parameter, source in element.get("bindings", {}).items():
-        if parameter_writable(template, parameter) and not tags.get(source, {}).get("writable", False):
+        if source and parameter_writable(template, parameter) and not tags.get(source, {}).get("writable", False):
             raise ValueError(tr("Objeto emergente: variable de solo lectura {source}", source=source))
 
 

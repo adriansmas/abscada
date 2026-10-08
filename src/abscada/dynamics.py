@@ -7,7 +7,6 @@ from .project_languages import is_text
 
 OPS={'eq':operator.eq,'ne':operator.ne,'gt':operator.gt,'ge':operator.ge,'lt':operator.lt,'le':operator.le}
 COLOR_KEYS={'color','text_color','border_color','stroke_color'}
-STYLE_KEYS=COLOR_KEYS|{'text','source'}
 
 
 def style_keys(kind):
@@ -130,6 +129,8 @@ def issues(project):
         for name,document in collection.items():
             for e in document['elements']:
                 if writable_control(e) and not e.get('tag'): result.append(tr("{name} / {id}: mando sin variable", name=name, id=e["id"]))
+                loose=[p for p,v in e.get('bindings',{}).items() if v=='']
+                if loose: result.append(tr("{name} / {id}: parámetros sin variable asignada: {parameters}", name=name, id=e["id"], parameters=', '.join(loose)))
                 for key in sorted(set(e)-known): result.append(tr("{name} / {id}: propiedad no reconocida «{key}»", name=name, id=e["id"], key=key))
     return result
 

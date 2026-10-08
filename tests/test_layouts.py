@@ -2,9 +2,9 @@ import copy
 import pytest
 from PySide6.QtCore import QPointF, Qt, QTimer
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication, QInputDialog
+from PySide6.QtWidgets import QApplication
 from abscada.project import Project
-from test_operational_ui import operational_studio, operational_project, pump_until
+from test_operational_ui import operational_project, operational_studio, pump_until
 
 
 def configure(w):

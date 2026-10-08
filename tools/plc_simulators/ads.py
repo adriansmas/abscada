@@ -4,7 +4,7 @@ Serves AMS/TCP with a symbol table (read/write by handle), %M/%I/%Q memory
 areas and the PLC state. It is not a TwinCAT runtime: no routing, no
 notifications, no sum commands.
 
-    python -m abscada.ads_simulator            # demo test bench on 127.0.0.1:48898
+    abscada --simulador ads            # demo test bench on 127.0.0.1:48898
 """
 import argparse
 import math
@@ -13,7 +13,7 @@ import struct
 import threading
 import time
 
-from .ads import (CMD_READ, CMD_READ_DEVICE_INFO, CMD_READ_STATE, CMD_READ_WRITE, CMD_WRITE,
+from abscada.ads import (CMD_READ, CMD_READ_DEVICE_INFO, CMD_READ_STATE, CMD_READ_WRITE, CMD_WRITE,
                   IG_SYM_HANDLE_BY_NAME, IG_SYM_RELEASE_HANDLE, IG_SYM_VALUE_BY_HANDLE, STATE_RESPONSE, TYPES)
 
 AREAS = {0x4020: "M", 0xF020: "I", 0xF030: "Q"}

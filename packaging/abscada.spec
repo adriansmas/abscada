@@ -1,12 +1,15 @@
 # PyInstaller spec for abSCADA (one-folder build). Run through packaging/build_exe.py.
 # -*- mode: python ; coding: utf-8 -*-
 import os
+import sys
 from pathlib import Path
 
 from PyInstaller.utils.hooks import collect_submodules
 
 ROOT = Path(SPECPATH).parent
 VERSION_FILE = os.environ.get("ABSCADA_VERSION_FILE")
+# The PLC simulators live in tools/ but travel inside the .exe (abscada --simulador).
+sys.path.insert(0, str(ROOT / "tools"))
 
 
 def example_datas():
@@ -21,7 +24,7 @@ def example_datas():
 
 a = Analysis(
     [str(ROOT / "packaging" / "launcher.py")],
-    pathex=[str(ROOT / "src")],
+    pathex=[str(ROOT / "src"), str(ROOT / "tools")],
     datas=example_datas() + [
         # Standard library: SVG symbols and catalogue, read at run time from the package folder.
         (str(ROOT / "src" / "abscada" / "standard_library"), "abscada/standard_library"),
@@ -32,7 +35,7 @@ a = Analysis(
         (str(ROOT / "LICENSE"), "."),
     ],
     # Simulators, protocol adapters and Qt modules are imported lazily by name.
-    hiddenimports=collect_submodules("abscada") + collect_submodules("snap7") + collect_submodules("pyModbusTCP")
+    hiddenimports=collect_submodules("abscada") + collect_submodules("plc_simulators") + collect_submodules("snap7") + collect_submodules("pyModbusTCP")
     + collect_submodules("asyncua") + ["PySide6.QtSvg", "PySide6.QtCharts"],
     excludes=["tkinter", "PySide6.QtWebEngineCore", "PySide6.QtWebEngineWidgets", "PySide6.Qt3DCore",
               "PySide6.QtQuick", "PySide6.QtQml", "PySide6.QtMultimedia", "pytest"],

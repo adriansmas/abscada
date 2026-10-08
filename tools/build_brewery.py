@@ -2,7 +2,7 @@
 
     .venv\\Scripts\\python tools/build_brewery.py [--output examples/brewery] [--force]
 
-Bindings come from abscada.simulators.brewery_map, the same address space the
+Bindings come from plc_simulators.brewery_map, the same address space the
 simulator publishes (abscada --simulador cerveceria).
 """
 import argparse
@@ -16,7 +16,7 @@ from abscada.project import Project  # noqa: E402
 from abscada.project_files import is_project  # noqa: E402
 from abscada.screen_tree import own_viewers  # noqa: E402
 from abscada.security import UserStore, default_security, users_path  # noqa: E402
-from abscada.simulators.brewery_map import (BREWHOUSE_FIELDS, ENDPOINT, FERMENTER_FIELDS, FERMENTERS, PHASES,  # noqa: E402
+from plc_simulators.brewery_map import (BREWHOUSE_FIELDS, ENDPOINT, FERMENTER_FIELDS, FERMENTERS, PHASES,  # noqa: E402
                                             PROMPTS, RECIPE_COUNT, RECIPE_EDITOR_FIELDS, RECIPE_PARAMETERS,
                                             SERVICES_FIELDS, STEPS, node)
 from build_hydro import SCREEN_W, SCREEN_H, Doc as BaseDoc, condition  # noqa: E402

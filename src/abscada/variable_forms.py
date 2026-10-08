@@ -1,8 +1,8 @@
 """Variable creation and editing without JSON, including nested structures."""
 import copy
 from PySide6.QtCore import Qt, QSize, QTimer
-from PySide6.QtWidgets import (QVBoxLayout, QFormLayout, QLineEdit, QComboBox, QCheckBox, QLabel, QPushButton,
-                               QMenu, QMessageBox, QTreeWidgetItem)
+from PySide6.QtWidgets import (QVBoxLayout, QFormLayout, QLineEdit, QComboBox, QCheckBox, QLabel, QMenu,
+                               QMessageBox, QTreeWidgetItem)
 from .dialogs import EditorDialog
 from .value_editor import ValueEditor, StructureEditor, FieldError
 from .protocol_editor import BindingEditor

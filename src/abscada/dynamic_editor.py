@@ -1,7 +1,7 @@
 """Visual conditions and state appearance, configured without expressions."""
 import copy
 from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QFormLayout,QCheckBox,QComboBox,QLineEdit,
-    QPushButton,QTableWidget,QTableWidgetItem,QHeaderView,QTabWidget,QDialogButtonBox,QLabel,QGroupBox,QScrollArea)
+    QPushButton,QTableWidget,QTableWidgetItem,QHeaderView,QTabWidget,QLabel,QGroupBox,QScrollArea)
 from .dialogs import EditorDialog
 from .value_editor import ValueEditor
 from .graphic_properties import ColorField

@@ -2,13 +2,12 @@
 import copy
 import uuid
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QDialog,
-    QDialogButtonBox, QLineEdit, QComboBox, QCheckBox, QSpinBox, QDoubleSpinBox,
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QDialogButtonBox, QLineEdit, QComboBox, QCheckBox, QSpinBox, QDoubleSpinBox,
     QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QTabWidget, QLabel,
     QListWidget, QListWidgetItem, QColorDialog, QFileDialog, QInputDialog)
 from PySide6.QtGui import QColor
 from .operational_config import OPERATORS, ALARM_COLUMNS, DEFAULT_ALARM_COLUMNS
-from .dialogs import EditorDialog as QDialog
+from .dialogs import EditorDialog
 from .i18n import tr
 from .project_languages import resolve, default_language
 
@@ -69,7 +68,7 @@ class ColorControl(QWidget):
         return self.input.text()
 
 
-class RecordDialog(QDialog):
+class RecordDialog(EditorDialog):
     def __init__(self, parent, title, fields, data=None):
         super().__init__(parent)
         self.setWindowTitle(title)
@@ -336,7 +335,7 @@ class OperationalEngineering:
     def edit_trend(self, name):
         """Configuration of one trend control (each control owns its configuration)."""
         draft = copy.deepcopy(self.host.project.trends[name])
-        dialog = QDialog(self.host); dialog.setWindowTitle(tr("Configurar gráfica")); dialog.resize(880, 570)
+        dialog = EditorDialog(self.host); dialog.setWindowTitle(tr("Configurar gráfica")); dialog.resize(880, 570)
         layout = QVBoxLayout(dialog); form = QFormLayout()
         from .project_text_editor import ProjectTextField
         title = ProjectTextField(self.host, draft['title'])

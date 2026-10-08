@@ -500,7 +500,7 @@ class Brewery:
 
 # ---------------------------------------------------------------------- OPC UA server
 def certificate_folder():
-    from ..app_paths import state_root
+    from abscada.app_paths import state_root
     return state_root() / "simuladores" / "cerveceria"
 
 
@@ -551,7 +551,7 @@ class BreweryServer:
 
     async def _main(self):
         from asyncua import Server, ua
-        from .. import pki
+        from abscada import pki
 
         self.stopping = asyncio.Event()
         server = Server()
@@ -618,7 +618,7 @@ def main(argv=None):
         server = BreweryServer(port=args.port).start()
     except RuntimeError as error:
         raise SystemExit(str(error)) from None
-    from .. import pki
+    from abscada import pki
     der = (pki.pki_root(server.folder) / "own" / "plc.der").read_bytes()
     print(f"PLC de la cervecería simulado en {server.endpoint}\n"
           f"Certificado del servidor: huella {pki.fingerprint(der)}. Ctrl+C para detener.", flush=True)

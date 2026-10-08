@@ -2,7 +2,7 @@
 
     .venv\\Scripts\\python tools/build_hydro.py [--output examples/hydro] [--force]
 
-Bindings come from tools/hydro_map.py, the same map served by tools/hydro_plc.py.
+Bindings come from plc_simulators/hydro_map.py, the same map served by plc_simulators/hydro.py.
 """
 import argparse
 import shutil
@@ -15,7 +15,7 @@ from abscada.example_languages import bilingual
 from abscada.project import Project  # noqa: E402
 from abscada.project_files import is_project  # noqa: E402
 from abscada.screen_tree import own_viewers  # noqa: E402
-from hydro_map import COMMON_FIELDS, METER_FIELDS, PORTS, STEPS, TRIP_CAUSES, UNIT_FIELDS  # noqa: E402
+from plc_simulators.hydro_map import COMMON_FIELDS, METER_FIELDS, PORTS, STEPS, TRIP_CAUSES, UNIT_FIELDS  # noqa: E402
 
 SCREEN_W, SCREEN_H = 1400, 830
 UNITS = [("G1", "PLC_G1", "Grupo 1"), ("G2", "PLC_G2", "Grupo 2")]
@@ -844,7 +844,7 @@ def build_alarm_screens(project):
 
 def build_instructor(project):
     d = screen(project, "90_instructor", "Panel del instructor · simulación",
-               "Solo para formación: inyecta fallos en el PLC simulado (tools/hydro_plc.py). No existe en una planta real.")
+               "Solo para formación: inyecta fallos en el PLC simulado (abscada --simulador hydro). No existe en una planta real.")
     d.add("rectangle", "banda", 10, 60, 1380, 40, color="#fff4dc", stroke_color="#e89a1c", stroke_width=2)
     d.label("banda_t", "MODO FORMACIÓN · las órdenes de esta pantalla activan averías simuladas. Desactívalas para recuperar la normalidad.",
             24, 68, 1350, 24, size=14, bold=True, color="#7a4b00")
@@ -897,7 +897,7 @@ def build_help(project):
         "• Control de planta: reparto de potencia y regulación del nivel del embalse.",
         "• Alarmas: reconocer (ACK) con operador y comentario; filtros e histórico CSV.",
         "• Ventanas: «Mando…» en la ficha de un grupo o un clic en una bomba abre su ventana; arrástrala a otro monitor.",
-        "• Simulación: el PLC simulado se arranca con  tools/hydro_plc.py.",
+        "• Simulación: el PLC simulado se arranca con  abscada --simulador hydro.",
     ]
     for i, line in enumerate(lines):
         d.label(f"l{i}", line, 24, 62 + i * 42, 712, 40, size=14, color="#1f2a33")

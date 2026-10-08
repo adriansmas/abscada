@@ -4,8 +4,8 @@ from abscada.security import (SecurityService, UserStore, AuthenticationError, d
                               verify_password, validate_security, required_permission, users_path)
 from abscada.runtime import Runtime
 from abscada.storage import ArchiveReader, database_path
-from test_operations import operational_project
 from test_core import wait_for
+from test_operations import operational_project
 
 
 POLICY = default_security()

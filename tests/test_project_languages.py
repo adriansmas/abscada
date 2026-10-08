@@ -3,7 +3,6 @@ import copy
 import csv
 import io
 from pathlib import Path
-import time
 
 import pytest
 from PySide6.QtWidgets import QApplication

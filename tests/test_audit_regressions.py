@@ -7,15 +7,15 @@ import pytest
 from PySide6.QtCore import QPointF, Qt
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication
-from abscada.project import coerce, Project
+from abscada.project import coerce
 from abscada.runtime import Runtime, Sample
 from abscada.storage import Repository, ProjectSampleReader, database_path, ArchiveReader
 from abscada.alarms import AlarmEngine
 from abscada.script_runner import TailOutput
 from abscada.versioning import ProjectGit
+from test_core import wait_for
 from test_operations import operational_project
 from test_operational_ui import operational_studio, pump_until
-from test_core import wait_for
 
 
 def test_failed_start_releases_all_services_and_lease(operational_project,monkeypatch):

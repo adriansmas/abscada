@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt, QPointF
 from PySide6.QtWidgets import QApplication
 from PySide6.QtTest import QTest
 from abscada.project import Project
-from test_operational_ui import operational_studio, operational_project, pump_until
+from test_operational_ui import operational_project, operational_studio, pump_until
 from test_ui import studio
 
 

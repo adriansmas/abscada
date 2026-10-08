@@ -6,11 +6,11 @@ import json
 import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
-from PySide6.QtCore import Qt, QTimer, QDateTime, QPointF, QMargins
+from PySide6.QtCore import Qt, QTimer, QDateTime, QMargins
 from PySide6.QtGui import QColor, QPen, QPainter
-from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QComboBox,
-    QLineEdit, QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView, QFileDialog, QMessageBox,
-    QDateTimeEdit, QSpinBox, QToolButton, QMenu)
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QComboBox, QLineEdit,
+    QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView, QFileDialog, QMessageBox, QDateTimeEdit,
+    QSpinBox, QToolButton, QMenu, QScrollArea, QFrame)
 from .operational_config import ALARM_COLUMNS, DEFAULT_ALARM_COLUMNS
 from PySide6.QtCharts import QChart, QChartView, QLineSeries, QDateTimeAxis, QValueAxis
 from .alarms import state
@@ -18,6 +18,7 @@ from .storage import ArchiveReader, database_path, ProjectSampleReader
 from .i18n import tr, tr_existing
 from .project_languages import resolve, default_language, localized
 from .runtime_language_ui import runtime_ui
+from .flow_layout import FlowLayout
 
 READERS = ThreadPoolExecutor(max_workers=3, thread_name_prefix="abscada-query")
 COMMANDS = ThreadPoolExecutor(max_workers=1, thread_name_prefix="abscada-operator")
@@ -60,7 +61,7 @@ class AlarmViewer(QWidget):
         self.reader = ArchiveReader(database_path(project))
         self.future = None; self.next_query = 0; self.rows = []; self.token = None
         layout = QVBoxLayout(self); layout.setContentsMargins(8, 6, 8, 6)
-        toolbar = QHBoxLayout()
+        toolbar = FlowLayout()
         self.mode = QComboBox()
         for key, label in (("pending", tr("Pendientes")), ("active", tr("Activas")), ("history", tr("Histórico")), ("events", tr("Eventos"))):
             self.mode.addItem(label, key)
@@ -73,16 +74,16 @@ class AlarmViewer(QWidget):
         self.search = QLineEdit(); self.search.setPlaceholderText(tr("Mensaje, variable o ID…"))
         self.priority = QSpinBox(); self.priority.setRange(1, 1000); self.priority.setPrefix(tr("Prioridad ≥ "))
         self.priority.setValue(self.config.get("min_priority", 1))
+        self.search.setMinimumWidth(140)
         for widget in (self.mode, self.category, self.priority, self.search):
-            toolbar.addWidget(widget, 1 if widget is self.search else 0)
+            toolbar.addWidget(widget)
         layout.addLayout(toolbar)
-        row = QHBoxLayout()
+        row = FlowLayout()
         self.date_controls = QWidget(); self.date_controls.setLayout(row)
         row.setContentsMargins(0,0,0,0)
         self.start = date_edit(time.time()-86400); self.end = date_edit(time.time())
         row.addWidget(QLabel(tr("Desde"))); row.addWidget(self.start); row.addWidget(QLabel(tr("Hasta"))); row.addWidget(self.end)
         self.apply = QPushButton(tr("Consultar")); self.apply.clicked.connect(self.reload); row.addWidget(self.apply)
-        row.addStretch()
         self.export = QPushButton(tr("CSV")); self.export.clicked.connect(self.export_csv); toolbar.addWidget(self.export)
         layout.addWidget(self.date_controls)
         self.table = QTableWidget(0, 10)
@@ -104,8 +105,8 @@ class AlarmViewer(QWidget):
         columns.setMenu(menu); columns.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         toolbar.addWidget(columns)
         layout.addWidget(self.table, 1)
-        footer = QHBoxLayout()
-        self.count = QLabel(); footer.addWidget(self.count); footer.addStretch()
+        footer = FlowLayout()
+        self.count = QLabel(); footer.addWidget(self.count)
         self.actor = QLineEdit(tr("Operador")); self.actor.setMaximumWidth(170)
         self.actor.setPlaceholderText(tr("Operador"))
         self.comment = QLineEdit(); self.comment.setPlaceholderText(tr("Comentario de ACK"))
@@ -301,7 +302,7 @@ class TrendViewer(QWidget):
         self.export_future = None
         self.generation = 0
         layout = QVBoxLayout(self); layout.setContentsMargins(6, 4, 6, 4)
-        toolbar = QHBoxLayout()
+        toolbar = FlowLayout()
         self.source = QComboBox()
         self.source.addItem(tr("Tiempo real"), "live"); self.source.addItem(tr("Histórico"), "history")
         self.source.setCurrentIndex(0 if runtime else 1)
@@ -313,7 +314,6 @@ class TrendViewer(QWidget):
         for widget in (self.live, self.start, self.end):
             toolbar.addWidget(widget)
         self.query = QPushButton(tr("Consultar")); self.query.clicked.connect(self.reload); toolbar.addWidget(self.query)
-        toolbar.addStretch(1)
         fit = QPushButton(tr("Restablecer zoom")); fit.clicked.connect(lambda: self.chart.zoomReset()); toolbar.addWidget(fit)
         export = QPushButton(tr("CSV")); export.clicked.connect(self.export_csv); toolbar.addWidget(export)
         layout.addLayout(toolbar)
@@ -330,23 +330,29 @@ class TrendViewer(QWidget):
             widget = QValueAxis(); widget.setTitleText(axis.get("title", axis["id"]))
             widget.setRange(axis.get("min", 0), axis.get("max", 100))
             self.chart.addAxis(widget, Qt.AlignmentFlag.AlignLeft if axis.get("side", "left") == "left" else Qt.AlignmentFlag.AlignRight)
+            widget.setTitleVisible(len(config["axes"]) <= 4)  # many axes: the toggles below name them
             widget.setVisible(axis.get("visible", True)); self.axes[axis["id"]] = widget
         self.view = TrendChartView(self.chart, self); layout.addWidget(self.view, 1)
-        toggles = QHBoxLayout()
+        # Any number of curves: the toggles wrap onto new rows, and past a few rows they scroll.
+        toggles = FlowLayout()
         for curve in config["curves"]:
             check = QCheckBox(curve.get("title", curve["tag"]))
             check.setChecked(curve.get("visible", True)); check.setStyleSheet(f"color: {curve.get('color', '#147d75')};")
             self.curve_visible[curve["id"]] = check
             check.toggled.connect(self.draw)
             toggles.addWidget(check)
-        toggles.addStretch(); toggles.addWidget(QLabel(tr("Ejes:")))
+        toggles.addWidget(QLabel(tr("Ejes:")))
         for axis in config["axes"]:
             check = QCheckBox(axis.get("title", axis["id"]))
             check.setChecked(axis.get("visible", True))
             self.axis_checks[axis["id"]] = check
             check.toggled.connect(self.axes[axis["id"]].setVisible)
             toggles.addWidget(check)
-        layout.addLayout(toggles)
+        holder = QWidget(); holder.setLayout(toggles)
+        scroller = QScrollArea(); scroller.setWidget(holder); scroller.setWidgetResizable(True)
+        scroller.setFrameShape(QFrame.Shape.NoFrame); scroller.setMaximumHeight(96)
+        scroller.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        layout.addWidget(scroller)
         self.readout = QLabel("—"); layout.addWidget(self.readout)
         self.live.toggled.connect(self.reload)
         self.source.currentIndexChanged.connect(self.reload)

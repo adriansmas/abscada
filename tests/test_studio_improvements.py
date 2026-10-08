@@ -127,3 +127,62 @@ def test_screen_open_scripts_without_scripts_points_to_the_scripts_section(studi
     monkeypatch.setattr(QMessageBox, "clickedButton", lambda self: None)
     studio.screen_properties.edit_events()
     assert opened and "Scripts" in opened[0]
+
+
+def test_trends_accept_many_axes_and_curves(studio):
+    tags = [n for n, t in studio.project.tags().items() if t["type"] == "float"][:40]
+    studio.project.trends["muchas"] = dict(
+        title="Muchas", window_seconds=600,
+        axes=[dict(id=f"a{i}", title=f"Eje {i}", side="left", auto=True, min=0, max=100, visible=True) for i in range(20)],
+        curves=[dict(id=f"c{i}", tag=tag, axis=f"a{i % 20}", color="#147d75", width=2, visible=True) for i, tag in enumerate(tags)])
+    studio.project.validate()
+    studio.project.trends["muchas"]["axes"] += [dict(id=f"x{i}", title="x", side="left", auto=True, min=0, max=1, visible=True) for i in range(60)]
+    with pytest.raises(ValueError, match="64"):
+        studio.project.validate()
+
+
+def test_viewers_are_laid_out_at_their_own_size_and_scale_uniformly(studio):
+    from abscada.graphics import ElementItem
+    from abscada.viewers import TrendViewer
+    studio.project.trends["t"] = dict(title="T", window_seconds=60, axes=[dict(id="y", title="Y", side="left", auto=True, min=0, max=1, visible=True)], curves=[])
+    document = studio.project.screens[studio.project.manifest["startup_screen"]]
+    document["elements"].append(dict(id="trend_t", kind="trend", view="t", x=0, y=0, w=500, h=320))
+    studio.project.validate()
+    class Host:
+        design_mode = False; project = studio.project; runtime = None; samples = {}; containers = {}
+        def font(self): return studio.font()
+    item = ElementItem(Host(), document["elements"][-1])
+    assert isinstance(item.proxy.widget(), TrendViewer)
+    assert (item.proxy.size().width(), item.proxy.size().height()) == (500, 320)
+    assert item.proxy.transform().isIdentity()
+
+
+def test_library_objects_can_be_placed_before_their_variables_exist(tmp_path):
+    from abscada.dynamics import issues
+    from abscada.ui import Window
+    QApplication.instance() or QApplication([])
+    project = Project(tmp_path, dict(schema_version=1, name="Vacio", startup_screen="main"), {}, [], [],
+                      {"main": dict(width=800, height=600, elements=[])},
+                      {"bomba": dict(width=100, height=60, parameters={"marcha": "bool"},
+                                     elements=[dict(id="lamp", kind="lamp", x=0, y=0, w=40, h=40, tag="$marcha")])})
+    studio = Window(project)
+    try:
+        assert not project.variables
+        assert studio.insert_library_object("bomba")
+        element = studio.document()["elements"][-1]
+        assert element["kind"] == "faceplate" and element["bindings"] == {"marcha": ""}
+        project.validate()
+        assert any("sin variable asignada" in message for message in issues(project))
+        assert len(list(project.elements("main"))) == 1          # expands with nothing assigned
+        studio.render_scene([element["id"]])
+        combo = studio.binding_fields["marcha"]
+        assert combo.currentData() == "" and combo.currentText() == "(sin asignar)"
+        # the variable is created later and assigned from the properties panel
+        studio.mutate(lambda: project.variables.append(dict(name="Marcha", type="bool", initial=False, writable=True)))
+        studio.render_scene([element["id"]])
+        studio.binding_fields["marcha"].setCurrentIndex(studio.binding_fields["marcha"].findData("Marcha"))
+        studio.apply_fields()
+        assert studio.document()["elements"][-1]["bindings"] == {"marcha": "Marcha"}
+    finally:
+        studio.dirty = False
+        studio.close()

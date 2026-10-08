@@ -75,7 +75,7 @@ Siemens S7-1200/1500 con DB optimizados: usar el servidor OPC UA integrado en la
 - **Tipos.** De BOOL a LREAL y STRING(n), codificados en little endian y cp1252.
 - **Errores.** Los códigos ADS se traducen a mensajes legibles. Como en S7 y Modbus, un fallo de lectura marca la conexión entera como *bad* y reconecta a los 2 s.
 
-`ads_simulator.py` es un servidor AMS/TCP en Python puro con tabla de símbolos, handles, áreas %M/%I/%Q y estado del PLC. Lo usan las pruebas y el ejemplo `examples/beckhoff`.
+`tools/plc_simulators/ads.py` es un servidor AMS/TCP en Python puro con tabla de símbolos, handles, áreas %M/%I/%Q y estado del PLC. Lo usan las pruebas y el ejemplo `examples/beckhoff`.
 
 Pendiente: notificaciones ADS (*device notifications*), lecturas agrupadas (*sum commands*, grupo `0xF080`), WSTRING, arrays completos, tipos de fecha y exploración de la tabla de símbolos desde Studio.
 
@@ -116,7 +116,7 @@ La escritura de bit hace lectura-modificación-escritura del byte para preservar
 
 ### PLC de desarrollo
 
-`python -m abscada.s7_simulator --port 1102` inicia un servidor TCP S7 local. El servidor no es una CPU Siemens ni simula todas sus restricciones. Es útil para comprobar la ruta completa del adaptador.
+`abscada --simulador s7 --port 1102` inicia un servidor TCP S7 local. El servidor no es una CPU Siemens ni simula todas sus restricciones. Es útil para comprobar la ruta completa del adaptador.
 
 | Dirección | Significado |
 | --- | --- |

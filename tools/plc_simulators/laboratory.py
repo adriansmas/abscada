@@ -20,7 +20,7 @@ class LaboratoryPLCs:
     def start(self):
         try:
             if self.protocol in ('s7', 'both'):
-                from abscada.s7_simulator import create_server
+                from .s7 import create_server
                 self.s7, self.memory = create_server(self.s7_port)
             if self.protocol in ('modbus', 'both'):
                 from pyModbusTCP.server import ModbusServer

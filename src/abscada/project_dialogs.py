@@ -1,9 +1,9 @@
 """Project-level dialogs: document creation and local version history."""
 import re
-from PySide6.QtWidgets import (QDialog,QVBoxLayout,QFormLayout,QLineEdit,QSpinBox,QDialogButtonBox,
+from PySide6.QtWidgets import (QVBoxLayout,QFormLayout,QLineEdit,QSpinBox,QDialogButtonBox,
                               QLabel,QPushButton,QPlainTextEdit,QHBoxLayout,QTabWidget)
 from .versioning import ProjectGit
-from .dialogs import EditorDialog as QDialog
+from .dialogs import EditorDialog
 from .i18n import tr
 
 
@@ -20,7 +20,7 @@ def file_name_from_title(title, taken=()):
     return name
 
 
-class NewDocumentDialog(QDialog):
+class NewDocumentDialog(EditorDialog):
     def __init__(self,host,faceplate=False):
         super().__init__(host); self.host=host; self.faceplate=faceplate
         self.setWindowTitle(tr('Nuevo objeto de librería') if faceplate else tr('Nueva pantalla'))
@@ -64,7 +64,7 @@ class NewDocumentDialog(QDialog):
         return doc
 
 
-class VersionDialog(QDialog):
+class VersionDialog(EditorDialog):
     def __init__(self,host):
         super().__init__(host); self.host=host; self.setWindowTitle(tr('Versiones del proyecto')); self.resize(780,520)
         layout=QVBoxLayout(self); bar=QHBoxLayout()

@@ -4,6 +4,14 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 
 ## [Sin publicar]
 
+### Cambiado
+- **Variables → pestaña «Forzado»:** escribe el valor de cualquier variable con escritura permitida mientras el runtime está en marcha (valor actual en vivo, Intro para escribir), sin pantallas ni scripts.
+- En el runtime, un campo de entrada se edita en el propio campo (un clic, Intro para escribir, Esc para cancelar) en lugar de abrir una ventana emergente.
+- La lista de variables se lee mejor: filas alternas más marcadas y fila seleccionada con texto oscuro sobre fondo azul claro.
+- Los objetos de librería se pueden colocar sin que existan sus variables: el parámetro queda «(sin asignar)» y se enlaza después en el panel de propiedades. «Revisar el proyecto» avisa de los que sigan sin asignar, y en el runtime un mando sin variable lo explica en lugar de fallar.
+- Los visores de tendencias y de alarmas se maquetan al tamaño real del elemento y escalan de forma uniforme con la pantalla; sus barras de herramientas y selectores de curvas se reparten en varias líneas. Una tendencia admite hasta 64 ejes (antes 8) y tantas curvas como se quiera.
+- Los simuladores de PLC pasan de `src/abscada` a `tools/plc_simulators` y siguen incluidos en el .exe (`abscada --simulador <id>`). Eliminado código sin uso y las utilidades `tools/hydro_plc.py`, `hydro_map.py`, `showcase_plcs.py`, `create_s7_demo.py` y `capture_review_fixes.py`.
+
 ## [0.5.0b3] - 2026-10-07
 
 ### Cambiado

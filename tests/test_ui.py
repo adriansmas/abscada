@@ -8,7 +8,7 @@ from PySide6.QtGui import QDragEnterEvent, QDropEvent
 from PySide6.QtTest import QTest
 from abscada.project import Project
 from abscada.ui import Window, Toolbox
-from test_core import DEMO, wait_for
+from test_core import wait_for
 
 
 def test_selection_changes_do_not_show_orphan_windows(studio):
@@ -294,7 +294,7 @@ def test_structures_are_collapsed_groups_and_filter_shows_matching_fields(studio
 
 def test_structure_field_can_select_plc_and_db_without_json(studio):
     from PySide6.QtCore import QTimer
-    from PySide6.QtWidgets import QLineEdit, QComboBox, QSpinBox
+    from PySide6.QtWidgets import QComboBox, QSpinBox
     studio.project.connections.append(dict(id="PLC_Main", protocol="s7", host="127.0.0.1"))
     def fill():
         dialog = QApplication.activeModalWidget()

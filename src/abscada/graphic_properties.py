@@ -1,5 +1,4 @@
 """Contextual inspectors for documents and editable vector drawings."""
-import copy
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QFormLayout, QHBoxLayout,
     QGroupBox, QLineEdit, QSpinBox, QDoubleSpinBox, QCheckBox, QPushButton,
