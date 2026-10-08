@@ -4,6 +4,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 
 ## [Sin publicar]
 
+## [0.5.0b5] - 2026-10-08
+
 ### Cambiado
 - **Idiomas del proyecto más fáciles de usar:** el desplegable de idioma de la barra superior tiene la opción «＋ Añadir idioma…» (lista de idiomas comunes u otro código), y Ajustes del proyecto → General sustituye los códigos separados por comas por una lista con casillas y un idioma por defecto. Quitar un idioma elimina sus traducciones.
 
