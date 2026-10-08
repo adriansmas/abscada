@@ -47,6 +47,8 @@ def button(text, callback, primary=False):
     return widget
 
 
+ADD_LANGUAGE = tr("＋ Añadir idioma…")
+
 TOOL_GROUPS = ((tr("Indicadores y mandos"), ("text", "lamp", "button", "input", "bar", "gauge", "text_list", "image")),
                (tr("Trazados y formas"), None),
                (tr("Visores y composición"), ("faceplate", "trend", "alarm_view", "screen_container")))
@@ -153,12 +155,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         titles.addWidget(self.page_title)
         top.addLayout(titles)
         top.addStretch()
-        from .project_languages import languages
         self.editing_language_field = QComboBox()
         self.editing_language_field.setObjectName('editingLanguage')
-        self.editing_language_field.setToolTip(tr('Idioma de edición del proyecto'))
-        self.editing_language_field.addItems(languages(self.project))
-        self.editing_language_field.setCurrentText(self.editing_language)
+        self.editing_language_field.setToolTip(tr('Idioma de edición del proyecto. Elige «Añadir idioma…» para traducir el proyecto a otro idioma.'))
+        self.fill_language_field()
         self.editing_language_field.currentTextChanged.connect(self.change_editing_language)
         top.addWidget(self.editing_language_field)
         self.unsaved_label = QPushButton(tr("● Cambios sin guardar · Guardar (Ctrl+S)"))
@@ -235,13 +235,69 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if self.runtime_window and QMessageBox.question(self,tr('Reiniciar runtime'),tr('Se interrumpirá la sesión de operación. ¿Reiniciar con los cambios actuales?'),QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.No)!=QMessageBox.StandardButton.Yes:return
         if self.stop_runtime():self.start_runtime()
 
+    def fill_language_field(self):
+        """Languages of the project, then the entry that adds one."""
+        from .project_languages import languages
+        field = self.editing_language_field
+        field.blockSignals(True)
+        field.clear()
+        field.addItems(languages(self.project))
+        field.addItem(ADD_LANGUAGE)
+        field.setCurrentText(self.editing_language)
+        field.blockSignals(False)
+
+    def add_language(self):
+        from .project_languages import KNOWN, languages, language_name, set_languages
+        current = languages(self.project)
+        dialog = EditorDialog(self)
+        dialog.setWindowTitle(tr("Añadir idioma"))
+        dialog.resize(380, 460)
+        layout = QVBoxLayout(dialog)
+        layout.addWidget(label(tr("Elige el idioma al que quieres traducir el proyecto. Hasta que traduzcas un texto se mostrará en el idioma por defecto; "
+                                  "las traducciones se escriben con el idioma de edición seleccionado arriba, o en Proyecto → Textos del proyecto…")))
+        layout.itemAt(0).widget().setWordWrap(True)
+        choices = QListWidget()
+        for code, name in KNOWN.items():
+            if code not in current:
+                row = QListWidgetItem(f"{name}  ({code})")
+                row.setData(Qt.ItemDataRole.UserRole, code)
+                choices.addItem(row)
+        choices.setCurrentRow(0)
+        layout.addWidget(choices, 1)
+        other = QLineEdit()
+        other.setPlaceholderText(tr("Otro idioma: código ISO, por ejemplo «sk»"))
+        layout.addWidget(other)
+        self.dialog_buttons(dialog, layout)
+        if dialog.exec() != EditorDialog.DialogCode.Accepted:
+            return None
+        code = other.text().strip().lower() or (choices.currentItem().data(Qt.ItemDataRole.UserRole) if choices.currentItem() else "")
+        if not code:
+            return None
+        if code in current:
+            return code
+        default = default_language(self.project)
+        if self.mutate(lambda: set_languages(self.project, current + [code], default)):
+            self.editing_language = code
+            self.statusBar().showMessage(tr("Idioma «{name}» añadido: traduce los textos con él seleccionado arriba.", name=language_name(code)), 8000)
+            return code
+        return None
+
     def change_editing_language(self, code):
         if not code:
+            return
+        if code == ADD_LANGUAGE:
+            # Ask after this signal has returned, and leave the combo on a real language.
+            QTimer.singleShot(0, self.add_language_from_combo)
             return
         self.editing_language = code
         selected = [item.element['id'] for item in self.scene.selectedItems()]
         self.render_scene(selected)
         self.show_properties()
+
+    def add_language_from_combo(self):
+        self.add_language()
+        self.fill_language_field()
+        self.change_editing_language(self.editing_language)
 
     def review_project(self):
         from .dynamics import issues
@@ -756,14 +812,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
     def render_scene(self, selected_ids=()):
         from .project_languages import languages
         codes = languages(self.project)
-        if [self.editing_language_field.itemText(i) for i in range(self.editing_language_field.count())] != codes:
-            self.editing_language_field.blockSignals(True)
-            self.editing_language_field.clear()
-            self.editing_language_field.addItems(codes)
+        if [self.editing_language_field.itemText(i) for i in range(self.editing_language_field.count() - 1)] != codes:
             if self.editing_language not in codes:
                 self.editing_language = default_language(self.project)
-            self.editing_language_field.setCurrentText(self.editing_language)
-            self.editing_language_field.blockSignals(False)
+            self.fill_language_field()
         self.scene.blockSignals(True)
         self.scene.clear()
         document = self.document()

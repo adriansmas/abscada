@@ -554,7 +554,6 @@
  "Ya existe la carpeta {folder} y no está vacía": "The folder {folder} already exists and is not empty",
  "Ajustes del proyecto": "Project settings",
  "Pantalla de inicio": "Start screen",
- "Idiomas (separados por comas)": "Languages (comma separated)",
  "Idioma por defecto": "Default language",
  "Idioma inicial": "Initial language",
  "Tamaño de las pantallas": "Screen size",
@@ -870,7 +869,6 @@
  "Indicadores y mandos": "Indicators and controls",
  "Trazados y formas": "Paths and shapes",
  "Visores y composición": "Viewers and layout",
- "Idioma de edición del proyecto": "Project editing language",
  "● Cambios sin guardar · Guardar (Ctrl+S)": "● Unsaved changes · Save (Ctrl+S)",
  "Los cambios se conservan al pasar de una sección a otra, pero solo se escriben en disco al guardar.": "Changes are kept when you move between sections, but they are only written to disk when you save.",
  "MODO DISEÑO": "DESIGN MODE",
@@ -1145,5 +1143,13 @@
  "Enviado al PLC…": "Sent to the PLC…",
  "Escrito": "Written",
  "Forzado": "Forcing",
- "Forzado de variables": "Variable forcing"
+ "Forzado de variables": "Variable forcing",
+ "＋ Añadir idioma…": "＋ Add language…",
+ "Idioma de edición del proyecto. Elige «Añadir idioma…» para traducir el proyecto a otro idioma.": "Project editing language. Choose “Add language…” to translate the project into another language.",
+ "Añadir idioma": "Add language",
+ "Elige el idioma al que quieres traducir el proyecto. Hasta que traduzcas un texto se mostrará en el idioma por defecto; las traducciones se escriben con el idioma de edición seleccionado arriba, o en Proyecto → Textos del proyecto…": "Choose the language to translate the project into. Until you translate a text it is shown in the default language; translations are written with the editing language selected above, or in Project → Project texts…",
+ "Otro idioma: código ISO, por ejemplo «sk»": "Other language: ISO code, for example “sk”",
+ "Idioma «{name}» añadido: traduce los textos con él seleccionado arriba.": "Language “{name}” added: translate the texts with it selected above.",
+ "Idiomas del proyecto": "Project languages",
+ "Otro idioma: código ISO y Intro": "Other language: ISO code and Enter"
 }

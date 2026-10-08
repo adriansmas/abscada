@@ -98,13 +98,9 @@ class ProjectActions:
             from .start_dialog import remember_project
             remember_project(project.manifest_path)
             self.project = project
-            from .project_languages import languages, default_language
+            from .project_languages import default_language
             self.editing_language = default_language(project)
-            self.editing_language_field.blockSignals(True)
-            self.editing_language_field.clear()
-            self.editing_language_field.addItems(languages(project))
-            self.editing_language_field.setCurrentText(self.editing_language)
-            self.editing_language_field.blockSignals(False)
+            self.fill_language_field()
             self.document_kind, self.document_name = "screens", project.manifest["startup_screen"]
             self.dirty = False
             self.undo_stack.clear()
