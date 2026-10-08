@@ -10,6 +10,28 @@ from dataclasses import dataclass
 TEXT_KEYS = {'text', 'title', 'message', 'default_text', 'disabled_reason', 'tooltip', 'description'}
 
 
+# Offered in the pickers; any other ISO code can still be typed.
+KNOWN = {'es': 'Español', 'en': 'English', 'ca': 'Català', 'eu': 'Euskara', 'gl': 'Galego', 'fr': 'Français',
+         'de': 'Deutsch', 'it': 'Italiano', 'pt': 'Português', 'nl': 'Nederlands', 'pl': 'Polski', 'ro': 'Română',
+         'sv': 'Svenska', 'da': 'Dansk', 'fi': 'Suomi', 'cs': 'Čeština', 'tr': 'Türkçe', 'ru': 'Русский',
+         'zh': '中文', 'ja': '日本語', 'ar': 'العربية'}
+
+
+def language_name(code):
+    return KNOWN.get(code, code)
+
+
+def set_languages(project, codes, default):
+    """Declare the project's languages. Translations into a dropped language are removed with it."""
+    codes = list(dict.fromkeys(codes))
+    for entry in entries(project):
+        value = entry.value
+        if isinstance(value, dict):
+            entry.owner[entry.key] = {code: text for code, text in value.items() if code in codes}
+    project.manifest['languages'] = codes
+    project.manifest['default_language'] = default
+
+
 def languages(project):
     return project.manifest.get('languages', ['es'])
 

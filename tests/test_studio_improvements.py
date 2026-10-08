@@ -186,3 +186,41 @@ def test_library_objects_can_be_placed_before_their_variables_exist(tmp_path):
     finally:
         studio.dirty = False
         studio.close()
+
+
+def test_a_language_is_added_from_the_combo_and_dropped_from_settings(studio, monkeypatch):
+    from abscada import ui
+    from abscada.project_languages import languages, set_languages, validate
+    studio.project.manifest["languages"] = ["es"]; studio.project.manifest["default_language"] = "es"
+    studio.fill_language_field()
+    field = studio.editing_language_field
+    assert [field.itemText(i) for i in range(field.count())] == ["es", ui.ADD_LANGUAGE]
+    monkeypatch.setattr(studio, "add_language", lambda: None)
+    assert studio.mutate(lambda: set_languages(studio.project, ["es", "en"], "es"))
+    studio.fill_language_field()
+    assert [field.itemText(i) for i in range(field.count())] == ["es", "en", ui.ADD_LANGUAGE]
+    field.setCurrentText("en")
+    assert studio.editing_language == "en"
+    # picking «Añadir idioma…» never leaves the combo on the entry itself
+    field.setCurrentText(ui.ADD_LANGUAGE); pump()
+    assert field.currentText() in languages(studio.project)
+    # dropping a language removes its translations
+    studio.project.screens[studio.project.manifest["startup_screen"]]["title"] = {"es": "Hola", "en": "Hello"}
+    set_languages(studio.project, ["es"], "es")
+    validate(studio.project)
+    assert studio.project.screens[studio.project.manifest["startup_screen"]]["title"] == {"es": "Hola"}
+
+
+def test_add_language_dialog_adds_english_and_selects_it(studio):
+    from PySide6.QtWidgets import QDialogButtonBox, QLineEdit as Line
+    studio.project.manifest["languages"] = ["es"]; studio.project.manifest["default_language"] = "es"
+    studio.fill_language_field()
+    def answer():
+        dialog = QApplication.activeModalWidget()
+        dialog.findChild(Line).setText("en")
+        dialog.findChild(QDialogButtonBox).button(QDialogButtonBox.StandardButton.Save).click()
+    QTimer.singleShot(0, answer)
+    assert studio.add_language() == "en"
+    studio.fill_language_field()
+    assert studio.project.manifest["languages"] == ["es", "en"] and studio.editing_language == "en"
+    assert studio.editing_language_field.currentText() == "en"

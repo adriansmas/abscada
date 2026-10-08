@@ -5,8 +5,9 @@ screens; it is usually the resolution of the operator's monitor.
 """
 import copy
 
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
-from PySide6.QtWidgets import (QComboBox, QFormLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QPushButton,
+from PySide6.QtWidgets import (QListWidget, QListWidgetItem, QComboBox, QFormLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit, QPushButton,
                                QSpinBox, QTabWidget, QVBoxLayout, QWidget)
 
 from .dialogs import EditorDialog
@@ -57,13 +58,43 @@ def edit_project_settings(studio):
     form.addRow(tr("Nombre"), name)
     form.addRow(tr("Pantalla de inicio"), startup)
     from .project_languages import languages, default_language
-    codes = QLineEdit(', '.join(languages(project)))
-    default = QLineEdit(default_language(project))
+    from .project_languages import KNOWN, language_name, set_languages
+    chosen = QListWidget(); chosen.setObjectName("projectLanguages"); chosen.setMaximumHeight(130)
+    def add_language_row(code, checked):
+        row = QListWidgetItem(f"{language_name(code)}  ({code})")
+        row.setData(Qt.ItemDataRole.UserRole, code)
+        row.setFlags(row.flags() | Qt.ItemFlag.ItemIsUserCheckable)
+        row.setCheckState(Qt.CheckState.Checked if checked else Qt.CheckState.Unchecked)
+        chosen.addItem(row)
+    for code in languages(project):
+        add_language_row(code, True)
+    for code in KNOWN:
+        if code not in languages(project):
+            add_language_row(code, False)
+    other = QLineEdit(); other.setPlaceholderText(tr("Otro idioma: código ISO y Intro"))
+    def add_other():
+        code = other.text().strip().lower()
+        if code and not any(chosen.item(i).data(Qt.ItemDataRole.UserRole) == code for i in range(chosen.count())):
+            add_language_row(code, True)
+        other.clear()
+    other.returnPressed.connect(add_other)
+    def checked_codes():
+        return [chosen.item(i).data(Qt.ItemDataRole.UserRole) for i in range(chosen.count())
+                if chosen.item(i).checkState() == Qt.CheckState.Checked]
+    default = QComboBox(); default.setObjectName("defaultLanguage")
+    def refill_default():
+        keep = default.currentData() or default_language(project)
+        default.clear()
+        for code in checked_codes():
+            default.addItem(f"{language_name(code)}  ({code})", code)
+        default.setCurrentIndex(max(0, default.findData(keep)))
+    chosen.itemChanged.connect(refill_default); refill_default()
     initial = QComboBox()
     for key, title in [('project', tr('Proyecto')), ('station', tr('Puesto')), ('user', tr('Usuario'))]:
         initial.addItem(title, key)
     initial.setCurrentIndex(max(0, initial.findData(project.manifest.get('initial_language', 'project'))))
-    form.addRow(tr('Idiomas (separados por comas)'), codes)
+    form.addRow(tr('Idiomas del proyecto'), chosen)
+    form.addRow("", other)
     form.addRow(tr('Idioma por defecto'), default)
     form.addRow(tr('Idioma inicial'), initial)
     body.addWidget(identity)
@@ -120,8 +151,7 @@ def edit_project_settings(studio):
     resize.clicked.connect(ask_scale)
 
     def apply(target):
-        target.manifest['languages'] = [c.strip() for c in codes.text().split(',') if c.strip()]
-        target.manifest['default_language'] = default.text().strip()
+        set_languages(target, checked_codes(), default.currentData() or '')
         target.manifest['initial_language'] = initial.currentData()
         target.manifest["name"] = name.text().strip()
         target.manifest["startup_screen"] = startup.currentText()
@@ -146,10 +176,6 @@ def edit_project_settings(studio):
         if candidate != project:
             studio.mutate(lambda: apply(studio.project))
             studio.project_label.setText(studio.project.manifest["name"])
-            studio.editing_language_field.blockSignals(True)
-            studio.editing_language_field.clear()
-            studio.editing_language_field.addItems(languages(studio.project))
             studio.editing_language = studio.editing_language if studio.editing_language in languages(studio.project) else default_language(studio.project)
-            studio.editing_language_field.setCurrentText(studio.editing_language)
-            studio.editing_language_field.blockSignals(False)
+            studio.fill_language_field()
             studio.render_scene(); studio.show_properties()
