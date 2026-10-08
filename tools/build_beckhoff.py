@@ -2,7 +2,7 @@
 
     .venv\\Scripts\\python tools/build_beckhoff.py [--output examples/beckhoff] [--force]
 
-Symbols match abscada.ads_simulator.DEMO_SYMBOLS (python -m abscada.ads_simulator).
+Symbols match plc_simulators.ads.DEMO_SYMBOLS (python -m plc_simulators.ads).
 """
 import argparse
 import shutil

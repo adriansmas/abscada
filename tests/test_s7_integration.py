@@ -2,8 +2,7 @@
 import socket
 import pytest
 pytest.importorskip("snap7")
-from abscada.s7_simulator import create_server
-from abscada.connectors import S7
+from plc_simulators.s7 import create_server
 from abscada.project import Project
 from abscada.runtime import Runtime
 from test_core import DEMO, wait_for

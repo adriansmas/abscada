@@ -1,7 +1,8 @@
 """Development PLC simulators, runnable without Python as `abscada --simulador <id>`.
 
-They serve the shipped examples over real TCP (S7, Modbus, ADS, OPC UA). Runtime never
-imports them: they always run as a separate process.
+They live in tools/ but travel inside the .exe (packaging/abscada.spec). They serve the shipped
+examples over real TCP (S7, Modbus, ADS, OPC UA). Runtime never imports them: they always run as
+a separate process. abscada.simulators loads this package.
 """
 from dataclasses import dataclass
 from importlib import import_module
@@ -22,15 +23,15 @@ class Simulator:
 SIMULATORS = {
     s.id: s for s in (
         Simulator("hydro", "Central hidroeléctrica (CH Valdearenas)", "hydro",
-                  "S7 :1102, :1103, :1104 · Modbus :1502", "abscada.simulators.hydro"),
+                  "S7 :1102, :1103, :1104 · Modbus :1502", "plc_simulators.hydro"),
         Simulator("cerveceria", "Microcervecería por lotes (La Tolva)", "brewery",
-                  "OPC UA :4841 (cifrado)", "abscada.simulators.brewery"),
+                  "OPC UA :4841 (cifrado)", "plc_simulators.brewery"),
         Simulator("ads", "Banco de ensayo Beckhoff (TwinCAT ADS)", "beckhoff",
-                  "ADS :48898 · puerto 851", "abscada.ads_simulator"),
+                  "ADS :48898 · puerto 851", "plc_simulators.ads"),
         Simulator("laboratorio", "Laboratorio SCADA (S7 + Modbus)", "showcase",
-                  "S7 :1102 · Modbus :1502", "abscada.simulators.laboratory"),
+                  "S7 :1102 · Modbus :1502", "plc_simulators.laboratory"),
         Simulator("s7", "PLC S7 básico (demo, s7)", "s7",
-                  "S7 :1102", "abscada.s7_simulator"),
+                  "S7 :1102", "plc_simulators.s7"),
     )
 }
 

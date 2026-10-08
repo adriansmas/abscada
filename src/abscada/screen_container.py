@@ -60,5 +60,5 @@ class ScreenContainer(QWidget):
         if not self.initializing and self.window.running:
             self.window.screen_opened(screen)
 
-    def actuate(self, element, entry=False, phase=None):
-        self.window.actuate(element, entry, source=self, phase=phase)
+    def actuate(self, element, entry=False, phase=None, editor=None, text=None):
+        self.window.actuate(element, entry, source=self, phase=phase, editor=editor, text=text)

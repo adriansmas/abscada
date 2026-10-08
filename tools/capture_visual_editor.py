@@ -10,7 +10,7 @@ from PySide6.QtTest import QTest
 from PySide6.QtCore import QSettings
 from abscada.project import Project
 from abscada.ui import Window
-from abscada.s7_simulator import create_server
+from plc_simulators.s7 import create_server
 
 root = Path(__file__).resolve().parents[1]
 app = QApplication([])

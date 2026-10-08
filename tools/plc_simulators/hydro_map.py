@@ -1,7 +1,7 @@
 """Memory map shared by the hydro example builder and its PLC simulator.
 
 One source of truth: build_hydro.py derives the SCADA bindings from these
-tables and hydro_plc.py serves exactly the same addresses.
+tables and hydro.py serves exactly the same addresses.
 
 Each entry is (field, scada_type, s7_address, writable_from_scada).
 REAL = 'float' on %DBn.DBDx, DINT = 'int' on %DBn.DBDx, BOOL on %DBn.DBXb.i.

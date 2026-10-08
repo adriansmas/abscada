@@ -1,9 +1,8 @@
 """Acceptance regressions for findings F01–F16 of the product review."""
 import copy
-import time
 import pytest
 from PySide6.QtCore import QTimer,QPointF,QPoint,Qt,QEvent
-from PySide6.QtWidgets import QApplication,QLineEdit,QComboBox,QDialogButtonBox,QPushButton,QMessageBox
+from PySide6.QtWidgets import QApplication, QLineEdit, QComboBox, QMessageBox
 from PySide6.QtTest import QTest
 from abscada import dynamics
 from abscada.runtime import Sample
@@ -11,9 +10,9 @@ from abscada.project import Project
 from abscada.value_editor import ValueEditor,StructureEditor,engineering_value
 from abscada.dynamic_editor import DynamicDialog
 from abscada.visual_preview import VisualPreview
+from test_core import wait_for
 from test_operations import operational_project
 from test_operational_ui import operational_studio
-from test_core import wait_for
 from test_ui import studio
 
 

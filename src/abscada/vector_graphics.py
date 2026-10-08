@@ -1,8 +1,8 @@
 """Qt rendering and canvas drawing gestures for SCADA vector objects."""
 import math
-from PySide6.QtCore import Qt, QPointF, QRectF
+from PySide6.QtCore import Qt, QPointF
 from PySide6.QtGui import QColor, QPainterPath, QPen, QPolygonF
-from .drawing import PATH_KINDS, SHAPE_KINDS
+from .drawing import SHAPE_KINDS
 from .i18n import tr
 
 

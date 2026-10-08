@@ -2,9 +2,9 @@ import time
 import pytest
 from abscada.runtime import Runtime
 from abscada.project import Project
-from test_operations import operational_project
 from test_core import wait_for
 from test_operational_ui import operational_studio, pump_until
+from test_operations import operational_project
 
 
 def test_startup_task_state_error_and_timeout(operational_project):

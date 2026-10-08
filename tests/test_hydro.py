@@ -10,6 +10,7 @@ import pytest
 from abscada.project import Project
 from abscada.runtime import Runtime
 from abscada.storage import ArchiveReader, ProjectSampleReader, database_path
+from plc_simulators import hydro as hydro_plc, hydro_map as hydro_map_module
 from test_core import wait_for
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,7 +31,7 @@ def free_port():
 
 
 def run(plant, seconds, until=None):
-    for _ in range(int(seconds / tool("hydro_plc").DT)):
+    for _ in range(int(seconds / hydro_plc.DT)):
         plant.scan()
         if until and until():
             return True
@@ -50,7 +51,7 @@ def test_shipped_project_matches_generator(tmp_path):
 def test_bindings_follow_the_shared_memory_map():
     project = Project.load(ROOT / "examples/hydro")
     tags = project.tags()
-    hydro_map = tool("hydro_map")
+    hydro_map = hydro_map_module
     for unit in ("G1", "G2"):
         for field, kind, address, writable in hydro_map.UNIT_FIELDS:
             tag = tags[f"{unit}.{field}"]
@@ -59,7 +60,7 @@ def test_bindings_follow_the_shared_memory_map():
 
 
 def test_start_stop_and_trip_sequences():
-    plant = tool("hydro_plc").Plant()
+    plant = hydro_plc.Plant()
     unit = plant.units[0]
     run(plant, 5)
     assert unit.db["ListoArranque"]
@@ -87,7 +88,7 @@ def test_start_stop_and_trip_sequences():
 
 
 def test_live_acquisition_commands_alarms_and_scripts(tmp_path):
-    plcs = tool("hydro_plc").HydroPLCs(ports={name: free_port() for name in tool("hydro_map").PORTS}).start()
+    plcs = hydro_plc.HydroPLCs(ports={name: free_port() for name in hydro_map_module.PORTS}).start()
     project = tool("build_hydro").build_project(tmp_path / "hydro")
     for connection in project.connections:
         connection["port"] = plcs.ports[connection["id"]]

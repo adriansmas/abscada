@@ -1,15 +1,15 @@
 """Transactional editor for an element's discrete text mapping."""
-from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
-    QTableWidget, QTableWidgetItem, QHeaderView, QPushButton, QLineEdit,
-    QDialogButtonBox, QLabel)
+from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout,
+    QTableWidget, QTableWidgetItem, QHeaderView, QPushButton, QDialogButtonBox,
+    QLabel)
 from .text_lists import validate_text_list
-from .dialogs import EditorDialog as QDialog
+from .dialogs import EditorDialog
 from .i18n import tr
 from .project_languages import resolve
 from .project_text_editor import editing_context
 
 
-class TextListDialog(QDialog):
+class TextListDialog(EditorDialog):
     def __init__(self, element, kind, parent=None):
         super().__init__(parent)
         self.kind = kind
@@ -80,5 +80,5 @@ def edit_text_list(host):
     if tag.startswith('$'):
         kind = host.document().get('parameters', {}).get(tag[1:])
     dialog = TextListDialog(element, kind, host)
-    if dialog.exec() == QDialog.DialogCode.Accepted:
+    if dialog.exec() == EditorDialog.DialogCode.Accepted:
         host.mutate(lambda: element.update(dialog.mapping()), selected_ids=[element['id']])

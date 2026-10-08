@@ -4,7 +4,7 @@ from PySide6.QtCore import QPoint, QTimer
 from PySide6.QtWidgets import QApplication, QPushButton, QTableWidget, QDialogButtonBox
 from abscada.project import Project
 from abscada.operation_windows import popup_key, popup_title
-from test_operational_ui import operational_studio, operational_project, pump_until
+from test_operational_ui import operational_project, operational_studio, pump_until
 from test_popups import click
 
 
@@ -182,7 +182,7 @@ def test_inspector_inside_faceplate_offers_own_parameters(studio):
     item = next(i for i in studio.scene.items() if getattr(i, "element", {}).get("id") == "open")
     item.setSelected(True)
     options = [studio.popup_binding_fields["level"].itemText(i) for i in range(studio.popup_binding_fields["level"].count())]
-    assert options[0] == "$level" and "Level2" in options
+    assert options[:2] == ["(sin asignar)", "$level"] and "Level2" in options
 
 
 def test_project_settings_edit_operation_windows_with_undo(studio):

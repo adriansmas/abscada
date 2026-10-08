@@ -239,9 +239,6 @@ class UserStore:
         with self._lock:
             self.attempts.pop(name.lower(), None)
 
-    def set_full_name(self, name, full_name):
-        self._update(name, lambda user: user.update(full_name=str(full_name)))
-
     def delete(self, name):
         data = self.load()
         user = self.find(name, data)

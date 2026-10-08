@@ -1,5 +1,4 @@
 """Screens in folders, layouts as ordinary screens and viewers that own their configuration."""
-import copy
 import json
 import os
 import shutil

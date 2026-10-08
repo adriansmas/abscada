@@ -18,7 +18,7 @@ Las acciones momentary y press_release solicitan liberación al soltar fuera, pe
 
 **Pantallas:** añadir un control **Tendencia** o **Alarmas** desde las herramientas de dibujo. No requiere crear una configuración antes: cada nuevo control recibe una propia. Seleccionarlo y pulsar **Configurar…** en el inspector, o hacer doble clic, abre sus ajustes. El selector permite reutilizar configuraciones existentes. Las configuraciones se guardan en `trends.json` y `alarm_views.json`; se editan desde sus controles, sin sección Gráficas ni pestaña Visores. No son tareas de registro.
 
-En una gráfica se eligen variables numéricas o bool, colores, grosores y ejes. Se admiten de 1 a 8 ejes con escala, lado y visibilidad configurables. Mostrar una variable en tiempo real no requiere asignarle un registro. Consultar su pasado requiere que se haya registrado durante ese periodo.
+En una gráfica se eligen variables numéricas o bool, colores, grosores y ejes. Se admiten de 1 a 64 ejes y tantas curvas como haga falta, con escala, lado y visibilidad configurables. Mostrar una variable en tiempo real no requiere asignarle un registro. Consultar su pasado requiere que se haya registrado durante ese periodo.
 
 El área de proceso del runtime contiene la pantalla diseñada; la aplicación aporta controles comunes de sesión, idioma y diagnóstico, pero no crea navegación de proceso ni visores automáticamente. Un botón con acción **Abrir pantalla** y destino elegido en el inspector permite navegar. El ejemplo plant tiene botones de navegación que forman parte de sus pantallas. Studio muestra representaciones de diseño sin valores en vivo.
 

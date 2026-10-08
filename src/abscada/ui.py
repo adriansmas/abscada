@@ -1,35 +1,34 @@
 """Engineering workspace. Live operation belongs to RuntimeWindow."""
 from __future__ import annotations
 import copy
-import json
 import uuid
 import shutil
 from pathlib import Path
 from PySide6.QtCore import Qt, QSize, QMimeData, QPointF, QSettings, QTimer
-from PySide6.QtGui import QAction, QDrag, QColor, QKeySequence
+from PySide6.QtGui import QAction, QDrag, QColor
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QSplitter,
     QListWidget, QListWidgetItem, QTreeWidget, QTreeWidgetItem, QStackedWidget,
     QLineEdit, QTableWidget, QTableWidgetItem, QPushButton, QLabel, QComboBox,
     QPlainTextEdit, QFileDialog, QFormLayout, QDoubleSpinBox, QSpinBox,
-    QScrollArea, QGroupBox, QDialog, QDialogButtonBox, QCheckBox, QColorDialog,
-    QHeaderView, QMessageBox, QInputDialog, QTabWidget, QMenu, QToolButton,QSizePolicy,
+    QScrollArea, QGroupBox, QDialogButtonBox, QCheckBox,
+    QHeaderView, QMessageBox, QTabWidget, QMenu, QToolButton,QSizePolicy,
 )
-from .project import coerce, PRIMITIVES
+from .project import PRIMITIVES
 from .numbered_rows import NUMBER_ROLE
 from .variable_forms import NEW_ROW
 from .connectors import REGISTRY, definition, binding_summary
-from .protocol_editor import ProtocolForm, BindingEditor
+from .protocol_editor import ProtocolForm
 from .project_actions import ProjectActions
 from .graphics import TOOL_NAMES, tool_icon, CanvasScene, CanvasView, ElementItem
 from .theme import STYLE, STUDIO_STYLE, configure_fonts
 from .runtime_window import RuntimeWindow
 from .engineering import OperationalEngineering
-from .drawing import PATH_KINDS, SHAPE_KINDS, set_points
+from .drawing import PATH_KINDS, SHAPE_KINDS
 from .graphic_properties import ScreenProperties, DrawingProperties, ColorField
 from .drawing_actions import DrawingActions
 from .text_list_editor import edit_text_list
-from .dialogs import EditorDialog as QDialog
+from .dialogs import EditorDialog
 from .i18n import tr
 from .project_languages import resolve, default_language
 
@@ -193,7 +192,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.variables_tabs = QTabWidget()
         self.variables_tabs.addTab(self.variables_page, tr("Variables"))
         self.variables_tabs.addTab(self.types_page, tr("Tipos de datos (estructuras)"))
-        self.variables_tabs.currentChanged.connect(lambda index: self.page_title.setText(tr("Variables") if index == 0 else tr("Tipos de datos")))
+        from .forcing_editor import ForcingPage
+        self.forcing_page = ForcingPage(self)
+        self.variables_tabs.addTab(self.forcing_page, tr("Forzado"))
+        self.variables_tabs.currentChanged.connect(lambda index: self.page_title.setText(
+            (tr("Variables"), tr("Tipos de datos"), tr("Forzado de variables"))[index]))
         self.section_pages = dict(screens=self.graphics_page, faceplates=self.graphics_page, variables=self.variables_tabs,
                                   types=self.variables_tabs, connections=self.connections_page, diagnostics=self.diagnostics_page,
                                   alarms=self.operational_editor.alarms, historian=self.operational_editor.historian,
@@ -735,15 +738,6 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.navigate(self.document_kind)
         self.render_scene()
 
-    def current_folder(self):
-        """Folder of the selected tree item, where «Nuevo documento» creates screens."""
-        item = self.navigation.currentItem()
-        value = item.data(0, Qt.ItemDataRole.UserRole) if item else None
-        if value and value[0] == "folder":
-            return value[1]
-        if value and value[0] == "screens" and value[1] in self.project.screens:
-            return self.project.screens[value[1]].get("folder", "")
-        return ""
 
     def document(self):
         return getattr(self.project, self.document_kind)[self.document_name]
@@ -917,8 +911,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 combo = QComboBox()
                 from .dynamics import parameter_writable
                 needs_write=parameter_writable(self.project.faceplates[e['template']],parameter)
-                combo.addItems([name for name,tag in self.project.tags().items() if tag['type']==kind and (not needs_write or tag.get('writable'))])
-                combo.setCurrentText(e["bindings"][parameter])
+                combo.addItem(tr("(sin asignar)"), "")
+                for name,tag in self.project.tags().items():
+                    if tag['type']==kind and (not needs_write or tag.get('writable')): combo.addItem(name, name)
+                combo.setCurrentIndex(max(0, combo.findData(e["bindings"][parameter])))
                 combo.activated.connect(self.auto_apply)
                 self.binding_fields[parameter] = combo
                 self.binding_form.addRow(parameter, combo)
@@ -953,8 +949,9 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             return
         for parameter, kind in self.project.faceplates[template].get("parameters", {}).items():
             combo = QComboBox()
-            combo.addItems(self.popup_binding_options(template, parameter, kind))
-            combo.setCurrentText(e.get("bindings", {}).get(parameter, ""))
+            combo.addItem(tr("(sin asignar)"), "")
+            for option in self.popup_binding_options(template, parameter, kind): combo.addItem(option, option)
+            combo.setCurrentIndex(max(0, combo.findData(e.get("bindings", {}).get(parameter, ""))))
             combo.activated.connect(self.auto_apply)
             self.popup_binding_fields[parameter] = combo
             self.popup_binding_form.addRow(parameter, combo)
@@ -967,11 +964,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         bindings = {}
         for parameter, kind in self.project.faceplates[template].get("parameters", {}).items():
             combo = self.popup_binding_fields.get(parameter) if same else None
-            value = combo.currentText() if combo else ""
+            value = (combo.currentData() or "") if combo else ""
             if not value:
                 # New template: forward a parameter with the same name, else the first match.
                 options = self.popup_binding_options(template, parameter, kind)
-                value = "$" + parameter if "$" + parameter in options else options[0] if options else ""
+                value = "$" + parameter if "$" + parameter in options else ""
             bindings[parameter] = value
         e.update(template=template, bindings=bindings)
         title = self.popup_title_field.text().strip()
@@ -1016,7 +1013,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         else:
             e.pop("color", None)
         if e["kind"] == "faceplate":
-            e["bindings"] = {p: combo.currentText() for p, combo in self.binding_fields.items()}
+            e["bindings"] = {p: combo.currentData() or "" for p, combo in self.binding_fields.items()}
         else:
             if self.tag_field.currentText().strip():
                 e["tag"] = self.tag_field.currentText().strip()
@@ -1119,11 +1116,6 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             index = self.document()["elements"].index(previous)
             self.mutate(lambda: self.document()["elements"].__setitem__(index, e), selected_ids=[e["id"]])
 
-    def choose_color(self):
-        color = QColorDialog.getColor(QColor(self.color_field.text() or "#f1f5f9"), self, tr("Color de fondo"))
-        if color.isValid():
-            self.color_field.setText(color.name())
-            self.apply_fields()
 
     def choose_image(self):
         selected = self.scene.selectedItems()
@@ -1218,7 +1210,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
 
     def edit_graphic_document(self):
         """Ordinary screen settings; JSON remains an explicit advanced option."""
-        dialog = QDialog(self)
+        dialog = EditorDialog(self)
         dialog.setWindowTitle(tr("Ajustes de pantalla / plantilla"))
         dialog.resize(480, 400)
         layout = QVBoxLayout(dialog)
@@ -1255,7 +1247,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         advanced = button(tr("Documento JSON avanzado…"), lambda: (dialog.reject(), ProjectActions.edit_graphic_document(self)))
         layout.addWidget(advanced)
         self.dialog_buttons(dialog, layout)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
+        if dialog.exec() == EditorDialog.DialogCode.Accepted:
             data = copy.deepcopy(self.document())
             data.update({key: field.value() for key, field in dimensions.items()})
             if parameters is not None:
@@ -1342,7 +1334,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 return
             from .library_browser import LibraryPicker
             picker = LibraryPicker(self, self.project)
-            if picker.exec() != QDialog.DialogCode.Accepted or not picker.selected():
+            if picker.exec() != EditorDialog.DialogCode.Accepted or not picker.selected():
                 return
             self.insert_library_object(picker.selected(), position)
             return
@@ -1362,18 +1354,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             self.error(tr("Los objetos de librería se colocan en pantallas"))
             return False
         template = self.project.faceplates[name]
-        bindings = {}
-        for parameter, tag_type in template.get("parameters", {}).items():
-            from .dynamics import parameter_writable
-            needs_write = parameter_writable(template, parameter)
-            candidates = [n for n, tag in self.project.tags().items() if tag["type"] == tag_type and (not needs_write or tag.get("writable"))]
-            if not candidates:
-                self.error(tr("Este objeto necesita una variable {tag_type} para «{parameter}»: créala primero", tag_type=tag_type, parameter=parameter))
-                return False
-            tag, ok = QInputDialog.getItem(self, tr("Enlazar parámetros"), tr("Variable para «{parameter}» ({tag_type})", parameter=parameter, tag_type=tag_type), candidates, 0, False)
-            if not ok:
-                return False
-            bindings[parameter] = tag
+        # The object is placed first; its variables are assigned afterwards in the properties panel.
+        bindings = {parameter: "" for parameter in template.get("parameters", {})}
         document = self.document()
         width, height = template["width"], template["height"]
         if position is None:
@@ -1525,6 +1507,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 table.setItem(i, j, item)
 
     def refresh_catalogs(self):
+        if hasattr(self, "forcing_page"):
+            self.forcing_page.refresh()
         if hasattr(self, "automation_editor"):
             self.automation_editor.refresh()
         if hasattr(self, "operational_editor"):
@@ -1616,7 +1600,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
 
     def connection_form(self, name):
         previous = next((copy.deepcopy(c) for c in self.project.connections if c["id"] == name), dict(id="", protocol="s7", poll_ms=250))
-        dialog = QDialog(self)
+        dialog = EditorDialog(self)
         dialog.setWindowTitle(tr("Conexión de adquisición"))
         dialog.resize(440, 420)
         layout = QVBoxLayout(dialog)
@@ -1671,7 +1655,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         from .connection_diagnostics import add_diagnostic
         add_diagnostic(dialog,layout,lambda:(current_data(),None,None,False),self)
         self.dialog_buttons(dialog, layout)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
+        if dialog.exec() == EditorDialog.DialogCode.Accepted:
             data = dict(id=identifier.text().strip(), protocol=protocol.currentData(),
                         poll_ms=cycle.value(), **fields.values())
             if name is None:
@@ -1681,7 +1665,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 self.mutate(lambda: self.project.connections.__setitem__(index, data))
 
     def type_form(self, name):
-        dialog = QDialog(self)
+        dialog = EditorDialog(self)
         dialog.setWindowTitle(tr("Estructura de datos"))
         dialog.resize(540, 480)
         layout = QVBoxLayout(dialog)
@@ -1715,7 +1699,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             candidate=copy.deepcopy(self.project); candidate.types[identifier.text().strip()]=dict(definitions); candidate.validate()
         dialog.validator=validate
         self.dialog_buttons(dialog, layout)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
+        if dialog.exec() == EditorDialog.DialogCode.Accepted:
             definitions = [(fields.item(i, 0).text().strip(), fields.cellWidget(i, 1).currentText()) for i in range(fields.rowCount())]
             new_name = identifier.text().strip()
             if len({field for field, kind in definitions}) != len(definitions) or (name is None and new_name in self.project.types):

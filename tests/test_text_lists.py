@@ -1,11 +1,11 @@
 from types import SimpleNamespace
 import pytest
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QApplication, QDialog, QTableWidgetItem
+from PySide6.QtWidgets import QApplication, QDialog
 from abscada.project import Project
 from abscada.text_lists import display_text, validate_text_list
 from abscada.text_list_editor import TextListDialog
-from test_operational_ui import operational_studio, operational_project, pump_until
+from test_operational_ui import operational_project, operational_studio, pump_until
 
 
 def element():

@@ -9,7 +9,7 @@ Ejemplo de comunicación con un **PLC Beckhoff** (CX, IPC o TwinCAT en un PC) me
 En una terminal, el PLC ADS simulado:
 
 ```powershell
-.venv\Scripts\python -m abscada.ads_simulator
+.venv\Scripts\python -m abscada --simulador ads
 ```
 
 En otra, el SCADA:

@@ -162,8 +162,8 @@
       "w": 712,
       "h": 40,
       "text": {
-        "es": "• Simulación: el PLC simulado se arranca con  tools/hydro_plc.py.",
-        "en": "• Simulation: The simulated PLC is started with tools/hydro_plc.py."
+        "es": "• Simulación: el PLC simulado se arranca con  abscada --simulador hydro.",
+        "en": "• Simulation: The simulated PLC is started with abscada --simulador hydro."
       },
       "font_size": 14,
       "bold": false,

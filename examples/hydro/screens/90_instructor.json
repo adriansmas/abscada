@@ -34,8 +34,8 @@
       "w": 900,
       "h": 18,
       "text": {
-        "es": "Solo para formación: inyecta fallos en el PLC simulado (tools/hydro_plc.py). No existe en una planta real.",
-        "en": "For training only: Inject faults into the simulated PLC (tools/hydro_plc.py). It does not exist in a real plant."
+        "es": "Solo para formación: inyecta fallos en el PLC simulado (abscada --simulador hydro). No existe en una planta real.",
+        "en": "For training only: Inject faults into the simulated PLC (abscada --simulador hydro). It does not exist in a real plant."
       },
       "font_size": 12,
       "bold": false,

@@ -1,8 +1,7 @@
-import pytest
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QApplication, QDialogButtonBox, QLineEdit, QMessageBox, QPushButton, QTableWidget, QCheckBox
+from PySide6.QtWidgets import QApplication, QDialogButtonBox, QLineEdit, QMessageBox, QTableWidget, QCheckBox
 from abscada.security import UserStore, default_security, users_path
-from test_operational_ui import operational_studio, operational_project, pump_until
+from test_operational_ui import operational_project, operational_studio, pump_until
 
 
 def secure(window, **policy):

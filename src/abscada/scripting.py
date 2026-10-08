@@ -4,7 +4,6 @@ import re
 import subprocess
 import sys
 import time
-from pathlib import Path
 from threading import Thread, Event, Lock
 from queue import Queue, Empty, Full
 from collections import deque

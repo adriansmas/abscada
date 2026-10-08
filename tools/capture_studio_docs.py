@@ -17,7 +17,7 @@ from PySide6.QtCore import Qt, QTimer  # noqa: E402
 from PySide6.QtWidgets import QApplication, QTabWidget  # noqa: E402
 from abscada import pki  # noqa: E402
 from abscada.project import Project  # noqa: E402
-from abscada.simulators.brewery import BreweryServer  # noqa: E402
+from plc_simulators.brewery import BreweryServer  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "artifacts" / "studio_docs"

@@ -32,7 +32,7 @@ Con el entorno del repositorio instalado (`pip install -e ".[s7,modbus]"`), abre
 
 ```powershell
 # 1. Los PLC simulados (deja esta terminal abierta)
-.venv\Scripts\python tools/hydro_plc.py
+.venv\Scripts\python -m abscada --simulador hydro
 
 # 2. El SCADA
 .\run.ps1 examples/hydro

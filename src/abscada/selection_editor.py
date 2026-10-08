@@ -1,7 +1,7 @@
 """Compatible tag selection and common properties without overwriting bindings."""
 import copy
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget,QFormLayout,QDoubleSpinBox,QSpinBox,QVBoxLayout,QLineEdit,QTreeWidget,QTreeWidgetItem,QLabel,QPushButton
+from PySide6.QtWidgets import QWidget, QFormLayout, QDoubleSpinBox, QVBoxLayout, QLineEdit, QTreeWidget, QTreeWidgetItem, QLabel
 from .dialogs import EditorDialog
 from .dynamic_editor import available_tags
 from .dynamics import compatible,COLOR_KEYS
@@ -9,7 +9,6 @@ from .graphic_properties import ColorField
 from .i18n import tr
 
 
-STYLE_KEYS=COLOR_KEYS|{'font_size','bold','text_align','lamp_colors','stroke_width','stroke_style','filled'}
 
 
 def select_tag(studio):

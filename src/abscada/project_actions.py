@@ -1,9 +1,9 @@
 """Project file operations and advanced document editing for Studio."""
 from pathlib import Path
 import json
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QDialogButtonBox, QMessageBox
+from PySide6.QtWidgets import QVBoxLayout, QPlainTextEdit, QDialogButtonBox, QMessageBox
 from .project import Project
-from .dialogs import EditorDialog as QDialog
+from .dialogs import EditorDialog
 from .i18n import tr
 
 
@@ -13,7 +13,7 @@ class ProjectActions:
             return
         from .project_dialogs import NewDocumentDialog
         dialog = NewDocumentDialog(self, faceplate)
-        if dialog.exec() != QDialog.DialogCode.Accepted:
+        if dialog.exec() != EditorDialog.DialogCode.Accepted:
             return
         name = dialog.name.text().strip()
         kind = 'faceplates' if faceplate else 'screens'
@@ -24,7 +24,7 @@ class ProjectActions:
             self.navigate(kind)
 
     def json_dialog(self, title, data):
-        dialog = QDialog(self)
+        dialog = EditorDialog(self)
         dialog.setWindowTitle(title)
         dialog.resize(800, 600)
         layout = QVBoxLayout(dialog)
@@ -34,7 +34,7 @@ class ProjectActions:
         buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
         layout.addWidget(buttons)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
+        if dialog.exec() == EditorDialog.DialogCode.Accepted:
             return json.loads(editor.toPlainText())
         return None
 

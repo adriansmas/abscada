@@ -11,7 +11,7 @@ from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtWidgets import QApplication  # noqa: E402
-from abscada.ads_simulator import DEMO_SYMBOLS, AdsSimulator, run_demo  # noqa: E402
+from plc_simulators.ads import DEMO_SYMBOLS, AdsSimulator, run_demo  # noqa: E402
 from abscada.project import Project  # noqa: E402
 from abscada.runtime_window import RuntimeWindow  # noqa: E402
 

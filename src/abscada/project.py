@@ -210,7 +210,7 @@ class Project:
                 value = document.get(dimension)
                 if isinstance(value,bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 < value <= 10000:
                     raise ValueError(tr("{name}: dimensiones inválidas", name=name))
-            from .operational_config import color, number
+            from .operational_config import number
             dynamics.validate_color(document.get("background", "#ffffff"))
             number(document.get("grid_size", 10), 1, 200)
             if not isinstance(document.get("grid_size", 10), int):
@@ -320,7 +320,8 @@ class Project:
                     if set(bindings) != set(template.get("parameters", {})):
                         raise ValueError(tr("Parámetros del objeto de librería incompletos"))
                     for parameter, kind in template["parameters"].items():
-                        if bindings[parameter] not in tags or tags[bindings[parameter]]["type"] != kind:
+                        # "" = not assigned yet: the object can be placed first and linked to variables later.
+                        if bindings[parameter] != "" and (bindings[parameter] not in tags or tags[bindings[parameter]]["type"] != kind):
                             raise ValueError(tr("Tipo incorrecto en parámetro {parameter}", parameter=parameter))
 
         for screen in self.screens:

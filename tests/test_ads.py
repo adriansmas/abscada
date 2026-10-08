@@ -4,7 +4,7 @@ import time
 
 import pytest
 from abscada.ads import AdsClient, AdsError, TwinCatADS, decode, encode, net_id_bytes, raw_address
-from abscada.ads_simulator import AdsSimulator
+from plc_simulators.ads import AdsSimulator
 from abscada.connectors import REGISTRY, definition
 from abscada.project import Project
 from abscada.runtime import Runtime
@@ -119,7 +119,7 @@ def test_beckhoff_example_matches_generator_and_reads_demo_plc(tmp_path):
     import importlib.util
     import threading
     from pathlib import Path
-    from abscada.ads_simulator import DEMO_SYMBOLS, run_demo
+    from plc_simulators.ads import DEMO_SYMBOLS, run_demo
     root = Path(__file__).resolve().parents[1]
     spec = importlib.util.spec_from_file_location("build_beckhoff", root / "tools" / "build_beckhoff.py")
     builder = importlib.util.module_from_spec(spec)

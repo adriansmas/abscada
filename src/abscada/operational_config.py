@@ -6,6 +6,7 @@ from .i18n import tr
 OPERATORS = {"true": tr("Activo"), "false": tr("Inactivo"), "high": tr("Mayor o igual"), "low": tr("Menor o igual"), "equal": tr("Igual"), "not_equal": tr("Distinto")}
 ALARM_COLUMNS = (("priority",tr("Prioridad")),("category",tr("Categoría")),("message",tr("Mensaje")),("tag",tr("Variable")),
     ("state",tr("Estado / evento")),("entered_at",tr("Entrada")),("returned_at",tr("Salida")),("ack_at","ACK"),("actor",tr("Operador")),("quality",tr("Calidad")))
+MAX_AXES = 64   # per trend; the number of curves is not limited
 DEFAULT_ALARM_COLUMNS = ["priority","category","message","state","entered_at","returned_at","ack_at"]
 
 
@@ -84,8 +85,8 @@ def validate_operations(project, tags):
             raise ValueError(tr("La tendencia necesita nombre y título"))
         number(trend.get("window_seconds", 600), 10, 31536000)
         axes = identifiers(trend["axes"])
-        if not axes or len(axes) > 8:
-            raise ValueError(tr("Una tendencia necesita entre 1 y 8 ejes"))
+        if not axes or len(axes) > MAX_AXES:
+            raise ValueError(tr("Una tendencia necesita entre 1 y {max} ejes", max=MAX_AXES))
         for axis in trend["axes"]:
             if not isinstance(axis.get("title", axis["id"]), str) or not axis.get("title", axis["id"]).strip():
                 raise ValueError(tr("El eje necesita un título"))

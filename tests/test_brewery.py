@@ -8,9 +8,9 @@ import pytest
 from abscada import pki
 from abscada.project import Project
 from abscada.security import required_permission
-from abscada.simulators import SIMULATORS
-from abscada.simulators.brewery import DT, Brewery
-from abscada.simulators.brewery_map import (BREWHOUSE_FIELDS, FERMENTER_FIELDS, FERMENTERS, OBJECTS,
+from plc_simulators import SIMULATORS
+from plc_simulators.brewery import DT, Brewery
+from plc_simulators.brewery_map import (BREWHOUSE_FIELDS, FERMENTER_FIELDS, FERMENTERS, OBJECTS,
                                             RECIPE_EDITOR_FIELDS, SERVICES_FIELDS, node)
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -212,7 +212,7 @@ def test_recipe_manager_loads_clamps_saves_and_discards():
 def test_live_acquisition_over_encrypted_opcua(tmp_path):
     pytest.importorskip("asyncua")
     from abscada.connectors import create
-    from abscada.simulators.brewery import BreweryServer
+    from plc_simulators.brewery import BreweryServer
 
     server = BreweryServer(port=free_port(), folder=tmp_path / "simulador").start()
     try:

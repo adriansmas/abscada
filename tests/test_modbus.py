@@ -5,7 +5,7 @@ import pytest
 from abscada.modbus import ModbusTCP, DEFINITION, ENCODINGS, reorder
 from abscada.project import Project
 from abscada.runtime import Runtime
-from test_core import DEMO, wait_for
+from test_core import wait_for
 
 
 @pytest.fixture
