@@ -4,10 +4,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 
 ## [Sin publicar]
 
+### Cambiado
+- **Idiomas del proyecto más fáciles de usar:** el desplegable de idioma de la barra superior tiene la opción «＋ Añadir idioma…» (lista de idiomas comunes u otro código), y Ajustes del proyecto → General sustituye los códigos separados por comas por una lista con casillas y un idioma por defecto. Quitar un idioma elimina sus traducciones.
+
 ## [0.5.0b4] - 2026-10-08
 
 ### Cambiado
-- **Idiomas del proyecto más fáciles de usar:** el desplegable de idioma de la barra superior tiene la opción «＋ Añadir idioma…» (lista de idiomas comunes u otro código), y Ajustes del proyecto → General sustituye los códigos separados por comas por una lista con casillas y un idioma por defecto. Quitar un idioma elimina sus traducciones.
 - **Variables → pestaña «Forzado»:** escribe el valor de cualquier variable con escritura permitida mientras el runtime está en marcha (valor actual en vivo, Intro para escribir), sin pantallas ni scripts.
 - En el runtime, un campo de entrada se edita en el propio campo (un clic, Intro para escribir, Esc para cancelar) en lugar de abrir una ventana emergente.
 - La lista de variables se lee mejor: filas alternas más marcadas y fila seleccionada con texto oscuro sobre fondo azul claro.
