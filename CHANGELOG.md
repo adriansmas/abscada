@@ -4,6 +4,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 
 ## [Sin publicar]
 
+## [0.5.0b4] - 2026-10-08
+
 ### Cambiado
 - **Variables → pestaña «Forzado»:** escribe el valor de cualquier variable con escritura permitida mientras el runtime está en marcha (valor actual en vivo, Intro para escribir), sin pantallas ni scripts.
 - En el runtime, un campo de entrada se edita en el propio campo (un clic, Intro para escribir, Esc para cancelar) en lugar de abrir una ventana emergente.
