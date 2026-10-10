@@ -93,6 +93,8 @@ def required_permission(element):
     action = element.get("action", "toggle" if element.get("kind") == "button" else None)
     if element.get("kind") == "input" or action in {"toggle", "set", "momentary", "press_release", "script"}:
         return "operate"
+    if action == "sequence" and any(step.get("action") in {"toggle", "set", "script"} for step in element.get("actions", [])):
+        return "operate"
     return None
 
 

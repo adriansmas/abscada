@@ -8,6 +8,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from dataclasses import dataclass, field
 from .i18n import tr
+from . import button_actions
 
 PRIMITIVES = {"bool", "int", "float", "string"}
 from .text_lists import validate_text_list
@@ -256,29 +257,15 @@ class Project:
                 tag_type = tags[tag]["type"] if tag in tags else parameters.get(tag.lstrip("$"))
                 try: validate_element_permission(element)
                 except ValueError as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
-                if element['kind'] == 'button':
-                    action = element.get('action','toggle')
-                    if action not in {'toggle','set','momentary','press_release','screen','popup','faceplate_popup','close_popup','script','set_language'}:
-                        raise ValueError(tr('Acción de botón desconocida'))
-                    if action == 'set_language' and element.get('language') not in self.manifest.get('languages', ['es']):
-                        raise ValueError('Idioma de destino no declarado')
-                    if action == 'faceplate_popup':
-                        try: validate_popup_button(element, self, tags, parameters)
-                        except (ValueError, TypeError) as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
-                    if action in {'popup','faceplate_popup'}:
-                        validate_window(element.get('window', {}))
-                        if not isinstance(element.get('modal', False), bool):
-                            raise ValueError(tr("El modo modal debe ser booleano"))
-                    if action in {'toggle','momentary'} and tag and tag_type != 'bool':
-                        raise ValueError(tr('Alternar o pulsador momentáneo requiere una variable bool'))
-                    if action=='press_release':
-                        for key in ('press_value','release_value'):
-                            if key not in element:raise ValueError(tr('Falta el valor al pulsar o soltar'))
-                            if tag:coerce(element[key],tag_type)
-                    if action == 'set':
-                        if 'value' not in element:
-                            raise ValueError(tr('El botón necesita un valor de escritura'))
-                        if tag: coerce(element['value'],tag_type)
+                if element['kind'] == 'button' and element.get('action') == button_actions.SEQUENCE:
+                    try: button_actions.validate_structure(element)
+                    except ValueError as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
+                    for number, step in enumerate(element['actions'], 1):
+                        try: self._validate_button_action(name, button_actions.as_button(element, step), tags, parameters)
+                        except ValueError as exc:
+                            raise ValueError(tr("{name} / {id}, acción {number}: {exc}", name=name, id=element["id"], number=number, exc=exc)) from exc
+                elif element['kind'] == 'button':
+                    self._validate_button_action(name, element, tags, parameters)
                 if dynamics.writable_control(element) and tag in tags and not tags[tag].get('writable',False):
                     raise ValueError(tr("{name} / {id}: variable de solo lectura: {tag}", name=name, id=element["id"], tag=tag))
                 if element["kind"] == "text_list":
@@ -294,10 +281,6 @@ class Project:
                         raise ValueError(tr("Un indicador requiere una variable numérica"))
                     from .gauges import validate as validate_gauge
                     validate_gauge(element)
-                if element["kind"] == "button" and element.get("action") in {"screen", "popup"} and element.get("screen") not in self.screens:
-                    raise ValueError(tr("Pantalla de destino inexistente"))
-                if element["kind"] == "button" and element.get("action") == "popup" and not isinstance(element.get("modal", False), bool):
-                    raise ValueError(tr("El modo modal debe ser booleano"))
                 if element["kind"] == "image":
                     self.asset(element.get("source", ""))
                 if element["kind"] in {"trend", "alarm_view"}:
@@ -325,13 +308,14 @@ class Project:
                             raise ValueError(tr("Tipo incorrecto en parámetro {parameter}", parameter=parameter))
 
         for screen in self.screens:
-            for element in self.elements(screen):
-                tag=element.get('tag')
-                if dynamics.writable_control(element) and tag in tags and not tags[tag].get('writable',False):
-                    raise ValueError(tr("{screen} / {id}: variable de solo lectura: {tag}", screen=screen, id=element["id"], tag=tag))
-                if element['kind'] == 'button' and element.get('action') == 'faceplate_popup':
-                    try: validate_popup_writes(element, self, tags)
-                    except ValueError as exc: raise ValueError(f'{screen} / {element["id"]}: {exc}') from exc
+            for expanded in self.elements(screen):
+                for element in [expanded] + [button_actions.as_button(expanded, step) for step in button_actions.steps(expanded)]:
+                    tag=element.get('tag')
+                    if dynamics.writable_control(element) and tag in tags and not tags[tag].get('writable',False):
+                        raise ValueError(tr("{screen} / {id}: variable de solo lectura: {tag}", screen=screen, id=element["id"], tag=tag))
+                    if element['kind'] == 'button' and element.get('action') == 'faceplate_popup':
+                        try: validate_popup_writes(element, self, tags)
+                        except ValueError as exc: raise ValueError(f'{screen} / {element["id"]}: {exc}') from exc
         validate_display(self)
         from .security import validate_security
         validate_security(self.security)
@@ -345,6 +329,43 @@ class Project:
         validate_settings(self)
         from .scripting import validate_scripts
         validate_scripts(self)
+
+    def _validate_button_action(self, name, element, tags, parameters):
+        """One action: a single-action button or one step of a list (seen as a button)."""
+        from . import dynamics
+        from .operation_windows import validate_popup_button, validate_window
+        tag = element.get("tag", "")
+        if not isinstance(tag, str):
+            raise ValueError(tr("{name} / {id}: la referencia de variable debe ser texto", name=name, id=element["id"]))
+        if tag and tag not in tags and not (tag.startswith("$") and tag[1:] in parameters):
+            raise ValueError(tr("{name}: variable inexistente {tag}", name=name, tag=tag))
+        tag_type = tags[tag]["type"] if tag in tags else parameters.get(tag.lstrip("$"))
+        action = element.get('action','toggle')
+        if action not in {'toggle','set','momentary','press_release','screen','popup','faceplate_popup','close_popup','script','set_language'}:
+            raise ValueError(tr('Acción de botón desconocida'))
+        if action == 'set_language' and element.get('language') not in self.manifest.get('languages', ['es']):
+            raise ValueError('Idioma de destino no declarado')
+        if action == 'faceplate_popup':
+            try: validate_popup_button(element, self, tags, parameters)
+            except (ValueError, TypeError) as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
+        if action in {'popup','faceplate_popup'}:
+            validate_window(element.get('window', {}))
+            if not isinstance(element.get('modal', False), bool):
+                raise ValueError(tr("El modo modal debe ser booleano"))
+        if action in {'toggle','momentary'} and tag and tag_type != 'bool':
+            raise ValueError(tr('Alternar o pulsador momentáneo requiere una variable bool'))
+        if action=='press_release':
+            for key in ('press_value','release_value'):
+                if key not in element:raise ValueError(tr('Falta el valor al pulsar o soltar'))
+                if tag:coerce(element[key],tag_type)
+        if action == 'set':
+            if 'value' not in element:
+                raise ValueError(tr('El botón necesita un valor de escritura'))
+            if tag: coerce(element['value'],tag_type)
+        if action in {"screen", "popup"} and element.get("screen") not in self.screens:
+            raise ValueError(tr("Pantalla de destino inexistente"))
+        if dynamics.writable_control(element) and tag in tags and not tags[tag].get('writable',False):
+            raise ValueError(tr("{name} / {id}: variable de solo lectura: {tag}", name=name, id=element["id"], tag=tag))
 
     def set_binding(self, name, binding):
         """Configure one primitive leaf, including a field within a structure."""

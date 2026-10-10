@@ -183,7 +183,9 @@ def link(project, source, alias, update=False):
 
 def unlink(project, alias):
     names = set(expected_faces(alias, project.libraries[alias]['package']))
-    used = [screen for screen, doc in project.screens.items() if any(e.get('template') in names for e in doc['elements'])]
+    from .button_actions import with_steps
+    used = [screen for screen, doc in project.screens.items()
+            if any(t.get('template') in names for e in doc['elements'] for t in with_steps(e))]
     if used:
         raise ValueError(tr('Biblioteca en uso en: ') + ', '.join(used))
     del project.libraries[alias]

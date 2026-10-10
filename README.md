@@ -65,6 +65,7 @@ Studio muestra diseño sin valores de proceso; Runtime usa una copia del proyect
 | --- | --- |
 | Diseñar, usar librerías, traducir y guardar | [Guía de Studio](docs/STUDIO.md) |
 | Operar alarmas, históricos, gráficas y scripts | [Guía de operación](docs/OPERATIONS.md) |
+| Escribir scripts: tags, calidad, escrituras y propiedades de `ctx` | [Manual de scripts](docs/SCRIPTS.md) |
 | Editar JSON o crear paquetes de librería | [Referencia de formato](docs/PROJECT_FORMAT.md) |
 | Configurar PLC y direcciones | [Protocolos](docs/PROTOCOLS.md) |
 | Desarrollar, probar o publicar | [Desarrollo](docs/DEVELOPMENT.md) |

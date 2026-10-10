@@ -27,7 +27,7 @@ Las pruebas S7 TCP se omiten si falta python-snap7. Qt se necesita para las prue
 
 ## Añadir un protocolo
 
-1. Crear un módulo que implemente `connect()`, `read(address, kind)`, `write(address, kind, value)` y `close()`.
+1. Crear un módulo que implemente `connect()`, `read(address, kind)`, `write(address, kind, value)` y `close()`. Opcionalmente, `prepare_reads(requests)` agrupa lecturas: recibe `[(address, kind), ...]` tras conectar y devuelve una lista de funciones sin argumentos; cada una hace una lectura y devuelve `{índice de la petición: valor}`. El runtime la llama una vez por conexión y reutiliza las funciones en cada ciclo (véase `read_groups` en `connectors.py` y el adaptador S7). Sin ella, se lee cada variable con `read()`.
 2. Publicar `Factory.definition` como `ProtocolDefinition`, con campos, normalización, validación y resumen del enlace. Registrar mediante `register("protocol_id", Factory)` antes de cargar el proyecto.
 3. Añadir la dependencia opcional. Project y el editor delegan en la definición; no añadir condiciones de protocolo en esos módulos. Véase [PROTOCOLS.md](PROTOCOLS.md).
 4. Probar contra un servidor TCP externo y fallos de conexión. `close()` debe ser idempotente y los errores deben conservar su contexto.

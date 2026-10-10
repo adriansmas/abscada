@@ -211,6 +211,8 @@ def build_project(root):
     for i,(label,tag) in enumerate([('Inicio de sesión','Sistema.Inicio'),('Hora actual','Sistema.Hora'),('Ciclos de tarea','Sistema.Ciclos'),('Pantallas abiertas','Sistema.Aperturas'),('Último evento','Sistema.UltimoEvento')]):value(d,'event'+str(i),label,tag,30,145+i*73,1090)
     button(d,'script','Ejecutar script de botón',30,550,action='script',script='button_event',w=350)
     button(d,'reset','Restablecer banco local',405,550,action='script',script='reset_local',w=350)
+    button(d,'sequence','Lista: consigna + script',780,550,action='sequence',w=350,
+           actions=[dict(action='set',tag='Local.Consigna',value=42.0),dict(action='script',script='button_event')])
     value(d,'operator','Operador','Sistema.Operador',30,626,725,kind='input')
     text(d,'jobs','Tarea cada 1 s: reloj, contador, señal local opcional y estado de calidad de S7/Modbus. Ver ejecuciones en Studio → Scripts y tareas.',30,688,1090,57)
 

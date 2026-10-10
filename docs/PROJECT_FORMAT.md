@@ -110,6 +110,19 @@ Las acciones toggle/set se activan al soltar dentro del botón; momentary y pres
 | close_popup | Cierra la ventana emergente actual |
 | script | script; invoca una fuente del proyecto |
 | set_language | language declarado; cambia el idioma del runtime |
+| sequence | actions: lista ordenada de acciones; ejecuta todas con un clic |
+
+Un botón con `"action": "sequence"` lleva en `actions` hasta 20 acciones, cada una con los mismos campos que un botón de acción única (`tag`, `value`, `script`, `screen`, `template`, `bindings`…). El propio botón no lleva `tag`. Se admiten `set`, `toggle`, `script`, `set_language`, `screen`, `popup`, `faceplate_popup` y `close_popup`; `momentary` y `press_release` no, porque dependen de mantener pulsado el botón. Abrir o cerrar pantallas solo puede ser la última acción. Una lista vacía es válida mientras se edita; **Revisar el proyecto** la señala.
+
+```json
+{"id": "arranque", "kind": "button", "text": "Arrancar", "action": "sequence",
+ "actions": [{"action": "set", "tag": "Bomba1.consigna", "value": 50.0},
+             {"action": "toggle", "tag": "Bomba1.marcha"},
+             {"action": "script", "script": "registrar_arranque"},
+             {"action": "screen", "screen": "detalle"}]}
+```
+
+Al soltar el botón se comprueban primero todas las acciones (variable asignada, lectura válida, script y pantalla existentes); si alguna no se puede realizar no se envía ninguna y el aviso indica su número. Después se envían en orden sin esperar a ninguna: las escrituras entran en la cola de su conexión, los scripts en la cola de scripts y la navegación ocurre al final. Las escrituras a una misma conexión salen en ese orden; entre conexiones distintas no hay orden garantizado, y las escrituras de un script se envían cuando el script termina, posiblemente después de acciones posteriores de la lista. Si una acción falla durante el envío, las anteriores no se deshacen y las siguientes no se envían. Cada pulsación repite la lista completa. Para una secuencia que deba esperar resultados, usa un único script con sus `ctx.write()` en orden. El permiso del botón (`permission`, u `operate` si alguna acción escribe o ejecuta un script) se comprueba una vez para toda la lista, y cada escritura se audita por separado.
 
 Las imágenes deben vivir dentro de la carpeta del proyecto; las rutas que escapan se rechazan. No se incrustan dentro del JSON. La aplicación no carga imágenes remotas.
 

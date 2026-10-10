@@ -119,6 +119,8 @@ Los proyectos antiguos con registros por variable se convierten en memoria a fic
 
 ## Scripts Python y tareas
 
+Consulta el [manual completo de scripts](SCRIPTS.md) para todas las funciones y propiedades de `ctx`, ejemplos, errores y límites de lectura y escritura. Esta sección resume su uso en operación.
+
 `ctx.language` devuelve el idioma actual del proyecto. `ctx.set_language("en")` solicita un cambio a un idioma declarado; se aplica al terminar correctamente el script. Véase [Idiomas del proyecto](STUDIO.md).
 
 En Studio, Scripts y tareas reúne el editor Python, los eventos de inicio, las tareas cíclicas y las últimas ejecuciones. El editor tiene resaltado, números de línea, sangrado automático y comprobación de sintaxis. Las fuentes se guardan como `scripts/<nombre>.py`, editables desde VS Code. El botón Comprobar valida sin ejecutar.
@@ -128,6 +130,7 @@ En Studio, Scripts y tareas reúne el editor Python, los eventos de inicio, las 
 - Eventos de inicio… selecciona los scripts que se ejecutan una vez al arrancar el runtime. Las comunicaciones ya se han iniciado, pero puede no haber todavía una lectura válida del PLC.
 - Sin seleccionar objetos, Al abrir pantalla… configura los scripts de ese documento. Se ejecutan al abrirlo en una ventana o contenedor y al navegar a él. Volver a enfocar una emergente ya abierta no repite el evento. La apertura de un layout dispara primero su evento y después los de sus pantallas iniciales.
 - Un botón puede usar Acción → Ejecutar script. Recibe como contexto la pantalla donde se pulsó, incluida una pantalla alojada en un contenedor.
+- Un botón con Acción → Lista de acciones puede incluir uno o varios scripts entre otras acciones. La lista no espera a que el script termine: las acciones siguientes se envían enseguida y las escrituras del script llegan cuando termina. Si el orden importa, haz esas escrituras dentro del propio script.
 - Tareas cíclicas permite nombre, script, periodo en milisegundos y activación. El primer disparo llega tras el periodo configurado, no al arrancar. Usa un evento de inicio si también necesitas ejecución inmediata.
 
 Studio no ejecuta scripts de proceso. El runtime utiliza la copia de fuentes y configuración tomada al arrancar. Reinícialo para ejecutar cambios nuevos. El modo headless ejecuta inicio y tareas; no genera aperturas de pantalla.

@@ -9,6 +9,7 @@
 import copy
 import re
 from .i18n import tr
+from .button_actions import with_steps
 
 NAME = re.compile(r"[A-Za-z0-9_-]+")
 VIEWERS = {"trend": "trends", "alarm_view": "alarm_views"}
@@ -170,7 +171,9 @@ def _editable_documents(project):
 
 
 def _opens_screen(element):
-    return element["kind"] == "screen_container" or (element["kind"] == "button" and element.get("action") in {"screen", "popup"})
+    """``element`` may also be a step of a button's action list (no ``kind``)."""
+    kind = element.get("kind", "button")
+    return kind == "screen_container" or (kind == "button" and element.get("action") in {"screen", "popup"})
 
 
 def screen_references(project, name):
@@ -184,7 +187,7 @@ def screen_references(project, name):
         if (collection, document_name) == ("screens", name):
             continue
         for element in document["elements"]:
-            if _opens_screen(element) and element.get("screen") == name:
+            if any(_opens_screen(target) and target.get("screen") == name for target in with_steps(element)):
                 found.append(f"{'objeto ' if collection == 'faceplates' else ''}{document_name} · {element['id']}")
     return found
 
@@ -210,8 +213,9 @@ def rename_screen(project, old, new):
             window["screen"] = new
     for _, _, document in _editable_documents(project):
         for element in document["elements"]:
-            if _opens_screen(element) and element.get("screen") == old:
-                element["screen"] = new
+            for target in with_steps(element):
+                if _opens_screen(target) and target.get("screen") == old:
+                    target["screen"] = new
     return scripts_mentioning(project, old)
 
 
@@ -240,13 +244,13 @@ def delete_screen(project, name):
 # --- faceplates -------------------------------------------------------------------------------
 
 def _uses_template(element, name):
-    return element.get("template") == name and (element["kind"] == "faceplate" or element.get("action") == "faceplate_popup")
+    return element.get("template") == name and (element.get("kind") == "faceplate" or element.get("action") == "faceplate_popup")
 
 
 def faceplate_references(project, name):
     return [f"{'objeto ' if collection == 'faceplates' else ''}{document_name} · {element['id']}"
             for collection, document_name, document in _editable_documents(project)
-            for element in document["elements"] if _uses_template(element, name)]
+            for element in document["elements"] if any(_uses_template(t, name) for t in with_steps(element))]
 
 
 def rename_faceplate(project, old, new):
@@ -259,8 +263,9 @@ def rename_faceplate(project, old, new):
     project.faceplates = {new if key == old else key: value for key, value in project.faceplates.items()}
     for _, _, document in _editable_documents(project):
         for element in document["elements"]:
-            if _uses_template(element, old):
-                element["template"] = new
+            for target in with_steps(element):
+                if _uses_template(target, old):
+                    target["template"] = new
 
 
 def duplicate_faceplate(project, name, new):

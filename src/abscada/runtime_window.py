@@ -11,6 +11,8 @@ from .runtime import Runtime
 from .viewers import AlarmViewer, TrendViewer
 from .operation_windows import MAIN_MODE, popup_key, popup_title, settings_key
 from .i18n import tr, tr_existing
+from . import button_actions
+from .button_actions import SEQUENCE, STEP_ACTIONS
 from .runtime_language_ui import runtime_ui
 
 
@@ -384,47 +386,16 @@ class RuntimeWindow(QMainWindow):
                     return
             elif not self.authorize(element):
                 return
-            action = element.get("action")
-            if action in {'toggle', 'set', 'momentary', 'press_release'} and not element.get('tag'):
+            action = element.get("action", "toggle")
+            if action == SEQUENCE:
+                self.run_sequence(element, source)
+                return
+            if not entry and action in STEP_ACTIONS:
+                self.click_action(element, source)()
+                return
+            if action in {'momentary', 'press_release'} and not element.get('tag'):
                 raise ValueError(tr("Este mando no tiene variable asignada"))
-            if action == 'faceplate_popup' and '' in element.get('bindings', {}).values():
-                raise ValueError(tr("El objeto emergente tiene parámetros sin variable asignada"))
-            if action == 'set_language':
-                self.runtime.set_language(element['language'])
-                return
-            if action == 'script':
-                self.runtime.scripts.submit(element['script'], 'button', source.document_name if source else self.document_name)
-                return
-            if action in {"screen", "popup"}:
-                target = element.get("screen", "")
-                if target not in self.project.screens:
-                    raise ValueError(tr("Pantalla inexistente"))
-                if action == "popup":
-                    self.defer(lambda: self.open_popup(target, element.get("modal", False), element.get("window")))
-                else:
-                    container = element.get('target_container', '')
-                    def navigate():
-                        try:
-                            self.navigate_screen(target, container, source)
-                        except (ValueError, RuntimeError) as exc:
-                            self.statusBar().showMessage(str(exc), 10000)
-                    self.defer(navigate)
-                return
-            if action == "faceplate_popup":
-                template, bindings = element["template"], dict(element.get("bindings", {}))
-                title, modal, window = element.get("title", ""), element.get("modal", False), element.get("window")
-                self.defer(lambda: self.open_faceplate(template, bindings, title, modal, window))
-                return
-            if action == "close_popup":
-                if self.owner:
-                    self.defer(self.close)
-                return
-            name = element.get("tag", "")
-            if name not in self.runtime.tags:
-                raise ValueError(tr("Este control no tiene una variable configurada"))
-            sample = self.runtime.snapshot()[name]
-            if self.runtime.tags[name].get("binding") and sample.quality != "good":
-                raise ValueError(tr("La variable no tiene una lectura válida"))
+            name, sample = self.command_target(element)
             if entry and text is not None:
                 value = text
             elif entry and editor is not None:
@@ -434,15 +405,9 @@ class RuntimeWindow(QMainWindow):
                 value, ok = QInputDialog.getText(self, tr("Escribir valor"), name, text=str(sample.value))
                 if not ok:
                     return
-            elif element.get("action", "toggle") == "toggle":
-                if self.runtime.tags[name]["type"] != "bool":
-                    raise ValueError(tr("La acción alternar necesita una variable bool"))
-                value = not sample.value
-            elif element.get('action') in {'momentary','press_release'}:
+            elif action in {'momentary','press_release'}:
                 if phase!='press': return
                 value=element.get('press_value',True)
-            elif element.get("action") == "set":
-                value = element["value"]
             else:
                 raise ValueError(tr("Acción de botón desconocida"))
             if entry:
@@ -452,6 +417,81 @@ class RuntimeWindow(QMainWindow):
             if element.get('action') in {'momentary','press_release'}: self.momentary[id(element)]=element
         except Exception as exc:
             QMessageBox.warning(self, tr("Operación no realizada"), str(exc))
+
+    def command_target(self, element):
+        """Variable of a control and its sample; refuses one without a valid reading."""
+        name = element.get("tag", "")
+        if name not in self.runtime.tags:
+            raise ValueError(tr("Este control no tiene una variable configurada"))
+        sample = self.runtime.snapshot()[name]
+        if self.runtime.tags[name].get("binding") and sample.quality != "good":
+            raise ValueError(tr("La variable no tiene una lectura válida"))
+        return name, sample
+
+    def click_action(self, element, source):
+        """Check a click action and return the function that performs it; nothing is sent yet."""
+        action = element.get("action", "toggle")
+        if action in {'toggle', 'set'} and not element.get('tag'):
+            raise ValueError(tr("Este mando no tiene variable asignada"))
+        if action == 'faceplate_popup' and '' in element.get('bindings', {}).values():
+            raise ValueError(tr("El objeto emergente tiene parámetros sin variable asignada"))
+        if action == 'set_language':
+            return lambda: self.runtime.set_language(element['language'])
+        if action == 'script':
+            if element.get('script') not in self.project.scripts:
+                raise ValueError(tr('Script inexistente'))
+            screen = source.document_name if source else self.document_name
+            return lambda: self.runtime.scripts.submit(element['script'], 'button', screen)
+        if action in {"screen", "popup"}:
+            target = element.get("screen", "")
+            if target not in self.project.screens:
+                raise ValueError(tr("Pantalla inexistente"))
+            if action == "popup":
+                return lambda: self.defer(lambda: self.open_popup(target, element.get("modal", False), element.get("window")))
+            container = element.get('target_container', '')
+            def navigate():
+                try:
+                    self.navigate_screen(target, container, source)
+                except (ValueError, RuntimeError) as exc:
+                    self.statusBar().showMessage(str(exc), 10000)
+            return lambda: self.defer(navigate)
+        if action == "faceplate_popup":
+            template, bindings = element["template"], dict(element.get("bindings", {}))
+            title, modal, window = element.get("title", ""), element.get("modal", False), element.get("window")
+            return lambda: self.defer(lambda: self.open_faceplate(template, bindings, title, modal, window))
+        if action == "close_popup":
+            return lambda: self.defer(self.close) if self.owner else None
+        name, sample = self.command_target(element)
+        if action == "toggle":
+            if self.runtime.tags[name]["type"] != "bool":
+                raise ValueError(tr("La acción alternar necesita una variable bool"))
+            value = not sample.value
+        elif action == "set":
+            value = element["value"]
+        else:
+            raise ValueError(tr("Acción de botón desconocida"))
+        return lambda: self.runtime.command(name, value, self.runtime.session)
+
+    def run_sequence(self, element, source):
+        """Check every step before sending any; then send them in order without waiting.
+
+        A failure while sending stops the rest; earlier steps were already sent and are not undone.
+        """
+        steps = [(number, step, button_actions.as_button(element, step))
+                 for number, step in enumerate(button_actions.steps(element), 1)]
+        prepared = []
+        for number, step, button in steps:
+            try:
+                prepared.append((number, step, self.click_action(button, source)))
+            except Exception as exc:
+                raise ValueError(tr("Acción {number} ({label}): {exc}\nNo se ha enviado ninguna acción.",
+                                    number=number, label=button_actions.label(step), exc=exc)) from exc
+        for number, step, perform in prepared:
+            try:
+                perform()
+            except Exception as exc:
+                raise ValueError(tr("Acción {number} ({label}) no realizada: {exc}\nLas acciones anteriores ya se enviaron y no se deshacen; las siguientes no se han enviado.",
+                                    number=number, label=button_actions.label(step), exc=exc)) from exc
 
     def closeEvent(self, event):
         try:

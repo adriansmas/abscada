@@ -784,6 +784,7 @@
   "Reposo de diacetilo · temperatura": "Diacetyl rest temperature",
   "Requiere fermentador libre, vapor > 4 bar y agua caliente ≥ 70 °C.": "Requires free fermenter, steam > 4 bar and hot water ≥ 70 °C.",
   "Restablecer banco local": "Reset local bank",
+  "Lista: consigna + script": "List: setpoint + script",
   "Resumen de grupo": "unit Summary",
   "Riesgo de desbordamiento del hervidor": "Risk of kettle overflow",
   "Rojo = interruptor cerrado · verde = abierto · azul = conductor en tensión": "Red = switch closed green = open blue = live conductor",

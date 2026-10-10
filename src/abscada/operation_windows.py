@@ -100,9 +100,11 @@ def validate_popup_writes(element, project, tags):
 
 def resolve_popup_bindings(child, instance_bindings):
     """Forward ``$parameter`` references of a nested pop-up button to real tags."""
-    if child.get("action") == "faceplate_popup":
-        child["bindings"] = {key: instance_bindings[value[1:]] if isinstance(value, str) and value.startswith("$") else value
-                             for key, value in child.get("bindings", {}).items()}
+    from .button_actions import with_steps
+    for target in with_steps(child):
+        if target.get("action") == "faceplate_popup":
+            target["bindings"] = {key: instance_bindings[value[1:]] if isinstance(value, str) and value.startswith("$") else value
+                                  for key, value in target.get("bindings", {}).items()}
     return child
 
 

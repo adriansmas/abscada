@@ -15,7 +15,7 @@ Lista vigente, revisada el 7 de octubre de 2026. Las funciones implementadas se 
 
 ## Comunicaciones
 
-- Lecturas agrupadas en S7, Modbus y ADS; *sum commands* ADS.
+- Lecturas agrupadas en Modbus y ADS; *sum commands* ADS. S7 ya agrupa bloques contiguos; falta validarlo con PLC físicos.
 - Suscripciones OPC UA y notificaciones ADS.
 - Explorador de nodos OPC UA y tabla de símbolos ADS en Studio.
 - Calidad stale, última lectura buena, métricas y confirmación correlacionada de órdenes.

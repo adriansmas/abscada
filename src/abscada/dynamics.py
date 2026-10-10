@@ -123,17 +123,22 @@ def compatible(element,tag):
 
 
 def issues(project):
-    known={'id','kind','x','y','w','h','text','tag','font_size','bold','text_align','text_color','border_color','color','unit','decimals','min','max','action','value','screen','modal','target_container','script','source','view','template','bindings','points','stroke_color','stroke_width','stroke_style','arrows','filled','texts','default_text','dynamics','lamp_colors','visible','editor_locked','editor_hidden','group','description','press_value','release_value','gauge_style','warning','alarm','title','window','permission','language','tooltip'}
+    known={'id','kind','x','y','w','h','text','tag','font_size','bold','text_align','text_color','border_color','color','unit','decimals','min','max','action','value','screen','modal','target_container','script','source','view','template','bindings','points','stroke_color','stroke_width','stroke_style','arrows','filled','texts','default_text','dynamics','lamp_colors','visible','editor_locked','editor_hidden','group','description','press_value','release_value','gauge_style','warning','alarm','title','window','permission','language','tooltip','actions'}
+    from .button_actions import as_button, steps
     result=[]
     for collection in (project.screens,project.faceplates):
         for name,document in collection.items():
             for e in document['elements']:
-                if writable_control(e) and not e.get('tag'): result.append(tr("{name} / {id}: mando sin variable", name=name, id=e["id"]))
-                loose=[p for p,v in e.get('bindings',{}).items() if v=='']
-                if loose: result.append(tr("{name} / {id}: parámetros sin variable asignada: {parameters}", name=name, id=e["id"], parameters=', '.join(loose)))
+                if e['kind']=='button' and e.get('action')=='sequence' and not e.get('actions'): result.append(tr("{name} / {id}: botón sin acciones", name=name, id=e["id"]))
+                for c in [e]+[as_button(e,s) for s in steps(e)]:
+                    if writable_control(c) and not c.get('tag'): result.append(tr("{name} / {id}: mando sin variable", name=name, id=e["id"]))
+                    loose=[p for p,v in c.get('bindings',{}).items() if v=='']
+                    if loose: result.append(tr("{name} / {id}: parámetros sin variable asignada: {parameters}", name=name, id=e["id"], parameters=', '.join(loose)))
                 for key in sorted(set(e)-known): result.append(tr("{name} / {id}: propiedad no reconocida «{key}»", name=name, id=e["id"], key=key))
     return result
 
 
 def parameter_writable(template,parameter):
-    return any(e.get("tag")=="$"+parameter and writable_control(e) for e in template["elements"])
+    from .button_actions import as_button, steps
+    controls=[c for e in template["elements"] for c in [e]+[as_button(e,s) for s in steps(e)]]
+    return any(c.get("tag")=="$"+parameter and writable_control(c) for c in controls)

@@ -573,10 +573,16 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         form.addRow(tr('Idioma'), self.language_target_field)
         self.action_field.addItem(tr("Pulsador momentáneo (1 / 0)"), "momentary")
         self.action_field.addItem(tr("Escribir al pulsar y soltar"), "press_release")
+        self.action_field.addItem(tr("Lista de acciones"), "sequence")
         self.action_field.activated.connect(self.auto_apply)
         self.value_field = QLineEdit()
         self.value_field.editingFinished.connect(self.auto_apply)
         form.addRow(tr("Acción"), self.action_field)
+        self.sequence_summary = QLabel(); self.sequence_summary.setWordWrap(True)
+        form.addRow(self.sequence_summary)
+        self.sequence_button = QPushButton(tr("Editar acciones…"))
+        self.sequence_button.clicked.connect(self.edit_button_actions)
+        form.addRow(self.sequence_button)
         form.addRow(tr("Valor"), self.value_field)
         self.press_value_field=QLineEdit();self.release_value_field=QLineEdit()
         for title,field in [(tr('Al pulsar'),self.press_value_field),(tr('Al soltar'),self.release_value_field)]:
@@ -921,6 +927,12 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.action_group.layout().setRowVisible(self.language_target_field, e.get('action') == 'set_language')
         self.value_field.setText(str(e.get("value", "")))
         self.value_field.setEnabled(e.get("action") == "set")
+        from .button_actions import label as action_label
+        sequence = e.get("action") == "sequence"
+        self.sequence_summary.setText("\n".join(f"{n}. {action_label(step)}" for n, step in enumerate(e.get("actions", []), 1))
+                                      or tr("Sin acciones"))
+        for widget in (self.sequence_summary, self.sequence_button):
+            self.action_group.layout().setRowVisible(widget, sequence)
         self.content_group.setVisible(e["kind"] not in {"screen_container", "faceplate", "trend", "alarm_view"} | PATH_KINDS | SHAPE_KINDS)
         self.text_list_button.setVisible(e["kind"] == "text_list")
         for field,kinds in [(self.text_field,{'text','input','button','gauge'}),(self.unit_field,{'text','input','gauge'}),(self.decimals_field,{'text','input','gauge'})]:
@@ -1008,6 +1020,20 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             self.popup_binding_fields[parameter] = combo
             self.popup_binding_form.addRow(parameter, combo)
 
+    def edit_button_actions(self):
+        selected = self.scene.selectedItems()
+        if len(selected) != 1 or selected[0].element.get("action") != "sequence":
+            return
+        from .button_actions_editor import ButtonActionsDialog
+        element = selected[0].element
+        dialog = ButtonActionsDialog(self, element)
+        if dialog.exec():
+            steps = dialog.result_steps()
+            if steps != element.get("actions"):
+                index = self.document()["elements"].index(element)
+                updated = dict(copy.deepcopy(element), actions=steps)
+                self.mutate(lambda: self.document()["elements"].__setitem__(index, updated), selected_ids=[element["id"]])
+
     def popup_faceplate_fields(self, e, previous):
         template = self.popup_template_field.currentText()
         if template not in self.project.faceplates:
@@ -1093,7 +1119,17 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                     self.error(tr("Umbral inválido: escribe un número o déjalo vacío"))
                     self.show_properties()
                     return
-        if e["kind"] == "button":
+        if e["kind"] == "button" and self.action_field.currentData() == "sequence":
+            # Each action names its own variable and target; the first one is the previous single action.
+            if previous.get("action") != "sequence":
+                from .button_actions_editor import seed
+                e["actions"] = seed(previous)
+            for key in ("tag", "value", "script", "language", "screen", "target_container", "modal", "window",
+                        "template", "bindings", "title", "press_value", "release_value"):
+                e.pop(key, None)
+            e["action"] = "sequence"
+        elif e["kind"] == "button":
+            e.pop("actions", None)
             e["action"] = self.action_field.currentData()
             if e['action'] == 'set_language':
                 e['language'] = self.language_target_field.currentText()

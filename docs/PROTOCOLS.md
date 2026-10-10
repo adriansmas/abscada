@@ -38,7 +38,7 @@ El runtime crea un trabajador por conexión. Cada trabajador posee un cliente, u
 
 La agenda se calcula desde el comienzo del ciclo; si una lectura tarda más que el intervalo, el siguiente ciclo puede empezar inmediatamente al terminar. No existe garantía de tiempo real ni se lanzan lecturas solapadas. Tras un fallo se cierra el cliente y se espera dos segundos antes de reconectar. Las escrituras pendientes de una conexión no disponible se descartan; no se reproducen al reconectar. Detener señala a todos los trabajadores y espera su salida; los timeouts de la biblioteca determinan cuánto puede tardar una operación ya iniciada.
 
-Actualmente hay lecturas individuales dentro de cada conexión. Para miles de variables se necesitan planes de lectura agrupada, medición de tiempos, presupuestos de carga y calidad stale. Un hilo por conexión es apropiado para un número moderado de equipos; miles de conexiones requerirían un ejecutor asíncrono o un servicio independiente. El número de equipos y variables que admite el sistema aún no se ha medido.
+S7 agrupa las lecturas en bloques de bytes contiguos (véase [Lecturas agrupadas](#lecturas-agrupadas)); Modbus, ADS y OPC UA siguen leyendo cada variable por separado. Para miles de variables se necesitan también lecturas agrupadas en esos protocolos, medición de tiempos, presupuestos de carga y calidad stale. Un hilo por conexión es apropiado para un número moderado de equipos; miles de conexiones requerirían un ejecutor asíncrono o un servicio independiente. El número de equipos y variables que admite el sistema aún no se ha medido.
 
 ## OPC UA y ADS: evolución de la adquisición
 
@@ -114,6 +114,16 @@ DB >= 1, offsets >= 0, bit entre 0 y 7. Una escritura fuera de rango se rechaza 
 
 La escritura de bit hace lectura-modificación-escritura del byte para preservar los bits vecinos. El trabajador serializa sus operaciones; un PLC u otro cliente puede cambiar ese byte entre la lectura y la escritura. Por tanto, reservar bytes de mando o implementar un handshake en el PLC antes de uso real.
 
+### Lecturas agrupadas
+
+El ciclo de adquisición no lee cada variable por separado. Al conectar, el adaptador agrupa las variables de la conexión por DB y desplazamiento y une los rangos que se solapan o son contiguos en un bloque; cada ciclo hace una llamada `db_read` por bloque y extrae los valores de memoria. Los bits de un mismo byte y las direcciones repetidas se leen una sola vez. No se leen huecos: dos variables separadas por un byte sin usar van en bloques distintos. Una variable nunca se reparte entre dos bloques.
+
+El tamaño máximo de bloque es el PDU negociado menos 18 bytes (462 con PDU 480; 222 con PDU 240). Es lo que python-snap7 3.2 envía en una única petición: por encima de ese tamaño, la biblioteca divide la llamada en varias peticiones de red. Si el cliente no informa del PDU se asume 240.
+
+Si un bloque devuelve menos bytes de los pedidos, la lectura falla y se aplica el contrato habitual: toda la conexión pasa a calidad *bad*, conserva los últimos valores y reconecta a los 2 s. El plan se prepara de nuevo tras cada reconexión. La parada se comprueba entre bloques y las escrituras siguen intercalándose entre ciclos.
+
+Medida con el servidor S7 de desarrollo en localhost y 134 variables (64 BOOL, 20 INT y 50 REAL en dos zonas): 2 peticiones por ciclo frente a 134, y unos 1 ms frente a 59 ms. Son tiempos de bucle local; no indican la capacidad ni el ciclo de un PLC real, que dependen de la CPU, la red y su carga.
+
 ### PLC de desarrollo
 
 `abscada --simulador s7 --port 1102` inicia un servidor TCP S7 local. El servidor no es una CPU Siemens ni simula todas sus restricciones. Es útil para comprobar la ruta completa del adaptador.
@@ -140,7 +150,7 @@ Ante un fallo se conserva el último valor, se marca calidad bad, se cierra el a
 
 ### Evidencia de validación
 
-`tests/test_s7_integration.py` abre un servidor local en un puerto disponible y ejecuta el runtime con un cliente Snap7 real. Comprueba lectura, escritura REAL y escritura bool mediante TCP. `test_core.py` comprueba INT, DINT, endianness y conservación de bits con un cliente de memoria.
+`tests/test_s7_integration.py` abre un servidor local en un puerto disponible y ejecuta el runtime con un cliente Snap7 real. Comprueba lectura, escritura REAL y escritura bool mediante TCP. `test_core.py` comprueba INT, DINT, endianness y conservación de bits con un cliente de memoria. `test_s7_reads.py` comprueba el plan de bloques, el número de llamadas por ciclo, respuestas incompletas, desconexión y reconexión.
 
 No se ha conectado un PLC Siemens físico. No se ha verificado acceso seguro, rendimiento con miles de tags, restricciones de CPUs concretas ni interferencia entre clientes. El tiempo de bloqueo de una llamada depende de la librería; el cierre espera hasta cinco segundos y mantiene el runtime referenciado si el trabajador sigue activo.
 

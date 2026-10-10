@@ -4,6 +4,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 
 ## [Sin publicar]
 
+### Añadido
+- **Botones con varias acciones:** la acción «Lista de acciones» ejecuta con un clic varias acciones en orden (escribir valor, alternar, ejecutar script, cambiar idioma y, como última, abrir o cerrar pantallas). Se editan en Studio con «Editar acciones…». Antes de enviar nada se comprueban todas; las acciones no esperan al script ni a la confirmación del PLC.
+
+### Cambiado
+- **Lecturas S7 agrupadas:** cada ciclo lee en una sola petición los bytes contiguos de un DB en lugar de una petición por variable; los bits de un mismo byte se leen una vez. El tamaño de bloque se ajusta al PDU negociado. Calidad, errores, reconexión y escrituras se comportan igual que antes.
+
 ## [0.5.0b5] - 2026-10-08
 
 ### Cambiado

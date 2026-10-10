@@ -77,6 +77,8 @@ Añade **Tendencia** o **Alarmas** a la pantalla y pulsa **Configurar…**, o ha
 
 Los contenedores comparten adquisición, alarmas y registros y navegan por separado. Se admite un nivel: una pantalla alojada no puede contener otros contenedores. Al navegar se destruyen los visores de la zona sustituida. Ajusta las proporciones del contenido a la zona.
 
+**Lista de acciones** permite que un botón haga varias cosas con un clic: **Editar acciones…** abre una lista donde añadir, eliminar y reordenar acciones (escribir valor, alternar, ejecutar script, cambiar idioma, abrir pantalla o emergente, cerrar emergente) y configurar cada una. Al elegir esta acción en un botón que ya tenía otra, esa acción pasa a ser la primera de la lista. Abrir o cerrar pantallas solo puede ser la última acción; los pulsadores momentáneos no forman parte de una lista. Las opciones de monitor de una emergente dentro de la lista se editan en Propiedades avanzadas. Véase [PROJECT_FORMAT.md](PROJECT_FORMAT.md) para el orden de envío y los fallos.
+
 **Abrir emergente** abre una pantalla en otra ventana; **Cerrar emergente** la cierra sin detener Runtime. Solo hay una ventana por pantalla de apertura; volver a abrirla la trae al frente. **Abrir faceplate emergente** abre un objeto de librería por combinación de plantilla y parámetros, permitiendo una ventana por equipo. Dentro de una plantilla puedes reenviar parámetros `$nombre`.
 
 **Proyecto → Ajustes del proyecto… → Operación** configura monitor, modo, escalado y ventanas adicionales al arrancar. Las emergentes también tienen opciones de monitor y «siempre encima». Runtime recuerda posiciones por proyecto y puesto; si un monitor no existe, usa uno disponible. **Olvidar posiciones guardadas** borra esa memoria.

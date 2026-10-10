@@ -8,6 +8,7 @@ from threading import Thread, Event, Lock
 from queue import Queue, Empty, Full
 from collections import deque
 from .i18n import tr
+from .button_actions import with_steps
 
 
 def validate_scripts(project):
@@ -38,8 +39,9 @@ def validate_scripts(project):
         references(document.get('on_open', []))
     for document in list(project.screens.values()) + list(project.faceplates.values()):
         for element in document['elements']:
-            if element['kind'] == 'button' and element.get('action') == 'script':
-                references([element.get('script')])
+            for target in with_steps(element):
+                if target.get('kind', 'button') == 'button' and target.get('action') == 'script':
+                    references([target.get('script')])
 
 
 class ScriptService:

@@ -45,7 +45,7 @@ Este proceso independiente sirve **S7 TCP en 127.0.0.1:1102** y **Modbus TCP en 
 | 09 · Histórico diario | Selecciona Histórico, desmarca Seguir, establece el intervalo y pulsa Consultar. Lee archivos de varios días en una única gráfica. Preparación de datos antiguos más abajo. |
 | 10 · Alarmas y ACK | Con señal local detenida, pulsa nivel alto, espera entrada, reconoce e introduce operador/comentario si procede, luego nivel normal. Prueba también fallo digital y retorno antes de ACK. |
 | 11 · Eventos y retorno | Consulta transiciones; «Ver ocurrencias» muestra entrada, retorno y reconocimiento de cada ocurrencia. Filtros, periodo y exportación CSV. |
-| 12 · Scripts y tareas | Fecha de inicio, contador periódico, aperturas de pantalla, script por botón y restablecimiento del banco interno. Las ejecuciones se consultan en Studio → Scripts y tareas. |
+| 12 · Scripts y tareas | Fecha de inicio, contador periódico, aperturas de pantalla, script por botón, botón con lista de acciones (consigna local y script) y restablecimiento del banco interno. Las ejecuciones se consultan en Studio → Scripts y tareas. |
 
 La variable `Sistema.Operador` es una etiqueta demostrativa editable; **no representa autenticación**. Con seguridad activada, el actor del ACK es el usuario de la sesión; sin ella, se introduce como texto libre.
 

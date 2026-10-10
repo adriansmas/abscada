@@ -162,6 +162,31 @@
       "script": "reset_local"
     },
     {
+      "id": "sequence",
+      "kind": "button",
+      "x": 780,
+      "y": 550,
+      "w": 350,
+      "h": 42,
+      "text": {
+        "es": "Lista: consigna + script",
+        "en": "List: setpoint + script"
+      },
+      "action": "sequence",
+      "font_size": 15,
+      "actions": [
+        {
+          "action": "set",
+          "tag": "Local.Consigna",
+          "value": 42.0
+        },
+        {
+          "action": "script",
+          "script": "button_event"
+        }
+      ]
+    },
+    {
       "id": "operator",
       "kind": "input",
       "x": 30,

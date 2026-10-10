@@ -1,6 +1,7 @@
 """Protocol adapters; called only from the runtime worker thread.
 
 An adapter offers connect(), read(address, kind), write(address, kind, value) and close().
+It may also offer prepare_reads(requests): see ``read_groups``.
 """
 from __future__ import annotations
 from dataclasses import dataclass
@@ -40,6 +41,38 @@ def parse_address(text, value_type=None):
     return Address(int(db), int(offset), kind, int(bit or 0))
 
 
+def _decode(a, data, start):
+    """Value of ``a`` inside ``data``, which begins at byte ``start`` of the DB."""
+    position = a.offset - start
+    if a.kind == "X":
+        return bool(data[position] & (1 << a.bit))
+    return struct.unpack_from({"B": ">B", "W": ">h", "D": ">i", "R": ">f"}[a.kind], data, position)[0]
+
+
+# Smallest PDU a S7 CPU negotiates; python-snap7 answers (pdu_length - 18) data bytes per request.
+S7_MIN_PDU = 240
+S7_READ_OVERHEAD = 18
+
+
+def plan_s7_reads(addresses, max_block):
+    """Group S7 addresses into blocks of one DB without reading gaps.
+
+    Returns ``[(db, start, size, [(index, address), ...]), ...]``. Overlapping or contiguous
+    ranges share a block while it stays within ``max_block`` bytes; a value is never split.
+    """
+    spans = sorted(((a.db, a.offset, a.offset + a.size, index, a) for index, a in enumerate(addresses)),
+                   key=lambda s: s[:3])
+    blocks = []
+    for db, begin, end, index, a in spans:
+        last = blocks[-1] if blocks else None
+        if last and last[0] == db and begin <= last[2] and max(end, last[2]) - last[1] <= max_block:
+            last[2] = max(end, last[2])
+            last[3].append((index, a))
+        else:
+            blocks.append([db, begin, end, [(index, a)]])
+    return [(db, begin, end - begin, members) for db, begin, end, members in blocks]
+
+
 class S7:
     def __init__(self, config):
         self.config = config
@@ -53,10 +86,29 @@ class S7:
 
     def read(self, address, kind):
         a = parse_address(address, kind)
-        data = self.client.db_read(a.db, a.offset, a.size)
-        if a.kind == "X":
-            return bool(data[0] & (1 << a.bit))
-        return struct.unpack({"B": ">B", "W": ">h", "D": ">i", "R": ">f"}[a.kind], data)[0]
+        return _decode(a, self._db_read(a.db, a.offset, a.size), a.offset)
+
+    def max_block(self):
+        """Bytes per read that python-snap7 sends as a single request with the negotiated PDU."""
+        pdu = getattr(self.client, "pdu_length", 0) or S7_MIN_PDU
+        return max(4, pdu - S7_READ_OVERHEAD)
+
+    def prepare_reads(self, requests):
+        """One read per block of contiguous bytes; bits of one byte are read once."""
+        addresses = [parse_address(address, kind) for address, kind in requests]
+        return [lambda db=db, start=start, size=size, members=members: self._read_block(db, start, size, members)
+                for db, start, size, members in plan_s7_reads(addresses, self.max_block())]
+
+    def _read_block(self, db, start, size, members):
+        data = self._db_read(db, start, size)
+        return {index: _decode(a, data, start) for index, a in members}
+
+    def _db_read(self, db, start, size):
+        data = self.client.db_read(db, start, size)
+        if len(data) != size:
+            raise ConnectionError(tr("Respuesta S7 incompleta: DB{db}, byte {start}, {got} de {size} bytes",
+                                     db=db, start=start, got=len(data), size=size))
+        return data
 
     def write(self, address, kind, value):
         a = parse_address(address, kind)
@@ -124,6 +176,20 @@ def create(config, project_root=None):
     if project_root is not None and hasattr(adapter, "attach"):
         adapter.attach(project_root)
     return adapter
+
+
+def read_groups(adapter, requests):
+    """Reads for one acquisition cycle over ``requests`` = [(address, kind), ...].
+
+    Returns callables; each performs one read and returns {request index: value}. Adapters
+    with ``prepare_reads`` group requests themselves; the rest read one request per call.
+    Prepare once per connection and reuse every cycle.
+    """
+    prepare = getattr(adapter, "prepare_reads", None)
+    if prepare:
+        return prepare(requests)
+    return [lambda index=index, address=address, kind=kind: {index: adapter.read(address, kind)}
+            for index, (address, kind) in enumerate(requests)]
 
 
 def binding_summary(binding, connections, kind):

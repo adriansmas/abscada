@@ -6,7 +6,7 @@ from threading import Event, Lock, Thread
 from concurrent.futures import Future
 import time
 from .project import coerce
-from .connectors import create
+from .connectors import create, read_groups
 from .security import SecurityService
 from .i18n import tr
 
@@ -216,8 +216,9 @@ class Runtime:
         cid = connection["id"]
         tags = {name: tag for name, tag in self.tags.items()
                 if tag.get("binding", {}).get("connection") == cid}
+        names = list(tags)
         queue = self._writes[cid]
-        adapter, due = None, 0
+        adapter, groups, due = None, [], 0
         try:
             while not self._stop.is_set():
                 now = time.monotonic()
@@ -227,11 +228,13 @@ class Runtime:
                         if adapter is None:
                             adapter = create(connection, self.project.root)
                             adapter.connect()
-                        for name, tag in tags.items():
+                            groups = read_groups(adapter, [(tags[n]["binding"]["address"], tags[n]["type"]) for n in names])
+                        for read in groups:
                             if self._stop.is_set():
                                 break
-                            value = adapter.read(tag["binding"]["address"], tag["type"])
-                            self._set(name, coerce(value, tag["type"]), "good")
+                            for index, value in read().items():
+                                name = names[index]
+                                self._set(name, coerce(value, tags[name]["type"]), "good")
                         with self._lock:
                             self._status[cid] = tr("Conectado")
                     except Exception as exc:

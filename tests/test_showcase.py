@@ -31,7 +31,7 @@ def test_showcase_covers_controls_actions_and_roundtrip(tmp_path):
     project.validate()
     elements = [e for doc in [*project.screens.values(), *project.faceplates.values()] for e in doc['elements']]
     assert {e['kind'] for e in elements} == KINDS
-    assert {e.get('action') for e in elements if e['kind'] == 'button'} == {'toggle','set','momentary','press_release','screen','popup','close_popup','script'}
+    assert {e.get('action') for e in elements if e['kind'] == 'button'} == {'toggle','set','momentary','press_release','screen','popup','close_popup','script','sequence'}
     generated = tool('build_showcase').build_project(tmp_path / 'generated')
     assert generated.tags() == project.tags()
     assert generated.screens == project.screens
