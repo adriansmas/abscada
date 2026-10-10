@@ -9,7 +9,7 @@ Estado: fase 1 (prácticas sin coste). Revisión: octubre de 2026.
 | Práctica | Qué pide | Qué se hace hoy | Pendiente |
 | --- | --- | --- | --- |
 | **SM** Gestión de la seguridad | Proceso definido, responsables, gestión de componentes de terceros, entorno de desarrollo protegido | Este documento; dependencias fijadas en `requirements-lock.txt`; Dependabot; CI en GitHub con permisos mínimos (`contents: read`) | Nombrar responsable de seguridad; formación registrada; revisar el proceso una vez al año |
-| **SR** Requisitos de seguridad | Contexto de uso, modelo de amenazas, requisitos de seguridad del producto | [SECURITY_DEVELOPMENT.md](SECURITY_DEVELOPMENT.md); requisitos implícitos en usuarios, roles, auditoría y OPC UA | Lista formal de requisitos con nivel objetivo (SL1/SL2) y trazabilidad a pruebas |
+| **SR** Requisitos de seguridad | Contexto de uso, modelo de amenazas, requisitos de seguridad del producto | [Modelo de amenazas](#modelo-de-amenazas); requisitos implícitos en usuarios, roles, auditoría y OPC UA | Lista formal de requisitos con nivel objetivo (SL1/SL2) y trazabilidad a pruebas |
 | **SD** Seguro por diseño | Defensa en profundidad, superficie mínima, revisión del diseño | Mínimo privilegio por roles; seguridad OPC UA con firma y cifrado por defecto; certificados nunca aceptados automáticamente; cuentas solo con huella scrypt | Revisión de diseño documentada para cada cambio grande |
 | **SI** Implementación segura | Normas de codificación, análisis estático, revisión de código | Revisiones en cada cambio; contraseñas con scrypt y comparación en tiempo constante; mensajes de error que no revelan cuentas | Análisis estático en CI (por ejemplo Bandit/CodeQL); guía de codificación escrita |
 | **SVV** Verificación y validación | Pruebas de requisitos de seguridad, de amenazas, de vulnerabilidades y de intrusión | Pruebas automáticas de autenticación, bloqueo, permisos, auditoría, confianza de certificados OPC UA y escrituras denegadas (`tests/test_security*.py`, `tests/test_opcua.py`); `pip-audit` en CI | Fuzzing de los conectores; prueba de intrusión externa antes de 1.0 |
@@ -69,10 +69,7 @@ Las obligaciones de notificación del CRA (vulnerabilidades explotadas e inciden
 
 ## Cómo se publica una versión
 
-1. Todas las pruebas y `pip-audit` pasan en CI.
-2. `CHANGELOG.md` actualizado, con la sección **Seguridad** si procede.
-3. Etiqueta `v*`: el flujo `release.yml` compila, prueba el ejecutable, genera SBOM y sumas, firma la procedencia y publica.
-4. Si la versión corrige una vulnerabilidad, se publica el aviso (GitHub Security Advisory) a la vez.
+El procedimiento está en [DEVELOPMENT.md](DEVELOPMENT.md#publicar-una-versión): pruebas y `pip-audit` en CI, sección **Seguridad** del `CHANGELOG.md` si procede, y `release.yml` compila, prueba, genera SBOM y sumas y firma la procedencia. Si la versión corrige una vulnerabilidad, el aviso (GitHub Security Advisory) se publica a la vez.
 
 Verificación por el cliente:
 

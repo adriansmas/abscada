@@ -44,6 +44,5 @@ Cuando una vulnerabilidad se esté explotando o haya un incidente grave que afec
 
 ## Documentación relacionada
 
-- [docs/SECURITY_DEVELOPMENT.md](docs/SECURITY_DEVELOPMENT.md): cómo se desarrolla abSCADA (IEC 62443-4-1, CRA).
-- [docs/SECURITY_DEVELOPMENT.md](docs/SECURITY_DEVELOPMENT.md): modelo de amenazas.
+- [docs/SECURITY_DEVELOPMENT.md](docs/SECURITY_DEVELOPMENT.md): cómo se desarrolla abSCADA (IEC 62443-4-1, CRA) y modelo de amenazas.
 - [docs/HARDENING.md](docs/HARDENING.md): guía de bastionado para instalaciones.

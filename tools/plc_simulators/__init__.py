@@ -30,7 +30,7 @@ SIMULATORS = {
                   "ADS :48898 · puerto 851", "plc_simulators.ads"),
         Simulator("laboratorio", "Laboratorio SCADA (S7 + Modbus)", "showcase",
                   "S7 :1102 · Modbus :1502", "plc_simulators.laboratory"),
-        Simulator("s7", "PLC S7 básico (demo, s7)", "s7",
+        Simulator("s7", "PLC S7 básico (demo)", "demo",
                   "S7 :1102", "plc_simulators.s7"),
     )
 }

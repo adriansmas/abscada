@@ -70,5 +70,5 @@ def qtbot_free_project(tmp_path):
     QApplication.instance() or QApplication([])
     from abscada.project import Project
     import shutil
-    shutil.copytree(ROOT / "examples" / "plant", tmp_path / "plant", ignore=shutil.ignore_patterns("runtime"))
-    return Project.load(tmp_path / "plant")
+    shutil.copytree(ROOT / "examples" / "demo", tmp_path / "demo", ignore=shutil.ignore_patterns("runtime"))
+    return Project.load(tmp_path / "demo")

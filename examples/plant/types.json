@@ -1,7 +1,0 @@
-{
-  "Pump": {
-    "running": "bool",
-    "flow": "float",
-    "setpoint": "float"
-  }
-}

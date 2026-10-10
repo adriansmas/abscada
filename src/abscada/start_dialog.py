@@ -23,8 +23,6 @@ EXAMPLES = [
     ("beckhoff", tr("Banco de ensayo Beckhoff (TwinCAT ADS)"),
      tr("Indicadores de aguja, mando y alarmas sobre un PLC Beckhoff simulado.")),
     ("showcase", tr("Laboratorio SCADA"), tr("Todos los controles, estados, objetos de librería, gráficas, alarmas y scripts.")),
-    ("plant", tr("Planta de bombeo"), tr("Ejemplo básico con layout, depósito, bombas, alarmas y registros.")),
-    ("library_author", tr("Autoría de bibliotecas"), tr("Cómo crear y publicar librerías de objetos reutilizables.")),
 ]
 
 

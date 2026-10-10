@@ -18,7 +18,7 @@ Lista vigente, revisada el 10 de octubre de 2026. Las funciones implementadas se
 - Lecturas agrupadas en Modbus y ADS (*sum commands* ADS), con el contrato `prepare_reads` que ya usa S7.
 - Suscripciones OPC UA y notificaciones ADS.
 - Explorador de nodos OPC UA y tabla de símbolos ADS en Studio.
-- Calidad stale, última lectura buena, métricas y confirmación correlacionada de órdenes.
+- Calidad stale, última lectura buena, calidad y hora del servidor en las muestras, métricas y confirmación correlacionada de órdenes.
 - Ampliar tipos/arrays cuando haya requisitos concretos; mantener límites documentados en [PROTOCOLS.md](PROTOCOLS.md).
 
 ## Ingeniería y operación

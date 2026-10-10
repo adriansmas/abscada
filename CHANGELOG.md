@@ -11,6 +11,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 
 ### Cambiado
 - **Lecturas S7 agrupadas:** cada ciclo lee en una sola petición los bytes contiguos de un DB en lugar de una petición por variable; los bits de un mismo byte se leen una vez. El tamaño de bloque se ajusta al PDU negociado. Calidad, errores, reconexión y escrituras se comportan igual que antes.
+- **Ejemplos y documentación simplificados:** quedan cuatro ejemplos en la pantalla de inicio (central hidroeléctrica, cervecería, banco Beckhoff y laboratorio); se retiran `plant`, `s7` y `library_author`. Las guías se reorganizan sin repeticiones y las capturas se reducen a seis, generadas con `tools/capture_docs.py`.
 
 ## [0.5.0b5] - 2026-10-08
 

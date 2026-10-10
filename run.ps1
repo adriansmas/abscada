@@ -1,4 +1,4 @@
-param([string]$Project = "examples/plant")
+param([string]$Project = "examples/hydro")
 $ErrorActionPreference = "Stop"
 Push-Location -LiteralPath $PSScriptRoot
 try {

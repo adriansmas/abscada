@@ -1,183 +1,75 @@
-# Guía de operación y scripts
+# Guía de operación
 
-## Mandos y sesión
+Cómo se comporta Runtime: mandos, alarmas, registro, tendencias y almacenamiento. Cómo se configura todo esto está en [STUDIO.md](STUDIO.md) y los scripts en [SCRIPTS.md](SCRIPTS.md).
 
-Todas las ventanas comparten comunicaciones, idioma, sesión, alarmas y registros. El cambio de idioma usa el selector común o un botón del proyecto y no reinicia adquisición. Con seguridad activada, inicia sesión para mandos, consignas, scripts de botón y ACK; el reconocimiento queda a nombre del usuario. Los permisos por control se configuran en el proyecto. Con seguridad desactivada, el nombre del actor introducido libremente no acredita identidad.
+## Ventanas y sesión
 
-Las acciones momentary y press_release solicitan liberación al soltar fuera, perder foco/captura, navegar, cerrar, ocultarse el control o perder habilitación. La mala calidad cancela el gesto. Antes de cerrar comunicaciones se espera hasta dos segundos por las liberaciones pendientes y se informa de fallos. No se reproducen al reconectar: pérdida de red, cierre forzado o corte eléctrico pueden impedir liberar. El PLC debe implementar el tiempo máximo y los permisos de esa orden.
+La ventana principal, sus contenedores y las emergentes comparten comunicaciones, idioma, sesión, alarmas y registros. Runtime solo añade controles comunes de sesión, idioma y diagnóstico; la navegación de proceso la hacen los botones de las pantallas.
 
-## Uso en Studio
+Con usuarios y roles activados, hay que iniciar sesión para dar órdenes, cambiar consignas, ejecutar scripts de botón y reconocer alarmas, y cada acción queda a nombre del usuario. Sin seguridad, el nombre de operador es texto libre y no acredita identidad.
 
-**Alarmas → Categorías:** definir ID, nombre y color. Las alarmas se asignan a una categoría; el visor puede filtrar una o varias categorías y aplica sus colores a los reconocimientos pendientes.
+## Órdenes
 
-**Alarmas → Alarmas:** definir ID, mensaje, variable, categoría, condición, umbral, histéresis, prioridad (1000 es la más alta), retardo de entrada/salida, ACK obligatorio y habilitación. La selección de variable adapta las condiciones digitales o numéricas. Los cambios pasan por validación y deshacer/rehacer; se guardan con Ctrl+S.
+Una escritura comprueba tipo, permiso y calidad, y entra en la cola de su conexión. Que se envíe no confirma el estado físico: el valor se actualiza con la siguiente lectura. Las órdenes que no se pudieron enviar se descartan y no se repiten al reconectar.
 
-**Control Alarmas → Configurar…:** definir título, modo inicial, categorías permitidas, prioridad mínima, columnas iniciales y disponibilidad del ACK. No seleccionar categorías permite mostrar todas. Este filtro y el permiso del control son configuración de interfaz, no un sistema de autorización de usuarios.
+Los pulsadores momentáneos y press/release envían la liberación al soltar, perder el foco, navegar, cerrar o deshabilitarse el control, y la mala calidad cancela el gesto. Al cerrar se esperan hasta 2 s las liberaciones pendientes. Una caída de red o de alimentación puede impedir la liberación: **el PLC debe implementar el tiempo máximo y los permisos de esas órdenes**.
 
-**Registros:** crear ficheros con ID, nombre, frecuencia común en milisegundos y variables incluidas. En **Variables**, el desplegable **Registro** de cada hoja permite elegir un fichero o Ninguno. Cambiarlo mueve la variable; nunca queda registrada en dos ficheros. Las estructuras conservan sus campos agrupados. El diálogo del fichero permite revisar sus variables. La retención de datos y de alarmas se configura en días.
+## Alarmas
 
-**Pantallas:** añadir un control **Tendencia** o **Alarmas** desde las herramientas de dibujo. No requiere crear una configuración antes: cada nuevo control recibe una propia. Seleccionarlo y pulsar **Configurar…** en el inspector, o hacer doble clic, abre sus ajustes. El selector permite reutilizar configuraciones existentes. Las configuraciones se guardan en `trends.json` y `alarm_views.json`; se editan desde sus controles, sin sección Gráficas ni pestaña Visores. No son tareas de registro.
-
-En una gráfica se eligen variables numéricas o bool, colores, grosores y ejes. Se admiten de 1 a 64 ejes y tantas curvas como haga falta, con escala, lado y visibilidad configurables. Mostrar una variable en tiempo real no requiere asignarle un registro. Consultar su pasado requiere que se haya registrado durante ese periodo.
-
-El área de proceso del runtime contiene la pantalla diseñada; la aplicación aporta controles comunes de sesión, idioma y diagnóstico, pero no crea navegación de proceso ni visores automáticamente. Un botón con acción **Abrir pantalla** y destino elegido en el inspector permite navegar. El ejemplo plant tiene botones de navegación que forman parte de sus pantallas. Studio muestra representaciones de diseño sin valores en vivo.
-
-Los visores se colocan directamente en pantallas, con un mínimo de 400 × 280; todavía no se admiten dentro de faceplates. Copia SQLite permite seleccionar el archivo de alarmas o un fichero diario y utiliza el mecanismo online de SQLite, incluyendo datos confirmados en WAL.
-
-![Configuración del registro](studio-historian.png)
-
-## Modelo de alarma
-
-Se registra una **ocurrencia** por activación y un **evento** por transición. Una alarma que vuelve a entrar después de retornar crea una nueva ocurrencia, aunque la anterior continúe pendiente de ACK. Se conservan todas las ocurrencias pendientes.
+Cada activación crea una **ocurrencia** y cada transición un **evento**. Si una alarma vuelve a entrar tras retornar, crea otra ocurrencia aunque la anterior siga pendiente de ACK.
 
 | Estado | Condición | Reconocimiento |
 | --- | --- | --- |
 | Activa · pendiente ACK | Activa | Pendiente |
-| Activa | Activa | Reconocida o no requiere ACK |
+| Activa | Activa | Reconocida o sin ACK |
 | Retornada · pendiente ACK | Inactiva | Pendiente |
-| Cerrada | Inactiva | Reconocida o no requiere ACK |
+| Cerrada | Inactiva | Reconocida o sin ACK |
 
-ACK registra fecha, operador y comentario; no escribe un bit al PLC, no cambia el valor de la variable y no elimina la condición. Se admiten ACK individual, selección múltiple y ACK de las filas visibles. Una repetición del ACK es idempotente: no añade otro evento. Las ocurrencias guardan mensaje/categoría/prioridad/variable de su configuración original. El visor resuelve los textos de alarma y categoría a partir de su identificador y la definición actual en el idioma del runtime; si la definición ya no existe, usa el respaldo guardado. La presentación puede cambiar con las traducciones, mientras las fechas y transiciones históricas se conservan.
+**Condiciones.** Digitales: true/false. Numéricas: high (≥), low (≤), igual y distinto. High retorna por debajo de umbral − histéresis y low por encima de umbral + histéresis; igual y distinto no usan histéresis, así que para flotantes conviene high/low.
 
-Las condiciones digitales son true/false. Las numéricas son high (≥), low (≤), igual y distinto. En high se activa al alcanzar el umbral y retorna por debajo de umbral menos histéresis. En low se activa al bajar al umbral y retorna por encima de umbral más histéresis. Igual/distinto comparan exactamente y no utilizan histéresis. Para flotantes suele ser preferible high/low.
+**Retardos.** La condición debe mantenerse el tiempo configurado. Una lectura bad o uncertain cancela los retardos pendientes y **conserva** el estado de las alarmas activas: perder la comunicación no es un retorno del proceso.
 
-El retardo exige que la condición se mantenga durante el tiempo configurado; el temporizador utiliza reloj monotónico. Una lectura bad/uncertain cancela retardos pendientes y conserva el estado de una alarma activa: pérdida de comunicación no se interpreta como retorno del proceso. Al recuperar calidad good se evalúa de nuevo y comienza el retardo correspondiente. Los estados activos y ACK se recuperan desde SQLite al reiniciar; las variables enlazadas comienzan uncertain hasta la primera lectura válida. Los retardos pendientes no se recuperan.
+**ACK.** Guarda fecha, operador y comentario. No escribe al PLC ni cambia la condición. Se puede reconocer una, varias o todas las visibles, y repetir un ACK no añade eventos.
 
-Eliminar o deshabilitar una definición no borra ocurrencias antiguas. Si una ocurrencia quedó activa al retirar su definición, se conserva como registro pendiente y puede reconocerse; no se inventa una fecha de retorno. El estado de proceso de esa ocurrencia no se reevaluará mientras la definición esté ausente/deshabilitada. Reactivarla con el mismo ID reanuda evaluación. Para conservar trazabilidad, no reutilizar IDs para alarmas de otro proceso.
+**Reinicio.** Los estados activos y los ACK se recuperan de SQLite; los retardos pendientes no. Eliminar o deshabilitar una alarma no borra sus ocurrencias: las activas se pueden seguir reconociendo y no se inventa su retorno.
 
-El visor muestra Pendientes, Activas, Histórico y Eventos. En histórico se filtra por fecha de **entrada**; en eventos, por fecha del **evento**. Las horas se presentan en zona local, con milisegundos, y se exportan como ISO 8601 UTC. La columna Calidad representa la calidad actual de la variable si el visor está conectado al runtime; no es la calidad histórica de la ocurrencia. Las fechas seleccionadas deben ser anteriores/posteriores en ese orden. Las consultas se limitan a 2000 filas, con indicación del límite; acotar el periodo para acceder a otros datos.
+**Visor.** Pestañas Pendientes, Activas, Histórico y Eventos. El histórico filtra por fecha de entrada y los eventos por fecha del evento. Las horas se muestran en hora local y se exportan en ISO 8601 UTC. Cada consulta devuelve como máximo 2000 filas. La columna Calidad es la calidad actual de la variable, no la de la ocurrencia.
 
-![Visor de alarmas](runtime-alarms.png)
+![Visor de alarmas](img/alarms.png)
 
-## Adquisición y registro
+## Registro
 
-El ciclo de conexión determina la frecuencia objetivo de lectura del equipo. El intervalo de registro determina cuándo se guarda una muestra de la última lectura disponible. Registrar cada 100 ms una variable que se adquiere cada 1000 ms no produce diez lecturas nuevas del PLC: repite el último valor, conservando su hora de adquisición para distinguirlas.
+El ciclo de la conexión decide cada cuánto se lee el PLC. El intervalo del registro decide cada cuánto se guarda la última lectura disponible. Registrar cada 100 ms una variable que se lee cada 1000 ms repite el mismo valor con su hora de adquisición original; no genera lecturas nuevas.
 
-Cada fichero tiene un ciclo independiente de los demás registros y de las conexiones PLC. En cada ciclo se guarda la última muestra disponible de todas sus variables con la misma fecha de registro, incluyendo su calidad. Registrar no depende de que haya una gráfica visible. La calidad se conserva en cada ciclo; no se promete capturar transiciones más breves que el intervalo de registro.
+Cada fichero de registro tiene su propio ciclo y guarda en cada uno todas sus variables con valor, calidad, hora de registro y hora de recepción (la del Runtime, no la del PLC). No interpola ni depende de que haya una tendencia abierta, y no garantiza capturar cambios más breves que su intervalo.
 
-Cada muestra tiene variable, fecha de registro, fecha de recepción de la lectura, valor JSON, valor numérico opcional y calidad. La hora de recepción no es un timestamp generado en el PLC. El registro no inventa valores ni interpola muestras al escribir SQLite.
+## Tendencias
 
-## Gráficas en Runtime
+- **Tiempo real** toma muestras cada 200 ms y guarda en memoria hasta 50000 por variable. Ese búfer se pierde al cambiar de pantalla.
+- **Histórico** consulta los SQLite de los días elegidos.
 
-El selector distingue **Tiempo real** y **Histórico**. Tiempo real toma muestras del runtime cada 200 ms y mantiene un buffer por control de hasta 50000 muestras por variable, limitado también por su ventana temporal. Este buffer es temporal: cambiar de pantalla recrea el control. No sustituye el registro persistente. Histórico consulta los SQLite de los días elegidos, independientemente de la pantalla que estaba abierta cuando se grabaron.
+**Seguir** desplaza la ventana de tiempo; desactivado, permite elegir inicio y fin. El cursor muestra la muestra más cercana de cada curva con su calidad. La calidad mala corta la curva y las variables bool se dibujan escalonadas.
 
-**Seguir** desplaza la ventana. Desactivarlo permite elegir inicio y fin; en modo histórico se pueden seleccionar días anteriores. El zoom fija el intervalo conservando la fuente seleccionada. Las casillas permiten ocultar curvas y ejes; ocultar un eje no oculta sus curvas. Estos ajustes de operación no modifican el proyecto.
+Las consultas grandes se reducen a unos 5000 puntos por curva conservando extremos, primer y último dato y huecos de calidad. El CSV del histórico exporta los datos originales, hasta 100000 registros; en tiempo real exporta el búfer.
 
-El cursor muestra hora y muestra más cercana de cada curva visible, con calidad. Las variables bool usan una línea escalonada. La calidad mala corta la curva; no se une una lectura buena con otra atravesando el fallo. Una única muestra se representa con un punto.
+![Tendencias](img/trends.png)
 
-Las consultas grandes se reducen por intervalos preservando primer/último dato, extremos y una muestra de mala calidad por intervalo, hasta aproximadamente 5000 puntos por curva. Esta reducción visual conserva picos y huecos representativos, pero no representa todas las transiciones originales. En modo Histórico, CSV exporta datos originales ordenados temporalmente, incluyendo calidad y ambas fechas; el límite es 100000 registros por exportación y se rechazan rangos que lo superen. No se exporta silenciosamente una versión reducida. En Tiempo real, CSV exporta las muestras del buffer mostrado.
-
-![Tendencias con dos ejes](runtime-trends.png)
-
-## Persistencia y servicio
-
-Las definiciones están en historian.json; los datos se guardan fuera de los JSON:
+## Almacenamiento
 
 ```text
 runtime/
-  scada.sqlite3                  # alarmas, eventos y auditoría
-  records/
-    process/
-      2026-10-01.sqlite3         # variables del registro process
-      2026-10-02.sqlite3
-    temperatures/
-      2026-10-02.sqlite3         # otro registro, con su propia frecuencia
+  scada.sqlite3                # alarmas, eventos y auditoría
+  records/<registro>/
+    2026-10-01.sqlite3         # un archivo por registro y día UTC
 ```
 
-Cada registro genera un SQLite por día **UTC** cuando tiene variables y recibe muestras. No se crean días vacíos ni registros sin variables. Al cambiar de día se confirma y cierra el fichero anterior y se abre el nuevo. El esquema nuevo se publica antes de permitir consultas. La fecha de adquisición original se conserva aunque la escritura pertenezca a otro día. Los visores presentan hora local; CSV usa UTC.
+- Solo se crean archivos para días con muestras. Las consultas recorren los días necesarios e incluyen los registros retirados: quitar una variable de un registro no borra su pasado.
+- SQLite en modo WAL con `synchronous FULL`; los lotes se confirman cada 200 ms y el ACK antes de responder al operador. Una caída abrupta puede perder el último lote.
+- Un único escritor por proyecto: un bloqueo de archivo impide arrancar dos Runtime sobre la misma carpeta.
+- Cola llena, error SQLite o disco lleno aparecen en la barra de estado. Tras un fallo de archivo, corrige la causa y reinicia Runtime.
+- La retención se aplica al arrancar y cada hora: borra los días caducados y las ocurrencias cerradas antiguas, nunca las activas o pendientes de ACK. Borrar datos no reduce el tamaño del archivo; no ejecutes VACUUM durante la adquisición.
+- Usa almacenamiento local. Para copiar en caliente, usa **Herramientas → Copia de seguridad de los registros**: copiar solo el `.sqlite3` puede perder lo que aún está en el WAL.
 
-Las consultas recorren los días del intervalo solicitado y combinan resultados por variable. La reducción visual tiene un presupuesto compartido entre días. Un catálogo persistente de fuentes evita abrir ficheros de otros registros que no contienen la variable. También se leen los históricos anteriores en scada.sqlite3 y los ficheros de registros retirados: mover o dejar de registrar una variable no borra su pasado. La división diaria facilita retención y copias; los índices por variable/fecha siguen siendo necesarios para consultar eficientemente.
+## Auditoría
 
-Se usa user_version=1, WAL y synchronous FULL. El archivo central conserva las ocurrencias de alarma y sus ACK entre reinicios; no se rota diariamente para mantener su estado persistente. Los archivos diarios usan el mismo esquema de repositorio, con tablas de alarma vacías.
-
-Un único servicio es propietario del escritor SQLite y del motor de alarmas. Los trabajadores PLC solo le entregan muestras a una cola de capacidad 20000. Las consultas y exportaciones corren en trabajadores de lectura separados de Qt. Un bloqueo de archivo nativo Windows/Linux impide arrancar dos escritores para el mismo proyecto y se libera al terminar o caer el proceso.
-
-Se confirman lotes aproximadamente cada 200 ms. ACK se confirma antes de responder al operador. Al detener se terminan adquisiciones y se vacía la cola antes de cerrar el archivo. Una caída abrupta puede perder el lote aún no confirmado; no se promete registro sin pérdidas ante fallo de alimentación. Cola llena, error SQLite o disco lleno se muestran en la barra de estado de Runtime; no se confunden con una lectura PLC fallida. Tras un fallo de archivo debe detenerse, corregirse la causa y reiniciarse el runtime.
-
-La retención se ejecuta al arrancar y después cada hora. Elimina ficheros diarios cuyo día completo ha superado la retención, sin tocar el día abierto; si un lector o copia lo mantiene ocupado en Windows, reintenta en la siguiente pasada. En el archivo central elimina muestras antiguas del formato anterior y ocurrencias retornadas y reconocidas (o sin necesidad de ACK) que superen la retención desde su retorno, junto con sus eventos. Las alarmas activas y pendientes de ACK no se eliminan por retención. SQLite reutiliza páginas liberadas; borrar datos no reduce necesariamente el tamaño físico del archivo. No ejecutar VACUUM sobre el archivo de producción durante adquisición.
-
-La auditoría registra inicio/parada del runtime, inicios y cierres de sesión, intentos fallidos, solicitudes de escritura con el usuario y su origen (HMI, OPC UA o script), órdenes denegadas y su envío/fallo. Con usuarios activados ([Usuarios y roles](PROJECT_FORMAT.md#usuarios-y-roles)), el ACK queda a nombre del usuario de la sesión; sin ellos, el nombre de operador es texto libre y no acredita identidad. La auditoría inmutable y la firma de registros siguen pendientes.
-
-## Límites y ampliaciones
-
-Aún faltan redundancia, shelving/mantenimiento de alarmas, ACK asociado a PLC, tipos/arrays ampliados, expresiones, un gestor de recetas en el SCADA (el ejemplo de la cervecería las gestiona en el PLC) e informes. Persistencia y motor están separados de Qt para evolucionar a un runtime como servicio. No se ha validado carga industrial, equipos físicos ni todas las plataformas del workflow remoto.
-
-SQLite WAL debe usarse en almacenamiento local. Copia SQLite permite respaldar durante ejecución; copiar únicamente el fichero .sqlite3 puede omitir transacciones confirmadas que estén en el archivo WAL. Los JSON del proyecto no contienen datos históricos.
-
-## Referencias consultadas
-
-- [WinCC Unified: alarm logging](https://docs.tia.siemens.cloud/r/en-us/v20/configuring-alarms-rt-unified/logging-alarms-rt-unified/basics-of-alarm-logging-rt-unified): clasificación, eventos y marcas UTC.
-- [WinCC: estados de alarma](https://docs.tia.siemens.cloud/r/en-us/v20/working-with-alarms-basic-panels-panels-comfort-panels-rt-advanced-rt-professional/principles-basic-panels-panels-comfort-panels-rt-advanced-rt-professional/alarm-states-basic-panels-panels-comfort-panels-rt-advanced-rt-professional): condición y reconocimiento.
-- [SQLite WAL](https://www.sqlite.org/wal.html): concurrencia de lectura/escritura y requisitos de almacenamiento local.
-- [Qt Charts: QDateTimeAxis](https://doc.qt.io/qt-6/qdatetimeaxis-qtcharts.html): eje temporal con datos en milisegundos.
-
-## Compatibilidad
-
-Los proyectos antiguos con registros por variable se convierten en memoria a ficheros agrupados por intervalo. Se guardan en el nuevo formato al guardar el proyecto. El modelo nuevo registra siempre de forma cíclica; no conserva los modos antiguos por cambio/banda muerta como opciones nuevas. Los SQLite anteriores no se reescriben ni se eliminan durante esa conversión.
-
-- [Siemens: data logging](https://docs.tia.siemens.cloud/r/en-us/v21/configuring-tags-rt-unified/logging-tags-rt-unified/basics-rt-unified/basics-of-data-logging-rt-unified): registro de variables y controles de visualización.
-
-## Scripts Python y tareas
-
-Consulta el [manual completo de scripts](SCRIPTS.md) para todas las funciones y propiedades de `ctx`, ejemplos, errores y límites de lectura y escritura. Esta sección resume su uso en operación.
-
-`ctx.language` devuelve el idioma actual del proyecto. `ctx.set_language("en")` solicita un cambio a un idioma declarado; se aplica al terminar correctamente el script. Véase [Idiomas del proyecto](STUDIO.md).
-
-En Studio, Scripts y tareas reúne el editor Python, los eventos de inicio, las tareas cíclicas y las últimas ejecuciones. El editor tiene resaltado, números de línea, sangrado automático y comprobación de sintaxis. Las fuentes se guardan como `scripts/<nombre>.py`, editables desde VS Code. El botón Comprobar valida sin ejecutar.
-
-La lista de scripts admite carpetas y subcarpetas (menú contextual: Nueva carpeta…, Renombrar carpeta…, Eliminar carpeta). Un script nuevo se crea en la carpeta seleccionada; para moverlo, arrástralo a otra carpeta o usa Mover a carpeta. Eliminar una carpeta sube su contenido un nivel y no borra ningún script. Las carpetas solo organizan Studio: los archivos siguen en `scripts/` y las referencias no cambian al moverlos. Los selectores de script de botones, eventos y tareas muestran la ruta de carpeta. Renombrar… (o F2) cambia el nombre y actualiza botones, listas de acciones, eventos de inicio, aperturas de pantalla y tareas; si otro script menciona el nombre antiguo como texto, Studio lo avisa para revisarlo a mano. Un script en uso no se puede eliminar: el aviso indica dónde se usa.
-
-### Eventos
-
-- Eventos de inicio… selecciona los scripts que se ejecutan una vez al arrancar el runtime. Las comunicaciones ya se han iniciado, pero puede no haber todavía una lectura válida del PLC.
-- Sin seleccionar objetos, Al abrir pantalla… configura los scripts de ese documento. Se ejecutan al abrirlo en una ventana o contenedor y al navegar a él. Volver a enfocar una emergente ya abierta no repite el evento. La apertura de un layout dispara primero su evento y después los de sus pantallas iniciales.
-- Un botón puede usar Acción → Ejecutar script. Recibe como contexto la pantalla donde se pulsó, incluida una pantalla alojada en un contenedor.
-- Un botón con Acción → Lista de acciones puede incluir uno o varios scripts entre otras acciones. La lista no espera a que el script termine: las acciones siguientes se envían enseguida y las escrituras del script llegan cuando termina. Si el orden importa, haz esas escrituras dentro del propio script.
-- Tareas cíclicas permite nombre, script, periodo en milisegundos y activación. El primer disparo llega tras el periodo configurado, no al arrancar. Usa un evento de inicio si también necesitas ejecución inmediata.
-
-Studio no ejecuta scripts de proceso. El runtime utiliza la copia de fuentes y configuración tomada al arrancar. Reinícialo para ejecutar cambios nuevos. El modo headless ejecuta inicio y tareas; no genera aperturas de pantalla.
-
-### API
-
-```python
-# Instantánea coherente tomada al empezar esta ejecución.
-if ctx.quality("Pump1.running") == "good":
-    running = ctx.read("Pump1.running")
-    print(f"Bomba 1: {running}")
-
-# Estado por script, compartido por sus distintos eventos, durante este runtime.
-ctx.state["executions"] = ctx.state.get("executions", 0) + 1
-print(ctx.event, ctx.screen, ctx.state["executions"])
-```
-
-`ctx.read(nombre)` devuelve el valor y rechaza lecturas cuya calidad no sea good. `ctx.quality(nombre)` devuelve good, uncertain o bad. Ambas rechazan variables inexistentes. `ctx.event` es startup, screen_open, button o task:<id>. `ctx.screen` está vacío para inicio y tareas.
-
-`ctx.write(nombre, valor)` solicita una escritura. Ejemplo: `ctx.write("Pump1.setpoint", 50.0)`. Se recogen hasta 1000 solicitudes y se validan al terminar correctamente el script. Si hay una excepción, sus solicitudes y cambios de estado se descartan. Se comprueban tipo, acceso de escritura y calidad de la variable enlazada antes de aplicar. Las escrituras PLC se envían por la cola habitual de su conexión; el retorno del script no confirma que el PLC las haya aceptado. Consultar el diagnóstico de comunicación y la lectura posterior. Las escrituras de un script no constituyen una transacción entre PLC distintos.
-
-`ctx.state` debe contener datos JSON serializables y se reinicia al detener/iniciar el runtime. `print()` y las excepciones aparecen en Ejecuciones (hasta 500 resultados, salida limitada a los últimos 16000 caracteres por ejecución). No es un registro persistente de auditoría de scripts.
-
-### Ejecución y límites
-
-Los eventos y tareas se serializan en un servicio independiente de Qt y de la adquisición. Cada ejecución usa un proceso Python nuevo. El límite configurable es de 0,1 a 300 segundos, por defecto 10. Al excederlo se termina ese proceso y se registra un error; el servicio continúa. La parada del runtime cancela la ejecución activa y descarta eventos pendientes. La cola admite 128 eventos; al llenarse se registra el descarte.
-
-Los scripts de inicio se ejecutan en el orden configurado antes de atender aperturas de pantalla, botones o tareas. Los primeros plazos de las tareas comienzan después de terminar esa inicialización. Los fallos de un script se registran y el servicio continúa con el siguiente.
-
-Las tareas no se solapan ni acumulan recuperaciones de periodos perdidos: el siguiente plazo se calcula desde el final de la ejecución. Son tareas periódicas de aplicación, no planificación de tiempo real ni calendarios diarios/semanales. Un script lento retrasa otros scripts, pero no bloquea Qt ni la adquisición. La captura normal de salida conserva un búfer limitado durante la ejecución, sin acumular todo el texto impreso.
-
-Los scripts son código Python de confianza del proyecto: tienen los permisos del usuario, pueden importar las bibliotecas instaladas y trabajar con archivos. El proceso separado permite cancelación; no es una sandbox de seguridad ni limita toda la memoria o los subprocesos que el propio script decida crear. El directorio de trabajo es la carpeta del proyecto. La API ctx no expone widgets ni clientes PLC. Para datos propios usa `runtime/`, excluido de las versiones Git.
-
-`examples/plant` incluye inicio, apertura de pantalla y una tarea de calidad de comunicación cada cinco segundos. Los scripts de este ejemplo no escriben al PLC ni fabrican valores. Otros ejemplos incluyen tareas sobre variables internas; no se sustituyen lecturas PLC por datos locales.
-
-### Archivos
-
-```json
-{
-  "startup": ["startup"],
-  "timeout_seconds": 10,
-  "tasks": [
-    {"id":"quality","script":"check_quality","interval_ms":5000,"enabled":true}
-  ]
-}
-```
-
-Se guarda en `automation.json`. Una pantalla añade `"on_open":["screen_open"]`. Un botón añade `"action":"script", "script":"nombre"`. Los proyectos anteriores cargan con configuración vacía. Las referencias y sintaxis se validan al guardar y al iniciar el runtime.
+Se registran el arranque y la parada de Runtime, inicios y cierres de sesión, intentos fallidos, cada orden con su usuario y su origen (HMI, OPC UA o script), las órdenes denegadas y si se enviaron o fallaron. La auditoría todavía no es inmutable ni está firmada.

@@ -1,122 +1,122 @@
 # Guía de Studio
 
-Studio edita el proyecto; Runtime lo opera en otra ventana sobre una copia tomada al arrancar. Puedes seguir diseñando mientras funciona, pero debes reiniciar Runtime para aplicar cambios. El lienzo de Studio muestra marcadores y pilotos neutros, sin valores de proceso.
+Studio edita el proyecto; Runtime lo opera en otra ventana sobre una copia tomada al arrancar. Puedes seguir diseñando mientras Runtime funciona, pero los cambios se aplican al reiniciarlo. El lienzo de Studio muestra marcadores neutros, nunca valores de proceso.
 
 ## Crear y organizar
 
-Sin argumentos, abSCADA muestra proyectos recientes y ejemplos. Los ejemplos abiertos desde esa ventana se copian a Documentos del usuario; puedes arrancar también su PLC simulado. **Archivo → Nuevo proyecto…** crea una carpeta con un manifiesto `.abscada` y sus documentos JSON.
+Sin argumentos, abSCADA muestra proyectos recientes y ejemplos. **Archivo → Nuevo proyecto…** crea una carpeta con un manifiesto `.abscada` y sus documentos JSON.
 
-- Clic derecho en **Proyecto → Pantallas**: nueva pantalla, nueva carpeta, renombrar, duplicar, eliminar o elegir **Usar como pantalla de inicio**. Arrastra pantallas para moverlas entre carpetas.
-- **Librerías → Proyecto**: objetos reutilizables y sus carpetas, con el mismo menú contextual.
-- **Elementos**: objetos de la pantalla abierta en orden de dibujo, del fondo al frente. Permite seleccionar los que están solapados.
+- Clic derecho en **Proyecto → Pantallas**: nueva pantalla o carpeta, renombrar, duplicar, eliminar y **Usar como pantalla de inicio**. Arrastra pantallas entre carpetas.
+- **Librerías → Proyecto**: objetos reutilizables, con el mismo menú.
+- **Elementos**: objetos de la pantalla abierta, del fondo al frente. Sirve para seleccionar objetos solapados, bloquearlos, ocultarlos solo en diseño, describirlos y agruparlos.
 
-Una composición o layout es una pantalla normal con contenedores. No hay un tipo separado de documento ni un botón «+ Crear».
+**Proyecto → Ajustes del proyecto…** reúne nombre, pantalla inicial, idiomas, tamaño propuesto para pantallas nuevas, escalado de las existentes, monitores y retención.
 
-**Proyecto → Ajustes del proyecto…** reúne nombre, pantalla inicial, idiomas, dimensiones propuestas para pantallas nuevas, escalado de pantallas existentes, operación en monitores y retención. Cambiar las dimensiones propuestas no redimensiona automáticamente las pantallas existentes.
+## Dibujar
 
-## Dibujar y editar
-
-Las herramientas de dibujo están debajo del explorador y pueden plegarse o filtrarse. Inserta con clic o arrastra una herramienta al lienzo. El inspector siempre muestra propiedades de pantalla u objeto según la selección.
+Inserta con clic o arrastra una herramienta al lienzo. El inspector muestra las propiedades de la pantalla o de la selección.
 
 | Gesto | Resultado |
 | --- | --- |
-| Primer clic en un objeto | Seleccionar sin mover |
-| Arrastrar un objeto ya seleccionado | Mover |
-| Ctrl+clic o rectángulo de selección | Selección múltiple |
-| Ocho tiradores | Redimensionar controles y formas |
+| Clic en un objeto | Seleccionar sin mover |
+| Arrastrar un objeto seleccionado | Mover |
+| Ctrl+clic o rectángulo | Selección múltiple |
+| Tiradores | Redimensionar |
 | Flechas / Shift+flechas | Mover 1 px / un paso de cuadrícula |
-| Ctrl+rueda / botón central | Zoom / desplazar lienzo |
-| Esc o clic en el fondo | Volver a propiedades de pantalla |
+| Ctrl+rueda / botón central | Zoom / desplazar |
+| Esc o clic en el fondo | Volver a las propiedades de pantalla |
 
-**Orden**, **Alinear**, **Duplicar**, **Eliminar**, copiar/cortar/pegar y deshacer/rehacer operan sobre la selección. Los atajos del lienzo no sustituyen la edición de texto dentro de los campos. La selección múltiple muestra propiedades comunes; un valor vacío por diferencias no sobrescribe objetos hasta que lo edites.
+Líneas: clic en origen y destino. Polilíneas y tuberías: clic por vértice; Enter, doble clic o botón derecho termina, Retroceso quita el último punto y Shift restringe a horizontal/vertical. Las tuberías conservan tramos ortogonales y no crean enlaces de proceso.
 
-En **Elementos**, el menú contextual permite bloquear movimiento, ocultar solo en diseño, añadir descripción, agrupar y desagrupar. Los objetos ocultos en diseño siguen disponibles en la lista y aparecen en Runtime. Los grupos son planos; duplicarlos crea un grupo independiente.
+**Orden**, **Alinear**, **Duplicar**, copiar/pegar y deshacer/rehacer actúan sobre la selección. Con selección múltiple, el inspector muestra las propiedades comunes; un campo vacío no sobrescribe nada hasta que lo editas. **Orden → Copiar formato / Pegar formato** repite un estilo sin tocar variables ni acciones.
 
-| Herramienta | Dibujo |
-| --- | --- |
-| Línea | Clic en origen y destino |
-| Polilínea / Tubería | Clic por vértice; Enter, doble clic o botón derecho termina |
-| Rectángulo / Elipse | Insertar y ajustar con tiradores |
-
-Esc cancela un trazado incompleto; Retroceso elimina el último punto. Shift restringe líneas y polilíneas a horizontal/vertical. Las tuberías conservan tramos ortogonales al mover vértices. El inspector permite editar puntos, grosor, estilo y flechas; las tuberías no crean enlaces de proceso.
-
-Los colores son explícitos en cada objeto y estado: `#RRGGBB` o `#AARRGGBB` (alfa al principio). Pulsa la muestra para abrir el selector RGB/alfa. No hay paleta compartida. **Orden → Copiar formato / Pegar formato** y la selección múltiple permiten repetir un estilo sin modificar variables ni acciones. Al abrir proyectos antiguos, sus referencias de paleta se convierten a HEX; el siguiente guardado retira la paleta.
-
-![Composición de pantallas](editor-layout.png)
+Los colores son explícitos en cada objeto y estado: `#RRGGBB` o `#AARRGGBB`. No hay paleta compartida; los proyectos antiguos con paleta se convierten a HEX al abrirlos.
 
 ## Variables y conexiones
 
-**Variables** y su pestaña **Tipos de datos** permiten definir primitivas y estructuras anidadas. Los formularios conservan el borrador si falla la validación. Los booleanos usan Falso/Verdadero; los números admiten coma o punto decimal, sin separadores de miles ni formatos mezclados.
+**Variables** y su pestaña **Tipos de datos** definen primitivas (`bool`, `int`, `float`, `string`) y estructuras anidadas. Cada hoja tiene valor inicial, acceso, enlace y registro propios. **Enlace…** elige conexión y dirección con un formulario propio de cada protocolo. **Duplicar** crea la copia sin enlaces para que asignes sus direcciones.
 
-Cada hoja tiene valor inicial, acceso y enlace propios. **Enlace…** elige conexión y dirección con un formulario específico del protocolo. El DB pertenece a la variable S7; una conexión puede usar varios DB. **Duplicar** crea la variable sin enlaces PLC para que revises y asignes las direcciones de la copia.
+En **Conexiones**, **Probar conexión** abre una conexión de solo lectura con el borrador y **Leer variable** muestra valor, calidad y hora de una dirección. Ninguna de las dos envía órdenes. Direcciones y límites: [PROTOCOLS.md](PROTOCOLS.md).
 
-En **Conexiones**, **Probar conexión** usa el borrador en una conexión de lectura independiente. **Leer variable** comprueba una dirección y muestra valor, calidad y hora. Estas pruebas no envían órdenes. Consulta [PROTOCOLS.md](PROTOCOLS.md) para direcciones y límites.
+## Propiedades dinámicas
 
-## Propiedades dinámicas y prueba visual
+**Propiedades dinámicas** cambia visibilidad, habilitación y apariencia según variables, sin scripts. Cada condición tiene variable, operador, valor y comportamiento sin calidad válida.
 
-**Propiedades dinámicas** configura visibilidad, habilitación y apariencia según variables, sin scripts. Cada condición tiene variable, operador, valor y comportamiento sin calidad válida. Booleanos y textos admiten igual/distinto; números también comparaciones ordenadas.
+La apariencia se aplica en este orden: propiedades del objeto, Normal, primer estado que se cumple, Sin comunicación y Deshabilitado. Los objetos invisibles no reciben clics; los deshabilitados pueden mostrar un motivo.
 
-La apariencia se aplica en este orden: propiedades del objeto, Normal, primer estado coincidente, Sin comunicación y Deshabilitado. Un campo vacío conserva la propiedad anterior. Los pilotos tienen colores para apagado, encendido y sin comunicación. Los objetos invisibles no reciben clics; los deshabilitados pueden mostrar un motivo de bloqueo.
+**Herramientas → Prueba visual…** permite introducir valores y calidad a mano para revisar el resultado. No conecta PLC, no ejecuta scripts ni escribe históricos.
 
-**Herramientas → Prueba visual…** permite introducir valores y calidad para revisar el resultado. No crea Runtime, no conecta PLC, no ejecuta scripts ni escribe históricos; los visores se muestran como marcadores. Los botones de esa ventana no operan el proceso.
+Ejemplo, dos botones superpuestos MARCHA/PARO sobre la misma variable bool: MARCHA escribe `true` y es visible cuando la variable es falsa; PARO escribe `false` y es visible cuando es verdadera.
 
-Para dos botones superpuestos MARCHA/PARO, usa la misma variable bool y posiciones. MARCHA escribe `true` y es visible cuando la variable es falsa; PARO escribe `false` y es visible cuando es verdadera. Revisa ambos estados y mala calidad en Prueba visual.
+**Lista de textos → Configurar textos…** relaciona valores exactos con rótulos. Con lectura válida sin coincidencia muestra el texto por defecto; con calidad mala, `—`.
 
-## Listas, gráficas y alarmas
+## Botones
 
-**Lista de textos → Configurar textos…** relaciona valores exactos con rótulos. Acepta bool, int, float y string. Para bool sirven false/true o 0/1; no se admiten valores equivalentes duplicados. El texto por defecto se usa si hay lectura válida sin coincidencia; mala calidad muestra `—`.
+Cada botón tiene una acción: escribir un valor, alternar, pulsador momentáneo, pulsar/soltar, abrir pantalla, abrir emergente o faceplate emergente, cerrar emergente, ejecutar script, cambiar idioma o **Lista de acciones**.
 
-Añade **Tendencia** o **Alarmas** a la pantalla y pulsa **Configurar…**, o haz doble clic. Studio crea la configuración al insertar el control y permite reutilizar otra. No hay sección Gráficas ni pestaña Visores. **Alarmas** define categorías y condiciones; **Registros** define qué variables se archivan y con qué frecuencia. Mostrar una gráfica no activa registro. Véase [OPERATIONS.md](OPERATIONS.md).
+**Lista de acciones** hace varias cosas con un clic. **Editar acciones…** permite añadir, quitar y reordenar. Abrir o cerrar pantallas solo puede ser la última acción y los pulsadores momentáneos no admiten lista. Orden de envío y fallos: [PROJECT_FORMAT.md](PROJECT_FORMAT.md#botones-y-acciones).
+
+**Abrir faceplate emergente** abre un objeto de librería en su propia ventana, una por equipo. Dentro de una plantilla, el botón puede reenviar sus parámetros `$nombre`, así cada símbolo abre la ventana de su equipo.
 
 ## Layouts, ventanas y monitores
 
+Un layout es una pantalla normal con contenedores:
+
 1. Crea pantallas de cabecera, menú y contenido.
-2. En una pantalla de composición, inserta **Contenedor de pantalla** y asigna ID, tamaño y pantalla inicial a cada zona.
-3. En los botones de navegación, elige **Abrir pantalla** y **Abrir en**: nombre de contenedor, Zona actual o Ventana completa.
-4. Marca la composición como pantalla de inicio desde el árbol y guarda.
+2. En la pantalla de composición, inserta **Contenedor de pantalla** y asigna a cada zona ID, tamaño y pantalla inicial.
+3. En los botones de navegación, elige **Abrir pantalla** y **Abrir en**: un contenedor, Zona actual o Ventana completa.
+4. Marca la composición como pantalla de inicio.
 
-Los contenedores comparten adquisición, alarmas y registros y navegan por separado. Se admite un nivel: una pantalla alojada no puede contener otros contenedores. Al navegar se destruyen los visores de la zona sustituida. Ajusta las proporciones del contenido a la zona.
+Hay un solo nivel: una pantalla alojada no puede tener contenedores. Todas las zonas y ventanas comparten adquisición, alarmas y registros.
 
-**Lista de acciones** permite que un botón haga varias cosas con un clic: **Editar acciones…** abre una lista donde añadir, eliminar y reordenar acciones (escribir valor, alternar, ejecutar script, cambiar idioma, abrir pantalla o emergente, cerrar emergente) y configurar cada una. Al elegir esta acción en un botón que ya tenía otra, esa acción pasa a ser la primera de la lista. Abrir o cerrar pantallas solo puede ser la última acción; los pulsadores momentáneos no forman parte de una lista. Las opciones de monitor de una emergente dentro de la lista se editan en Propiedades avanzadas. Véase [PROJECT_FORMAT.md](PROJECT_FORMAT.md) para el orden de envío y los fallos.
+**Proyecto → Ajustes del proyecto… → Operación** configura monitor, modo, escalado y ventanas que se abren al arrancar. Las emergentes también admiten monitor y «siempre encima». Runtime recuerda posiciones por proyecto y puesto.
 
-**Abrir emergente** abre una pantalla en otra ventana; **Cerrar emergente** la cierra sin detener Runtime. Solo hay una ventana por pantalla de apertura; volver a abrirla la trae al frente. **Abrir faceplate emergente** abre un objeto de librería por combinación de plantilla y parámetros, permitiendo una ventana por equipo. Dentro de una plantilla puedes reenviar parámetros `$nombre`.
+**Abrir runtime** arranca en la pantalla seleccionada; `--runtime` usa la de inicio. **Reiniciar con cambios** aplica lo guardado, interrumpiendo la sesión.
 
-**Proyecto → Ajustes del proyecto… → Operación** configura monitor, modo, escalado y ventanas adicionales al arrancar. Las emergentes también tienen opciones de monitor y «siempre encima». Runtime recuerda posiciones por proyecto y puesto; si un monitor no existe, usa uno disponible. **Olvidar posiciones guardadas** borra esa memoria.
+## Alarmas
 
-**Abrir runtime** ejecuta la pantalla seleccionada en Studio; `--runtime` utiliza la pantalla de inicio del proyecto. Cerrar la principal cierra sus emergentes y detiene comunicaciones. Guardar mientras opera no reinicia la ejecución; **Reiniciar con cambios** solicita confirmación porque interrumpe la sesión.
+- **Alarmas → Categorías**: ID, nombre y color. Los visores filtran por categoría.
+- **Alarmas → Alarmas**: ID, mensaje, variable, categoría, condición, umbral, histéresis, prioridad (1000 es la más alta), retardos de entrada y salida, ACK obligatorio y habilitación.
+
+El comportamiento en operación está en [OPERATIONS.md](OPERATIONS.md#alarmas). No reutilices el ID de una alarma para otro proceso: su histórico se mezclaría.
+
+## Registros, tendencias y visores de alarmas
+
+**Registros** crea ficheros con ID, nombre, intervalo en milisegundos y variables. En **Variables**, el desplegable **Registro** de cada hoja asigna un fichero o Ninguno; una variable solo puede estar en un fichero. La retención se configura en días.
+
+Los controles **Tendencia** y **Alarmas** se insertan desde las herramientas de dibujo. Cada uno recibe su configuración al insertarlo; **Configurar…** o doble clic la edita, y el selector permite reutilizar otra. En una tendencia se eligen variables, colores, grosores y de 1 a 64 ejes. En un visor de alarmas, título, modo inicial, categorías, prioridad mínima, columnas y si permite ACK.
+
+Mostrar una variable en una tendencia no la registra: para ver su pasado tiene que estar en un registro.
 
 ## Librerías
 
-El árbol reúne **Proyecto** (editable), **Estándar** (solo lectura, incluida en la aplicación) y externas vinculadas. La estándar contiene símbolos SVG y objetos animados. Arrastra un objeto al lienzo o usa el selector con buscador; **Copiar al proyecto** crea una variante editable.
+El árbol reúne **Proyecto** (editable), **Estándar** (símbolos SVG y objetos animados incluidos en la aplicación, de solo lectura) y librerías externas vinculadas. Arrastra un objeto al lienzo o usa el selector; **Copiar al proyecto** crea una variante editable.
 
-Los objetos propios viven en `faceplates/`. Sus parámetros son variables primitivas bool/int/float/string y sus elementos las referencian como `$nombre`. Cada instancia asigna todos los parámetros a variables compatibles. No se admiten objetos de librería anidados ni visores dentro de sus plantillas.
+Los objetos propios viven en `faceplates/`. Sus parámetros son variables primitivas que sus elementos referencian como `$nombre`; cada instancia los asigna a variables compatibles. No admiten objetos de librería anidados ni visores.
 
-**Proyecto → Importar librería externa… → Publicar biblioteca…** genera un paquete nuevo `.abscada-library.json` con plantillas, imágenes, colores explícitos y traducciones. El exportador exige autonomía: sin variables, scripts, pantallas ni visores ocultos del proyecto de autoría. Las revisiones publicadas no se sobrescriben.
+- **Proyecto → Importar librería externa… → Publicar biblioteca…** genera un paquete `.abscada-library.json` nuevo con plantillas, imágenes y traducciones. Exige que las plantillas no dependan de variables, scripts ni pantallas del proyecto. No sobrescribe versiones publicadas.
+- **Vincular…** fija una copia del paquete con alias y huella SHA-256; funciona sin el archivo original.
+- **Actualizar desde…** comprueba la compatibilidad con todas las instancias antes de aplicar.
+- **Desvincular** exige resolver antes las instancias que lo usan.
 
-**Vincular…** fija una copia del paquete con alias y huella SHA-256; funciona sin el archivo original. **Actualizar desde…** comprueba compatibilidad antes de aplicar. Se puede deshacer y requiere guardar; un Runtime abierto conserva su versión. **Desvincular** requiere resolver las instancias que lo utilizan. La huella verifica integridad, no autoría.
-
-El ejemplo [Autoría de equipos](../examples/library_author/README.md) permite practicar publicación y actualización. El contrato técnico está en [PROJECT_FORMAT.md](PROJECT_FORMAT.md#bibliotecas-publicadas).
+La huella verifica integridad, no autoría. Formato del paquete: [PROJECT_FORMAT.md](PROJECT_FORMAT.md#librerías).
 
 ## Idiomas
 
-El idioma de Studio, el idioma de edición y el idioma del runtime son independientes. **Ayuda → Idioma / Language** cambia Studio al volver a abrirlo. **Proyecto → Ajustes del proyecto…** declara idiomas, idioma por defecto y origen del idioma inicial (proyecto, puesto o usuario).
+El idioma de Studio, el de edición y el de Runtime son independientes.
 
-El selector **Idioma de edición** de la barra superior cambia los textos mostrados y editados en el inspector y lienzo. Cada traducción vive junto al texto; una traducción ausente utiliza el idioma por defecto. Los identificadores, unidades y datos recibidos del PLC, como nombres de receta, no se traducen.
+- **Ayuda → Idioma / Language** cambia Studio al volver a abrirlo.
+- **Proyecto → Ajustes del proyecto…** declara los idiomas del proyecto, el de por defecto y de dónde sale el inicial (proyecto, puesto o usuario).
+- El selector de idioma de la barra superior cambia el idioma en que se ven y editan los textos.
 
-**Proyecto → Textos del proyecto…** reúne los textos con una columna por idioma y filtro **Sin traducir**. Los textos de librerías vinculadas y estándar son de solo lectura: modifica su origen o copia el objeto al proyecto. **Revisar el proyecto** avisa de traducciones ausentes sin impedir ejecutar.
-
-La tabla exporta e importa **CSV UTF-8 con BOM**, compatible con Excel. `path` identifica la propiedad y las otras columnas siguen los idiomas declarados y su orden. Puedes importar parte de las filas; rutas repetidas o desconocidas se rechazan y se valida todo antes de aplicar. Las filas de solo lectura deben conservarse. Reexporta tras cambiar la estructura de los estados dinámicos.
-
-Los ocho ejemplos incluyen español e inglés; la cervecería tiene botones ES/EN. El formato y el fallback se describen en [PROJECT_FORMAT.md](PROJECT_FORMAT.md#idiomas-y-textos).
+Cada traducción vive junto a su texto; si falta, se usa el idioma por defecto. **Proyecto → Textos del proyecto…** muestra todos los textos con una columna por idioma y un filtro **Sin traducir**, y exporta e importa CSV UTF-8 con BOM (compatible con Excel). Los textos de librerías vinculadas y estándar son de solo lectura. Identificadores, unidades y datos del PLC no se traducen.
 
 ## Guardar y versionar
 
-Los campos del inspector y Aceptar en diálogos modifican el proyecto en memoria. **Archivo → Guardar / Ctrl+S** guarda el conjunto, incluidos scripts y traducciones. El asterisco del título indica cambios pendientes.
+**Ctrl+S** guarda todo el proyecto, incluidos scripts y traducciones. El asterisco del título indica cambios sin guardar.
 
-El guardado valida, detecta cambios externos y bloquea guardados concurrentes. Prepara copias previas y sustituye los archivos modificados; intenta restaurar si falla una escritura. No es una transacción resistente a cortes de alimentación entre archivos. Si también falla la restauración, conserva `.abscada-recovery-*` y muestra su ruta. No borres esa carpeta antes de recuperar el trabajo. Un cierre anormal puede dejar `.abscada-save.lock`; retíralo solo tras comprobar que no hay otro guardado activo.
+El guardado valida, bloquea guardados concurrentes, rechaza sobrescribir cambios hechos por otro editor y, si falla una escritura, restaura los archivos anteriores. No es una transacción frente a cortes de alimentación. Si la restauración también falla, deja una carpeta `.abscada-recovery-*` con tu trabajo; no la borres antes de recuperarlo. Si un cierre anormal deja `.abscada-save.lock`, bórralo solo tras comprobar que no hay otro guardado activo.
 
-Si VS Code u otro editor cambia archivos, Studio rechaza sobrescribirlos. Revisa tus cambios antes de **Archivo → Recargar desde disco**; no hay fusión automática. Las imágenes se copian a `assets/` al importarlas y no se eliminan al deshacer.
+Si otro programa cambia los archivos, revisa tus cambios y usa **Archivo → Recargar desde disco**; no hay fusión automática.
 
-**Archivo → Versiones del proyecto… → Activar Git** requiere Git en PATH. Crea la versión inicial y un commit en cada guardado con cambios; no configura remoto ni hace push. El diálogo muestra las últimas 30 versiones. Si falla Git después de guardar, los archivos quedan guardados y se puede reintentar.
-
-Se versionan diseño, scripts, imágenes, cuentas, secretos y certificados. **Protege la carpeta y el repositorio**: las contraseñas de conexión son recuperables y las claves OPC UA también viajan con el proyecto. `runtime/`, temporales y cachés quedan fuera. Véase [HARDENING.md](HARDENING.md).
+**Archivo → Versiones del proyecto… → Activar Git** (requiere Git en PATH) hace un commit en cada guardado con cambios. No configura remoto ni hace push. Se versiona todo salvo `runtime/`, incluidas cuentas, contraseñas de conexión y certificados: **protege la carpeta y el repositorio** ([HARDENING.md](HARDENING.md)).

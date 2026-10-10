@@ -72,7 +72,7 @@ def test_new_project_location(tmp_path):
     assert project_files.safe_stem('a:b*c') == "a_b_c"
 
 
-@pytest.mark.parametrize("example", ["hydro", "beckhoff", "showcase", "plant", "library_author", "demo", "s7"])
+@pytest.mark.parametrize("example", ["hydro", "brewery", "beckhoff", "showcase", "demo"])
 def test_every_shipped_example_has_an_abscada_file(example):
     root, manifest = project_files.locate(ROOT / "examples" / example)
     assert manifest.endswith(".abscada")
