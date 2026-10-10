@@ -6,6 +6,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 
 ### Añadido
 - **Botones con varias acciones:** la acción «Lista de acciones» ejecuta con un clic varias acciones en orden (escribir valor, alternar, ejecutar script, cambiar idioma y, como última, abrir o cerrar pantallas). Se editan en Studio con «Editar acciones…». Antes de enviar nada se comprueban todas; las acciones no esperan al script ni a la confirmación del PLC.
+- **Carpetas de scripts:** la lista de Scripts admite carpetas y subcarpetas (crear, renombrar, eliminar subiendo su contenido, arrastrar o «Mover a carpeta»). Son organización de Studio: los archivos siguen en `scripts/` y las referencias no cambian. Los selectores de script muestran la carpeta.
+- **Renombrar scripts** desde Studio actualiza botones, listas de acciones, eventos de inicio, aperturas de pantalla y tareas, y avisa de los scripts que mencionan el nombre como texto. Eliminar un script en uso indica dónde se usa.
 
 ### Cambiado
 - **Lecturas S7 agrupadas:** cada ciclo lee en una sola petición los bytes contiguos de un DB en lugar de una petición por variable; los bits de un mismo byte se leen una vez. El tamaño de bloque se ajusta al PDU negociado. Calidad, errores, reconexión y escrituras se comportan igual que antes.

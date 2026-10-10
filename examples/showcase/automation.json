@@ -10,5 +10,17 @@
       "enabled": true
     }
   ],
-  "timeout_seconds": 10
+  "timeout_seconds": 10,
+  "folders": [
+    "Botones",
+    "Eventos",
+    "Eventos/Tareas"
+  ],
+  "script_folders": {
+    "button_event": "Botones",
+    "reset_local": "Botones",
+    "startup": "Eventos",
+    "screen_open": "Eventos",
+    "periodic": "Eventos/Tareas"
+  }
 }

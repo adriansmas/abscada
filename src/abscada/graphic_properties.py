@@ -87,8 +87,9 @@ class ScreenProperties(QWidget):
             if box.clickedButton() is go:
                 self.host.navigate('automation')
             return
+        from .script_tree import choices as script_choices
         dialog = RecordDialog(self, tr('Scripts al abrir la pantalla'), [
-            ('on_open', tr('Scripts'), 'multi', [], [(n,n) for n in project.scripts])], self.host.document())
+            ('on_open', tr('Scripts'), 'multi', [], script_choices(project, self.host.document().get('on_open', [])))], self.host.document())
         note = QLabel(tr('Marca los scripts que deben ejecutarse al abrir esta pantalla (también cuando se muestra dentro de un '
                          'contenedor). Se ejecutan por el orden de esta lista.'))
         note.setWordWrap(True); note.setObjectName('muted')

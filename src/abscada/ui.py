@@ -914,8 +914,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             if name != self.document_name and not containers(doc):
                 self.container_screen_field.addItem(name, name)
         self.container_screen_field.setCurrentIndex(max(0, self.container_screen_field.findData(e.get('screen', ''))))
-        self.script_field.clear(); self.script_field.addItems(list(self.project.scripts))
-        self.script_field.setCurrentText(e.get('script', ''))
+        from .script_tree import choices as script_choices
+        self.script_field.clear()
+        for name, text in script_choices(self.project): self.script_field.addItem(text, name)
+        self.script_field.setCurrentIndex(max(0, self.script_field.findData(e.get('script', ''))))
         self.action_group.layout().setRowVisible(self.script_field, e.get('action') == 'script')
         self.action_group.layout().setRowVisible(self.screen_field, e.get('action') in {'screen','popup'})
         self.action_group.layout().setRowVisible(self.value_field, e.get('action') == 'set')
@@ -1172,7 +1174,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 for key in ("template", "bindings", "title"):
                     e.pop(key, None)
             if e['action'] == 'script':
-                e['script'] = self.script_field.currentText()
+                e['script'] = self.script_field.currentData() or ''
                 e.pop('tag', None); e.pop('screen', None)
             else:
                 e.pop('script', None)

@@ -22,6 +22,8 @@ def validate_scripts(project):
     def references(items):
         if not isinstance(items, list) or any(not isinstance(n, str) or n not in project.scripts for n in items):
             raise ValueError(tr('Referencia a script inexistente'))
+    from .script_tree import validate as validate_folders
+    validate_folders(project)
     references(project.automation.get('startup', []))
     timeout = project.automation.get('timeout_seconds', 10)
     if type(timeout) not in (int, float) or not 0.1 <= timeout <= 300:

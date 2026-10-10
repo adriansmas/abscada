@@ -299,7 +299,7 @@ Un botón de navegación añade `"action":"screen", "screen":"history", "target_
 
 ## Automatización y versiones
 
-Las fuentes residen en scripts/<nombre>.py; automation.json define startup, timeout_seconds y tasks. Los eventos de pantalla se guardan en on_open. Ver [Scripts y tareas](OPERATIONS.md) para la API y [Guardado y versiones](STUDIO.md) para Git y el guardado conjunto.
+Las fuentes residen en scripts/<nombre>.py; automation.json define startup, timeout_seconds y tasks. Las carpetas de scripts son solo organización de Studio: `folders` lista todas las carpetas (también las vacías, rutas con `/`) y `script_folders` asocia un nombre de script a su carpeta, p. ej. `{"arranque": "Proceso/Bombas"}`; los scripts que no aparecen están en la raíz. Los archivos no se mueven y todas las referencias usan solo el nombre, que es único en el proyecto. Los eventos de pantalla se guardan en on_open. Ver [Scripts y tareas](OPERATIONS.md) para la API y [Guardado y versiones](STUDIO.md) para Git y el guardado conjunto.
 
 
 ## Usuarios y roles

@@ -1,12 +1,12 @@
 # Pendientes
 
-Lista vigente, revisada el 7 de octubre de 2026. Las funciones implementadas se describen en las guías y en [CHANGELOG.md](../CHANGELOG.md), sin repetir aquí su historial.
+Lista vigente, revisada el 10 de octubre de 2026. Las funciones implementadas se describen en las guías y en [CHANGELOG.md](../CHANGELOG.md), sin repetir aquí su historial.
 
 ## Validación y distribución
 
 - Comprobar en GitHub Actions el resultado de la revisión publicada; matriz Windows/Linux con Python 3.11/3.14.
 - Probar interfaz y protocolos en Linux y macOS con sesión gráfica real; añadir macOS a CI si se mantiene como plataforma soportada.
-- Ensayar PLC físicos S7-1200/1500, Beckhoff TwinCAT y servidor OPC UA de S7-1500.
+- Ensayar PLC físicos S7-1200/1500 (incluidas las lecturas S7 agrupadas), Beckhoff TwinCAT y servidor OPC UA de S7-1500.
 - Verificar varios monitores, DPI 125/150 %, entrada táctil y accesibilidad en puestos reales.
 - Medir carga sostenida, histórico de meses y desconexiones antes de anunciar capacidades de tags o ciclos.
 - Validar recuperación ante corte de alimentación y disco lleno.
@@ -15,7 +15,7 @@ Lista vigente, revisada el 7 de octubre de 2026. Las funciones implementadas se 
 
 ## Comunicaciones
 
-- Lecturas agrupadas en Modbus y ADS; *sum commands* ADS. S7 ya agrupa bloques contiguos; falta validarlo con PLC físicos.
+- Lecturas agrupadas en Modbus y ADS (*sum commands* ADS), con el contrato `prepare_reads` que ya usa S7.
 - Suscripciones OPC UA y notificaciones ADS.
 - Explorador de nodos OPC UA y tabla de símbolos ADS en Studio.
 - Calidad stale, última lectura buena, métricas y confirmación correlacionada de órdenes.

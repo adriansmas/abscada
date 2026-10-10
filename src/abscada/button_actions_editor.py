@@ -151,8 +151,11 @@ class ButtonActionsDialog(EditorDialog):
         self.tag_field.addItems(options)
         self.tag_field.setCurrentText(step.get("tag", ""))
         self.value_field.setText(str(step.get("value", "")))
-        self.script_field.clear(); self.script_field.addItems(list(project.scripts))
-        self.script_field.setCurrentText(step.get("script", ""))
+        from .script_tree import choices as script_choices
+        self.script_field.clear()
+        for name, text in script_choices(project):
+            self.script_field.addItem(text, name)
+        self.script_field.setCurrentIndex(max(0, self.script_field.findData(step.get("script", ""))))
         self.language_field.clear(); self.language_field.addItems(project.manifest.get("languages", ["es"]))
         self.language_field.setCurrentText(step.get("language", self.studio.editing_language))
         self.screen_field.clear(); self.screen_field.addItems(list(project.screens))
@@ -231,7 +234,7 @@ class ButtonActionsDialog(EditorDialog):
             except (ValueError, TypeError):
                 step["value"] = raw  # the check on OK reports it
         if action == "script":
-            step["script"] = self.script_field.currentText()
+            step["script"] = self.script_field.currentData() or ""
         if action == "set_language":
             step["language"] = self.language_field.currentText()
         if action in {"screen", "popup"}:

@@ -1,6 +1,6 @@
 # Manual de scripts de abSCADA
 
-Referencia de la API disponible en 0.5.0b5, comprobada contra `script_runner.py`, `scripting.py` y `runtime.py`. Explica las funciones de abSCADA, no el lenguaje Python. La versión actual no incluye carpetas de scripts. Un botón puede ejecutar un script dentro de una lista de acciones (sin publicar en 0.5.0b5).
+Referencia de la API disponible en 0.5.0b5, comprobada contra `script_runner.py`, `scripting.py` y `runtime.py`. Explica las funciones de abSCADA, no el lenguaje Python. Las carpetas de scripts y la ejecución de un script dentro de una lista de acciones de un botón están sin publicar en 0.5.0b5.
 
 ## Índice
 
@@ -34,7 +34,7 @@ Referencia de la API disponible en 0.5.0b5, comprobada contra `script_runner.py`
 
 La apertura de pantallas incluye contenedores y ventanas emergentes. Volver a enfocar una emergente que ya estaba abierta no repite el evento. El modo sin interfaz ejecuta inicio y tareas, pero no genera aperturas de pantalla. El servicio también admite el evento `"manual"` como valor interno por defecto; no hay una función `ctx` para dispararlo.
 
-Los archivos se guardan en `scripts/<nombre>.py`. Puedes editarlos externamente, pero Runtime utiliza la copia del proyecto que recibió al arrancar.
+Los archivos se guardan en `scripts/<nombre>.py`. Puedes editarlos externamente, pero Runtime utiliza la copia del proyecto que recibió al arrancar. Las carpetas de la lista de Scripts solo organizan Studio: no cambian la ruta del archivo ni el nombre con el que se referencia el script.
 
 ## Referencia rápida
 

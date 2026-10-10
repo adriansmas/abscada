@@ -34,6 +34,9 @@ def test_showcase_covers_controls_actions_and_roundtrip(tmp_path):
     assert {e.get('action') for e in elements if e['kind'] == 'button'} == {'toggle','set','momentary','press_release','screen','popup','close_popup','script','sequence'}
     generated = tool('build_showcase').build_project(tmp_path / 'generated')
     assert generated.tags() == project.tags()
+    assert generated.automation == project.automation
+    from abscada.script_tree import folders
+    assert folders(project) == ['Botones', 'Eventos', 'Eventos/Tareas']
     assert generated.screens == project.screens
     with pytest.raises(ValueError, match='ya existe'):
         tool('build_showcase').build_project(generated.root)

@@ -125,6 +125,8 @@ Consulta el [manual completo de scripts](SCRIPTS.md) para todas las funciones y 
 
 En Studio, Scripts y tareas reúne el editor Python, los eventos de inicio, las tareas cíclicas y las últimas ejecuciones. El editor tiene resaltado, números de línea, sangrado automático y comprobación de sintaxis. Las fuentes se guardan como `scripts/<nombre>.py`, editables desde VS Code. El botón Comprobar valida sin ejecutar.
 
+La lista de scripts admite carpetas y subcarpetas (menú contextual: Nueva carpeta…, Renombrar carpeta…, Eliminar carpeta). Un script nuevo se crea en la carpeta seleccionada; para moverlo, arrástralo a otra carpeta o usa Mover a carpeta. Eliminar una carpeta sube su contenido un nivel y no borra ningún script. Las carpetas solo organizan Studio: los archivos siguen en `scripts/` y las referencias no cambian al moverlos. Los selectores de script de botones, eventos y tareas muestran la ruta de carpeta. Renombrar… (o F2) cambia el nombre y actualiza botones, listas de acciones, eventos de inicio, aperturas de pantalla y tareas; si otro script menciona el nombre antiguo como texto, Studio lo avisa para revisarlo a mano. Un script en uso no se puede eliminar: el aviso indica dónde se usa.
+
 ### Eventos
 
 - Eventos de inicio… selecciona los scripts que se ejecutan una vez al arrancar el runtime. Las comunicaciones ya se han iniciado, pero puede no haber todavía una lectura válida del PLC.
