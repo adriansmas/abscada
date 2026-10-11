@@ -19,7 +19,7 @@ jobs:
       - name: Qt system dependencies
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0
-      - run: python -m pip install -e '.[dev,s7,modbus,opcua]'
+      - run: python -m pip install -e '.[dev,s7,modbus,opcua,s7plus]'
       - run: python -m pytest -q
 
   # IEC 62443-4-1 SM-9/SI-2 and CRA Annex I: know the components and their known vulnerabilities.

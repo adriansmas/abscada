@@ -38,7 +38,9 @@ a = Analysis(
     hiddenimports=collect_submodules("abscada") + collect_submodules("plc_simulators") + collect_submodules("snap7") + collect_submodules("pyModbusTCP")
     + collect_submodules("asyncua") + ["PySide6.QtSvg", "PySide6.QtCharts"],
     excludes=["tkinter", "PySide6.QtWebEngineCore", "PySide6.QtWebEngineWidgets", "PySide6.Qt3DCore",
-              "PySide6.QtQuick", "PySide6.QtQml", "PySide6.QtMultimedia", "pytest"],
+              "PySide6.QtQuick", "PySide6.QtQml", "PySide6.QtMultimedia", "pytest",
+              # S7CommPlus stays out of the distributed build until its licence/provenance review (PROTOCOLS.md).
+              "s7commplus"],
     noarchive=False,
 )
 pyz = PYZ(a.pure)

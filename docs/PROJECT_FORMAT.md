@@ -79,7 +79,7 @@ Los documentos opcionales que faltan se cargan vacíos. Los nombres de pantallas
 ]
 ```
 
-`id` es único y estable. `protocol` es `s7`, `modbus_tcp`, `ads` u `opcua`. `poll_ms` va de 50 a 60000.
+`id` es único y estable. `protocol` es `s7`, `s7plus`, `modbus_tcp`, `ads` u `opcua`. `poll_ms` va de 50 a 60000.
 
 Un enlace guarda la conexión, la versión del formato de enlace y una dirección propia de cada protocolo:
 
@@ -91,6 +91,7 @@ Un enlace guarda la conexión, la versión del formato de enlace y una direcció
 
 - **S7**: `db`, `offset` en bytes, `encoding` (bool, uint8, int16, int32, float32) y `bit` solo para bool. También se acepta el texto `%DB1.DBD4`; al editar se guarda la forma estructurada.
 - **Modbus**: `area` (coils, discrete_inputs, holding_registers, input_registers), `offset` 0–65535, `encoding` y, en registros multipalabra, `byte_order` y `word_order` (big/little).
+- **S7 simbólico** (`s7plus`): `symbol` (`DB_Horno.Temperatura`) y `encoding`, el tipo en el PLC (BOOL, INT, DINT, REAL…). La conexión añade `batch` (variables por petición); el certificado de confianza del PLC va en `pki/s7plus/<id>.pem`.
 - **ADS** y **OPC UA**: véase [PROTOCOLS.md](PROTOCOLS.md).
 
 Un enlace sin `version` es versión 1; las versiones desconocidas se rechazan.

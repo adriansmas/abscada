@@ -40,6 +40,11 @@ class ProtocolDefinition:
     check_binding: Callable
     describe: Callable
     version: int = 1
+    # Studio offers «Contraseña…» (secrets.json) for the connection, also without a user name.
+    secret: bool = False
+    # Studio offers «Certificado del PLC…»: the adapter verifies TLS against a certificate
+    # imported for that connection only (module function import_certificate & co.).
+    trust_store: bool = False
 
     def fields_for(self, kind):
         return tuple(f for f in self.binding_fields if not f.kinds or kind in f.kinds)

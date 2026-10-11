@@ -694,6 +694,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         more_menu.addAction(tr("Expandir todas las estructuras"), lambda: self.table.expandAll())
         more_menu.addAction(tr("Contraer todas las estructuras"), lambda: self.table.collapseAll())
         more_menu.addSeparator()
+        from .symbol_import_editor import import_from_plc
+        more_menu.addAction(tr("Importar símbolos del PLC…"), lambda: import_from_plc(self))
         more_menu.addAction(tr("Editar como JSON (avanzado)…"), self.edit_variables)
         more.setMenu(more_menu); tools.addWidget(more)
         tools.addStretch()
@@ -1721,12 +1723,20 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             active = protocol.currentData()
             fields = ProtocolForm(definition(active).connection_fields, drafts.get(active, {}))
             layout.insertWidget(1, fields)
-            secured.setVisible(any(f.key == "username" for f in definition(active).connection_fields))
-        from .security_editor import set_connection_password, certificates_dialog
+            spec = definition(active)
+            secured.setVisible(spec.secret or spec.trust_store or any(f.key == "username" for f in spec.connection_fields))
+            shared_certificates.setVisible(not spec.trust_store)
+            plc_certificate.setVisible(spec.trust_store)
+        from .security_editor import set_connection_password, certificates_dialog, connection_certificate_dialog
         secured = QWidget(); secured_row = QHBoxLayout(secured); secured_row.setContentsMargins(0, 0, 0, 0)
+        buttons = []
         for title, callback in ((tr("Contraseña…"), lambda: set_connection_password(dialog, self.project.root, identifier.text().strip())),
-                                (tr("Certificados…"), lambda: certificates_dialog(self))):
+                                (tr("Certificados…"), lambda: certificates_dialog(self)),
+                                (tr("Certificado del PLC…"), lambda: connection_certificate_dialog(
+                                    dialog, self.project.root, identifier.text().strip(), REGISTRY[protocol.currentData()]))):
             secured_button = QPushButton(title); secured_button.clicked.connect(callback); secured_row.addWidget(secured_button)
+            buttons.append(secured_button)
+        shared_certificates, plc_certificate = buttons[1], buttons[2]
         secured_row.addStretch()
         layout.addWidget(secured)
         protocol.currentIndexChanged.connect(state)

@@ -36,7 +36,7 @@ Los colores son explícitos en cada objeto y estado: `#RRGGBB` o `#AARRGGBB`. No
 
 **Variables** y su pestaña **Tipos de datos** definen primitivas (`bool`, `int`, `float`, `string`) y estructuras anidadas. Cada hoja tiene valor inicial, acceso, enlace y registro propios. **Enlace…** elige conexión y dirección con un formulario propio de cada protocolo. **Duplicar** crea la copia sin enlaces para que asignes sus direcciones.
 
-En **Conexiones**, **Probar conexión** abre una conexión de solo lectura con el borrador y **Leer variable** muestra valor, calidad y hora de una dirección. Ninguna de las dos envía órdenes. Direcciones y límites: [PROTOCOLS.md](PROTOCOLS.md).
+En **Conexiones**, **Probar conexión** abre una conexión de solo lectura con el borrador y **Leer variable** muestra valor, calidad y hora de una dirección. Ninguna de las dos envía órdenes. En una conexión **Siemens S7 simbólico**, **Certificado del PLC…** importa el certificado que se verifica en TLS y **Variables → Más → Importar símbolos del PLC…** crea variables a partir de los símbolos del PLC. Direcciones y límites: [PROTOCOLS.md](PROTOCOLS.md).
 
 ## Propiedades dinámicas
 

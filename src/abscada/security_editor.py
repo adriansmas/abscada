@@ -310,6 +310,51 @@ def certificates_dialog(studio):
     dialog.exec()
 
 
+def connection_certificate_dialog(parent, project_root, connection_id, factory):
+    """Certificate (or CA chain) the adapter trusts for this connection only, imported from a file."""
+    from PySide6.QtWidgets import QFileDialog, QPlainTextEdit
+    if not connection_id:
+        QMessageBox.information(parent, tr("Certificado del PLC"), tr("Pon nombre a la conexión antes de importar su certificado"))
+        return
+    dialog = QDialog(parent); dialog.setWindowTitle(tr("Certificado del PLC · {connection_id}", connection_id=connection_id))
+    dialog.resize(680, 380)
+    layout = QVBoxLayout(dialog)
+    note = QLabel(tr("Importa el certificado PG/HMI del PLC (o el de su CA) exportado desde TIA Portal, en PEM o DER. "
+                     "Comprueba la huella SHA-256 con la que muestra TIA antes de confiar en él. Solo vale para esta conexión; "
+                     "sin certificado la conexión no se establece."))
+    note.setWordWrap(True); layout.addWidget(note)
+    details = QPlainTextEdit(); details.setReadOnly(True); details.setObjectName("plcCertificate"); layout.addWidget(details)
+
+    def refresh():
+        lines = []
+        for info in factory.trusted_certificates(project_root, connection_id):
+            lines += [tr("Sujeto: {subject}", subject=info["subject"]), tr("Emisor: {issuer}", issuer=info["issuer"]),
+                      tr("Válido: {start} a {end}", start=info["valid_from"], end=info["valid_until"]),
+                      tr("Direcciones: {addresses}", addresses=", ".join(info["addresses"]) or "—"),
+                      tr("Huella SHA-256: {fingerprint}", fingerprint=info["fingerprint"]), ""]
+        details.setPlainText("\n".join(lines) or tr("Sin certificado de confianza: la conexión se rechazará."))
+
+    def load():
+        filename, _ = QFileDialog.getOpenFileName(dialog, tr("Certificado del PLC"), "", tr("Certificados (*.pem *.crt *.cer *.der)"))
+        if filename:
+            try:
+                from pathlib import Path
+                factory.import_certificate(project_root, connection_id, Path(filename).read_bytes())
+            except (OSError, ValueError) as exc:
+                QMessageBox.warning(dialog, tr("Certificado del PLC"), str(exc))
+            refresh()
+
+    def remove():
+        factory.remove_certificate(project_root, connection_id); refresh()
+    row = QHBoxLayout(); layout.addLayout(row)
+    for title, callback in ((tr("Importar certificado…"), load), (tr("Quitar confianza"), remove)):
+        button = QPushButton(title); button.clicked.connect(callback); row.addWidget(button)
+    row.addStretch()
+    close = QPushButton(tr("Cerrar")); close.clicked.connect(dialog.accept); row.addWidget(close)
+    refresh()
+    dialog.exec()
+
+
 def set_connection_password(parent, project_root, connection_id):
     from .secrets_store import SecretStore, connection_secret_key, secrets_path
     if not connection_id:

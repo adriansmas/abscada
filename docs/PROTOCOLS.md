@@ -5,6 +5,7 @@ Una **variable** es un dato del proyecto (nombre, tipo, valor inicial, acceso). 
 | Protocolo | Conexión | Enlace |
 | --- | --- | --- |
 | Siemens S7 | Host, puerto, rack, slot, ciclo | DB, byte, bit para BOOL, codificación |
+| Siemens S7 simbólico | Host, puerto, variables por petición; certificado del PLC y contraseña | Símbolo del PLC y su tipo |
 | Modbus TCP | Host, puerto, Unit ID, timeout, ciclo | Área, offset base 0, codificación, orden de bytes y registros |
 | TwinCAT ADS | IP, puerto TCP 48898, AMS Net ID remoto y local, puerto ADS, timeout | Símbolo o grupo:offset, tipo PLC, longitud de STRING |
 | OPC UA | Endpoint, política de seguridad, usuario, timeout | NodeId |
@@ -17,7 +18,7 @@ Cada conexión tiene su propio hilo, cliente y cola de escritura, de modo que un
 
 Si una lectura falla, **toda la conexión** pasa a calidad *bad*, conserva los últimos valores, cierra el cliente y reconecta a los 2 s. Las escrituras pendientes de una conexión caída se descartan y no se repiten al reconectar.
 
-S7 agrupa las lecturas; Modbus, ADS y OPC UA leen cada variable por separado. La capacidad en número de equipos y variables todavía no se ha medido.
+S7 agrupa las lecturas por bloques de bytes y S7 simbólico por lotes de símbolos; Modbus, ADS y OPC UA leen cada variable por separado. La capacidad en número de equipos y variables todavía no se ha medido.
 
 ## Siemens S7
 
@@ -37,7 +38,7 @@ Escribir un bit lee el byte, cambia el bit y lo escribe. Otro cliente puede camb
 
 **Lecturas agrupadas.** Al conectar, las variables se agrupan por DB en bloques de bytes contiguos (sin leer huecos) y cada ciclo hace una petición por bloque. El bloque máximo es el PDU negociado menos 18 bytes (462 con PDU 480). Si un bloque devuelve menos bytes, falla la conexión entera como cualquier otra lectura. En localhost, 134 variables pasaron de 134 peticiones y 59 ms a 2 peticiones y 1 ms por ciclo; no indica el rendimiento con un PLC real.
 
-**PLC real.** Edita IP, rack, slot y puerto en **Conexiones**. En S7-1200/1500 hay que habilitar PUT/GET y usar DB no optimizados; con DB optimizados, usa el servidor OPC UA de la CPU.
+**PLC real.** Edita IP, rack, slot y puerto en **Conexiones**. En S7-1200/1500 hay que habilitar PUT/GET y usar DB no optimizados; con DB optimizados, usa [S7 simbólico](#siemens-s7-simbólico-s7commplus) o el servidor OPC UA de la CPU.
 
 **Simulador.** `abscada --simulador s7 --port 1102` sirve `examples/demo`:
 
@@ -49,6 +50,29 @@ Escribir un bit lee el byte, cambia el bit y lo escribe. Otro cliente puede camb
 | `%DB1.DBD12` | Nivel del depósito, onda simulada |
 
 No es una CPU Siemens: sirve para probar el adaptador de punta a punta.
+
+## Siemens S7 simbólico (S7CommPlus)
+
+**Beta, sin probar todavía con un PLC físico.** Lee y escribe por **nombre de símbolo** (`DB_Horno.Temperatura`) con S7CommPlus sobre TLS, como un panel HMI de Siemens: los DB pueden ser **optimizados** y **PUT/GET puede estar desactivado**. Usa la biblioteca `s7commplus` 0.2.0 (extra `s7plus`, versión fijada). Referencia documentada por Siemens para PG/HMI seguro: S7-1200 con firmware V4.5 o posterior configurado con TIA V17 o posterior; la compatibilidad de cada CPU y firmware hay que comprobarla.
+
+| Enlace | Tipo de variable | Tipos del PLC |
+| --- | --- | --- |
+| `{"symbol": "DB_Horno.Marcha", "encoding": "BOOL"}` | bool | BOOL |
+| `{"symbol": "DB_Horno.Contador", "encoding": "DINT"}` | int | BYTE, USINT, SINT, WORD, UINT, INT, DWORD, UDINT, DINT |
+| `{"symbol": "DB_Horno.Temperatura", "encoding": "REAL"}` | float | REAL, LREAL |
+
+El símbolo se escribe como en TIA, con o sin comillas (`"DB_Horno".Temperatura`); los elementos de array se enlazan con índice (`DB.Zona[2]`). Aún no hay STRING/WSTRING, arrays completos, estructuras enteras, áreas I/Q/M ni suscripciones.
+
+- **Seguridad sin alternativas débiles.** Siempre TLS, y el certificado del PLC se verifica contra el certificado (o la CA) importado **para esa conexión** con **Conexiones → Certificado del PLC…** (PEM o DER exportado de TIA; compara la huella SHA-256 con la de TIA). Se guarda en `pki/s7plus/<conexión>.pem`. Sin él no se conecta; nunca se baja a una sesión sin verificar, sin TLS ni a la autenticación antigua sin TLS. El certificado debe incluir la IP o el nombre usado en la conexión.
+- **Contraseña.** Si la CPU tiene nivel de protección, la contraseña va en `secrets.json` (botón **Contraseña…**), codificada pero **no cifrada**.
+- **Resolución y tipos.** Al conectar se explora el PLC y cada enlace se comprueba: un símbolo inexistente, un array sin índice o un tipo distinto del configurado (p. ej. DINT en el PLC y INT en el enlace) impiden conectar con un mensaje que lo dice. Tras cualquier fallo se reconecta y se explora de nuevo, lo que recoge una descarga del programa; mientras tanto no hay detección automática de cambios.
+- **Lecturas.** Una petición por lote de símbolos (**Variables por petición**, 20 por defecto); un símbolo que falla hace fallar la conexión, como en los demás protocolos.
+- **Escrituras.** Se comprueba el rango del tipo antes de enviar. No se reintentan: si se pierde la respuesta, el resultado se informa como **incierto** (el PLC pudo aplicarla).
+- **Importar símbolos.** **Variables → Más → Importar símbolos del PLC…** lee los símbolos del PLC y crea una variable por cada uno marcado (`DB_Horno.Temperatura` → `DB_Horno_Temperatura`), de solo lectura salvo que se indique. Volver a importar solo añade los nuevos.
+
+**Distribución.** La biblioteca **no se incluye todavía en el ejecutable de Windows**: antes hay que revisar su procedencia y licencias. Se instala con `pip install -e ".[s7plus]"`. Inventario revisado: `s7commplus` 0.2.0, licencia MIT, wheel SHA-256 `9bc114e2f2a1d87ae1e546eb813d53623faa644e1a9b5ffc21a5b8729a064c12`, depende de `cryptography`. El paquete incluye código de autenticación antigua derivado de HarpoS7 (licencia propia en el wheel) y diccionarios XML de compresión; abSCADA no usa la autenticación antigua, pero los archivos forman parte del paquete.
+
+**Pruebas.** `test_s7plus.py` usa el emulador de la propia biblioteca con TLS real: verificación del certificado (CA ajena e IP distinta rechazadas), lecturas por lotes, escrituras tipadas sin tocar el BOOL vecino, símbolos y tipos erróneos, pérdida y recuperación del PLC en el runtime e importación. El emulador no ofrece el árbol de tipos que usa la exploración, así que esa parte se sustituye en las pruebas por una lista equivalente: **la exploración real, los permisos y el comportamiento de cada firmware solo se validan con el PLC**.
 
 ## Modbus TCP
 
@@ -77,4 +101,4 @@ Cada conexión lee por polling: aún no hay suscripciones ni explorador de nodos
 
 ## Validación
 
-Las pruebas usan servidores TCP reales en localhost: `test_s7_integration.py` y `test_s7_reads.py` (S7), `test_modbus.py`, `test_ads.py` y `test_opcua.py`. **No se ha probado ningún PLC físico** ni el rendimiento con miles de variables.
+Las pruebas usan servidores TCP reales en localhost: `test_s7_integration.py` y `test_s7_reads.py` (S7), `test_s7plus.py` (S7 simbólico, emulador con TLS), `test_modbus.py`, `test_ads.py` y `test_opcua.py`. **No se ha probado ningún PLC físico** ni el rendimiento con miles de variables.

@@ -6,7 +6,8 @@ Lista vigente, revisada el 10 de octubre de 2026. Las funciones implementadas se
 
 - Comprobar en GitHub Actions el resultado de la revisión publicada; matriz Windows/Linux con Python 3.11/3.14.
 - Probar interfaz y protocolos en Linux y macOS con sesión gráfica real; añadir macOS a CI si se mantiene como plataforma soportada.
-- Ensayar PLC físicos S7-1200/1500 (incluidas las lecturas S7 agrupadas), Beckhoff TwinCAT y servidor OPC UA de S7-1500.
+- Ensayar PLC físicos S7-1200/1500 (incluidas las lecturas S7 agrupadas y el conector S7 simbólico: exploración, certificados, contraseña, permisos, descargas de programa, rendimiento), Beckhoff TwinCAT y servidor OPC UA de S7-1500.
+- Revisar procedencia y licencias de `s7commplus` antes de incluirlo en el ejecutable; consultar a Siemens las condiciones de PG/HMI.
 - Verificar varios monitores, DPI 125/150 %, entrada táctil y accesibilidad en puestos reales.
 - Medir carga sostenida, histórico de meses y desconexiones antes de anunciar capacidades de tags o ciclos.
 - Validar recuperación ante corte de alimentación y disco lleno.
@@ -16,6 +17,7 @@ Lista vigente, revisada el 10 de octubre de 2026. Las funciones implementadas se
 ## Comunicaciones
 
 - Lecturas agrupadas en Modbus y ADS (*sum commands* ADS), con el contrato `prepare_reads` que ya usa S7.
+- S7 simbólico: STRING/WSTRING, arrays y estructuras completas, áreas I/Q/M, suscripciones y detección de cambios de programa.
 - Suscripciones OPC UA y notificaciones ADS.
 - Explorador de nodos OPC UA y tabla de símbolos ADS en Studio.
 - Calidad stale, última lectura buena, calidad y hora del servidor en las muestras, métricas y confirmación correlacionada de órdenes.
