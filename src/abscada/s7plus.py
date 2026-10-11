@@ -5,10 +5,18 @@ offset: DBs may stay optimized and PUT/GET disabled. The CPU needs secure PG/HMI
 communication (S7-1200 FW V4.5 / TIA V17 or later is the documented reference).
 
 Security policy, deliberately without fallbacks:
-- TLS is always required and the PLC certificate must verify against the certificate (or
-  CA) an administrator imported for *this* connection: ``<project>/pki/s7plus/<id>.pem``.
-  Without it the connection is refused; it never degrades to an unverified or plain session
-  and never uses the legacy (non-TLS) session-key authentication of the library.
+- TLS is always required and the PLC certificate must verify against what an administrator
+  trusted for *this* connection: ``<project>/pki/s7plus/<id>.pem``. Without it the connection
+  is refused; it never degrades to an unverified or plain session and never uses the legacy
+  (non-TLS) session-key authentication of the library.
+- Two ways to trust, like TIA Portal and the HMI panels: «Leer del PLC y confiar» captures the
+  certificate the PLC presents (no password is sent), shows its fingerprints and stores it
+  after the user confirms; or a certificate / CA exported from TIA is imported from a file.
+- A single end certificate (not a CA) is an exact pin: only that certificate is accepted,
+  whatever the IP or name used. A CA (or a chain) also requires the PLC's IP or name in the
+  certificate, because the CA could sign other devices.
+- Trust never travels to the client: the PLC does not ask the SCADA for a certificate. Writes
+  depend on the CPU access level, its password and the HMI attributes of each variable.
 - The PLC password, when the CPU is protected, lives in the project's secrets.json.
 
 Symbols are resolved and their PLC types checked once per connection, by browsing the PLC.
@@ -18,10 +26,13 @@ Writes are never retried: when the answer is lost, the result is reported as unc
 """
 from __future__ import annotations
 
+import contextlib
+import datetime
 import hashlib
 import re
 import ssl
 import struct
+import threading
 from pathlib import Path
 
 from .protocol_definition import Field, ProtocolDefinition
@@ -98,11 +109,24 @@ def _certificates(data: bytes):
     return [x509.load_der_x509_certificate(data)]
 
 
+def _fingerprint(der, algorithm):
+    return ":".join(f"{b:02X}" for b in hashlib.new(algorithm, der).digest())
+
+
+def _is_ca(certificate):
+    from cryptography import x509
+    try:
+        return certificate.extensions.get_extension_for_class(x509.BasicConstraints).value.ca
+    except x509.ExtensionNotFound:
+        return False
+
+
 def describe_certificates(data: bytes):
-    """Subject, SHA-256 fingerprint, validity and addresses of each certificate in a file."""
+    """Subject, fingerprints (SHA-256 and the SHA-1 Windows shows), validity and addresses of each certificate."""
     from cryptography import x509
     from cryptography.hazmat.primitives.serialization import Encoding
     result = []
+    now = datetime.datetime.now(datetime.timezone.utc)
     for certificate in _certificates(data):
         try:
             names = certificate.extensions.get_extension_for_class(x509.SubjectAlternativeName).value
@@ -111,14 +135,22 @@ def describe_certificates(data: bytes):
             addresses = []
         der = certificate.public_bytes(Encoding.DER)
         result.append(dict(subject=certificate.subject.rfc4514_string(), issuer=certificate.issuer.rfc4514_string(),
-                           fingerprint=":".join(f"{b:02X}" for b in hashlib.sha256(der).digest()),
+                           fingerprint=_fingerprint(der, "sha256"), sha1=_fingerprint(der, "sha1"),
                            valid_from=certificate.not_valid_before_utc.isoformat()[:10],
-                           valid_until=certificate.not_valid_after_utc.isoformat()[:10], addresses=addresses))
+                           valid_until=certificate.not_valid_after_utc.isoformat()[:10],
+                           days_left=(certificate.not_valid_after_utc - now).days,
+                           addresses=addresses, ca=_is_ca(certificate)))
     return result
 
 
+def is_pin(data: bytes):
+    """One end certificate (not a CA): only that exact certificate is accepted, whatever the IP used."""
+    certificates = _certificates(data)
+    return len(certificates) == 1 and not _is_ca(certificates[0])
+
+
 def import_certificate(project_root, connection_id, data: bytes):
-    """Trust the PLC certificate (or its CA chain) exported from TIA Portal, PEM or DER.
+    """Trust a PLC certificate or its CA chain (exported from TIA Portal or read from the PLC), PEM or DER.
 
     Replaces the previous one: changing the PLC or renewing its certificate is a conscious act.
     """
@@ -142,6 +174,95 @@ def remove_certificate(project_root, connection_id):
     trust_path(project_root, connection_id).unlink(missing_ok=True)
 
 
+# --- TLS policy applied to the library's context ---------------------------------------------
+#
+# The library builds its own SSLContext. A hook adds abSCADA's policy to the contexts created in
+# the thread that is inside ``_tls_policy``: one acquisition worker per connection, so the policy
+# of one connection never leaks to another, also when the library reconnects by itself.
+
+_POLICY = threading.local()
+
+
+def _install_hook():
+    from s7commplus.connection import S7CommPlusConnection
+    original = S7CommPlusConnection._setup_ssl_context
+    if getattr(original, "abscada_policy", False):
+        return
+
+    def setup(self, *args, **kwargs):
+        context = original(self, *args, **kwargs)
+        policy = getattr(_POLICY, "value", None)
+        if policy is not None:
+            policy(context)
+        return context
+    setup.abscada_policy = True
+    S7CommPlusConnection._setup_ssl_context = setup
+
+
+@contextlib.contextmanager
+def _tls_policy(policy):
+    _install_hook()
+    previous = getattr(_POLICY, "value", None)
+    _POLICY.value = policy
+    try:
+        yield
+    finally:
+        _POLICY.value = previous
+
+
+def _verify_policy(pin):
+    def apply(context):
+        if context.verify_mode != ssl.CERT_REQUIRED:
+            raise ssl.SSLError(tr("Política TLS sin verificación: conexión rechazada"))
+        # The trusted file is the anchor even when it is not a self-signed root (exact pin).
+        context.verify_flags |= ssl.VERIFY_X509_PARTIAL_CHAIN
+        if pin:
+            context.check_hostname = False
+    return apply
+
+
+def _library():
+    try:
+        from s7commplus import Client
+    except ImportError as exc:
+        raise RuntimeError(tr("Falta la biblioteca S7CommPlus: instala abSCADA con el extra s7plus "
+                              "(pip install -e '.[s7plus]'). No se incluye todavía en el ejecutable de Windows.")) from exc
+    return Client
+
+
+def capture_certificate(config):
+    """Certificate the PLC presents, for the user to confirm in Studio. Runs outside the Qt thread.
+
+    This is the only unverified TLS session: it sends no password, reads nothing and closes at
+    once. Trust is stored only when the user accepts the fingerprints shown.
+    """
+    client = _library()()
+    der = None
+    try:
+        with _tls_policy(None):
+            try:
+                client.connect(config["host"], int(config.get("port", 102)), use_tls=True, tls_ca=None, password=None,
+                               allow_legacy_key_fallback=False, legacy_session_key_refresh_interval=None)
+            except Exception as exc:
+                # The handshake may have succeeded before the PLC refused the session: keep the certificate.
+                failure = exc
+            else:
+                failure = None
+            connection = getattr(client, "_connection", None)
+            ssl_object = getattr(connection, "_ssl_object", None)
+            if ssl_object is not None:
+                der = ssl_object.getpeercert(binary_form=True)
+    finally:
+        try:
+            client.disconnect()
+        except Exception:
+            pass
+    if not der:
+        raise ConnectionError(tr("El PLC no ha presentado certificado TLS: {exc}. Comprueba que tiene activada la "
+                                 "comunicación PG/HMI segura.", exc=failure or tr("sin TLS")))
+    return der
+
+
 # --- errors ------------------------------------------------------------------------------------
 
 def explain(exc):
@@ -150,7 +271,8 @@ def explain(exc):
         return exc
     if isinstance(exc, ssl.SSLCertVerificationError):
         return ConnectionError(tr("Certificado del PLC rechazado ({reason}). Comprueba que el certificado importado para esta "
-                                  "conexión es el del PLC (o su CA), que no ha caducado y que incluye la IP usada.",
+                                  "conexión es el del PLC (o su CA) y que no ha caducado. Si el PLC tiene un certificado nuevo, vuelve a "
+                                  "confiar en él (Certificado del PLC… → Leer del PLC y confiar).",
                                   reason=exc.verify_message or exc.reason or exc))
     if isinstance(exc, ssl.SSLError):
         return ConnectionError(tr("No se pudo establecer TLS con el PLC: {exc}. Comprueba que la CPU tiene activada la "
@@ -174,11 +296,14 @@ class S7Plus:
     import_certificate = staticmethod(import_certificate)
     trusted_certificates = staticmethod(trusted_certificates)
     remove_certificate = staticmethod(remove_certificate)
+    capture_certificate = staticmethod(capture_certificate)
+    describe_certificates = staticmethod(describe_certificates)
 
     def __init__(self, config):
         self.config = config
         self.root = None
         self.client = None
+        self.policy = None
         self.tags = {}  # symbol -> SymbolicTag, checked against the expected PLC type
 
     def attach(self, project_root):
@@ -189,19 +314,17 @@ class S7Plus:
             raise RuntimeError(tr("Conector S7 simbólico sin carpeta de proyecto (certificado y contraseña)"))
         ca = trust_path(self.root, self.config.get("id", ""))
         if not ca.exists():
-            raise PermissionError(tr("No hay certificado de confianza para el PLC de esta conexión: impórtalo en Studio "
-                                     "(Conexiones → Certificado del PLC…). Sin él no se establece TLS verificado."))
+            raise PermissionError(tr("No hay certificado de confianza para el PLC de esta conexión: en Studio, Conexiones → "
+                                     "Certificado del PLC… → «Leer del PLC y confiar» o importa el de TIA. Sin él no se "
+                                     "establece TLS verificado."))
+        self.policy = _verify_policy(is_pin(ca.read_bytes()))
         from .secrets_store import SecretStore, connection_secret_key, secrets_path
         password = SecretStore(secrets_path(self.root)).get(connection_secret_key(self.config["id"])) or None
+        client = _library()()
         try:
-            from s7commplus import Client
-        except ImportError as exc:
-            raise RuntimeError(tr("Falta la biblioteca S7CommPlus: instala abSCADA con el extra s7plus "
-                                  "(pip install -e '.[s7plus]'). No se incluye todavía en el ejecutable de Windows.")) from exc
-        client = Client()
-        try:
-            client.connect(self.config["host"], int(self.config.get("port", 102)), use_tls=True, tls_ca=str(ca),
-                           password=password, allow_legacy_key_fallback=False, legacy_session_key_refresh_interval=None)
+            with _tls_policy(self.policy):
+                client.connect(self.config["host"], int(self.config.get("port", 102)), use_tls=True, tls_ca=str(ca),
+                               password=password, allow_legacy_key_fallback=False, legacy_session_key_refresh_interval=None)
             if not client.tls_active:
                 raise ConnectionError(tr("El PLC no ha activado TLS: conexión rechazada"))
         except Exception as exc:
@@ -221,7 +344,8 @@ class S7Plus:
         symbol, encoding = a["symbol"], a["encoding"]
         if symbol not in self.tags:
             try:
-                tag = self.client.resolve_tag(symbol)
+                with _tls_policy(self.policy):
+                    tag = self.client.resolve_tag(symbol)
             except KeyError as exc:
                 raise SymbolError(tr("El PLC no tiene el símbolo {symbol} (o no es accesible desde HMI)", symbol=symbol)) from exc
             actual = ALIASES.get(tag.softdatatype.name, tag.softdatatype.name)
@@ -258,7 +382,8 @@ class S7Plus:
     def _read(self, entries):
         """entries: [(index, symbol, encoding)]; one request for all of them."""
         try:
-            results = self.client.read_tags([symbol for _, symbol, _ in entries])
+            with _tls_policy(self.policy):
+                results = self.client.read_tags([symbol for _, symbol, _ in entries])
         except Exception as exc:
             raise explain(exc) from exc
         values = {}
@@ -285,7 +410,8 @@ class S7Plus:
         tag, encoding = self.resolve(address, kind)
         data = self.encode(encoding, value)
         try:
-            result = self.client.write_tags({tag.name: data})[0]
+            with _tls_policy(self.policy):
+                result = self.client.write_tags({tag.name: data})[0]
         except Exception as exc:
             # The request may have reached the PLC: never claim it did not, never repeat it.
             raise ConnectionError(tr("Resultado de la escritura de {symbol} incierto (el PLC pudo aplicarla): {exc}",
@@ -298,7 +424,9 @@ class S7Plus:
     def browse(self):
         """Readable scalar symbols of the PLC: [(address, logical kind)] for Studio's import."""
         found = []
-        for item in self.client.browse():
+        with _tls_policy(self.policy):
+            items = self.client.browse()
+        for item in items:
             encoding = ALIASES.get(item["data_type"], item["data_type"])
             if encoding in ENCODINGS and not item.get("array_dimensions"):
                 found.append((dict(symbol=item["name"], encoding=encoding), ENCODINGS[encoding][1]))

@@ -5,7 +5,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 ## [Sin publicar]
 
 ### Añadido
-- **Siemens S7 simbólico (beta, sin probar en PLC físico):** conector `s7plus` que lee y escribe S7-1200/1500 por nombre de símbolo con S7CommPlus sobre TLS, con DB optimizados y PUT/GET desactivado. Exige el certificado del PLC importado para la conexión y comprueba símbolo y tipo al conectar; las escrituras perdidas se informan como inciertas. Importación de símbolos del PLC como variables. Requiere el extra `s7plus`; no se incluye aún en el ejecutable de Windows.
+- **Siemens S7 simbólico (beta, sin probar en PLC físico):** conector `s7plus` que lee y escribe S7-1200/1500 por nombre de símbolo con S7CommPlus sobre TLS, con DB optimizados y PUT/GET desactivado. Se confía en el PLC como en TIA Portal: «Leer del PLC y confiar» muestra las huellas del certificado y lo fija para esa conexión (o se importa el de TIA); comprueba símbolo y tipo al conectar; las escrituras perdidas se informan como inciertas. Importación de símbolos del PLC como variables. Requiere el extra `s7plus`; no se incluye aún en el ejecutable de Windows.
 - **Botones con varias acciones:** la acción «Lista de acciones» ejecuta con un clic varias acciones en orden (escribir valor, alternar, ejecutar script, cambiar idioma y, como última, abrir o cerrar pantallas). Se editan en Studio con «Editar acciones…». Antes de enviar nada se comprueban todas; las acciones no esperan al script ni a la confirmación del PLC.
 - **Carpetas de scripts:** la lista de Scripts admite carpetas y subcarpetas (crear, renombrar, eliminar subiendo su contenido, arrastrar o «Mover a carpeta»). Son organización de Studio: los archivos siguen en `scripts/` y las referencias no cambian. Los selectores de script muestran la carpeta.
 - **Renombrar scripts** desde Studio actualiza botones, listas de acciones, eventos de inicio, aperturas de pantalla y tareas, y avisa de los scripts que mencionan el nombre como texto. Eliminar un script en uso indica dónde se usa.
@@ -15,7 +15,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 - **Ejemplos y documentación simplificados:** quedan cuatro ejemplos en la pantalla de inicio (central hidroeléctrica, cervecería, banco Beckhoff y laboratorio); se retiran `plant`, `s7` y `library_author`. Las guías se reorganizan sin repeticiones y las capturas se reducen a seis, generadas con `tools/capture_docs.py`.
 
 ### Seguridad
-- El conector S7 simbólico solo funciona con TLS y verificando el certificado del PLC contra el importado para esa conexión; no hay modo sin verificar, sin TLS ni autenticación antigua. La contraseña del PLC se guarda en `secrets.json` (codificada, no cifrada), como las de OPC UA.
+- El conector S7 simbólico solo funciona con TLS y verificando el certificado del PLC contra el aceptado para esa conexión (fijado o firmado por la CA importada); no hay modo sin verificar, sin TLS ni autenticación antigua. La lectura del certificado para aceptarlo es la única sesión sin verificar y no envía contraseña ni datos. La contraseña del PLC se guarda en `secrets.json` (codificada, no cifrada), como las de OPC UA.
 
 ## [0.5.0b5] - 2026-10-08
 

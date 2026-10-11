@@ -39,7 +39,7 @@ def browse_entries():
     return entries
 
 
-def certificate(tmp_path, name, ip="127.0.0.1", days=30):
+def certificate(tmp_path, name, ip="127.0.0.1", days=30, ca=True):
     key = ec.generate_private_key(ec.SECP256R1())
     subject = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, name)])
     now = datetime.datetime.now(datetime.timezone.utc)
@@ -47,7 +47,7 @@ def certificate(tmp_path, name, ip="127.0.0.1", days=30):
             .serial_number(x509.random_serial_number()).not_valid_before(now - datetime.timedelta(days=2))
             .not_valid_after(now + datetime.timedelta(days=days))
             .add_extension(x509.SubjectAlternativeName([x509.IPAddress(ipaddress.ip_address(ip))]), False)
-            .add_extension(x509.BasicConstraints(ca=True, path_length=None), True).sign(key, hashes.SHA256()))
+            .add_extension(x509.BasicConstraints(ca=ca, path_length=None), True).sign(key, hashes.SHA256()))
     pem = cert.public_bytes(serialization.Encoding.PEM)
     (tmp_path / f"{name}.pem").write_bytes(pem)
     (tmp_path / f"{name}.key").write_bytes(key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
@@ -62,10 +62,10 @@ def free_port():
 
 
 @pytest.fixture
-def plc(tmp_path, monkeypatch):
+def plc(tmp_path, monkeypatch, request):
     from s7commplus import Client, Server
     from s7commplus.protocol import ProtocolVersion
-    certificate(tmp_path, "plc")
+    certificate(tmp_path, "plc", ca=request.param if hasattr(request, "param") else True)
     port = free_port()
     server = Server(protocol_version=ProtocolVersion.V2)
     db = server.register_raw_db(1, bytearray(64))
@@ -334,3 +334,96 @@ def test_import_dialog_lists_new_symbols_and_creates_variables(studio, monkeypat
     item = next(dialog.list.item(i) for i in range(2) if "Consigna" in dialog.list.item(i).text())
     assert "→ DB_Prueba_Consigna" in item.text() and not item.flags() & Qt.ItemFlag.ItemIsEnabled
     dialog.reject()
+
+
+# --- trust on first use («Leer del PLC y confiar») ---------------------------------------------
+
+def test_reading_the_plc_certificate_sends_no_password(plc, monkeypatch):
+    from s7commplus import Client
+    from cryptography.hazmat.primitives.serialization import Encoding
+    calls = []
+    original = Client.connect
+    monkeypatch.setattr(Client, "connect", lambda self, *a, **k: calls.append(k) or original(self, *a, **k))
+    der = s7plus.capture_certificate(plc["config"])
+    expected = x509.load_pem_x509_certificate(plc["pem"]).public_bytes(Encoding.DER)
+    assert der == expected
+    assert calls[0]["password"] is None and calls[0]["tls_ca"] is None
+    assert calls[0]["allow_legacy_key_fallback"] is False
+    # Nothing is trusted until the user accepts it in Studio.
+    assert s7plus.trusted_certificates(plc["root"], "plc1") == []
+
+
+def test_capturing_from_a_closed_port_explains_it(tmp_path):
+    with pytest.raises(Exception):
+        s7plus.capture_certificate(dict(host="127.0.0.1", port=free_port()))
+
+
+@pytest.mark.parametrize("plc", [False], indirect=True)
+def test_a_captured_end_certificate_is_an_exact_pin(plc):
+    der = s7plus.capture_certificate(plc["config"])
+    s7plus.import_certificate(plc["root"], "plc1", der)
+    assert s7plus.is_pin(s7plus.trust_path(plc["root"], "plc1").read_bytes())
+    # The pinned certificate is accepted whatever name reaches the PLC (no IP in the certificate needed)…
+    plc["config"]["host"] = "localhost"
+    adapter = connected(plc)
+    try:
+        assert adapter.read(dict(symbol="DB_Prueba.Contador", encoding="DINT"), "int") == 1234
+    finally:
+        adapter.close()
+    # …and any other certificate is refused, also another end certificate.
+    other, _ = certificate(plc["tmp"], "otro_plc", ca=False)
+    s7plus.import_certificate(plc["root"], "plc1", other)
+    with pytest.raises(ConnectionError, match="rechazado"):
+        create(plc["config"], plc["root"]).connect()
+
+
+def test_tls_policy_stays_in_its_thread():
+    import threading
+    seen = {}
+    def worker():
+        with s7plus._tls_policy("connection A"):
+            seen["inside"] = s7plus._POLICY.value
+            other = threading.Thread(target=lambda: seen.__setitem__("other", getattr(s7plus._POLICY, "value", None)))
+            other.start(); other.join()
+        seen["after"] = s7plus._POLICY.value
+    thread = threading.Thread(target=worker); thread.start(); thread.join()
+    assert seen == {"inside": "connection A", "other": None, "after": None}
+
+
+def test_certificate_details_show_both_fingerprints_and_expiry(tmp_path):
+    pem, der = certificate(tmp_path, "pronto", days=10, ca=False)
+    info = s7plus.describe_certificates(pem)[0]
+    import hashlib
+    assert info["sha1"].replace(":", "").lower() == hashlib.sha1(der).hexdigest()
+    assert 8 <= info["days_left"] <= 10 and info["ca"] is False
+    from abscada.security_editor import certificate_lines
+    assert any("Caduca en" in line for line in certificate_lines(info))
+
+
+def test_studio_reads_the_plc_certificate_and_asks_before_trusting(studio, monkeypatch, tmp_path):
+    from PySide6.QtCore import QTimer
+    from PySide6.QtWidgets import QApplication, QMessageBox, QPushButton
+    from abscada.s7plus import S7Plus
+    from abscada.security_editor import connection_certificate_dialog
+    _, first = certificate(tmp_path, "primero", ca=False)
+    _, second = certificate(tmp_path, "segundo", ca=False)
+    presented = [first]
+    monkeypatch.setattr(S7Plus, "capture_certificate", staticmethod(lambda config: presented[0]))
+    questions, answers = [], [QMessageBox.StandardButton.Yes]
+    monkeypatch.setattr(QMessageBox, "question", lambda parent, title, text: questions.append(text) or answers[0])
+    def drive():
+        dialog = QApplication.activeModalWidget()
+        button = next(b for b in dialog.findChildren(QPushButton) if b.text() == "Leer del PLC y confiar…")
+        button.click()
+        wait_for(lambda: (QApplication.processEvents(), len(questions) == 1)[1])
+        presented[0] = second; answers[0] = QMessageBox.StandardButton.No
+        button.click()
+        wait_for(lambda: (QApplication.processEvents(), len(questions) == 2)[1])
+        dialog.accept()
+    QTimer.singleShot(0, drive)
+    root = studio.project.root
+    connection_certificate_dialog(studio, root, "plc1", S7Plus, lambda: dict(id="plc1", host="127.0.0.1", port=102))
+    assert "SHA-1" in questions[0] and "DISTINTO" not in questions[0]
+    assert "DISTINTO" in questions[1]  # another certificate than the trusted one
+    trusted = s7plus.trusted_certificates(root, "plc1")
+    assert len(trusted) == 1 and trusted[0]["fingerprint"] == s7plus.describe_certificates(first)[0]["fingerprint"]

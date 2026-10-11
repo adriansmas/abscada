@@ -1733,7 +1733,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         for title, callback in ((tr("Contraseña…"), lambda: set_connection_password(dialog, self.project.root, identifier.text().strip())),
                                 (tr("Certificados…"), lambda: certificates_dialog(self)),
                                 (tr("Certificado del PLC…"), lambda: connection_certificate_dialog(
-                                    dialog, self.project.root, identifier.text().strip(), REGISTRY[protocol.currentData()]))):
+                                    dialog, self.project.root, identifier.text().strip(), REGISTRY[protocol.currentData()],
+                                    lambda: current_data()))):
             secured_button = QPushButton(title); secured_button.clicked.connect(callback); secured_row.addWidget(secured_button)
             buttons.append(secured_button)
         shared_certificates, plc_certificate = buttons[1], buttons[2]
