@@ -4,6 +4,14 @@ from typing import Callable
 from .i18n import tr
 
 
+class GroupError(Exception):
+    """A grouped read failed for its own requests only (a slave that does not answer on a
+    shared bus); the connection stays open and the other groups keep their values."""
+    def __init__(self, indices, message):
+        super().__init__(message)
+        self.indices = list(indices)
+
+
 @dataclass(frozen=True)
 class Field:
     key: str

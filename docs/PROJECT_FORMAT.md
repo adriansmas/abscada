@@ -75,11 +75,16 @@ Los documentos opcionales que faltan se cargan vacíos. Los nombres de pantallas
 ```json
 [
   {"id": "plc", "protocol": "s7", "host": "192.168.1.10", "rack": 0, "slot": 1, "port": 102, "poll_ms": 250},
-  {"id": "meter", "protocol": "modbus_tcp", "host": "192.168.1.20", "port": 502, "unit_id": 1, "timeout_ms": 1000, "poll_ms": 100}
+  {"id": "meter", "protocol": "modbus_tcp", "host": "192.168.1.20", "port": 502, "unit_id": 1, "timeout_ms": 1000, "poll_ms": 100},
+  {"id": "bus", "protocol": "modbus_rtu", "transport": "serial", "port": "COM3", "baudrate": 19200, "bytesize": 8,
+   "parity": "E", "stopbits": 1, "timeout_ms": 300, "single_register": "fc16", "gap_ms": 0, "poll_ms": 500},
+  {"id": "scale", "protocol": "serial_ascii", "transport": "tcp", "host": "192.168.1.30", "tcp_port": 4001,
+   "framing": "terminator", "terminator": "\\r\\n", "encoding": "ascii", "suffix": "\\r\\n",
+   "on_connect": "O1", "on_close": "O0", "stale_ms": 3000, "timeout_ms": 1000, "poll_ms": 200}
 ]
 ```
 
-`id` es único y estable. `protocol` es `s7`, `modbus_tcp`, `ads` u `opcua`. `poll_ms` va de 50 a 60000.
+`id` es único y estable. `protocol` es `s7`, `modbus_tcp`, `modbus_rtu`, `serial_ascii`, `ads` u `opcua`. `poll_ms` va de 50 a 60000. Las conexiones serie guardan todos los campos del medio (`transport` `serial` o `tcp`, `port`, `baudrate`, `bytesize`, `parity` N/E/O/M/S, `stopbits`, `host`, `tcp_port`), aunque solo use los suyos. Los textos de `serial_ascii` guardan los escapes tal cual se escriben (`\r\n`).
 
 Un enlace guarda la conexión, la versión del formato de enlace y una dirección propia de cada protocolo:
 
@@ -91,6 +96,8 @@ Un enlace guarda la conexión, la versión del formato de enlace y una direcció
 
 - **S7**: `db`, `offset` en bytes, `encoding` (bool, uint8, int16, int32, float32) y `bit` solo para bool. También se acepta el texto `%DB1.DBD4`; al editar se guarda la forma estructurada.
 - **Modbus**: `area` (coils, discrete_inputs, holding_registers, input_registers), `offset` 0–65535, `encoding` y, en registros multipalabra, `byte_order` y `word_order` (big/little).
+- **Modbus RTU**: `unit_id` (esclavo 1–247) y los mismos campos que Modbus.
+- **Serie / TCP en bruto**: `function` (`rx` y `request` para string, `count` para int, `send` para string escribible) y `command` en `request`.
 - **ADS** y **OPC UA**: véase [PROTOCOLS.md](PROTOCOLS.md).
 
 Un enlace sin `version` es versión 1; las versiones desconocidas se rechazan.
@@ -269,10 +276,11 @@ Los datos se guardan en `runtime/records/<id>/AAAA-MM-DD.sqlite3`, por día UTC.
 ```json
 {"startup": ["startup"], "timeout_seconds": 10,
  "tasks": [{"id": "quality", "script": "check_quality", "interval_ms": 5000, "enabled": true}],
- "folders": ["Proceso/Bombas"], "script_folders": {"arranque": "Proceso/Bombas"}}
+ "folders": ["Proceso/Bombas"], "script_folders": {"arranque": "Proceso/Bombas"},
+ "limits": {"lector_bascula": null, "informe": 60}}
 ```
 
-Una pantalla añade `"on_open": ["screen_open"]` y un botón `"action": "script", "script": "nombre"`. `folders` y `script_folders` solo organizan Studio. Las referencias se validan al guardar y al arrancar. Véase [SCRIPTS.md](SCRIPTS.md).
+Una pantalla añade `"on_open": ["screen_open"]` y un botón `"action": "script", "script": "nombre"`. `folders` y `script_folders` solo organizan Studio. `limits` es opcional: segundos propios de un script (0,1–86400) o `null` para que no tenga límite; los que no aparecen usan `timeout_seconds`. Las referencias se validan al guardar y al arrancar. Véase [SCRIPTS.md](SCRIPTS.md).
 
 ## Usuarios y roles
 

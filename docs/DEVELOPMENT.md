@@ -6,15 +6,15 @@ Python ≥ 3.11. Probado en Windows con Python 3.14, PySide6 6.11 y python-snap7
 
 ```powershell
 python -m venv .venv
-.venv\Scripts\python -m pip install -e ".[dev,s7,modbus,opcua]"
+.venv\Scripts\python -m pip install -e ".[dev,s7,modbus,opcua,serial]"
 .venv\Scripts\python -m pytest -q
 ```
 
-Extras: `s7` (python-snap7), `modbus` (pyModbusTCP), `opcua` (asyncua). ADS no necesita dependencias.
+Extras: `s7` (python-snap7), `modbus` (pyModbusTCP), `opcua` (asyncua), `serial` (pyserial, para Modbus RTU y Serie/TCP en bruto). ADS no necesita dependencias.
 
 ## Pruebas
 
-`python -m pytest -q` cubre el dominio, los cuatro protocolos contra servidores TCP reales en localhost, alarmas y archivo, scripts, seguridad, idiomas, librerías, la interfaz de Studio y Runtime (Qt offscreen) y los ejemplos. Las pruebas S7 se omiten si falta python-snap7.
+`python -m pytest -q` cubre el dominio, los protocolos contra servidores TCP reales en localhost (los serie, contra equipos simulados por TCP y `loop://`), alarmas y archivo, scripts, seguridad, idiomas, librerías, la interfaz de Studio y Runtime (Qt offscreen) y los ejemplos. Las pruebas S7 se omiten si falta python-snap7.
 
 CI (`.github/workflows/tests.yml`) ejecuta Windows y Linux con Python 3.11 y 3.14, además de `pip-audit`. macOS no está en la matriz.
 
@@ -30,7 +30,7 @@ Monolito modular. El dominio y las comunicaciones no importan Qt; los adaptadore
 | Módulos | Responsabilidad |
 | --- | --- |
 | `project`, `project_storage`, `validation`, `versioning` | Carga, validación, guardado con recuperación y versiones Git |
-| `connectors`, `protocol_definition`, `modbus`, `ads`, `opcua` | Transporte y esquemas de conexión y enlace (S7 está en `connectors`) |
+| `connectors`, `protocol_definition`, `modbus`, `modbus_rtu`, `serial_link`, `serial_ascii`, `ads`, `opcua` | Transporte y esquemas de conexión y enlace (S7 está en `connectors`; `serial_link` es el puerto serie o TCP en bruto común) |
 | `runtime` | Almacén de muestras, órdenes y un trabajador por conexión |
 | `operations`, `alarms`, `storage`, `recording` | Motor de alarmas y escritor SQLite; consultas aparte |
 | `security`, `pki`, `opcua_server` | Usuarios y roles, certificados y servidor OPC UA |
@@ -49,7 +49,7 @@ Monolito modular. El dominio y las comunicaciones no importan Qt; los adaptadore
 ## Añadir un protocolo
 
 1. Crea un módulo con un adaptador que implemente `connect()`, `read(address, kind)`, `write(address, kind, value)` y `close()` (idempotente). Importa la biblioteca de red dentro de `connect()`, no al abrir Studio.
-2. Opcional, `prepare_reads(requests)` para agrupar lecturas: recibe `[(address, kind), ...]` tras conectar y devuelve funciones sin argumentos que leen un bloque y devuelven `{índice: valor}`. Ejemplo: el adaptador S7 y `read_groups` en `connectors.py`.
+2. Opcional, `prepare_reads(requests)` para agrupar lecturas: recibe `[(address, kind), ...]` tras conectar y devuelve funciones sin argumentos que leen un bloque y devuelven `{índice: valor}`. Ejemplo: el adaptador S7 y `read_groups` en `connectors.py`. Si un bloque falla solo por sus datos (un esclavo del bus que no responde), lanza `GroupError(índices, mensaje)` de `protocol_definition`: esas variables pasan a *bad* y la conexión sigue abierta (ejemplo: `modbus_rtu.py`).
 3. Publica `Factory.definition` como `ProtocolDefinition`: campos de conexión y de enlace con tipos, límites y etiquetas, normalización, validación, resumen y versión del enlace. Studio genera los formularios a partir de ella.
 4. Regístralo con `register("protocol_id", Factory)` y añade la dependencia como extra opcional.
 5. Prueba contra un servidor TCP real, incluidos fallos de conexión.
@@ -106,7 +106,7 @@ Después, `release.yml` comprueba que la etiqueta coincide con la versión, prue
 Para compilar el ejecutable en local:
 
 ```powershell
-.venv\Scripts\python -m pip install -e ".[s7,modbus,opcua]" pyinstaller
+.venv\Scripts\python -m pip install -e ".[s7,modbus,opcua,serial]" pyinstaller
 .venv\Scripts\python packaging/build_exe.py   # dist/abSCADA/abscada.exe y un ZIP
 ```
 

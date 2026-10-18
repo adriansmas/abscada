@@ -7,6 +7,7 @@ from concurrent.futures import Future
 import time
 from .project import coerce
 from .connectors import create, read_groups
+from .protocol_definition import GroupError
 from .security import SecurityService
 from .i18n import tr
 
@@ -232,7 +233,13 @@ class Runtime:
                         for read in groups:
                             if self._stop.is_set():
                                 break
-                            for index, value in read().items():
+                            try:
+                                values = read()
+                            except GroupError as exc:
+                                for index in exc.indices:
+                                    self._set(names[index], self.snapshot()[names[index]].value, "bad", str(exc))
+                                continue
+                            for index, value in values.items():
                                 name = names[index]
                                 self._set(name, coerce(value, tags[name]["type"]), "good")
                         with self._lock:

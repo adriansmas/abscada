@@ -186,3 +186,26 @@ def test_selectors_show_folders_and_keep_the_execution_order(studio):
     studio.script_field.setCurrentIndex(studio.script_field.findData("abrir"))
     studio.apply_fields()
     assert studio.document()["elements"][0]["script"] == "abrir"
+
+
+def test_script_limit_dialog_stores_own_limit_or_none(studio, monkeypatch):
+    from abscada import automation_editor
+    editor, project = studio.automation_editor, lambda: studio.project
+    answers = iter([dict(mode="none", seconds=10.0), dict(mode="custom", seconds=2.5), dict(mode="default", seconds=1.0)])
+
+    class Accepted:
+        def __init__(self, *args, **kwargs):
+            self.answer = next(answers)
+        def exec(self):
+            return automation_editor.QDialog.DialogCode.Accepted
+        def data(self):
+            return self.answer
+    monkeypatch.setattr(automation_editor, "RecordDialog", Accepted)
+    editor.edit_limit("reloj")
+    assert project().automation["limits"] == {"reloj": None}
+    assert any(editor.tree.topLevelItem(i).text(0) == "reloj  ·  sin límite" for i in range(editor.tree.topLevelItemCount()))
+    editor.edit_limit("reloj")
+    assert project().automation["limits"] == {"reloj": 2.5}
+    editor.edit_limit("reloj")
+    assert "limits" not in project().automation
+    assert studio.errors == []

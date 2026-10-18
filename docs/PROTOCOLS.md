@@ -6,6 +6,8 @@ Una **variable** es un dato del proyecto (nombre, tipo, valor inicial, acceso). 
 | --- | --- | --- |
 | Siemens S7 | Host, puerto, rack, slot, ciclo | DB, byte, bit para BOOL, codificación |
 | Modbus TCP | Host, puerto, Unit ID, timeout, ciclo | Área, offset base 0, codificación, orden de bytes y registros |
+| Modbus RTU | Puerto serie (o TCP a un conversor), baudios, paridad, timeout, ciclo | Esclavo, y lo mismo que Modbus TCP |
+| Serie / TCP en bruto | Puerto serie o TCP, fin de trama, codificación, textos al conectar y desconectar | Función (última trama, contador, petición, envío) y comando |
 | TwinCAT ADS | IP, puerto TCP 48898, AMS Net ID remoto y local, puerto ADS, timeout | Símbolo o grupo:offset, tipo PLC, longitud de STRING |
 | OPC UA | Endpoint, política de seguridad, usuario, timeout | NodeId |
 
@@ -15,9 +17,9 @@ El tipo de la variable (`int`, `float`…) es distinto de la codificación en el
 
 Cada conexión tiene su propio hilo, cliente y cola de escritura, de modo que un equipo lento o caído no afecta a los demás. `poll_ms` (50–60000) es un intervalo objetivo, no tiempo real: si una lectura tarda más, el siguiente ciclo empieza al terminar, sin solaparse.
 
-Si una lectura falla, **toda la conexión** pasa a calidad *bad*, conserva los últimos valores, cierra el cliente y reconecta a los 2 s. Las escrituras pendientes de una conexión caída se descartan y no se repiten al reconectar.
+Si una lectura falla, **toda la conexión** pasa a calidad *bad*, conserva los últimos valores, cierra el cliente y reconecta a los 2 s. Excepción: en Modbus RTU, un esclavo que no responde o devuelve una excepción solo pone en *bad* sus variables, y el resto del bus sigue leyéndose. Las escrituras pendientes de una conexión caída se descartan y no se repiten al reconectar.
 
-S7 agrupa las lecturas; Modbus, ADS y OPC UA leen cada variable por separado. La capacidad en número de equipos y variables todavía no se ha medido.
+S7 y Modbus RTU agrupan las lecturas; Modbus TCP, ADS y OPC UA leen cada variable por separado. La capacidad en número de equipos y variables todavía no se ha medido.
 
 ## Siemens S7
 
@@ -54,6 +56,75 @@ No es una CPU Siemens: sirve para probar el adaptador de punta a punta.
 
 Usa `pyModbusTCP` (extra `modbus`). Coils y discrete inputs son bits; holding e input registers, registros de 16 bits. Codificaciones uint16, int16, uint32, int32, float32 y float64, con orden de bytes y de registros configurable. Los offsets son **base 0**: el holding register documentado como 40001 es el offset 0. Las áreas de entrada no admiten escritura. No hay cadenas, arrays ni bits dentro de registros.
 
+## Puerto serie
+
+Modbus RTU y Serie/TCP en bruto usan `pyserial` (extra `serial`, incluido en el `.exe`). No necesita drivers propios, solo el del adaptador USB-RS232/485 si lo hay. El **medio** puede ser:
+
+- **Puerto serie**: `COM3` en Windows o `/dev/ttyUSB0` en Linux, con baudios, bits de datos, paridad y bits de parada. También admite URL de pyserial (`loop://`, `rfc2217://host:puerto`).
+- **TCP**: un conversor serie-Ethernet (Moxa, USR…) en modo *TCP server* transparente. IP y puerto TCP.
+
+Un puerto serie solo lo puede abrir un programa: si está ocupado, la conexión queda en *bad* con el error del sistema.
+
+### Modbus RTU
+
+Maestro Modbus RTU con las mismas áreas, offsets base 0 y codificaciones que Modbus TCP. El **esclavo** (1-247) va en cada variable, porque un puerto atiende todo el bus RS-485.
+
+- **Lecturas**: funciones 1-4, agrupando datos contiguos del mismo esclavo y área (hasta 125 registros o 2000 bits).
+- **Escrituras**: función 5 para coils y 16 para registros. Con la opción «FC06» de la conexión, un dato de un solo registro se escribe con la 6.
+- **Tramas**: respeta el silencio de 3,5 caracteres entre tramas y comprueba el CRC. *Pausa entre peticiones* añade más tiempo para equipos lentos.
+- Sin broadcast (esclavo 0).
+
+Cada esclavo que no responde cuesta su *timeout* en cada ciclo. Con varios esclavos caídos, baja el timeout o separa los buses.
+
+### Serie / TCP en bruto
+
+Para equipos que hablan por texto o tramas propias: básculas, lectores de códigos, medidores, displays. El conector **no interpreta nada**: corta tramas, entrega el texto y envía lo que se le pide. Entender la trama es trabajo del proyecto, normalmente un script.
+
+**Conexión**:
+
+- **Fin de trama**:
+  - *Terminador*: `\r\n`, `\r`, `\x03`…
+  - *Inicio y fin*: por ejemplo `\x02`…`\x03`.
+  - *Longitud fija*.
+  - *Silencio en la línea*: la trama termina cuando no llegan bytes durante X ms.
+
+  Los delimitadores no forman parte de la trama y las tramas vacías se descartan.
+- **Codificación**: ASCII, Latin-1, UTF-8 o *Hexadecimal*. En hexadecimal cada trama se muestra como `01 03 02 00 0A`, y lo que se envía se escribe en ese mismo formato.
+- **Añadir a cada envío**: sufijo para todo lo que se envía, típicamente `\r\n`.
+- **Enviar al conectar / al desconectar**: por ejemplo, la orden de transmisión continua y la de pararla. El texto de conexión se repite al reconectar.
+- **Error si no llegan tramas en**: con un valor distinto de 0, si el equipo deja de emitir, la conexión pasa a *bad* y reconecta, con lo que reenvía el texto de conexión.
+
+Los textos admiten escapes `\r`, `\n`, `\t` y `\xNN`.
+
+**Funciones de enlace**:
+
+| Función | Tipo | Valor |
+| --- | --- | --- |
+| Última trama recibida | string | La última trama completa, llegue cuando llegue |
+| Tramas recibidas | int | Contador desde la conexión; cambia aunque la trama se repita |
+| Petición y respuesta | string | En cada ciclo envía el comando y guarda la primera trama que llega antes del *timeout* |
+| Enviar texto | string, escritura | Escribir la variable envía el texto (más el sufijo); leerla devuelve lo último enviado |
+
+**Ejemplo: báscula KERN PNS** (1200 8N1, trama `+0075.55 G S`).
+
+- **Conexión**: *Añadir a cada envío* `\r\n`, *Enviar al conectar* `O1` (transmisión continua) y *Enviar al desconectar* `O0`.
+- **Variables**: `BasculaTrama` (Última trama recibida), `BasculaOrden` (Enviar texto, para `T` de tara) y dos internas, `Peso` y `Estable`.
+- **Script**: sin límite de tiempo y en los eventos de inicio; rellena `Peso` y `Estable`:
+
+```python
+import re
+while ctx.sleep(0.2):
+    if ctx.quality('BasculaTrama') != 'good':
+        continue
+    m = re.match(r'\s*([+-])\s*([\d./]+)\s*(\w*)\s*([SUE])?', ctx.read('BasculaTrama'))
+    if m and m.group(4) != 'E':
+        valor = float(m.group(2).replace('/', ''))
+        ctx.write('Peso', -valor if m.group(1) == '-' else valor)
+        ctx.write('Estable', m.group(4) == 'S')
+```
+
+Para una báscula de consulta, enlaza `BasculaTrama` con *Petición y respuesta* y comando `O8`, y no envíes nada al conectar.
+
 ## TwinCAT ADS
 
 `ads.py` implementa AMS/TCP directamente: no necesita `pyads`, `TcAdsDll.dll` ni TwinCAT en el puesto SCADA. El PLC debe tener una ruta estática hacia el AMS Net ID del SCADA (por defecto, su IP + `.1.1`) y estar en RUN. Paso a paso: [ejemplo Beckhoff](../examples/beckhoff/README.md#conectar-un-plc-real).
@@ -77,4 +148,4 @@ Cada conexión lee por polling: aún no hay suscripciones ni explorador de nodos
 
 ## Validación
 
-Las pruebas usan servidores TCP reales en localhost: `test_s7_integration.py` y `test_s7_reads.py` (S7), `test_modbus.py`, `test_ads.py` y `test_opcua.py`. **No se ha probado ningún PLC físico** ni el rendimiento con miles de variables.
+Las pruebas usan servidores TCP reales en localhost: `test_s7_integration.py` y `test_s7_reads.py` (S7), `test_modbus.py`, `test_ads.py` y `test_opcua.py`; los conectores serie, `test_serial.py`, contra equipos simulados por TCP y el puerto `loop://` de pyserial. **No se ha probado ningún PLC físico** ni el rendimiento con miles de variables.

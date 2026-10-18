@@ -1,6 +1,6 @@
 """Build the Windows beta: dist/abSCADA/abscada.exe and dist/abSCADA-<version>-windows.zip.
 
-    .venv\\Scripts\\python -m pip install -e ".[s7,modbus]" pyinstaller
+    .venv\\Scripts\\python -m pip install -e ".[s7,modbus,opcua,serial]" pyinstaller
     .venv\\Scripts\\python packaging/build_exe.py
 """
 import datetime

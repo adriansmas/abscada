@@ -1,4 +1,4 @@
-# Tested Windows development environment; install project with pip install -e '.[dev,s7,modbus,opcua]'.
+# Tested Windows development environment; install project with pip install -e '.[dev,s7,modbus,opcua,serial]'.
 PySide6==6.11.2
 PySide6_Addons==6.11.2
 PySide6_Essentials==6.11.2
@@ -6,6 +6,7 @@ shiboken6==6.11.2
 python-snap7==3.2.1
 pytest==9.1.1
 pyModbusTCP==0.3.1
+pyserial==3.5
 asyncua==2.1.0
 aiosqlite==0.22.1
 anyio==4.15.1

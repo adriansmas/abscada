@@ -161,8 +161,11 @@ S7.definition = ProtocolDefinition(
 from .modbus import ModbusTCP
 from .ads import TwinCatADS
 from .opcua import OpcUaClient
+from .modbus_rtu import ModbusRTU
+from .serial_ascii import SerialAscii
 
-REGISTRY = {"s7": S7, "modbus_tcp": ModbusTCP, "ads": TwinCatADS, "opcua": OpcUaClient}
+REGISTRY = {"s7": S7, "modbus_tcp": ModbusTCP, "ads": TwinCatADS, "opcua": OpcUaClient,
+            "modbus_rtu": ModbusRTU, "serial_ascii": SerialAscii}
 
 
 def definition(protocol):

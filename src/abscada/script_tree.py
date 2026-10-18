@@ -149,6 +149,7 @@ def add_script(project, name, source, folder=""):
 def delete_script(project, name):
     """Delete a source; the project validation refuses it while something still uses it."""
     project.scripts.pop(name)
+    project.automation.get("limits", {}).pop(name, None)
     located = _located(project)
     located.pop(name, None)
     _store(project, project.automation.get("folders", []), located)
@@ -193,6 +194,8 @@ def rename_script(project, old, new):
         automation["startup"] = [swap(n) for n in automation["startup"]]
     for task in automation.get("tasks", []):
         task["script"] = swap(task.get("script"))
+    if "limits" in automation:
+        automation["limits"] = {swap(key): limit for key, limit in automation["limits"].items()}
     located = {swap(key): folder for key, folder in _located(project).items()}
     _store(project, automation.get("folders", []), located)
     for collection in ("screens", "faceplates"):

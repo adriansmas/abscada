@@ -92,8 +92,10 @@ class AutomationEditor(QTabWidget):
             item.setIcon(0,folder_icon); item.setData(0,ROLE,('folder',path)); nodes[path]=item
         current=None
         for script in script_tree.ordered(project):
-            item=QTreeWidgetItem(parent(script_tree.folder_of(project,script)),[script])
+            limit=self.limit_text(script)
+            item=QTreeWidgetItem(parent(script_tree.folder_of(project,script)),[f'{script}  ·  {limit}' if limit else script])
             item.setData(0,ROLE,('script',script))
+            if limit: item.setToolTip(0,tr('Límite de ejecución: {limit}',limit=limit))
             if script==name or (current is None and not name): current=item
         self.tree.expandAll()
         if current: self.tree.setCurrentItem(current)
@@ -133,7 +135,7 @@ class AutomationEditor(QTabWidget):
     def end_edit_group(self):
         self.edit_group=False; self.edit_timer.stop()
 
-    TEMPLATE='# API: ctx.read, ctx.quality, ctx.write, ctx.state\nprint(ctx.event)\n'
+    TEMPLATE='# API: ctx.read, ctx.quality, ctx.write, ctx.state, ctx.commit, ctx.sleep\nprint(ctx.event)\n'
 
     def add(self):
         self.new_name.setFocus()
@@ -178,6 +180,7 @@ class AutomationEditor(QTabWidget):
             name=value[1]
             menu.addAction(tr('Renombrar…'),lambda:self.rename(item))
             menu.addAction(tr('Duplicar'),self.duplicate)
+            menu.addAction(tr('Límite de ejecución…'),lambda:self.edit_limit(name))
             move=menu.addMenu(tr('Mover a carpeta'))
             current=script_tree.folder_of(project,name)
             for path in ['']+script_tree.folders(project):
@@ -241,6 +244,29 @@ class AutomationEditor(QTabWidget):
             ('timeout_seconds',tr('Límite por ejecución (s)'),'number',10,())], self.host.project.automation)
         if d.exec()==QDialog.DialogCode.Accepted:
             self.host.mutate(lambda:self.host.project.automation.update(d.data()))
+
+    def limit_text(self,name):
+        """Own limit of a script for the list; empty when it uses the general one."""
+        limits=self.host.project.automation.get('limits',{})
+        if name not in limits: return ''
+        return tr('sin límite') if limits[name] is None else tr('{seconds} s',seconds=f'{limits[name]:g}')
+
+    def edit_limit(self,name):
+        automation=self.host.project.automation; limits=automation.get('limits',{})
+        general=automation.get('timeout_seconds',10)
+        mode='default' if name not in limits else 'none' if limits[name] is None else 'custom'
+        d=RecordDialog(self,tr('Límite de ejecución de «{name}»',name=name),[
+            ('mode',tr('Límite'),'choice',mode,[('default',tr('El general ({seconds} s)',seconds=f'{general:g}')),
+                ('custom',tr('Propio')),('none',tr('Sin límite: se ejecuta en paralelo hasta que termine'))]),
+            ('seconds',tr('Segundos (límite propio)'),'number',float(limits.get(name) or general),())])
+        if d.exec()!=QDialog.DialogCode.Accepted: return
+        data=d.data()
+        def change():
+            own=automation.setdefault('limits',{})
+            if data['mode']=='default': own.pop(name,None)
+            else: own[name]=None if data['mode']=='none' else data['seconds']
+            if not own: automation.pop('limits')
+        if self.host.mutate(change): self.refresh()
 
     def refresh_diagnostics(self):
         runtime=self.host.runtime
