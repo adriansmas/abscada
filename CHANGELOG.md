@@ -5,11 +5,15 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 ## [Sin publicar]
 
 ### Añadido
+- **Conectores serie:** **Modbus RTU** (maestro con el esclavo en cada variable, lecturas agrupadas por esclavo; un esclavo que no responde solo marca sus variables) y **Serie / TCP en bruto** para básculas, lectores y equipos con protocolo propio (última trama, contador, petición y respuesta, envío de texto; el análisis de la trama se hace en scripts). Ambos funcionan por puerto COM o por un conversor serie-Ethernet en TCP. Necesitan el extra `serial` (pyserial), incluido en el `.exe`. Véase [PROTOCOLS.md](docs/PROTOCOLS.md#puerto-serie).
+- **Scripts sin límite de tiempo:** cada script puede tener su propio límite o ninguno. Los que no tienen límite corren en paralelo hasta terminar; `ctx.commit()` y `ctx.sleep()` aplican escrituras durante la ejecución.
+- **Calidad desde scripts y alarma «Sin datos válidos»:** `ctx.set_quality()` marca una variable interna como `bad` o `uncertain` sin cambiar su valor, y la condición de alarma `bad_quality` avisa mientras una variable no tiene un dato bueno.
 - **Botones con varias acciones:** la acción «Lista de acciones» ejecuta con un clic varias acciones en orden (escribir valor, alternar, ejecutar script, cambiar idioma y, como última, abrir o cerrar pantallas). Se editan en Studio con «Editar acciones…». Antes de enviar nada se comprueban todas; las acciones no esperan al script ni a la confirmación del PLC.
 - **Carpetas de scripts:** la lista de Scripts admite carpetas y subcarpetas (crear, renombrar, eliminar subiendo su contenido, arrastrar o «Mover a carpeta»). Son organización de Studio: los archivos siguen en `scripts/` y las referencias no cambian. Los selectores de script muestran la carpeta.
 - **Renombrar scripts** desde Studio actualiza botones, listas de acciones, eventos de inicio, aperturas de pantalla y tareas, y avisa de los scripts que mencionan el nombre como texto. Eliminar un script en uso indica dónde se usa.
 
 ### Cambiado
+- **Pantalla completa en el runtime:** la pantalla se escala de borde a borde, sin margen ni barras de desplazamiento; si el monitor tiene otra proporción, el hueco sobrante es oscuro en lugar de blanco. En pantalla completa se oculta la barra de estado (salvo con usuarios activados) y sus mensajes aparecen superpuestos.
 - **Lecturas S7 agrupadas:** cada ciclo lee en una sola petición los bytes contiguos de un DB en lugar de una petición por variable; los bits de un mismo byte se leen una vez. El tamaño de bloque se ajusta al PDU negociado. Calidad, errores, reconexión y escrituras se comportan igual que antes.
 - **Ejemplos y documentación simplificados:** quedan cuatro ejemplos en la pantalla de inicio (central hidroeléctrica, cervecería, banco Beckhoff y laboratorio); se retiran `plant`, `s7` y `library_author`. Las guías se reorganizan sin repeticiones y las capturas se reducen a seis, generadas con `tools/capture_docs.py`.
 

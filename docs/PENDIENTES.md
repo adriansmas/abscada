@@ -7,6 +7,7 @@ Lista vigente, revisada el 10 de octubre de 2026. Las funciones implementadas se
 - Comprobar en GitHub Actions el resultado de la revisión publicada; matriz Windows/Linux con Python 3.11/3.14.
 - Probar interfaz y protocolos en Linux y macOS con sesión gráfica real; añadir macOS a CI si se mantiene como plataforma soportada.
 - Ensayar PLC físicos S7-1200/1500 (incluidas las lecturas S7 agrupadas), Beckhoff TwinCAT y servidor OPC UA de S7-1500.
+- Ensayar Modbus RTU en un bus RS-485 real y la conexión serie en bruto con una báscula, por puerto COM y por conversor serie-Ethernet.
 - Verificar varios monitores, DPI 125/150 %, entrada táctil y accesibilidad en puestos reales.
 - Medir carga sostenida, histórico de meses y desconexiones antes de anunciar capacidades de tags o ciclos.
 - Validar recuperación ante corte de alimentación y disco lleno.

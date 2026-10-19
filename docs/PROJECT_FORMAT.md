@@ -245,7 +245,7 @@ Un botón navega en una zona con `"action": "screen", "screen": "historico", "ta
 }
 ```
 
-`main` coloca la ventana principal; cada entrada de `windows` abre otra al arrancar. `scale` es `fit` (mantener proporciones), `stretch` o `none` (tamaño real con barras de desplazamiento). Sin `display` se abre la principal maximizada. Las posiciones que deja el operador se guardan en sus preferencias, no en el proyecto.
+`main` coloca la ventana principal; cada entrada de `windows` abre otra al arrancar. `scale` es `fit` (mantener proporciones, con franjas oscuras si el monitor tiene otra proporción), `stretch` (llenar la ventana) o `none` (tamaño real con barras de desplazamiento). `mode` es `normal`, `maximized` o `fullscreen`. Sin `display` se abre la principal maximizada. Las posiciones que deja el operador se guardan en sus preferencias, no en el proyecto.
 
 ## Alarmas, registros y visores
 

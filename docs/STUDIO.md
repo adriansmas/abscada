@@ -69,7 +69,7 @@ Un layout es una pantalla normal con contenedores:
 
 Hay un solo nivel: una pantalla alojada no puede tener contenedores. Todas las zonas y ventanas comparten adquisición, alarmas y registros.
 
-**Proyecto → Ajustes del proyecto… → Operación** configura monitor, modo, escalado y ventanas que se abren al arrancar. Las emergentes también admiten monitor y «siempre encima». Runtime recuerda posiciones por proyecto y puesto.
+**Proyecto → Ajustes del proyecto… → Operación** configura monitor, modo, escalado y ventanas que se abren al arrancar. En **Pantalla completa** la pantalla ocupa todo el monitor: la barra de estado se oculta y sus mensajes aparecen superpuestos abajo; solo se mantiene si el proyecto tiene usuarios, porque lleva el botón de sesión. Las emergentes también admiten monitor y «siempre encima». Runtime recuerda posiciones por proyecto y puesto.
 
 **Abrir runtime** arranca en la pantalla seleccionada; `--runtime` usa la de inicio. **Reiniciar con cambios** aplica lo guardado, interrumpiendo la sesión.
 

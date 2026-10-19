@@ -1,6 +1,6 @@
 # abSCADA
 
-SCADA de escritorio libre (GPL-3.0-or-later) hecho con Python y PySide6. **Studio** diseña el proyecto y **Runtime** lo opera en otra ventana. Comunica con Siemens S7, Modbus TCP, Beckhoff TwinCAT ADS y OPC UA, y tiene usuarios y roles, alarmas, históricos SQLite, tendencias y scripts Python. Los proyectos son carpetas de JSON con un manifiesto `.abscada`.
+SCADA de escritorio libre (GPL-3.0-or-later) hecho con Python y PySide6. **Studio** diseña el proyecto y **Runtime** lo opera en otra ventana. Comunica con Siemens S7, Modbus TCP, Modbus RTU, Beckhoff TwinCAT ADS, OPC UA y equipos serie en bruto (básculas, lectores…) por puerto serie o conversor TCP, y tiene usuarios y roles, alarmas, históricos SQLite, tendencias y scripts Python. Los proyectos son carpetas de JSON con un manifiesto `.abscada`.
 
 ![Studio](docs/img/studio.png)
 
@@ -12,7 +12,7 @@ Requiere Python 3.11 o posterior y una sesión gráfica.
 git clone https://github.com/adriansmas/abscada.git
 cd abscada
 python -m venv .venv
-.venv\Scripts\python -m pip install -e ".[dev,s7,modbus,opcua]"
+.venv\Scripts\python -m pip install -e ".[dev,s7,modbus,opcua,serial]"
 .venv\Scripts\python -m abscada
 ```
 
@@ -48,7 +48,7 @@ Runtime trabaja sobre una copia del proyecto: lo que guardes en Studio se aplica
 | [Studio](docs/STUDIO.md) | Diseñar pantallas, variables, alarmas, registros, librerías, idiomas y guardar |
 | [Operación](docs/OPERATIONS.md) | Runtime: mandos, alarmas, históricos, tendencias y almacenamiento |
 | [Scripts](docs/SCRIPTS.md) | Scripts Python y la API `ctx` |
-| [Protocolos](docs/PROTOCOLS.md) | Conexiones, direcciones y límites de S7, Modbus, ADS y OPC UA |
+| [Protocolos](docs/PROTOCOLS.md) | Conexiones, direcciones y límites de S7, Modbus TCP y RTU, serie en bruto, ADS y OPC UA |
 | [Formato de proyecto](docs/PROJECT_FORMAT.md) | Referencia de los JSON del proyecto y de las librerías |
 | [Bastionado](docs/HARDENING.md) | Instalar abSCADA de forma segura en planta |
 | [Desarrollo](docs/DEVELOPMENT.md) | Arquitectura, pruebas, añadir protocolos o controles, traducir y publicar versiones |

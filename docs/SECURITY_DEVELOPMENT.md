@@ -27,7 +27,7 @@ Estado: fase 1 (prácticas sin coste). Revisión: octubre de 2026.
 | Configuración segura por defecto | Parcial: OPC UA seguro por defecto y servidor OPC UA desactivado; **la seguridad de usuarios está desactivada por defecto** para no romper proyectos existentes. Antes de comercializar, el asistente de nuevo proyecto debería activarla |
 | Actualizaciones de seguridad | Versiones con SBOM y procedencia; falta aviso automático |
 | Protección frente a acceso no autorizado (autenticación, gestión de identidades) | Usuarios, roles, bloqueo por intentos, caducidad de sesión, cambio de contraseña en el primer acceso; OPC UA con usuario y certificado |
-| Confidencialidad (cifrado) | OPC UA con firma y cifrado. Las contraseñas de conexión van en el proyecto codificadas, no cifradas: la confidencialidad depende del acceso al proyecto. **S7 clásico y Modbus TCP no admiten cifrado**: mitigación por arquitectura de red ([HARDENING.md](HARDENING.md)) |
+| Confidencialidad (cifrado) | OPC UA con firma y cifrado. Las contraseñas de conexión van en el proyecto codificadas, no cifradas: la confidencialidad depende del acceso al proyecto. **S7 clásico, Modbus TCP y RTU y la conexión serie en bruto no admiten cifrado**: mitigación por arquitectura de red ([HARDENING.md](HARDENING.md)) |
 | Integridad de datos, órdenes y configuración | Escrituras como órdenes explícitas validadas por tipo y permiso; guardado con detección de cambios externos y recuperación ante errores de E/S (sin transacción frente a cortes de alimentación); versiones Git del proyecto |
 | Minimizar datos | El runtime no recoge datos personales salvo el nombre de usuario en la auditoría |
 | Disponibilidad y resiliencia | Un trabajador por conexión; colas acotadas; reconexión. Falta prueba de carga sostenida |
@@ -62,9 +62,9 @@ Las obligaciones de notificación del CRA (vulnerabilidades explotadas e inciden
 | CR 2.1 Aplicación de la autorización | ✅ Permisos por rol en mandos, scripts, ACK y escrituras OPC UA |
 | CR 2.5 / 2.6 Bloqueo y cierre de sesión | ✅ Cierre por inactividad |
 | CR 2.8 Eventos auditables | ✅ Ver Parte I |
-| CR 3.1 Integridad de las comunicaciones | ✅ OPC UA; ❌ S7 clásico y Modbus (limitación del protocolo) |
+| CR 3.1 Integridad de las comunicaciones | ✅ OPC UA; ❌ S7 clásico, Modbus y serie en bruto (limitación del protocolo) |
 | CR 3.4 Integridad del software | ⏳ Falta firma Authenticode del ejecutable |
-| CR 4.1 / 4.3 Confidencialidad y criptografía | ✅ OPC UA; ⚠️ secretos de conexión recuperables en el proyecto; ❌ S7 clásico y Modbus |
+| CR 4.1 / 4.3 Confidencialidad y criptografía | ✅ OPC UA; ⚠️ secretos de conexión recuperables en el proyecto; ❌ S7 clásico, Modbus y serie en bruto |
 | CR 7.x Disponibilidad | ⏳ Pendiente de ensayos de carga |
 
 ## Cómo se publica una versión
@@ -87,7 +87,7 @@ Método STRIDE sobre los límites de confianza de una instalación típica. Se r
 ```text
             Zona de oficina / IT                │   Zona de control (OT)
                                                 │
-  Cliente OPC UA (MES, historian) ──OPC UA──────┼──▶ abSCADA runtime ──S7 / Modbus / ADS──▶ PLC
+  Cliente OPC UA (MES, historian) ──OPC UA──────┼──▶ abSCADA runtime ──S7 / Modbus / ADS / serie──▶ PLC
   (certificado + usuario abSCADA)   cifrado     │     │  ▲   │
                                                 │     │  │   └─ OPC UA cifrado ──▶ PLC S7-1500 / servidor OPC UA
   Ingeniero con Studio ─────────────────────────┼─────┘  │
@@ -101,7 +101,7 @@ Método STRIDE sobre los límites de confianza de una instalación típica. Se r
 | --- | --- | --- |
 | Operador → runtime | Mandos, consignas, ACK, scripts de botón | Sesión con usuario y rol; cierre por inactividad; auditoría |
 | Red IT → servidor OPC UA | Lecturas y escrituras de clientes | Firma y cifrado; certificado del cliente aceptado expresamente; usuario con permiso «Acceso por OPC UA»; escritura solo con «Mandos y consignas»; anónimo desactivado por defecto |
-| Runtime → PLC | Lecturas y órdenes | OPC UA cifrado cuando el PLC lo permite; S7 clásico y Modbus sin protección (aislar en la red) |
+| Runtime → PLC | Lecturas y órdenes | OPC UA cifrado cuando el PLC lo permite; S7 clásico, Modbus y serie sin protección (aislar en la red) |
 | Ingeniero → proyecto | JSON, scripts Python | Permisos del sistema de archivos y control de versiones Git; los scripts son código de confianza |
 | Disco del puesto y repositorio | Cuentas (huellas scrypt), contraseñas de conexión, clave privada OPC UA, histórico | Hash scrypt y longitud mínima; acceso restringido a la carpeta y al repositorio; `runtime/` nunca va al repositorio |
 

@@ -7,6 +7,7 @@ Para el integrador o el responsable de la planta. Aplica la defensa en profundid
 - **Zona de control separada** de la red de oficina (VLAN o red física) con un cortafuegos entre ambas.
 - Entre oficina y control, solo los conductos necesarios. Lo habitual es **OPC UA (TCP 4840) desde los equipos de oficina autorizados hacia el puesto abSCADA**, nunca al revés.
 - **S7 clásico (TCP 102), Modbus TCP (502) y ADS (48898) no tienen autenticación ni cifrado.** Deben quedarse dentro de la zona de control, sin salida a la red de oficina ni a internet.
+- **Modbus RTU y la conexión serie en bruto tampoco.** Si se usan a través de un conversor serie-Ethernet, el conversor queda en la zona de control como un PLC más, con su puerto TCP solo accesible desde el puesto abSCADA y su configuración web protegida con contraseña.
 - Sin acceso remoto directo al puesto. Si hace falta, VPN con doble factor hasta una máquina de salto, no hasta el SCADA.
 
 ## 2. Puesto Windows
