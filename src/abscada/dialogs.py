@@ -3,6 +3,15 @@ from PySide6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QLineEdit
 from .i18n import tr
 
 
+def discard(widget):
+    """Remove a widget from view now and delete it later. ``deleteLater`` alone waits for the
+    event loop that called it: while a modal dialog prepared before ``exec()`` is open, the old
+    widget would stay visible next to its replacement."""
+    widget.hide()
+    widget.setParent(None)
+    widget.deleteLater()
+
+
 class EditorDialog(QDialog):
     validator = None
 
