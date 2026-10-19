@@ -182,10 +182,11 @@ class ButtonActionsDialog(EditorDialog):
         self._loading = False
 
     def load_bindings(self, template, bindings):
+        from .dialogs import discard
         while self.binding_form.count():
             entry = self.binding_form.takeAt(0)
             if entry.widget():
-                entry.widget().deleteLater()
+                discard(entry.widget())
         self.binding_fields = {}
         if template not in self.studio.project.faceplates:
             return

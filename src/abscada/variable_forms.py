@@ -203,9 +203,7 @@ class VariableForms:
                 structure.configure(active,value,previous.get('writable',False),overrides)
             else: initial.set_kind(active,drafts.get(active,previous['initial'] if active==previous['type'] else None))
             endpoint.kind=active
-            if endpoint.form:
-                endpoint.layout.removeWidget(endpoint.form); endpoint.form.deleteLater(); endpoint.form=None
-            endpoint.drafts.clear(); endpoint.rebuild()
+            endpoint.clear_form(); endpoint.drafts.clear(); endpoint.rebuild()
             if structured: endpoint.hide()
         state(); kind.currentTextChanged.connect(state)
         if duplicate:
