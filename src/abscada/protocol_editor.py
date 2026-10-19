@@ -58,10 +58,7 @@ class BindingEditor(QWidget):
             return
         if self.form:
             self.drafts[self.active] = self.form.values()
-            self.layout.removeWidget(self.form)
-            self.form.setParent(None)
-            self.form.deleteLater()
-            self.form = None
+            self.clear_form()
         self.active = self.connection.currentData()
         if self.active and self.kind in {"bool", "int", "float", "string"}:
             spec = definition(self.configs[self.active]["protocol"])
@@ -70,6 +67,13 @@ class BindingEditor(QWidget):
             self.form = ProtocolForm(spec.fields_for(self.kind), data, self.kind)
             self.layout.addRow(self.form)
         self.setVisible(self.form is not None)
+
+    def clear_form(self):
+        from .dialogs import discard
+        if self.form:
+            self.layout.removeWidget(self.form)
+            discard(self.form)
+            self.form = None
 
     def binding(self):
         if not self.form:
