@@ -4,7 +4,7 @@ import copy
 import math
 import shiboken6
 from PySide6.QtCore import Qt, QRectF, QPointF, QTimer, QEvent, Signal
-from PySide6.QtGui import QColor, QPainter, QPen, QPixmap, QIcon, QFont, QPainterPath, QPainterPathStroker
+from PySide6.QtGui import QColor, QPainter, QPen, QPixmap, QIcon, QFont, QPainterPath, QPainterPathStroker, QTransform
 from PySide6.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsView, QGraphicsScene, QGraphicsProxyWidget, QLineEdit
 
 from .text_lists import display_text
@@ -311,10 +311,24 @@ class CanvasView(DrawingInteraction, QGraphicsView):
         pad = 24 if self.host.design_mode else 0
         mode = "fit" if self.host.design_mode else self.scale_mode
         if mode == "none":
+            if not self.host.design_mode:
+                policy = Qt.ScrollBarPolicy.ScrollBarAsNeeded
+                self.setHorizontalScrollBarPolicy(policy); self.setVerticalScrollBarPolicy(policy)
             self.resetTransform()
+        elif self.host.design_mode:
+            self.fitInView(self.scene().sceneRect().adjusted(-pad, -pad, pad, pad), Qt.AspectRatioMode.KeepAspectRatio)
         else:
-            self.fitInView(self.scene().sceneRect().adjusted(-pad, -pad, pad, pad),
-                           Qt.AspectRatioMode.IgnoreAspectRatio if mode == "stretch" else Qt.AspectRatioMode.KeepAspectRatio)
+            # Operation: the page fills the window edge to edge. fitInView keeps a 2 px
+            # margin and may leave scroll bars, which look like a badly scaled screen.
+            policy = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+            self.setHorizontalScrollBarPolicy(policy); self.setVerticalScrollBarPolicy(policy)
+            bounds = self.scene().sceneRect()
+            sx = self.viewport().width() / bounds.width()
+            sy = self.viewport().height() / bounds.height()
+            if mode != "stretch":
+                sx = sy = min(sx, sy)
+            self.setTransform(QTransform.fromScale(sx, sy))
+            self.centerOn(bounds.center())
         self.update_zoom_label()
 
     def update_zoom_label(self):

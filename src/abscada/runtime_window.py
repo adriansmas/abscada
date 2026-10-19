@@ -3,8 +3,8 @@ from __future__ import annotations
 import copy
 import time
 from PySide6.QtCore import QTimer, Signal, Qt, QEvent, QPoint, QSettings
-from PySide6.QtGui import QGuiApplication
-from PySide6.QtWidgets import QMainWindow, QInputDialog, QMessageBox
+from PySide6.QtGui import QGuiApplication, QColor
+from PySide6.QtWidgets import QMainWindow, QInputDialog, QMessageBox, QLabel
 from .theme import STYLE, configure_fonts
 from .graphics import CanvasScene, CanvasView, ElementItem
 from .runtime import Runtime
@@ -14,6 +14,12 @@ from .i18n import tr, tr_existing
 from . import button_actions
 from .button_actions import SEQUENCE, STEP_ACTIONS
 from .runtime_language_ui import runtime_ui
+
+
+# Around the page when the window has other proportions than the screen (letterbox).
+LETTERBOX = "#1b232d"
+NOTICE_STYLE = ("QLabel { background: rgba(27, 35, 45, 225); color: white; border-radius: 4px;"
+                " padding: 6px 10px; }")
 
 
 def monitors():
@@ -52,6 +58,15 @@ class RuntimeWindow(QMainWindow):
         self.view = CanvasView(self.scene, self)
         self.view.scale_mode = self.project.manifest.get("display", {}).get("main", {}).get("scale", "fit")
         self.setCentralWidget(self.view)
+        self.scene.setBackgroundBrush(QColor(LETTERBOX))
+        # Full screen hides the status bar; its messages float over the bottom of the screen.
+        self.notice = QLabel(self.view)
+        self.notice.setObjectName("fullscreenNotice")
+        self.notice.setStyleSheet(NOTICE_STYLE)
+        self.notice.setWordWrap(True)
+        self.notice.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
+        self.notice.hide()
+        self.statusBar().messageChanged.connect(self.show_notice)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.refresh)
         from PySide6.QtWidgets import QComboBox
@@ -66,7 +81,7 @@ class RuntimeWindow(QMainWindow):
             self.statusBar().addPermanentWidget(self.language_selector)
         self.session_label = self.session_button = None
         if not owner and self.runtime.security.enabled:
-            from PySide6.QtWidgets import QLabel, QPushButton
+            from PySide6.QtWidgets import QPushButton
             self.session_label = QLabel(); self.session_label.setObjectName("session_label")
             self.session_button = QPushButton(); self.session_button.setObjectName("session_button")
             self.session_button.clicked.connect(self.toggle_session)
@@ -141,6 +156,38 @@ class RuntimeWindow(QMainWindow):
 
     def show_mode(self, mode):
         {"maximized": self.showMaximized, "fullscreen": self.showFullScreen}.get(mode, self.show)()
+
+    def changeEvent(self, event):
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.WindowStateChange:
+            self.update_chrome()
+
+    def update_chrome(self):
+        """Full screen gives the whole monitor to the screen. The status bar stays only
+        when it holds the operator session controls, which have no other place."""
+        self.statusBar().setHidden(self.isFullScreen() and self.session_label is None)
+        self.show_notice(self.statusBar().currentMessage())
+
+    def show_notice(self, text):
+        if not text or not self.statusBar().isHidden():
+            self.notice.hide()
+            return
+        self.notice.setText(text)
+        self.place_notice()
+        self.notice.show()
+        self.notice.raise_()
+
+    def place_notice(self):
+        margin = 12
+        text_width = self.notice.fontMetrics().horizontalAdvance(self.notice.text()) + 24
+        self.notice.setFixedWidth(min(text_width, max(120, self.view.width() - 2 * margin)))
+        self.notice.setFixedHeight(self.notice.heightForWidth(self.notice.width()))
+        self.notice.move(margin, self.view.height() - self.notice.height() - margin)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        if self.notice.isVisible():
+            self.place_notice()
 
     def monitor(self, number):
         if number is None:
