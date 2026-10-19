@@ -3,6 +3,7 @@ import time
 import pytest
 from abscada import script_tree
 from abscada.runtime import Runtime
+from abscada.storage import ArchiveReader, database_path
 from test_core import wait_for
 from test_operations import operational_project  # noqa: F401 (fixture)
 
@@ -125,3 +126,53 @@ def test_ctx_sleep_outside_the_runtime_is_explained():
         ctx.sleep(1)
     with pytest.raises(ValueError):
         ctx.sleep(-1)
+
+
+def test_scripts_set_the_quality_of_internal_variables(operational_project):
+    p = operational_project
+    p.alarms["items"].append(dict(p.alarms["items"][0], id="sin_datos", condition="bad_quality", on_delay_ms=0, off_delay_ms=0))
+    p.scripts = {'calidad': """
+ctx.write('Level', 5)
+ctx.set_quality('Level', 'bad', 'báscula sin tramas')
+ctx.commit()
+print('calidad', ctx.quality('Level'))
+try:
+    ctx.read('Level')
+except ValueError:
+    print('lectura rechazada')
+try:
+    ctx.set_quality('Level', 'mala')
+except ValueError:
+    print('calidad desconocida')
+""", 'vuelve': "ctx.write('Level', 6)", 'dudosa': "ctx.set_quality('Level', 'uncertain')"}
+    p.automation = dict(startup=[], tasks=[], timeout_seconds=5)
+    p.validate()
+    r = Runtime(p)
+    r.start()
+    try:
+        r.scripts.submit('calidad')
+        wait_for(lambda: 'ok' in statuses(r, 'calidad'), 10)
+        text = '\n'.join(row['message'] for row in r.scripts.diagnostics())
+        assert 'calidad bad' in text and 'lectura rechazada' in text and 'calidad desconocida' in text
+        sample = r.snapshot()['Level']
+        assert (sample.value, sample.quality, sample.error) == (5, 'bad', 'báscula sin tramas')
+        reader = ArchiveReader(database_path(p))
+        wait_for(lambda: any(row["alarm_id"] == "sin_datos" for row in reader.alarms()))
+        r.scripts.submit('vuelve')
+        wait_for(lambda: r.snapshot()['Level'].quality == 'good' and r.snapshot()['Level'].value == 6, 10)
+        r.scripts.submit('dudosa')
+        wait_for(lambda: r.snapshot()['Level'].quality == 'uncertain', 10)
+        assert r.snapshot()['Level'].value == 6
+    finally:
+        r.stop()
+
+
+def test_quality_of_bound_variables_belongs_to_their_connection(operational_project):
+    from abscada.scripting import ScriptService
+    p = operational_project
+    r = Runtime(p)
+    r.tags['Level'] = dict(r.tags['Level'], binding=dict(connection='plc', address={}))
+    with pytest.raises(ValueError, match='internas'):
+        ScriptService(r).apply('x', [['Level', None, 'bad', '']], None, {})
+    with pytest.raises(ValueError, match='internas'):
+        r.set_quality('Level', 'bad')

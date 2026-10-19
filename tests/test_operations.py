@@ -236,3 +236,26 @@ def test_operational_configuration_rejects_invalid_references(operational_projec
     change(operational_project)
     with pytest.raises(ValueError):
         operational_project.validate()
+
+
+def test_bad_quality_alarm_follows_the_data_not_the_value(repository, operational_project):
+    alarm = dict(operational_project.alarms["items"][0], id="no_data", condition="bad_quality", on_delay_ms=1000, off_delay_ms=0)
+    engine = AlarmEngine([alarm], repository)
+    engine.observe("Level", Sample(90, "good", 100), 0, 100)
+    engine.tick(5, 105); assert not engine.active
+    engine.observe("Level", Sample(90, "bad", 106), 6, 106)
+    engine.tick(6.9, 106.9); assert not engine.active
+    engine.tick(7, 107); assert "no_data" in engine.active
+    engine.observe("Level", Sample(0, "uncertain", 108), 8, 108)
+    engine.tick(9, 109); assert "no_data" in engine.active
+    engine.observe("Level", Sample(0, "good", 110), 10, 110)
+    assert not engine.active
+
+
+def test_bad_quality_alarm_accepts_any_simple_type(operational_project):
+    operational_project.variables.append(dict(name="Trama", type="string", initial="", writable=True))
+    operational_project.alarms["items"].append(dict(operational_project.alarms["items"][0], id="trama", tag="Trama", condition="bad_quality"))
+    operational_project.validate()
+    operational_project.alarms["items"][-1]["condition"] = "high"
+    with pytest.raises(ValueError):
+        operational_project.validate()

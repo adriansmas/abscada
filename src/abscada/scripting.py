@@ -169,19 +169,28 @@ class ScriptService:
     def apply(self, name, actions, change, state):
         """Validate every requested write before applying any of them."""
         from .project import coerce
-        for tag, value in actions:
+        for tag, value, *quality in actions:
             definition = self.runtime.tags.get(tag)
             if definition is None:
                 raise ValueError(tr("{tag}: variable inexistente", tag=tag))
             if not definition.get('writable'):
                 raise ValueError(tr("{tag}: solo lectura", tag=tag))
+            if quality:
+                if definition.get('binding'):
+                    raise ValueError(tr("{tag}: solo se puede cambiar la calidad de variables internas", tag=tag))
+                if quality[0] not in ('good', 'uncertain', 'bad'):
+                    raise ValueError(tr("{tag}: calidad desconocida", tag=tag))
+                continue
             coerce(value, definition['type'])
             if definition.get('binding') and self.runtime.snapshot()[tag].quality != 'good':
                 raise ValueError(tr("{tag}: lectura no válida", tag=tag))
         if change is not None and change not in self.project.manifest.get('languages', ['es']):
             raise ValueError('Idioma de proyecto desconocido')
-        for tag, value in actions:
-            self.runtime.write(tag, value)
+        for tag, value, *quality in actions:
+            if quality:
+                self.runtime.set_quality(tag, *quality)
+            else:
+                self.runtime.write(tag, value)
         if change is not None:
             self.runtime.set_language(change)
         self.state[name] = state

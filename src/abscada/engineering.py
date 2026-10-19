@@ -258,20 +258,23 @@ class OperationalEngineering:
         def state(*args):
             kind = self.host.project.tags().get(tag.currentData(), {}).get("type")
             current = op.currentData()
-            keys = ("true", "false") if kind == "bool" else ("high", "low", "equal", "not_equal")
+            keys = ("true", "false") if kind == "bool" else () if kind == "string" else ("high", "low", "equal", "not_equal")
             op.blockSignals(True); op.clear()
-            for key in keys:
+            for key in keys + ("bad_quality",):
                 op.addItem(OPERATORS[key],key)
             op.setCurrentIndex(max(0,op.findData(current))); op.blockSignals(False)
-            dialog.fields["threshold"].setEnabled(kind!="bool")
+            limits()
+        def limits(*args):
+            kind = self.host.project.tags().get(tag.currentData(), {}).get("type")
+            dialog.fields["threshold"].setEnabled(kind in {"int","float"} and op.currentData() != "bad_quality")
             dialog.fields["hysteresis"].setEnabled(op.currentData() in {"high","low"})
         tag.currentIndexChanged.connect(state)
-        op.currentIndexChanged.connect(lambda: dialog.fields["hysteresis"].setEnabled(op.currentData() in {"high","low"}))
+        op.currentIndexChanged.connect(limits)
         state()
 
     def alarm_fields(self):
         categories = [(c["id"], c["name"]) for c in self.host.project.alarms["categories"]]
-        return [text("id", "ID"), text("message", tr("Mensaje")), choice("tag", tr("Variable"), self.tags({"bool", "int", "float"})),
+        return [text("id", "ID"), text("message", tr("Mensaje")), choice("tag", tr("Variable"), self.tags({"bool", "int", "float", "string"})),
             choice("category", tr("Categoría"), categories), choice("condition", tr("Condición"), list(OPERATORS.items()), "high"),
             numeric("threshold", tr("Umbral")), numeric("hysteresis", tr("Histéresis")), numeric("on_delay_ms", tr("Retardo entrada (ms)"), integer=True),
             numeric("off_delay_ms", tr("Retardo salida (ms)"), integer=True), numeric("priority", "Prioridad (1–1000)", 500, True),

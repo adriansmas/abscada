@@ -3,7 +3,8 @@ import math
 import re
 from .i18n import tr
 
-OPERATORS = {"true": tr("Activo"), "false": tr("Inactivo"), "high": tr("Mayor o igual"), "low": tr("Menor o igual"), "equal": tr("Igual"), "not_equal": tr("Distinto")}
+OPERATORS = {"true": tr("Activo"), "false": tr("Inactivo"), "high": tr("Mayor o igual"), "low": tr("Menor o igual"), "equal": tr("Igual"), "not_equal": tr("Distinto"),
+             "bad_quality": tr("Sin datos válidos")}
 ALARM_COLUMNS = (("priority",tr("Prioridad")),("category",tr("Categoría")),("message",tr("Mensaje")),("tag",tr("Variable")),
     ("state",tr("Estado / evento")),("entered_at",tr("Entrada")),("returned_at",tr("Salida")),("ack_at","ACK"),("actor",tr("Operador")),("quality",tr("Calidad")))
 MAX_AXES = 64   # per trend; the number of curves is not limited
@@ -42,7 +43,10 @@ def validate_operations(project, tags):
         if not alarm.get("message", "").strip() or alarm.get("condition") not in OPERATORS:
             raise ValueError(tr("Texto o condición de alarma inválidos"))
         kind = tags[alarm["tag"]]["type"]
-        if alarm["condition"] in {"true", "false"}:
+        if alarm["condition"] == "bad_quality":
+            if kind not in {"bool", "int", "float", "string"}:
+                raise ValueError(tr("La alarma de datos necesita una variable simple"))
+        elif alarm["condition"] in {"true", "false"}:
             if kind != "bool":
                 raise ValueError(tr("La alarma digital necesita una variable bool"))
         elif kind not in {"float", "int"}:

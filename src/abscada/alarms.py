@@ -45,11 +45,19 @@ class AlarmEngine:
     def evaluate(self, alarm, monotonic, wall):
         key = alarm["id"]
         sample = self.samples.get(alarm["tag"])
-        if sample is None or sample.quality != "good":
+        if alarm["condition"] == "bad_quality":
+            # The only condition about the data itself: no valid value, for whatever reason.
+            if sample is None:
+                return
+            active = key in self.active
+            desired = sample.quality != "good"
+        elif sample is None or sample.quality != "good":
+            # Losing the data is not a return of the process: keep the state, cancel delays.
             self.pending.pop(key, None)
             return
-        active = key in self.active
-        desired = condition(alarm, sample.value, active)
+        else:
+            active = key in self.active
+            desired = condition(alarm, sample.value, active)
         if desired == active:
             self.pending.pop(key, None)
             return

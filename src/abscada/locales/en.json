@@ -1268,5 +1268,11 @@
  "Par": "Even",
  "Impar": "Odd",
  "Marca": "Mark",
- "Espacio": "Space"
+ "Espacio": "Space",
+ "Sin datos válidos": "No valid data",
+ "La alarma de datos necesita una variable simple": "A data alarm needs a simple variable",
+ "{tag}: solo se puede cambiar la calidad de variables internas": "{tag}: only internal variables can have their quality changed",
+ "{tag}: calidad desconocida": "{tag}: unknown quality",
+ "{name}: solo se puede cambiar la calidad de variables internas": "{name}: only internal variables can have their quality changed",
+ "Calidad desconocida: {quality}": "Unknown quality: {quality}"
 }

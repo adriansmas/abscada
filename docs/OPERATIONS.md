@@ -25,9 +25,9 @@ Cada activación crea una **ocurrencia** y cada transición un **evento**. Si un
 | Retornada · pendiente ACK | Inactiva | Pendiente |
 | Cerrada | Inactiva | Reconocida o sin ACK |
 
-**Condiciones.** Digitales: true/false. Numéricas: high (≥), low (≤), igual y distinto. High retorna por debajo de umbral − histéresis y low por encima de umbral + histéresis; igual y distinto no usan histéresis, así que para flotantes conviene high/low.
+**Condiciones.** Digitales: true/false. Numéricas: high (≥), low (≤), igual y distinto. High retorna por debajo de umbral − histéresis y low por encima de umbral + histéresis; igual y distinto no usan histéresis, así que para flotantes conviene high/low. **Sin datos válidos** (`bad_quality`), para cualquier variable simple, incluida string: salta mientras la calidad no es `good` (equipo sin comunicación, o un script que la marca con `ctx.set_quality`) y retorna con el primer dato bueno. No usa umbral ni histéresis; el retardo de entrada evita avisar por cortes breves.
 
-**Retardos.** La condición debe mantenerse el tiempo configurado. Una lectura bad o uncertain cancela los retardos pendientes y **conserva** el estado de las alarmas activas: perder la comunicación no es un retorno del proceso.
+**Retardos.** La condición debe mantenerse el tiempo configurado. En las demás condiciones, una lectura bad o uncertain cancela los retardos pendientes y **conserva** el estado de las alarmas activas: perder la comunicación no es un retorno del proceso. Para avisar de esa pérdida, añade una alarma *Sin datos válidos* sobre la misma variable.
 
 **ACK.** Guarda fecha, operador y comentario. No escribe al PLC ni cambia la condición. Se puede reconocer una, varias o todas las visibles, y repetir un ACK no añade eventos.
 

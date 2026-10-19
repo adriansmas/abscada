@@ -132,6 +132,15 @@ class Runtime:
             self.operations.audit("write_requested", name, actor=actor, detail=f"{origin}: {value}")
         return completion
 
+    def set_quality(self, name, quality, reason=""):
+        """Quality of an internal variable, keeping its value, until the next write (which is good).
+        Bound variables get their quality from their connection."""
+        if self.tags[name].get("binding"):
+            raise ValueError(tr("{name}: solo se puede cambiar la calidad de variables internas", name=name))
+        if quality not in ("good", "uncertain", "bad"):
+            raise ValueError(tr("Calidad desconocida: {quality}", quality=quality))
+        self._set(name, self.snapshot()[name].value, quality, reason)
+
     def _set(self, name, value, quality, error=""):
         with self._lock:
             self._samples[name] = Sample(value, quality, time.time(), error)

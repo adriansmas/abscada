@@ -257,7 +257,7 @@ Un botón navega en una zona con `"action": "screen", "screen": "historico", "ta
             "on_delay_ms": 500, "off_delay_ms": 300, "ack_required": true, "enabled": true}]}
 ```
 
-- `alarms.json`: arriba. `condition` es `true` o `false` para bool y `high`, `low`, `equal` o `not_equal` para números; prioridad hasta 1000.
+- `alarms.json`: arriba. `condition` es `true` o `false` para bool, `high`, `low`, `equal` o `not_equal` para números, y `bad_quality` (sin datos válidos) para cualquier tipo simple; prioridad hasta 1000.
 - `historian.json`: `retention_days` y `files`, cada uno con `id`, `name`, `interval_ms` y `variables`. Una variable solo puede estar en un fichero. Los ID tienen 1–64 caracteres ASCII (letras, números, `_`, `-`).
 - `trends.json`: visores con `title`, `window_seconds`, `axes` (`id`, `title`, `side`, `auto`, `min`, `max`, `visible`) y `curves` (`id`, `tag`, `axis`, `color`, `width`, `visible`).
 - `alarm_views.json`: visores con `title`, `categories`, `min_priority`, `mode`, `allow_ack` y `columns`.

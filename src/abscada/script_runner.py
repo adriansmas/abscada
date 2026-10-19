@@ -62,6 +62,14 @@ class Context:
             raise ValueError('Máximo de 1000 operaciones por ejecución; usa ctx.commit() para aplicarlas antes')
         self.actions.append([name, value])
 
+    def set_quality(self, name, quality, reason=''):
+        """Change the quality of an internal variable and keep its value; ctx.write() makes it good again."""
+        if quality not in ('good', 'uncertain', 'bad'):
+            raise ValueError('Calidad desconocida: usa "good", "uncertain" o "bad"')
+        if len(self.actions) >= 1000:
+            raise ValueError('Máximo de 1000 operaciones por ejecución; usa ctx.commit() para aplicarlas antes')
+        self.actions.append([name, None, quality, str(reason)])
+
     def commit(self):
         """Apply the pending writes, language and state now, and read fresh samples."""
         self._sync(0)

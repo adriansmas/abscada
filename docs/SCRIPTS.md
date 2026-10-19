@@ -34,6 +34,7 @@ Los nombres de variable son los de **Variables**, con mayúsculas y puntos exact
 | `ctx.read(nombre)` | Leer una variable con calidad buena | `bool`, `int`, `float` o `str` |
 | `ctx.quality(nombre)` | Consultar la calidad | `"good"`, `"uncertain"` o `"bad"` |
 | `ctx.write(nombre, valor)` | Solicitar una escritura | `None` |
+| `ctx.set_quality(nombre, calidad, motivo="")` | Cambiar la calidad de una variable interna sin tocar su valor | `None` |
 | `ctx.set_language(codigo)` | Solicitar otro idioma del proyecto | `None` |
 | `ctx.event`, `ctx.screen` | Qué disparó la ejecución y desde qué pantalla | Texto |
 | `ctx.state` | Datos que se conservan entre ejecuciones del mismo script | Diccionario |
@@ -43,7 +44,7 @@ Los nombres de variable son los de **Variables**, con mayúsculas y puntos exact
 | `ctx.samples` | Instantánea de todas las variables | `{nombre: {"value", "quality"}}` |
 | `ctx.language`, `ctx.languages` | Idioma actual y declarados | Código y lista de códigos |
 
-`ctx.actions` y `ctx.language_change` son campos internos que rellenan `write()` y `set_language()`; no los modifiques.
+`ctx.actions` y `ctx.language_change` son campos internos que rellenan `write()`, `set_quality()` y `set_language()`; no los modifiques.
 
 ## Leer
 
@@ -86,6 +87,21 @@ Si `ctx.commit()` o `ctx.sleep()` encuentran una solicitud inválida, lanzan `Va
 | `string` | Texto |
 
 **No es una transacción.** Un fallo al aplicar puede dejar solicitudes anteriores ya enviadas, y cada PLC tiene su cola. Un resultado `ok` no confirma que el PLC haya aceptado la orden: compruébalo con la lectura posterior. Escribir `True` y luego `False` en la misma ejecución no garantiza un pulso.
+
+## Calidad
+
+Una variable interna escrita por un script tiene calidad `good`. Si el script calcula un valor a partir de un equipo que deja de responder, puede decirlo con `ctx.set_quality(nombre, calidad, motivo)`: `"bad"` (sin dato válido), `"uncertain"` (dudoso) o `"good"`. El valor se conserva y el motivo aparece como error de la muestra. La siguiente `ctx.write()` de esa variable la deja de nuevo en `good`.
+
+Con calidad distinta de `good`, la variable se comporta como una de PLC sin comunicación: la pantalla la marca, el registro guarda la calidad, la tendencia corta la curva, `ctx.read()` lanza `ValueError` y las alarmas de valor no cambian de estado. La condición de alarma **Sin datos válidos** salta precisamente entonces.
+
+```python
+if ctx.quality("BasculaTrama") != "good":
+    ctx.set_quality("Peso", "bad", "Báscula sin comunicación")
+else:
+    ctx.write("Peso", calcular(ctx.read("BasculaTrama")))
+```
+
+Se valida y se aplica junto con las escrituras, en el mismo orden. Solo admite variables internas escribibles: la calidad de una variable enlazada la da su conexión.
 
 ## Estado e idioma
 
