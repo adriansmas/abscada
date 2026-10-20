@@ -229,6 +229,7 @@ class Project:
             references = structures.parameter_references(parameters, self.types)
             values = {key: kind for key, kind in references.items() if kind in PRIMITIVES}
             for element in document["elements"]:
+                element = self._concrete(name, element, tags, roots, parameters, values)
                 if not isinstance(element["id"], str) or not element["id"].strip():
                     raise ValueError(tr("Los elementos necesitan un nombre"))
                 if element["id"] in ids or element["kind"] not in KINDS:
@@ -312,13 +313,15 @@ class Project:
 
         for screen in self.screens:
             for expanded in self.elements(screen):
+                expanded = self._concrete(screen, expanded, tags, roots, {}, {})
                 for element in [expanded] + [button_actions.as_button(expanded, step) for step in button_actions.steps(expanded)]:
                     tag=element.get('tag')
                     if dynamics.writable_control(element) and tag in tags and not tags[tag].get('writable',False):
                         raise ValueError(tr("{screen} / {id}: variable de solo lectura: {tag}", screen=screen, id=element["id"], tag=tag))
                     if element['kind'] == 'button' and element.get('action') == 'faceplate_popup':
-                        try: validate_popup_writes(element, self, tags)
-                        except ValueError as exc: raise ValueError(f'{screen} / {element["id"]}: {exc}') from exc
+                        for variant in [element] + element.get('variants', []):
+                            try: validate_popup_writes(dict(element, template=variant['template'], bindings=variant.get('bindings', {})), self, tags)
+                            except ValueError as exc: raise ValueError(f'{screen} / {element["id"]}: {exc}') from exc
         validate_display(self)
         from .security import validate_security
         validate_security(self.security)
@@ -349,6 +352,35 @@ class Project:
         else:
             actual = structures.path_kind(self.types, roots, source)
         return structures.compatible(self.types, actual, kind)
+
+    def _concrete(self, name, element, tags, roots, parameters, values):
+        """The element with each variable index replaced by the first index (``A[Sel]`` → ``A[0]``).
+
+        The index must be an integer variable or, inside an object, an integer ``$parameter``;
+        every other check then runs on the sample path.
+        """
+        from .variable_references import _element_slots
+        slots = [(container, key) for container, key in _element_slots(element)
+                 if structures.index_tags(container[key])]
+        if not slots:
+            return element
+        element = copy.deepcopy(element)
+        everything = {**roots, **{"$" + key: kind for key, kind in parameters.items()}}
+        for container, key in _element_slots(element):
+            path = container[key]
+            indices = structures.index_tags(path)
+            if not indices:
+                continue
+            for index in indices:
+                kind = values.get(index[1:]) if index.startswith("$") else tags.get(index, {}).get("type")
+                if kind != "int":
+                    raise ValueError(tr("{name} / {id}: el índice «{index}» de {path} debe ser una variable entera",
+                                        name=name, id=element.get("id", ""), index=index, path=path))
+            sample = structures.sample_path(self.types, everything, path)
+            if sample is None:
+                raise ValueError(tr("{name} / {id}: ruta con índice variable inválida: {path}", name=name, id=element.get("id", ""), path=path))
+            container[key] = sample
+        return element
 
     def _check_nesting(self):
         """Objects may contain other objects, without cycles and at most MAX_NESTING levels deep."""
@@ -386,6 +418,9 @@ class Project:
         if action == 'faceplate_popup':
             try: validate_popup_button(element, self, tags, references)
             except (ValueError, TypeError) as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
+            self._validate_variants(name, element, tags, references)
+        elif 'variants' in element:
+            raise ValueError(tr("{name} / {id}: solo «Abrir objeto en ventana» admite alternativas", name=name, id=element["id"]))
         if action in {'popup','faceplate_popup'}:
             validate_window(element.get('window', {}))
             if not isinstance(element.get('modal', False), bool):
@@ -404,6 +439,24 @@ class Project:
             raise ValueError(tr("Pantalla de destino inexistente"))
         if dynamics.writable_control(element) and tag in tags and not tags[tag].get('writable',False):
             raise ValueError(tr("{name} / {id}: variable de solo lectura: {tag}", name=name, id=element["id"], tag=tag))
+
+    def _validate_variants(self, name, element, tags, references):
+        """Alternatives of a faceplate pop-up: the first whose condition holds is opened."""
+        from . import dynamics
+        from .operation_windows import validate_popup_button
+        variants = element.get("variants", [])
+        if not isinstance(variants, list) or len(variants) > button_actions.MAX_VARIANTS:
+            raise ValueError(tr("{name} / {id}: como máximo {count} alternativas", name=name, id=element["id"], count=button_actions.MAX_VARIANTS))
+        values = {key: kind for key, kind in references.items() if kind in PRIMITIVES}
+        for number, variant in enumerate(variants, 1):
+            try:
+                if not isinstance(variant, dict) or not {"when", "template"} <= set(variant) <= button_actions.VARIANT_KEYS:
+                    raise ValueError(tr("necesita condición y objeto"))
+                dynamics.validate(dict(id=element["id"], kind="rectangle", dynamics={"visible": variant["when"]}), tags, values)
+                validate_popup_button(dict(element, template=variant["template"], bindings=variant.get("bindings", {}),
+                                           title=variant.get("title", "")), self, tags, references)
+            except (ValueError, TypeError, KeyError) as exc:
+                raise ValueError(tr("{name} / {id}, alternativa {number}: {exc}", name=name, id=element["id"], number=number, exc=exc)) from exc
 
     def set_binding(self, name, binding):
         """Configure one primitive leaf, including a field within a structure."""

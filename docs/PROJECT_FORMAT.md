@@ -65,6 +65,7 @@ Los documentos opcionales que faltan se cargan vacíos. Los nombres de pantallas
 ]
 ```
 
+- **Índice variable:** donde se indica una variable (elementos, condiciones, dinámicas, enlaces de objetos y ventanas emergentes) se puede escribir `Juegos[Seleccion].Temp`: el índice es el valor actual de la variable entera `Seleccion`. Dentro de un objeto de librería el índice también puede ser un parámetro entero: `$juegos[$sel].temp`. Si el índice no tiene un valor válido o queda fuera del array, el elemento se muestra sin valor y no escribe. No se admite en alarmas, registros ni tendencias.
 - Los nombres de variables, tipos y campos no llevan puntos ni corchetes. Las hojas se nombran con la ruta completa: los campos con punto y los índices entre corchetes, desde 0 (`Pump1.flow`, `Pump1.temps[2]`, `Pumps[3].running`).
 - Una variable también puede ser un array (`"type": "Pump[4]"` o `"float[8]"`); su `initial` es una lista con exactamente n elementos, empezando por el primer índice.
 - `"folder": "PLC/Valvulas"` coloca la variable en una carpeta del Studio; las carpetas vacías se guardan en `variable_folders` del manifiesto. Son solo organización: no cambian el nombre de la variable.
@@ -244,6 +245,13 @@ Los valores se guardan como texto y se comparan según el tipo de la variable. `
 ```
 
 Cada instancia enlaza todos los parámetros (escribibles si la plantilla escribe). Un parámetro primitivo toma una variable de su tipo. Uno de tipo estructura o array toma una variable entera o una parte de ella (`"motor": "Pumps[2]"`) con la misma forma: cada campo que espera el parámetro debe existir con el mismo tipo; puede haber campos de más. Así un tipo del proyecto alimenta un tipo idéntico publicado por una librería. `""` deja el parámetro sin asignar.
+
+Un botón `faceplate_popup` puede llevar `variants`: alternativas en orden, cada una con `when` (una condición o una lista de ellas), `template`, `bindings` y, opcional, `title`. Al pulsar se abre la primera cuya condición se cumple; si no se cumple ninguna, el objeto del propio botón.
+
+```json
+{"id": "abrir", "kind": "button", "action": "faceplate_popup", "template": "Scr_Cmd_Valve", "bindings": {"v": "V101"},
+ "variants": [{"when": {"tag": "V101.Modo", "op": "eq", "value": 2}, "template": "Scr_Cmd_Valve_Manual", "bindings": {"v": "V101"}}]}
+```
 
 Una plantilla puede contener otros objetos de librería, hasta 8 niveles y sin ciclos. Sus `bindings` reenvían los parámetros de la plantilla que los contiene (`"running": "$motor.running"`, `"motor": "$motor"`). No se admiten visores ni contenedores dentro de una plantilla.
 

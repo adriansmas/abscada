@@ -192,12 +192,10 @@ class ButtonActionsDialog(EditorDialog):
         if template not in self.studio.project.faceplates:
             return
         for parameter, kind in self.studio.project.faceplates[template].get("parameters", {}).items():
-            combo = QComboBox()
-            combo.addItem(tr("(sin asignar)"), "")
-            for option in self.studio.popup_binding_options(template, parameter, kind):
-                combo.addItem(option, option)
-            combo.setCurrentIndex(max(0, combo.findData(bindings.get(parameter, ""))))
+            from .popup_variants_editor import binding_combo
+            combo = binding_combo(self.studio, template, parameter, kind, bindings.get(parameter, ""))
             combo.activated.connect(self.changed)
+            combo.lineEdit().editingFinished.connect(self.changed)
             self.binding_fields[parameter] = combo
             self.binding_form.addRow(parameter, combo)
 
@@ -250,7 +248,8 @@ class ButtonActionsDialog(EditorDialog):
                 step["window"] = copy.deepcopy(previous["window"])
         if action == "faceplate_popup":
             step["template"] = self.template_field.currentText()
-            step["bindings"] = {parameter: combo.currentData() or "" for parameter, combo in self.binding_fields.items()}
+            from .popup_variants_editor import combo_value
+            step["bindings"] = {parameter: combo_value(combo) for parameter, combo in self.binding_fields.items()}
             if self.title_field.text().strip() or isinstance(self.title_field.original, dict):
                 step["title"] = self.title_field.translated_value()
         self.steps[self.current] = step

@@ -21,9 +21,27 @@ def available_tags(studio):
     return result
 
 
+def check(studio,element):
+    """dynamics.validate on the element, with variable indices checked and set to a sample index."""
+    project=studio.project; tags=project.tags()
+    roots={v['name']:v['type'] for v in project.variables}
+    parameters=studio.document().get('parameters',{}) if studio.document_kind=='faceplates' else {}
+    element=project._concrete(studio.document_name,element,tags,roots,parameters,parameter_values(studio))
+    dynamics.validate(element,tags,parameter_values(studio))
+
+
+def reference_kind(studio,tags,name):
+    """Type of a variable, a $reference or a path with a variable index (Juegos[Sel].Temp)."""
+    if name in tags: return tags[name]['type']
+    from .structures import sample_path
+    roots={v['name']:v['type'] for v in studio.project.variables}|{'$'+n:k for n,k in studio.document_references().items()}
+    sample=sample_path(studio.project.types,roots,name)
+    return tags.get(sample,{}).get('type') if sample else None
+
+
 class ConditionForm(QWidget):
     def __init__(self,studio,value=None,optional=True):
-        super().__init__(); self.tags=available_tags(studio)
+        super().__init__(); self.tags=available_tags(studio); self.studio=studio
         form=QFormLayout(self); form.setContentsMargins(0,0,0,0)
         self.active=QCheckBox(tr('Cuando se cumpla')); self.active.setChecked(bool(value) or not optional)
         if optional: form.addRow(self.active)
@@ -33,7 +51,7 @@ class ConditionForm(QWidget):
         self.bad=QCheckBox(tr('Cumplir condición sin calidad válida'))
         for title,control in [(tr('Variable'),self.tag),(tr('Operador'),self.op),(tr('Valor'),self.value),('',self.bad)]: form.addRow(title,control)
         def update():
-            kind=self.tags.get(self.tag.currentText(),{}).get('type','bool')
+            kind=reference_kind(studio,self.tags,self.tag.currentText()) or 'bool'
             previous=self.op.currentData(); self.op.clear()
             for key,label in [('eq',tr('Igual a')),('ne',tr('Distinto de'))]+([('gt',tr('Mayor que')),('ge',tr('Mayor o igual')),('lt',tr('Menor que')),('le',tr('Menor o igual'))] if kind in {'int','float'} else []): self.op.addItem(label,key)
             self.op.setCurrentIndex(max(0,self.op.findData(previous))); self.value.set_kind(kind)
@@ -46,13 +64,27 @@ class ConditionForm(QWidget):
             self.tag.setCurrentText(value['tag']); update(); self.op.setCurrentIndex(self.op.findData(value['op']))
             shown=value['value']
             if isinstance(shown,bool) and value['op']=='ne': shown=not shown  # «≠ verdadero» is «falso»
-            self.value.set_kind(self.tags[value['tag']]['type'],shown); self.bad.setChecked(value.get('bad',False))
+            self.value.set_kind(reference_kind(studio,self.tags,value['tag']) or 'bool',shown); self.bad.setChecked(value.get('bad',False))
         def enable():
             for control in (self.tag,self.op,self.value,self.bad): control.setEnabled(self.active.isChecked())
         self.active.toggled.connect(enable); enable()
 
     def data(self):
         return dict(tag=self.tag.currentText(),op='eq' if self.value.kind=='bool' else self.op.currentData(),value=self.value.value(),bad=self.bad.isChecked()) if self.active.isChecked() else None
+
+
+OPERATORS={'eq':'=','ne':'≠','gt':'>','ge':'≥','lt':'<','le':'≤'}
+
+
+def describe_condition(condition):
+    """«Bomba.Fallo es verdadero y Nivel > 80»."""
+    parts=[]
+    for c in dynamics.conditions(condition):
+        if isinstance(c['value'],bool):
+            shown=c['value'] if c['op']=='eq' else not c['value']
+            parts.append(f"{c['tag']} "+(tr('es verdadero') if shown else tr('es falso')))
+        else: parts.append(f"{c['tag']} {OPERATORS.get(c['op'],c['op'])} {c['value']}")
+    return tr(' y ').join(parts)
 
 
 class ConditionList(QWidget):
@@ -231,17 +263,10 @@ class DynamicDialog(EditorDialog):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch); self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.table.setMinimumHeight(110)
         box.addWidget(self.table); row=QHBoxLayout(); box.addLayout(row)
-        operators={'eq':'=','ne':'≠','gt':'>','ge':'≥','lt':'<','le':'≤'}
         def refresh():
             self.table.setRowCount(len(self.states))
             for i,state in enumerate(self.states):
-                parts=[]
-                for c in dynamics.conditions(state['when']):
-                    if isinstance(c['value'],bool):
-                        shown=c['value'] if c['op']=='eq' else not c['value']
-                        parts.append(f"{c['tag']} "+(tr('es verdadero') if shown else tr('es falso')))
-                    else: parts.append(f"{c['tag']} {operators.get(c['op'],c['op'])} {c['value']}")
-                text=tr(' y ').join(parts)
+                text=describe_condition(state['when'])
                 appearance=' · '.join(f'{k}: {v}' for k,v in state['style'].items())+(' · '+tr('parpadea') if state.get('blink') else '')
                 self.table.setItem(i,0,QTableWidgetItem(text)); self.table.setItem(i,1,QTableWidgetItem(appearance))
         def edit(new):
@@ -255,7 +280,7 @@ class DynamicDialog(EditorDialog):
             def state(): return dict(when=cond.data(),style=style.data(),**({'blink':True} if blink.isChecked() else {}))
             def validate():
                 candidate=copy.deepcopy(element); candidate['dynamics']={'states':[state()]}
-                dynamics.validate(candidate,studio.project.tags(),parameter_values(studio))
+                check(studio,candidate)
             dialog.validator=validate; studio.dialog_buttons(dialog,content)
             if dialog.exec()==EditorDialog.DialogCode.Accepted:
                 if new:self.states.append(state())
@@ -314,7 +339,7 @@ class DynamicDialog(EditorDialog):
         return result
 
     def validate(self):
-        dynamics.validate(self.data(),self.studio.project.tags(),parameter_values(self.studio))
+        check(self.studio,self.data())
 
 
 def edit_dynamics(studio):

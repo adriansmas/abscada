@@ -224,7 +224,19 @@ def substitute(reference, bindings):
     A parameter not assigned yet ("") gives "". Anything that is not a ``$``
     reference is returned unchanged.
     """
-    if not isinstance(reference, str) or not reference.startswith("$"):
+    if not isinstance(reference, str) or "$" not in reference:
+        return reference
+    # A parameter used as an index: Juegos[$sel] → Juegos[Seleccion].
+    unassigned = False
+    def index(match):
+        nonlocal unassigned
+        value = substitute("$" + match[1].strip(), bindings)
+        unassigned |= not value
+        return f"[{value}]"
+    reference = re.sub(r"\[\$([^\[\]]+)\]", index, reference)
+    if unassigned:
+        return ""
+    if not reference.startswith("$"):
         return reference
     name = root(reference[1:])
     base = bindings[name]
@@ -248,3 +260,68 @@ def check_definitions(types):
             visit(child, stack + (kind,))
     for name in types:
         visit(name, ())
+
+
+# --- variable indices -------------------------------------------------------------------------
+# ``Juegos[Seleccion].Temp`` takes the index from the integer variable ``Seleccion``; inside an
+# object ``$juegos[$sel].temp`` may also take it from a parameter. Checks use a sample path with
+# the first index; the runtime resolves the index with the current value of the variable.
+
+_INDEXED = re.compile(r"\[([^\[\]]+)\]")
+
+
+def index_tags(path):
+    """Variables (or ``$parameters``) used as indices in ``path``: ``A[Sel].x`` → ["Sel"]."""
+    if not isinstance(path, str):
+        return []
+    return [name.strip() for name in _INDEXED.findall(path) if not re.fullmatch(r"\s*-?\d+\s*", name)]
+
+
+def sample_path(types, roots, path):
+    """``path`` with every variable index replaced by the first index of its array; None if invalid.
+
+    ``roots`` maps each root (a variable, or ``$parameter`` inside an object) to its kind.
+    """
+    head = root(path)
+    if head not in roots:
+        return None
+    kind, result, position = roots[head], head, len(head)
+    for match in re.finditer(r"\.([^.\[\]]+)|\[([^\[\]]+)\]", path):
+        if match.start() < position:
+            continue
+        if match.start() != position:
+            return None
+        position = match.end()
+        field, index = match[1], match[2]
+        base, length = split_kind(kind)
+        if field is not None:
+            if length is not None or kind not in types or field not in types[kind]:
+                return None
+            kind, result = types[kind][field], f"{result}.{field}"
+        else:
+            number = index.strip()
+            if length is None:
+                return None
+            if not re.fullmatch(r"-?\d+", number):
+                number = str(lower(kind))
+            kind, result = base, f"{result}[{number}]"
+    return result if position == len(path) else None
+
+
+def resolve_indices(path, values):
+    """``path`` with each variable index replaced by its current value (``values``: name → int or None).
+
+    An index without a valid value gives None: the element shows no value and cannot write.
+    """
+    def replace(match):
+        name = match[1].strip()
+        if re.fullmatch(r"-?\d+", name):
+            return match[0]
+        value = values.get(name)
+        if value is None:
+            raise LookupError(name)
+        return f"[{int(value)}]"
+    try:
+        return _INDEXED.sub(replace, path)
+    except (LookupError, TypeError, ValueError):
+        return None

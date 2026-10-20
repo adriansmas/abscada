@@ -137,7 +137,7 @@ def resolve_bindings(element,bindings):
     def replace(value):
         if isinstance(value,dict):
             for key,item in value.items():
-                if key=='tag' and isinstance(item,str) and item.startswith('$'): value[key]=substitute(item,bindings)
+                if key=='tag' and isinstance(item,str) and '$' in item: value[key]=substitute(item,bindings)
                 else: replace(item)
         elif isinstance(value,list):
             for item in value: replace(item)
@@ -258,3 +258,43 @@ def parameter_writable(template,parameter):
     """Some control writes the parameter or, for a structure or array, one of its parts."""
     from .structures import root
     return any(root(reference)==parameter for reference in written_references(template))
+
+
+def index_values(names,samples):
+    """Current value of each variable used as an index; None if it has no valid integer."""
+    result={}
+    for name in names:
+        sample=samples.get(name)
+        try: result[name]=int(sample.value) if sample is not None and sample.quality=='good' and not isinstance(sample.value,str) else None
+        except (TypeError,ValueError): result[name]=None
+    return result
+
+
+def resolve_indices(elements,samples):
+    """Elements with each variable index (``Juegos[Sel].Temp``) set to its current value.
+
+    Returns the elements and the index values used, so the screen is drawn again when one
+    changes. Pop-up bindings keep their index: the window they open follows it on its own.
+    """
+    from .structures import index_tags, resolve_indices as resolve
+    elements=[copy.deepcopy(e) for e in elements]
+    names=set()
+    def collect(value):
+        if isinstance(value,dict):
+            for key,item in value.items():
+                if key=='tag' and isinstance(item,str): names.update(index_tags(item))
+                elif key!='bindings': collect(item)
+        elif isinstance(value,list):
+            for item in value: collect(item)
+    for element in elements: collect(element)
+    if not names: return elements,{}
+    values=index_values(names,samples)
+    def apply(value):
+        if isinstance(value,dict):
+            for key,item in value.items():
+                if key=='tag' and isinstance(item,str) and index_tags(item): value[key]=resolve(item,values) or ''
+                elif key!='bindings': apply(item)
+        elif isinstance(value,list):
+            for item in value: apply(item)
+    for element in elements: apply(element)
+    return elements,values

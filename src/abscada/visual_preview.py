@@ -63,7 +63,9 @@ class VisualPreview(QMainWindow):
     def render_scene(self):
         self.document_name=self.screen.currentText();self.containers.clear();self.scene.clear();doc=self.project.screens[self.document_name]
         self.scene.setSceneRect(0,0,doc['width'],doc['height'])
-        for e in self.project.elements(self.document_name):self.scene.addItem(ElementItem(self,e))
+        from .dynamics import resolve_indices
+        elements,self.index_state=resolve_indices(self.project.elements(self.document_name),self.samples)
+        for e in elements:self.scene.addItem(ElementItem(self,e))
         self.view.fit_canvas()
 
     def actuate(self,*args,**kwargs):pass

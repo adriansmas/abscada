@@ -46,7 +46,7 @@ class ScreenContainer(QWidget):
     def samples(self):
         return self.window.samples
 
-    def select_screen(self, screen):
+    def select_screen(self, screen, opened=True):
         document = self.project.screens[screen]
         if containers(document):
             raise ValueError(tr('No se puede abrir un layout dentro de un contenedor'))
@@ -54,10 +54,12 @@ class ScreenContainer(QWidget):
         self.window.release_momentaries()
         self.scene.clear()
         self.scene.setSceneRect(0, 0, document['width'], document['height'])
-        for element in self.project.elements(screen):
+        from .dynamics import resolve_indices
+        elements, self.index_state = resolve_indices(self.project.elements(screen), self.samples)
+        for element in elements:
             self.scene.addItem(ElementItem(self, element))
         self.view.fit_canvas()
-        if not self.initializing and self.window.running:
+        if not self.initializing and self.window.running and opened:
             self.window.screen_opened(screen)
 
     def actuate(self, element, entry=False, phase=None, editor=None, text=None):

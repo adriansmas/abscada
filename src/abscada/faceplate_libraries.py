@@ -138,7 +138,7 @@ def export_library(project, names, target, name, version, author='', license='')
 
 def dependencies(project, names):
     """Objects to publish with the chosen ones (nested objects, pop-ups) and the types they use."""
-    from .button_actions import with_steps
+    from .button_actions import with_steps, popup_targets
     from .structures import structure_of
     from .system_library import is_system
     chosen, pending = [], list(names)
@@ -148,7 +148,7 @@ def dependencies(project, names):
             continue
         chosen.append(name)
         for element in project.faceplates[name]['elements']:
-            for target in with_steps(element):
+            for target in popup_targets(element):
                 template = target.get('template')
                 if template and template in project.faceplates and not is_system(template) and template not in chosen:
                     pending.append(template)
@@ -268,11 +268,11 @@ def link(project, source, alias, update=False):
 
 def unlink(project, alias):
     names = set(expected_faces(alias, project.libraries[alias]['package']))
-    from .button_actions import with_steps
+    from .button_actions import with_steps, popup_targets
     used = [screen for screen, doc in project.screens.items()
-            if any(t.get('template') in names for e in doc['elements'] for t in with_steps(e))]
+            if any(t.get('template') in names for e in doc['elements'] for t in popup_targets(e))]
     used += [name for name, doc in project.faceplates.items() if name not in names
-             and any(t.get('template') in names for e in doc['elements'] for t in with_steps(e))]
+             and any(t.get('template') in names for e in doc['elements'] for t in popup_targets(e))]
     from .structures import structure_of
     types = set(expected_types(alias, project.libraries[alias]['package']))
     used += [v['name'] for v in project.variables if structure_of(v['type']) in types]

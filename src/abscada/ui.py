@@ -601,6 +601,9 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.popup_binding_form.setContentsMargins(0, 0, 0, 0)
         self.popup_binding_fields = {}
         form.addRow(self.popup_bindings)
+        self.popup_variants = button(tr("Alternativas según condiciones…"), self.edit_popup_variants)
+        self.popup_variants.setToolTip(tr("Abrir otro objeto cuando se cumpla una condición; si no se cumple ninguna, el de arriba"))
+        form.addRow(self.popup_variants)
         self.popup_title_field = ProjectTextField(self)
         self.popup_title_field.setPlaceholderText(tr("Automático: objeto · equipo"))
         self.popup_title_field.editingFinished.connect(self.auto_apply)
@@ -977,13 +980,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 entry.widget().deleteLater()
         self.binding_fields = {}
         if e["kind"] == "faceplate":
+            from .popup_variants_editor import binding_combo
             for parameter, kind in self.project.faceplates[e["template"]].get("parameters", {}).items():
-                combo = QComboBox()
-                combo.addItem(tr("(sin asignar)"), "")
-                for option in self.popup_binding_options(e["template"], parameter, kind): combo.addItem(option, option)
-                combo.setCurrentIndex(max(0, combo.findData(e["bindings"][parameter])))
-                combo.setToolTip(tr("Tipo {kind}", kind=kind))
+                combo = binding_combo(self, e["template"], parameter, kind, e["bindings"][parameter])
                 combo.activated.connect(self.auto_apply)
+                combo.lineEdit().editingFinished.connect(self.auto_apply)
                 self.binding_fields[parameter] = combo
                 self.binding_form.addRow(parameter, combo)
         self._syncing = False
@@ -1016,8 +1017,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
     def refresh_popup_faceplate(self, e):
         visible = e.get("action") == "faceplate_popup"
         layout = self.action_group.layout()
-        for widget in (self.popup_template_field, self.popup_bindings, self.popup_title_field):
+        for widget in (self.popup_template_field, self.popup_bindings, self.popup_title_field, self.popup_variants):
             layout.setRowVisible(widget, visible)
+        count = len(e.get("variants", []))
+        self.popup_variants.setText(tr("Alternativas según condiciones ({count})…", count=count) if count else tr("Alternativas según condiciones…"))
         self.popup_template_field.clear()
         self.popup_template_field.addItems(list(self.project.faceplates))
         self.popup_template_field.setCurrentText(e.get("template", ""))
@@ -1030,14 +1033,19 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         template = e.get("template")
         if not visible or template not in self.project.faceplates:
             return
+        from .popup_variants_editor import binding_combo
         for parameter, kind in self.project.faceplates[template].get("parameters", {}).items():
-            combo = QComboBox()
-            combo.addItem(tr("(sin asignar)"), "")
-            for option in self.popup_binding_options(template, parameter, kind): combo.addItem(option, option)
-            combo.setCurrentIndex(max(0, combo.findData(e.get("bindings", {}).get(parameter, ""))))
+            combo = binding_combo(self, template, parameter, kind, e.get("bindings", {}).get(parameter, ""))
             combo.activated.connect(self.auto_apply)
+            combo.lineEdit().editingFinished.connect(self.auto_apply)
             self.popup_binding_fields[parameter] = combo
             self.popup_binding_form.addRow(parameter, combo)
+
+    def edit_popup_variants(self):
+        selected = self.scene.selectedItems()
+        if len(selected) == 1 and selected[0].element.get("action") == "faceplate_popup":
+            from .popup_variants_editor import edit_variants
+            edit_variants(self, selected[0].element)
 
     def edit_button_actions(self):
         selected = self.scene.selectedItems()
@@ -1061,7 +1069,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         bindings = {}
         for parameter, kind in self.project.faceplates[template].get("parameters", {}).items():
             combo = self.popup_binding_fields.get(parameter) if same else None
-            value = (combo.currentData() or "") if combo else ""
+            from .popup_variants_editor import combo_value
+            value = combo_value(combo) if combo else ""
             if not value:
                 # New template: forward a parameter with the same name, else the first match.
                 options = self.popup_binding_options(template, parameter, kind)
@@ -1110,7 +1119,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         else:
             e.pop("color", None)
         if e["kind"] == "faceplate":
-            e["bindings"] = {p: combo.currentData() or "" for p, combo in self.binding_fields.items()}
+            from .popup_variants_editor import combo_value
+            e["bindings"] = {p: combo_value(combo) for p, combo in self.binding_fields.items()}
         else:
             if self.tag_field.currentText().strip():
                 e["tag"] = self.tag_field.currentText().strip()
@@ -1144,7 +1154,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 from .button_actions_editor import seed
                 e["actions"] = seed(previous)
             for key in ("tag", "value", "script", "language", "screen", "target_container", "modal", "window",
-                        "template", "bindings", "title", "press_value", "release_value"):
+                        "template", "bindings", "title", "variants", "press_value", "release_value"):
                 e.pop(key, None)
             e["action"] = "sequence"
         elif e["kind"] == "button":
@@ -1157,7 +1167,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 e.pop('language', None)
             tag = e.get('tag', '')
             tags = self.project.tags()
-            kind = tags[tag]['type'] if tag in tags else self.document_references().get(tag.lstrip('$'))
+            from .dynamic_editor import reference_kind, available_tags
+            kind = reference_kind(self, available_tags(self), tag)
             if e['action'] == 'toggle' and kind and kind != 'bool' and tag != previous.get('tag', ''):
                 e['action'] = 'set'
             if e['action'] == 'screen':
@@ -1188,7 +1199,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 except ValueError as exc:
                     self.error(exc); self.show_properties(); return
             else:
-                for key in ("template", "bindings", "title"):
+                for key in ("template", "bindings", "title", "variants"):
                     e.pop(key, None)
             if e['action'] == 'script':
                 e['script'] = self.script_field.currentData() or ''
@@ -1209,7 +1220,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 try:
                     tag = e.get("tag", "")
                     tags = self.project.tags()
-                    kind = tags[tag]["type"] if tag in tags else self.document_references().get(tag.lstrip("$"))
+                    from .dynamic_editor import reference_kind, available_tags
+                    kind = reference_kind(self, available_tags(self), tag)
                     raw_value = self.value_field.text()
                     if not raw_value and previous.get("action", "toggle") != "set":
                         raw_value = {"bool": False, "int": 0, "float": 0.0, "string": ""}.get(kind, "")

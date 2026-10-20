@@ -11,8 +11,10 @@ SEQUENCE = "sequence"
 STEP_ACTIONS = ("set", "toggle", "script", "set_language", "screen", "popup", "faceplate_popup", "close_popup")
 NAVIGATION = {"screen", "popup", "faceplate_popup", "close_popup"}
 STEP_KEYS = {"action", "tag", "value", "script", "language", "screen", "target_container",
-             "modal", "window", "template", "bindings", "title"}
+             "modal", "window", "template", "bindings", "title", "variants"}
 MAX_STEPS = 20
+MAX_VARIANTS = 16
+VARIANT_KEYS = {"when", "template", "bindings", "title"}
 
 
 def steps(element):
@@ -25,6 +27,26 @@ def steps(element):
 def with_steps(element):
     """The element followed by its steps: every dict that may carry an action reference."""
     return [element, *steps(element)]
+
+
+def popup_targets(element):
+    """Every dict that names an object to open: the element, its steps and their alternatives."""
+    result = []
+    for target in with_steps(element):
+        result.append(target)
+        if target.get("action") == "faceplate_popup" and isinstance(target.get("variants"), list):
+            result.extend(v for v in target["variants"] if isinstance(v, dict))
+    return result
+
+
+def choose_popup(element, samples):
+    """(template, bindings, title) a faceplate pop-up opens: the first alternative whose
+    condition holds, else the button's own object."""
+    from .dynamics import test
+    for variant in element.get("variants", []):
+        if test(variant["when"], samples):
+            return variant["template"], dict(variant.get("bindings", {})), variant.get("title", element.get("title", ""))
+    return element["template"], dict(element.get("bindings", {})), element.get("title", "")
 
 
 def as_button(element, step):

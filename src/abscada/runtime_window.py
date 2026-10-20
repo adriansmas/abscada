@@ -303,7 +303,8 @@ class RuntimeWindow(QMainWindow):
         self.document_name = screen
         self.render_scene()
 
-    def render_scene(self):
+    def render_scene(self, opened=True):
+        """Draw the screen; ``opened=False`` redraws it without running its opening scripts again."""
         self.release_momentaries()
         self.containers.clear()
         self.scene.clear()
@@ -312,10 +313,12 @@ class RuntimeWindow(QMainWindow):
         title = resolve(document.get('title', ''), self.runtime.language, default_language(self.project)) or self.document_name
         self.setWindowTitle(title if self.owner else "abSCADA Runtime · " + self.project.manifest["name"] + " · " + title)
         self.scene.setSceneRect(0, 0, document["width"], document["height"])
-        for element in self.project.expand(document["elements"]):
+        from .dynamics import resolve_indices
+        elements, self.index_state = resolve_indices(self.project.expand(document["elements"]), self.samples)
+        for element in elements:
             self.scene.addItem(ElementItem(self, element))
         self.view.fit_canvas()
-        if self.running:
+        if self.running and opened:
             self.opened()
 
     def screen_opened(self, screen):
@@ -333,6 +336,15 @@ class RuntimeWindow(QMainWindow):
             self.setWindowTitle(title if self.owner else 'abSCADA Runtime · ' + self.project.manifest['name'] + ' · ' + title)
         self.check_releases()
         self.samples = self.runtime.snapshot()
+        # A variable used as an index changed: the screen now shows other elements of the array.
+        from .dynamics import index_values
+        state = getattr(self, "index_state", {})
+        if state and index_values(state, self.samples) != state:
+            self.render_scene(opened=False)
+        for container in list(self.containers.values()):
+            state = getattr(container, "index_state", {})
+            if state and container.document_name and index_values(state, self.samples) != state:
+                container.select_screen(container.document_name, opened=False)
         for scene in [self.scene]+[c.scene for c in self.containers.values()]:
             for item in scene.items():
                 if isinstance(item,ElementItem): item.refresh_state()
@@ -480,8 +492,11 @@ class RuntimeWindow(QMainWindow):
         action = element.get("action", "toggle")
         if action in {'toggle', 'set'} and not element.get('tag'):
             raise ValueError(tr("Este mando no tiene variable asignada"))
-        if action == 'faceplate_popup' and '' in element.get('bindings', {}).values():
-            raise ValueError(tr("El objeto emergente tiene parámetros sin variable asignada"))
+        if action == 'faceplate_popup':
+            # The first alternative whose condition holds now, else the button's own object.
+            template, bindings, title = button_actions.choose_popup(element, self.runtime.snapshot())
+            if '' in bindings.values():
+                raise ValueError(tr("El objeto emergente tiene parámetros sin variable asignada"))
         if action == 'set_language':
             return lambda: self.runtime.set_language(element['language'])
         if action == 'script':
@@ -503,8 +518,7 @@ class RuntimeWindow(QMainWindow):
                     self.statusBar().showMessage(str(exc), 10000)
             return lambda: self.defer(navigate)
         if action == "faceplate_popup":
-            template, bindings = element["template"], dict(element.get("bindings", {}))
-            title, modal, window = element.get("title", ""), element.get("modal", False), element.get("window")
+            modal, window = element.get("modal", False), element.get("window")
             return lambda: self.defer(lambda: self.open_faceplate(template, bindings, title, modal, window))
         if action == "close_popup":
             return lambda: self.defer(self.close) if self.owner else None

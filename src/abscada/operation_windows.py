@@ -91,7 +91,9 @@ def validate_popup_writes(element, project, tags):
     template = project.faceplates[element["template"]]
     instance = dict(id="popup", kind="faceplate", template=element["template"], bindings=element.get("bindings", {}),
                     x=0, y=0, w=template["width"], h=template["height"])
+    roots = {v["name"]: v["type"] for v in project.variables}
     for child in project.expand([instance]):
+        child = project._concrete(element.get("id", ""), child, tags, roots, {}, {})
         for control in [child] + [as_button(child, step) for step in steps(child)]:
             source = control.get("tag")
             if source and writable_control(control) and not tags.get(source, {}).get("writable", False):
@@ -102,8 +104,9 @@ def resolve_popup_bindings(child, instance_bindings):
     """Forward ``$parameter`` references of a nested pop-up button to real tags."""
     from .button_actions import with_steps
     from .structures import substitute
-    for target in with_steps(child):
-        if target.get("action") == "faceplate_popup":
+    from .button_actions import popup_targets
+    for target in popup_targets(child):
+        if target.get("action") == "faceplate_popup" or "when" in target:
             target["bindings"] = {key: substitute(value, instance_bindings)
                                   for key, value in target.get("bindings", {}).items()}
     return child

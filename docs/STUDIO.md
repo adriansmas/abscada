@@ -136,6 +136,10 @@ El árbol reúne **Proyecto** (editable), **Estándar** (símbolos SVG y objetos
 
 Los objetos propios viven en `faceplates/`. Sus parámetros (**Ajustes de pantalla / plantilla**) son primitivos, tipos de datos o arrays; sus elementos los referencian como `$nombre` o, por partes, `$motor.marcha` y `$motor.temps[0]`. Cada instancia los asigna a variables compatibles: un parámetro `Bomba` se enlaza de una vez con `Bomba1`, o con `Bombas[2]`, en lugar de campo a campo. Vale cualquier variable con los mismos campos y tipos, aunque tenga campos de más.
 
+En un botón «Abrir objeto en ventana», **Alternativas según condiciones…** abre otro objeto cuando se cumple una condición (por ejemplo, el panel manual de una válvula en modo manual). Se usa la primera alternativa que se cumpla; si ninguna, el objeto del botón.
+
+En cualquier campo de variable o de enlace se puede escribir una ruta con **índice variable**, como `Juegos[Seleccion].Temp`: muestra y escribe el elemento del array que indica la variable entera `Seleccion`, y cambia en cuanto cambia el índice, también dentro de una ventana emergente ya abierta. Sirve, por ejemplo, para una ventana de juegos de parámetros con un selector de juego.
+
 Un objeto puede contener otros objetos de librería: arrástralos a su lienzo y enlaza sus parámetros con los del objeto que los contiene (`$motor`, `$motor.marcha`). No admiten ciclos, visores ni contenedores.
 
 - **Proyecto → Importar librería externa… → Publicar biblioteca…** genera un paquete `.abscada-library.json` nuevo con plantillas, imágenes, traducciones y los tipos de datos de sus parámetros; añade solos los objetos anidados o abiertos en ventana que usan. Exige que las plantillas no dependan de variables, scripts ni pantallas del proyecto. No sobrescribe versiones publicadas. Los tipos vinculados aparecen como `alias__Tipo`, de solo lectura, y las variables del proyecto pueden usarlos.

@@ -21,8 +21,36 @@ def inside(value, path):
     return isinstance(value, str) and (value == path or value.startswith((path + ".", path + "[")))
 
 
+def mentions(value, path):
+    """``value`` uses ``path``: as itself, as a part of it, or as a variable index (``A[Sel]``)."""
+    return inside(value, path) or any(inside(index, path) for index in structures.index_tags(value))
+
+
 def moved(value, old, new):
-    return new + value[len(old):] if inside(value, old) else value
+    if not isinstance(value, str):
+        return value
+    if inside(value, old):
+        value = new + value[len(old):]
+    if "[" in value:
+        value = re.sub(r"\[([^\[\]]+)\]", lambda m: "[" + (new + m[1].strip()[len(old):] if inside(m[1].strip(), old) else m[1]) + "]", value)
+    return value
+
+
+def moved_any_index(value, old, new):
+    """``moved`` for a path with variable indices: ``Sets[Sel].temp`` also matches ``Sets[1].temp``.
+
+    ``old`` and ``new`` have the same indices (a field rename), so the value keeps its own.
+    """
+    if not structures.index_tags(value):
+        return value
+    pattern = re.escape(old)
+    pattern = re.sub(r"\\\[(?:-?\d+)\\\]", lambda m: r"\[([^\[\]]+)\]", pattern)
+    match = re.match(pattern + r"(?=$|[.\[])", value)
+    if not match:
+        return value
+    indices = iter(match.groups())
+    rebuilt = re.sub(r"\[(-?\d+)\]", lambda m: f"[{next(indices)}]", new)
+    return rebuilt + value[match.end():]
 
 
 # --- every reference --------------------------------------------------------------------------
@@ -34,7 +62,7 @@ def _element_slots(element):
         if isinstance(value, dict):
             if isinstance(value.get("tag"), str):
                 slots.append((value, "tag"))
-            if (value.get("kind") == "faceplate" or value.get("action") == "faceplate_popup") and isinstance(value.get("bindings"), dict):
+            if (value.get("kind") == "faceplate" or value.get("action") == "faceplate_popup" or "template" in value) and isinstance(value.get("bindings"), dict):
                 slots.extend((value["bindings"], key) for key, item in value["bindings"].items() if isinstance(item, str))
             for key, item in value.items():
                 if key != "bindings":
@@ -73,7 +101,7 @@ def slots(project):
 
 def usages(project, path):
     """Places that use ``path`` or something inside it: [(where, the stored path)]."""
-    return [(where, container[key]) for where, container, key in slots(project) if inside(container[key], path)]
+    return [(where, container[key]) for where, container, key in slots(project) if mentions(container[key], path)]
 
 
 def scripts_mentioning(project, path):
@@ -99,7 +127,7 @@ def _apply(project, renames):
     """Move every reference, PLC link and history alias from each old prefix to its new one."""
     for _, container, key in slots(project):
         for old, new in renames:
-            container[key] = moved(container[key], old, new)
+            container[key] = moved_any_index(moved(container[key], old, new), old, new)
     for variable in project.variables:
         if variable.get("bindings"):
             updated = {}
@@ -194,7 +222,7 @@ def rename_field(project, type_name, old, new):
             for element in document.get("elements", []):
                 for container, key in _element_slots(element):
                     for before, after in local:
-                        container[key] = moved(container[key], before, after)
+                        container[key] = moved_any_index(moved(container[key], before, after), before, after)
     project.types[type_name] = {new if field == old else field: kind for field, kind in fields.items()}
     _apply(project, renames)
 

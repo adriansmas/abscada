@@ -9,7 +9,7 @@
 import copy
 import re
 from .i18n import tr
-from .button_actions import with_steps
+from .button_actions import with_steps, popup_targets
 
 NAME = re.compile(r"[A-Za-z0-9_-]+")
 VIEWERS = {"trend": "trends", "alarm_view": "alarm_views"}
@@ -255,13 +255,13 @@ def delete_screen(project, name):
 # --- faceplates -------------------------------------------------------------------------------
 
 def _uses_template(element, name):
-    return element.get("template") == name and (element.get("kind") == "faceplate" or element.get("action") == "faceplate_popup")
+    return element.get("template") == name and (element.get("kind") == "faceplate" or element.get("action") == "faceplate_popup" or "when" in element)
 
 
 def faceplate_references(project, name):
     return [f"{'objeto ' if collection == 'faceplates' else ''}{document_name} · {element['id']}"
             for collection, document_name, document in _editable_documents(project)
-            for element in document["elements"] if any(_uses_template(t, name) for t in with_steps(element))]
+            for element in document["elements"] if any(_uses_template(t, name) for t in popup_targets(element))]
 
 
 def rename_faceplate(project, old, new):
@@ -274,7 +274,7 @@ def rename_faceplate(project, old, new):
     project.faceplates = {new if key == old else key: value for key, value in project.faceplates.items()}
     for _, _, document in _editable_documents(project):
         for element in document["elements"]:
-            for target in with_steps(element):
+            for target in popup_targets(element):
                 if _uses_template(target, old):
                     target["template"] = new
 
