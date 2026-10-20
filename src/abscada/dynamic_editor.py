@@ -1,17 +1,23 @@
 """Visual conditions and state appearance, configured without expressions."""
 import copy
 from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QFormLayout,QCheckBox,QComboBox,QLineEdit,
-    QPushButton,QTableWidget,QTableWidgetItem,QHeaderView,QTabWidget,QLabel,QGroupBox,QScrollArea)
+    QPushButton,QTableWidget,QTableWidgetItem,QHeaderView,QTabWidget,QLabel,QGroupBox,QScrollArea,QDoubleSpinBox)
 from .dialogs import EditorDialog
 from .value_editor import ValueEditor
 from .graphic_properties import ColorField
 from . import dynamics
 from .i18n import tr
+from .structures import PRIMITIVES
+
+
+def parameter_values(studio):
+    """Primitive $references of the object being edited ($run, $motor.marcha, $temps[0])."""
+    return {n:k for n,k in studio.document_references().items() if k in PRIMITIVES}
 
 
 def available_tags(studio):
     result=studio.project.tags()
-    if studio.document_kind=='faceplates': result|={'$'+n:dict(type=k,writable=True) for n,k in studio.document().get('parameters',{}).items()}
+    result|={'$'+n:dict(type=k,writable=True) for n,k in parameter_values(studio).items()}
     return result
 
 
@@ -70,6 +76,63 @@ class StyleForm(QWidget):
             if field.text() or isinstance(getattr(field, 'original', None), dict)}
 
 
+def number_field(value,low=-1e9,high=1e9,decimals=2,suffix=''):
+    field=QDoubleSpinBox(); field.setRange(low,high); field.setDecimals(decimals); field.setValue(value)
+    if suffix: field.setSuffix(suffix)
+    return field
+
+
+class MotionForm(QWidget):
+    """Rotation by value, continuous rotation and fill level, each one optional."""
+    def __init__(self,studio,element):
+        super().__init__(); d=element.get('dynamics',{}); page=QVBoxLayout(self)
+        numeric=[name for name,tag in available_tags(studio).items() if tag['type'] in {'int','float'}]
+        def variable(current):
+            combo=QComboBox(); combo.setEditable(True); combo.addItems(numeric); combo.setCurrentText(current); return combo
+        self.rotation=self.fill=self.spin=None
+        if element['kind'] in dynamics.ROTATABLE:
+            spec=d.get('rotation',{})
+            group=QGroupBox(tr('Girar según una variable')); group.setCheckable(True); group.setChecked(bool(spec)); form=QFormLayout(group)
+            note=QLabel(tr('El ángulo sigue al valor: el mínimo da el ángulo inicial y el máximo el final. Gira sobre su centro.'))
+            note.setWordWrap(True); note.setObjectName('muted'); form.addRow(note)
+            fields=dict(tag=variable(spec.get('tag','')),min=number_field(spec.get('min',0)),max=number_field(spec.get('max',100)),
+                        **{'from':number_field(spec.get('from',0),-36000,36000,1,' °'),'to':number_field(spec.get('to',360),-36000,36000,1,' °')})
+            for key,title in [('tag',tr('Variable')),('min',tr('Valor mínimo')),('max',tr('Valor máximo')),('from',tr('Ángulo en el mínimo')),('to',tr('Ángulo en el máximo'))]:
+                form.addRow(title,fields[key])
+            self.rotation=(group,fields); page.addWidget(group)
+            spin=d.get('spin',{})
+            group=QGroupBox(tr('Girar continuamente')); group.setCheckable(True); group.setChecked(bool(spin)); box=QVBoxLayout(group)
+            note=QLabel(tr('Por ejemplo, un ventilador o un agitador que gira mientras el motor está en marcha.'))
+            note.setWordWrap(True); note.setObjectName('muted'); box.addWidget(note)
+            condition=ConditionForm(studio,spin.get('when'),False); box.addWidget(condition)
+            seconds=number_field(spin.get('seconds',2),0.2,3600,1,' s'); row=QFormLayout(); row.addRow(tr('Una vuelta cada'),seconds); box.addLayout(row)
+            self.spin=(group,condition,seconds); page.addWidget(group)
+        if element['kind'] in dynamics.FILLABLE:
+            spec=d.get('fill',{})
+            group=QGroupBox(tr('Nivel de llenado')); group.setCheckable(True); group.setChecked(bool(spec)); form=QFormLayout(group)
+            note=QLabel(tr('Pinta el nivel sobre la propia figura: en una imagen SVG o PNG solo se colorea el dibujo, no el fondo transparente.'))
+            note.setWordWrap(True); note.setObjectName('muted'); form.addRow(note)
+            color=ColorField(lambda:None); color.setText(spec.get('color',dynamics.FILL_COLOR))
+            direction=QComboBox()
+            for key,title in [('up',tr('De abajo arriba')),('down',tr('De arriba abajo')),('right',tr('De izquierda a derecha')),('left',tr('De derecha a izquierda'))]: direction.addItem(title,key)
+            direction.setCurrentIndex(max(0,direction.findData(spec.get('direction','up'))))
+            fields=dict(tag=variable(spec.get('tag','')),min=number_field(spec.get('min',0)),max=number_field(spec.get('max',100)),color=color,direction=direction)
+            for key,title in [('tag',tr('Variable')),('min',tr('Vacío en')),('max',tr('Lleno en')),('color',tr('Color (admite transparencia)')),('direction',tr('Dirección'))]:
+                form.addRow(title,fields[key])
+            self.fill=(group,fields); page.addWidget(group)
+        page.addStretch()
+
+    def data(self):
+        result={}
+        if self.rotation and self.rotation[0].isChecked():
+            f=self.rotation[1]; result['rotation']={'tag':f['tag'].currentText(),'min':f['min'].value(),'max':f['max'].value(),'from':f['from'].value(),'to':f['to'].value()}
+        if self.spin and self.spin[0].isChecked():
+            result['spin']={'when':self.spin[1].data(),'seconds':self.spin[2].value()}
+        if self.fill and self.fill[0].isChecked():
+            f=self.fill[1]; result['fill']={'tag':f['tag'].currentText(),'min':f['min'].value(),'max':f['max'].value(),'color':f['color'].text(),'direction':f['direction'].currentData()}
+        return result
+
+
 class DynamicDialog(EditorDialog):
     """Appearance (one page, in the order it is applied), visibility and enabling of one element."""
     def __init__(self,studio,element):
@@ -111,18 +174,20 @@ class DynamicDialog(EditorDialog):
                     shown=c['value'] if c['op']=='eq' else not c['value']
                     text=f"{c['tag']} "+(tr('es verdadero') if shown else tr('es falso'))
                 else: text=f"{c['tag']} {operators.get(c['op'],c['op'])} {c['value']}"
-                self.table.setItem(i,0,QTableWidgetItem(text)); self.table.setItem(i,1,QTableWidgetItem(' · '.join(f'{k}: {v}' for k,v in state['style'].items())))
+                appearance=' · '.join(f'{k}: {v}' for k,v in state['style'].items())+(' · '+tr('parpadea') if state.get('blink') else '')
+                self.table.setItem(i,0,QTableWidgetItem(text)); self.table.setItem(i,1,QTableWidgetItem(appearance))
         def edit(new):
             index=-1 if new else self.table.currentRow()
             if not new and index<0: return
             current={} if new else self.states[index]
             dialog=EditorDialog(self); dialog.setWindowTitle(tr('Estado')); content=QVBoxLayout(dialog)
             cond=ConditionForm(studio,current.get('when'),False); style=StyleForm(current.get('style'),element['kind'],host=studio)
-            content.addWidget(cond); content.addWidget(style)
-            def state(): return dict(when=cond.data(),style=style.data())
+            blink=QCheckBox(tr('Parpadear (alterna con la apariencia normal)')); blink.setChecked(current.get('blink',False))
+            content.addWidget(cond); content.addWidget(style); content.addWidget(blink)
+            def state(): return dict(when=cond.data(),style=style.data(),**({'blink':True} if blink.isChecked() else {}))
             def validate():
                 candidate=copy.deepcopy(element); candidate['dynamics']={'states':[state()]}
-                dynamics.validate(candidate,studio.project.tags(),studio.document().get('parameters',{}))
+                dynamics.validate(candidate,studio.project.tags(),parameter_values(studio))
             dialog.validator=validate; studio.dialog_buttons(dialog,content)
             if dialog.exec()==EditorDialog.DialogCode.Accepted:
                 if new:self.states.append(state())
@@ -146,6 +211,9 @@ class DynamicDialog(EditorDialog):
         has_style=bool(dynamics.style_keys(element['kind'])) or element['kind']=='lamp'
         if has_style:
             tabs.addTab(scroll,tr('Apariencia'))
+        self.motion=MotionForm(studio,element)
+        if element['kind'] in dynamics.ROTATABLE|dynamics.FILLABLE:
+            tabs.addTab(self.motion,tr('Giro y nivel'))
         self.visible=ConditionForm(studio,d.get('visible')); tabs.addTab(self.visible,tr('Visibilidad'))
         enabled=QWidget(); form=QVBoxLayout(enabled); self.enabled=ConditionForm(studio,d.get('enabled')); form.addWidget(self.enabled)
         from .project_text_editor import ProjectTextField
@@ -159,12 +227,13 @@ class DynamicDialog(EditorDialog):
         if self.enabled.data(): d['enabled']=self.enabled.data()
         if self.reason.text() or isinstance(self.reason.original, dict): d['disabled_reason']=self.reason.translated_value()
         if self.states:d['states']=copy.deepcopy(self.states)
+        d.update(self.motion.data())
         result=copy.deepcopy(self.element); result['dynamics']=d
         if self.lamp:result['lamp_colors']={key:field.text() for key,field in self.lamp.items()}
         return result
 
     def validate(self):
-        dynamics.validate(self.data(),self.studio.project.tags(),self.studio.document().get('parameters',{}))
+        dynamics.validate(self.data(),self.studio.project.tags(),parameter_values(self.studio))
 
 
 def edit_dynamics(studio):

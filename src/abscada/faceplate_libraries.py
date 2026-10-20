@@ -2,6 +2,9 @@
 
 Packages are JSON, including base64 image resources. Linking never executes code
 and never follows the source on load. Updating is an explicit validated operation.
+
+Schema 1 carries objects and resources. Schema 2 adds the data types their
+parameters use (``types``), linked read-only as ``<alias>__<Type>`` like objects.
 """
 import base64
 import copy
@@ -14,6 +17,7 @@ from .validation import filenames
 from .i18n import tr
 
 _cache = None
+SCHEMAS = (1, 2)
 
 
 def digest(package):
@@ -32,23 +36,50 @@ def resource_name(name):
         filenames([part])
 
 
-def transform(value, assets, alias=None):
+def transform(value, assets, alias=None, names=None):
+    """Resources become package paths (export) or ``library://`` URIs (link).
+
+    When linking, ``names`` lists the package's own objects and types: references
+    to them get the alias prefix (nested objects, pop-ups, parameter types).
+    """
     if isinstance(value, list):
-        return [transform(v, assets, alias) for v in value]
+        return [transform(v, assets, alias, names) for v in value]
     if not isinstance(value, dict):
         return value
     result = {}
     for key, item in value.items():
         if key == 'source' and isinstance(item, str) and item:
             result[key] = assets(item) if callable(assets) else f'library://{alias}/{item}'
+        elif key == 'template' and names and isinstance(item, str) and item in names['faceplates']:
+            result[key] = alias + '__' + item
+        elif key == 'parameters' and names and isinstance(item, dict):
+            result[key] = {name: prefixed_kind(kind, alias, names['types']) for name, kind in item.items()}
         else:
-            result[key] = transform(item, assets, alias)
+            result[key] = transform(item, assets, alias, names)
     return result
 
 
+def prefixed_kind(kind, alias, types):
+    """``Motor[4]`` of a package linked as ``vendor`` → ``vendor__Motor[4]``; primitives unchanged."""
+    from .structures import split_kind
+    base, length = split_kind(kind)
+    if length is not None:
+        return prefixed_kind(base, alias, types) + kind[len(base):]
+    return alias + '__' + kind if isinstance(kind, str) and kind in types else kind
+
+
+def package_names(package):
+    return dict(faceplates=set(package['faceplates']), types=set(package.get('types', {})))
+
+
 def validate_package(package):
-    if not isinstance(package, dict) or package.get('schema_version') != 1:
+    if not isinstance(package, dict) or package.get('schema_version') not in SCHEMAS:
         raise ValueError(tr('Versión de biblioteca no soportada'))
+    types = package.get('types', {})
+    if not isinstance(types, dict) or (types and package['schema_version'] < 2):
+        raise ValueError(tr('Los tipos de datos de una librería requieren el formato 2'))
+    from .structures import check_definitions
+    check_definitions(types)
     for key in ('name', 'version'):
         if not isinstance(package.get(key), str) or not package[key].strip():
             raise ValueError(tr('La biblioteca necesita nombre y versión'))
@@ -65,7 +96,7 @@ def validate_package(package):
     # A library cannot depend on variables, scripts, views or screens in a consumer.
     from .project import Project
     project = Project(Path.cwd(), dict(name='Library validation', startup_screen='main',
-                      languages=package.get('languages', ['es']), default_language=package.get('default_language', 'es')), {}, [], [],
+                      languages=package.get('languages', ['es']), default_language=package.get('default_language', 'es')), copy.deepcopy(types), [], [],
                       {'main':dict(width=800,height=600,elements=[])}, copy.deepcopy(faces))
     def asset(name):
         from .system_library import SYSTEM, asset as system_asset
@@ -83,6 +114,7 @@ def export_library(project, names, target, name, version, author='', license='')
     """Publish a new immutable package. Existing files are never overwritten."""
     if not names or any(n not in project.faceplates for n in names):
         raise ValueError(tr('Selecciona al menos un objeto de librería existente'))
+    names, types = dependencies(project, names)
     assets = {}
     def capture(source):
         raw = project.asset(source).read_bytes()
@@ -90,9 +122,11 @@ def export_library(project, names, target, name, version, author='', license='')
         assets[key] = base64.b64encode(raw).decode('ascii')
         return key
     from .project_languages import languages, default_language
-    package = dict(schema_version=1, name=name, version=version, author=author, license=license,
+    package = dict(schema_version=2 if types else 1, name=name, version=version, author=author, license=license,
                    languages=languages(project), default_language=default_language(project),
                    faceplates={n:transform(project.faceplates[n], capture) for n in names}, assets=assets)
+    if types:
+        package['types'] = {t: copy.deepcopy(project.types[t]) for t in types}
     validate_package(package)
     target = Path(target)
     # Exclusive creation keeps published versions immutable, including from other processes.
@@ -102,8 +136,46 @@ def export_library(project, names, target, name, version, author='', license='')
     return package
 
 
+def dependencies(project, names):
+    """Objects to publish with the chosen ones (nested objects, pop-ups) and the types they use."""
+    from .button_actions import with_steps
+    from .structures import structure_of
+    from .system_library import is_system
+    chosen, pending = [], list(names)
+    while pending:
+        name = pending.pop(0)
+        if name in chosen:
+            continue
+        chosen.append(name)
+        for element in project.faceplates[name]['elements']:
+            for target in with_steps(element):
+                template = target.get('template')
+                if template and template in project.faceplates and not is_system(template) and template not in chosen:
+                    pending.append(template)
+    types, pending = [], [kind for name in chosen for kind in project.faceplates[name].get('parameters', {}).values()]
+    while pending:
+        kind = structure_of(pending.pop(0))
+        if kind in project.types and kind not in types:
+            types.append(kind)
+            pending.extend(project.types[kind].values())
+    return chosen, types
+
+
 def expected_faces(alias, package):
-    return {alias + '__' + name: transform(doc, package['assets'], alias=alias) for name, doc in package['faceplates'].items()}
+    names = package_names(package)
+    return {alias + '__' + name: transform(doc, package['assets'], alias=alias, names=names) for name, doc in package['faceplates'].items()}
+
+
+def expected_types(alias, package):
+    names = package.get('types', {})
+    return {alias + '__' + name: {field: prefixed_kind(kind, alias, names) for field, kind in fields.items()}
+            for name, fields in names.items()}
+
+
+def type_owner(project, name):
+    """Library a data type comes from; None if it belongs to the project."""
+    return next((alias for alias, entry in project.libraries.items()
+                 if name.startswith(alias+'__') and name[len(alias)+2:] in entry['package'].get('types', {})), None)
 
 
 def owner(project, template):
@@ -132,6 +204,10 @@ def hydrate(project):
             if name in project.faceplates:
                 raise ValueError(tr('Colisión con un objeto de librería local: ') + name)
             project.faceplates[name] = document
+        for name, fields in expected_types(alias, package).items():
+            if name in project.types:
+                raise ValueError(tr('Colisión con un tipo de datos local: ') + name)
+            project.types[name] = fields
 
 
 def validate_links(project):
@@ -154,6 +230,9 @@ def validate_links(project):
         for name, document in expected_faces(alias, package).items():
             if project.faceplates.get(name) != document:
                 raise ValueError(tr("{name}: plantilla vinculada de solo lectura", name=name))
+        for name, fields in expected_types(alias, package).items():
+            if project.types.get(name) != fields:
+                raise ValueError(tr("{name}: tipo de datos vinculado de solo lectura", name=name))
 
 
 def link(project, source, alias, update=False):
@@ -172,13 +251,19 @@ def link(project, source, alias, update=False):
             raise ValueError(tr('Una versión publicada es inmutable; publica una versión nueva'))
         for name in expected_faces(alias, existing['package']):
             candidate.faceplates.pop(name, None)
+        for name in expected_types(alias, existing['package']):
+            candidate.types.pop(name, None)
     candidate.libraries[alias] = dict(source=str(source), sha256=digest(package), package=package)
     for name, doc in expected_faces(alias, package).items():
         if any(n.casefold() == name.casefold() for n in candidate.faceplates):
             raise ValueError(tr('Colisión de nombre de objeto de librería: ') + name)
         candidate.faceplates[name] = doc
-    candidate.validate()  # Checks every existing instance against the new interface.
-    project.libraries, project.faceplates = candidate.libraries, candidate.faceplates
+    for name, fields in expected_types(alias, package).items():
+        if name in candidate.types:
+            raise ValueError(tr('Colisión de nombre de tipo de datos: ') + name)
+        candidate.types[name] = fields
+    candidate.validate()  # Checks every existing instance and variable against the new interface.
+    project.libraries, project.faceplates, project.types = candidate.libraries, candidate.faceplates, candidate.types
 
 
 def unlink(project, alias):
@@ -186,11 +271,22 @@ def unlink(project, alias):
     from .button_actions import with_steps
     used = [screen for screen, doc in project.screens.items()
             if any(t.get('template') in names for e in doc['elements'] for t in with_steps(e))]
+    used += [name for name, doc in project.faceplates.items() if name not in names
+             and any(t.get('template') in names for e in doc['elements'] for t in with_steps(e))]
+    from .structures import structure_of
+    types = set(expected_types(alias, project.libraries[alias]['package']))
+    used += [v['name'] for v in project.variables if structure_of(v['type']) in types]
+    used += [name for name, fields in project.types.items() if name not in types
+             and any(structure_of(kind) in types for kind in fields.values())]
+    used += [name for name, doc in project.faceplates.items() if name not in names
+             and any(structure_of(kind) in types for kind in doc.get('parameters', {}).values())]
     if used:
         raise ValueError(tr('Biblioteca en uso en: ') + ', '.join(used))
     del project.libraries[alias]
     for name in names:
         del project.faceplates[name]
+    for name in types:
+        del project.types[name]
 
 
 def asset(project, uri):

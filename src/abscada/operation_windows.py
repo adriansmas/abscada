@@ -73,17 +73,12 @@ def validate_popup_button(element, project, tags, parameters):
     expected = template.get("parameters", {})
     if not isinstance(bindings, dict) or set(bindings) != set(expected):
         raise ValueError(tr("Parámetros del objeto emergente incompletos"))
+    roots = {v["name"]: v["type"] for v in project.variables}
     for parameter, kind in expected.items():
         source = bindings[parameter]
         if not isinstance(source, str):
             raise ValueError(tr("Parámetro {parameter}: se esperaba una variable", parameter=parameter))
-        if source == "":
-            continue  # not assigned yet
-        if source.startswith("$"):
-            actual = parameters.get(source[1:])
-        else:
-            actual = tags[source]["type"] if source in tags else None
-        if actual != kind:
+        if not project.binding_fits(source, kind, roots, parameters):
             raise ValueError(tr("Tipo incorrecto en parámetro {parameter} del objeto emergente", parameter=parameter))
     if not isinstance(element.get("title", ""), str):
         raise ValueError(tr("Título de ventana inválido"))
@@ -91,19 +86,25 @@ def validate_popup_button(element, project, tags, parameters):
 
 def validate_popup_writes(element, project, tags):
     """After expansion every binding is a real tag; commands need writable tags."""
-    from .dynamics import parameter_writable
+    from .dynamics import writable_control
+    from .button_actions import as_button, steps
     template = project.faceplates[element["template"]]
-    for parameter, source in element.get("bindings", {}).items():
-        if source and parameter_writable(template, parameter) and not tags.get(source, {}).get("writable", False):
-            raise ValueError(tr("Objeto emergente: variable de solo lectura {source}", source=source))
+    instance = dict(id="popup", kind="faceplate", template=element["template"], bindings=element.get("bindings", {}),
+                    x=0, y=0, w=template["width"], h=template["height"])
+    for child in project.expand([instance]):
+        for control in [child] + [as_button(child, step) for step in steps(child)]:
+            source = control.get("tag")
+            if source and writable_control(control) and not tags.get(source, {}).get("writable", False):
+                raise ValueError(tr("Objeto emergente: variable de solo lectura {source}", source=source))
 
 
 def resolve_popup_bindings(child, instance_bindings):
     """Forward ``$parameter`` references of a nested pop-up button to real tags."""
     from .button_actions import with_steps
+    from .structures import substitute
     for target in with_steps(child):
         if target.get("action") == "faceplate_popup":
-            target["bindings"] = {key: instance_bindings[value[1:]] if isinstance(value, str) and value.startswith("$") else value
+            target["bindings"] = {key: substitute(value, instance_bindings)
                                   for key, value in target.get("bindings", {}).items()}
     return child
 

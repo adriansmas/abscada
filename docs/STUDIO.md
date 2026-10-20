@@ -34,7 +34,24 @@ Los colores son explícitos en cada objeto y estado: `#RRGGBB` o `#AARRGGBB`. No
 
 ## Variables y conexiones
 
-**Variables** y su pestaña **Tipos de datos** definen primitivas (`bool`, `int`, `float`, `string`) y estructuras anidadas. Cada hoja tiene valor inicial, acceso, enlace y registro propios. **Enlace…** elige conexión y dirección con un formulario propio de cada protocolo. **Duplicar** crea la copia sin enlaces para que asignes sus direcciones.
+**Variables** y su pestaña **Tipos de datos** definen primitivas (`bool`, `int`, `float`, `string`), estructuras anidadas y arrays. Un array se escribe en el campo Tipo como `float[8]` o `Motor[4]`, tanto en un campo de un tipo como en una variable; sus elementos aparecen como `Motores[2].marcha`. Cada hoja tiene valor inicial, acceso, enlace y registro propios. **Enlace…** elige conexión y dirección con un formulario propio de cada protocolo. **Duplicar** crea la copia sin enlaces para que asignes sus direcciones.
+
+Las variables se ordenan en **carpetas** (clic derecho → Nueva carpeta, Mover a carpeta, Renombrar, Mover o Eliminar carpeta). Son solo organización: el nombre de una variable no cambia y debe ser único en todo el proyecto. Eliminar una carpeta sube su contenido a la carpeta superior.
+
+### Importar un DB de TIA Portal
+
+**Más → Importar DB de TIA Portal…** (o clic derecho sobre una carpeta) crea un DB completo de una vez:
+
+1. En TIA Portal, clic derecho sobre el DB → **Generar fuente a partir de bloques** → **Incluir todos los bloques dependientes**. El archivo contiene los UDT (`TYPE`) y el DB (`DATA_BLOCK`).
+2. Pega su texto en el diálogo (o ábrelo con **Abrir archivo de fuente…**), elige la conexión S7, el número de DB y la carpeta.
+3. Revisa la vista previa (variable, tipo PLC, tipo, dirección y valor inicial) y los avisos, y acepta.
+
+El DB se crea como **una variable estructurada con su nombre**, así las rutas son las de TIA: `DB_Valvulas.V101.Abierta`, `DB_Valvulas.Niveles[1]`. Cada UDT y cada `Struct` anónimo pasan a ser tipos de datos (un `Struct` se llama `<Padre>_<campo>`), los `Array[a..b]` conservan sus índices y los valores iniciales salen de las declaraciones y de la sección `BEGIN`. Las direcciones se calculan con la disposición de un DB **no optimizado**: bools bit a bit, bytes en el byte siguiente y lo demás, cada estructura y cada array en byte par.
+
+- Un DB con acceso optimizado no tiene direcciones absolutas: se importa la estructura sin enlaces. Desactiva «Acceso optimizado al bloque» en TIA Portal o enlázalo por OPC UA.
+- `Bool`, `Byte`, `USInt`, `Int`, `Word`, `UInt`, `DInt`, `DWord`, `UDInt`, `Time` (milisegundos) y `Real` se importan. `Word`, `UInt`, `DWord` y `UDInt` se leen con signo. El resto (`LReal`, `String`, `Date_And_Time`…) se omite con aviso, pero su espacio se respeta para que los campos siguientes tengan su dirección correcta.
+- **Sustituir** actualiza una variable o un tipo que ya existan con el mismo nombre (por ejemplo tras cambiar el DB en TIA). Sin marcarlo, la importación se niega a sobrescribir.
+- No se importan instancias de FB ni bloques de código.
 
 En **Conexiones**, **Probar conexión** abre una conexión de solo lectura con el borrador y **Leer variable** muestra valor, calidad y hora de una dirección. Ninguna de las dos envía órdenes. Direcciones y límites: [PROTOCOLS.md](PROTOCOLS.md).
 
@@ -42,7 +59,13 @@ En **Conexiones**, **Probar conexión** abre una conexión de solo lectura con e
 
 **Propiedades dinámicas** cambia visibilidad, habilitación y apariencia según variables, sin scripts. Cada condición tiene variable, operador, valor y comportamiento sin calidad válida.
 
-La apariencia se aplica en este orden: propiedades del objeto, Normal, primer estado que se cumple, Sin comunicación y Deshabilitado. Los objetos invisibles no reciben clics; los deshabilitados pueden mostrar un motivo.
+La apariencia se aplica en este orden: propiedades del objeto, Normal, primer estado que se cumple, Sin comunicación y Deshabilitado. Un estado marcado **Parpadear** alterna su apariencia con la normal una vez por segundo. Los objetos invisibles no reciben clics; los deshabilitados pueden mostrar un motivo.
+
+La pestaña **Giro y nivel** añade:
+
+- **Girar según una variable**: el ángulo sigue al valor entre un mínimo y un máximo (una válvula de mariposa, una aguja).
+- **Girar continuamente**: una vuelta cada N segundos mientras se cumple una condición (un ventilador o un agitador en marcha).
+- **Nivel de llenado** (imágenes, rectángulos y elipses): pinta el nivel sobre la propia figura; en una imagen SVG o PNG solo se colorea el dibujo, no el fondo transparente.
 
 **Herramientas → Prueba visual…** permite introducir valores y calidad a mano para revisar el resultado. No conecta PLC, no ejecuta scripts ni escribe históricos.
 
@@ -92,9 +115,11 @@ Mostrar una variable en una tendencia no la registra: para ver su pasado tiene q
 
 El árbol reúne **Proyecto** (editable), **Estándar** (símbolos SVG y objetos animados incluidos en la aplicación, de solo lectura) y librerías externas vinculadas. Arrastra un objeto al lienzo o usa el selector; **Copiar al proyecto** crea una variante editable.
 
-Los objetos propios viven en `faceplates/`. Sus parámetros son variables primitivas que sus elementos referencian como `$nombre`; cada instancia los asigna a variables compatibles. No admiten objetos de librería anidados ni visores.
+Los objetos propios viven en `faceplates/`. Sus parámetros (**Ajustes de pantalla / plantilla**) son primitivos, tipos de datos o arrays; sus elementos los referencian como `$nombre` o, por partes, `$motor.marcha` y `$motor.temps[0]`. Cada instancia los asigna a variables compatibles: un parámetro `Bomba` se enlaza de una vez con `Bomba1`, o con `Bombas[2]`, en lugar de campo a campo. Vale cualquier variable con los mismos campos y tipos, aunque tenga campos de más.
 
-- **Proyecto → Importar librería externa… → Publicar biblioteca…** genera un paquete `.abscada-library.json` nuevo con plantillas, imágenes y traducciones. Exige que las plantillas no dependan de variables, scripts ni pantallas del proyecto. No sobrescribe versiones publicadas.
+Un objeto puede contener otros objetos de librería: arrástralos a su lienzo y enlaza sus parámetros con los del objeto que los contiene (`$motor`, `$motor.marcha`). No admiten ciclos, visores ni contenedores.
+
+- **Proyecto → Importar librería externa… → Publicar biblioteca…** genera un paquete `.abscada-library.json` nuevo con plantillas, imágenes, traducciones y los tipos de datos de sus parámetros; añade solos los objetos anidados o abiertos en ventana que usan. Exige que las plantillas no dependan de variables, scripts ni pantallas del proyecto. No sobrescribe versiones publicadas. Los tipos vinculados aparecen como `alias__Tipo`, de solo lectura, y las variables del proyecto pueden usarlos.
 - **Vincular…** fija una copia del paquete con alias y huella SHA-256; funciona sin el archivo original.
 - **Actualizar desde…** comprueba la compatibilidad con todas las instancias antes de aplicar.
 - **Desvincular** exige resolver antes las instancias que lo usan.

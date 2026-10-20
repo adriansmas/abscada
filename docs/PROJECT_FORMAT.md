@@ -42,10 +42,10 @@ Los documentos opcionales que faltan se cargan vacíos. Los nombres de pantallas
 
 ## Tipos y variables
 
-`types.json` define estructuras con campos primitivos (`bool`, `int`, `float`, `string`) u otras estructuras, sin ciclos. No hay arrays.
+`types.json` define estructuras con campos primitivos (`bool`, `int`, `float`, `string`), otras estructuras o arrays, sin ciclos. Un array se escribe `tipo[n]`, con índices de 0 a n-1, o `tipo[a..b]`, con índices de a a b como en un DB de Siemens (`float[8]`, `Pump[4]`, `int[1..10]`, también `float[2][3]`). Tiene entre 1 y 1000 elementos.
 
 ```json
-{"Pump": {"running": "bool", "flow": "float", "setpoint": "float"}}
+{"Pump": {"running": "bool", "flow": "float", "setpoint": "float", "temps": "float[3]"}}
 ```
 
 `variables.json`:
@@ -65,8 +65,11 @@ Los documentos opcionales que faltan se cargan vacíos. Los nombres de pantallas
 ]
 ```
 
-- Los nombres raíz no llevan puntos. Las hojas se nombran con la ruta completa (`Pump1.flow`).
-- En una estructura, `initial` contiene exactamente los campos del tipo; `bindings` usa nombres completos y `overrides` rutas relativas.
+- Los nombres de variables, tipos y campos no llevan puntos ni corchetes. Las hojas se nombran con la ruta completa: los campos con punto y los índices entre corchetes, desde 0 (`Pump1.flow`, `Pump1.temps[2]`, `Pumps[3].running`).
+- Una variable también puede ser un array (`"type": "Pump[4]"` o `"float[8]"`); su `initial` es una lista con exactamente n elementos, empezando por el primer índice.
+- `"folder": "PLC/Valvulas"` coloca la variable en una carpeta del Studio; las carpetas vacías se guardan en `variable_folders` del manifiesto. Son solo organización: no cambian el nombre de la variable.
+- En una estructura, `initial` contiene exactamente los campos del tipo; `bindings` usa nombres completos y `overrides` rutas relativas (`temps[2]`, o `[1].running` en un array).
+- Cada elemento de un array es una hoja con su propio enlace: los protocolos leen y escriben elemento a elemento.
 - `writable` es `false` por defecto y los campos lo heredan salvo override. Un campo sin enlace es una variable interna.
 - No se admiten NaN, infinitos ni enteros con decimales.
 
@@ -194,7 +197,21 @@ Al soltar se comprueban todas las acciones; si alguna no es posible, no se enví
 }
 ```
 
-`visible` y `enabled` son condiciones; `op` es `eq`, `ne`, `gt`, `ge`, `lt` o `le` (las ordenadas solo con números) y `bad` es el resultado sin calidad válida. En `states` gana la primera condición que se cumple. Las condiciones admiten `$parametro` dentro de faceplates.
+`visible` y `enabled` son condiciones; `op` es `eq`, `ne`, `gt`, `ge`, `lt` o `le` (las ordenadas solo con números) y `bad` es el resultado sin calidad válida. En `states` gana la primera condición que se cumple; con `"blink": true` su apariencia se alterna con la normal una vez por segundo, y todos los estados parpadean a la vez. Las condiciones admiten `$parametro` dentro de faceplates.
+
+Giro y nivel de llenado, opcionales:
+
+```json
+"dynamics": {
+  "rotation": {"tag": "Valve.position", "min": 0, "max": 100, "from": 0, "to": 90},
+  "spin": {"when": {"tag": "Fan.running", "op": "eq", "value": true}, "seconds": 2},
+  "fill": {"tag": "Tank.level", "min": 0, "max": 100, "color": "#cc3da9bf", "direction": "up"}
+}
+```
+
+- `rotation` gira el elemento sobre su centro: el ángulo pasa de `from` a `to` (grados) mientras el valor va de `min` a `max`. `spin` gira de forma continua, una vuelta cada `seconds` (0,2–3600), mientras se cumple `when`. Si hay ambos, se suman. Admiten giro imágenes, rectángulos, elipses, líneas, polilíneas, tuberías, textos y pilotos.
+- `fill` pinta el nivel con `color` sobre los píxeles visibles del propio elemento: en una imagen SVG o PNG solo se colorea el dibujo, no su fondo transparente. `direction` es `up`, `down`, `right` o `left`. Admiten nivel imágenes, rectángulos y elipses.
+- Las variables de giro y nivel son numéricas; fuera de rango se recortan y, sin calidad válida, se usa el último valor y el estilo `bad`.
 
 ## Listas de textos
 
@@ -208,7 +225,7 @@ Los valores se guardan como texto y se comparan según el tipo de la variable. `
 
 ## Objetos de librería
 
-`faceplates/<nombre>.json` es una plantilla con parámetros primitivos que sus elementos usan como `$nombre`. `folder` la coloca en una carpeta de la librería. Las plantillas `estandar__*` son de la librería estándar y nunca se guardan en el proyecto.
+`faceplates/<nombre>.json` es una plantilla con parámetros que sus elementos usan como `$nombre`. Un parámetro es primitivo, un tipo de datos o un array; los de tipo estructura o array se usan por partes: `$motor.running`, `$motor.temps[0]`. `folder` la coloca en una carpeta de la librería. Las plantillas `estandar__*` son de la librería estándar y nunca se guardan en el proyecto.
 
 ```json
 {"width": 320, "height": 180, "folder": "Bombas",
@@ -221,7 +238,9 @@ Los valores se guardan como texto y se comparan según el tipo de la variable. `
  "template": "pump", "bindings": {"running": "Pump1.running"}}
 ```
 
-Cada instancia enlaza todos los parámetros con variables del mismo tipo (escribibles si la plantilla escribe). No se admiten objetos anidados, visores ni contenedores dentro de una plantilla.
+Cada instancia enlaza todos los parámetros (escribibles si la plantilla escribe). Un parámetro primitivo toma una variable de su tipo. Uno de tipo estructura o array toma una variable entera o una parte de ella (`"motor": "Pumps[2]"`) con la misma forma: cada campo que espera el parámetro debe existir con el mismo tipo; puede haber campos de más. Así un tipo del proyecto alimenta un tipo idéntico publicado por una librería. `""` deja el parámetro sin asignar.
+
+Una plantilla puede contener otros objetos de librería, hasta 8 niveles y sin ciclos. Sus `bindings` reenvían los parámetros de la plantilla que los contiene (`"running": "$motor.running"`, `"motor": "$motor"`). No se admiten visores ni contenedores dentro de una plantilla.
 
 ## Layouts
 
@@ -339,16 +358,19 @@ El mapa debe contener el idioma por defecto. Una traducción ausente o vacía us
 Un paquete `.abscada-library.json` es autónomo:
 
 ```json
-{"schema_version": 1, "name": "Equipos", "version": "1.0.0",
+{"schema_version": 2, "name": "Equipos", "version": "1.0.0",
  "languages": ["es", "en"], "default_language": "es",
  "author": "Mi equipo", "license": "GPL-3.0-or-later",
- "faceplates": {"bomba": {"width": 100, "height": 60, "parameters": {}, "elements": []}},
+ "types": {"Bomba": {"marcha": "bool", "velocidad": "float"}},
+ "faceplates": {"bomba": {"width": 100, "height": 60, "parameters": {"motor": "Bomba"}, "elements": []}},
  "assets": {}}
 ```
 
-`assets` relaciona rutas relativas con su contenido en base64; se rechazan rutas absolutas, `..`, `:` y `\`. Las plantillas solo pueden depender de sus parámetros y recursos.
+`assets` relaciona rutas relativas con su contenido en base64; se rechazan rutas absolutas, `..`, `:` y `\`. Las plantillas solo pueden depender de sus parámetros, de los tipos y objetos del propio paquete, de la librería estándar y de sus recursos. No llevan scripts.
 
-`libraries.json` vincula cada paquete por alias con su `source`, su `sha256` y una copia completa, así el proyecto funciona sin el archivo original. El alias empieza por letra y admite letras, números, `_` y `-` (hasta 40). Las plantillas se usan como `alias__nombre`. Una actualización exige el mismo `name`, una versión nueva si cambia el contenido y compatibilidad con todas las instancias.
+`types` (formato 2) incluye los tipos de datos de sus parámetros. Al publicar se añaden solos los objetos anidados o abiertos en ventana y los tipos que usan; el paquete se escribe con `schema_version` 2 si lleva tipos y con 1 si no. Los paquetes de formato 1 se siguen leyendo.
+
+`libraries.json` vincula cada paquete por alias con su `source`, su `sha256` y una copia completa, así el proyecto funciona sin el archivo original. El alias empieza por letra y admite letras, números, `_` y `-` (hasta 40). Las plantillas se usan como `alias__nombre` y los tipos como `alias__Tipo`; ambos son de solo lectura, no se guardan en `faceplates/` ni en `types.json`, y las variables del proyecto pueden usar esos tipos. Una actualización exige el mismo `name`, una versión nueva si cambia el contenido y compatibilidad con todas las instancias.
 
 ```python
 from abscada.project import Project

@@ -26,14 +26,17 @@ def parent_folder(path):
     return path.rpartition("/")[0]
 
 
-# Screens and the project's library objects (faceplate documents) have their own folder trees.
-# Objects of the standard library and of linked libraries are read-only and keep theirs.
-FOLDER_KEYS = {"screens": "screen_folders", "faceplates": "library_folders"}
+# Screens, the project's library objects (faceplate documents) and variables have their own
+# folder trees. Objects of the standard library and of linked libraries are read-only and keep
+# theirs. A variable stores its folder as ``variable["folder"]``; names stay global.
+FOLDER_KEYS = {"screens": "screen_folders", "faceplates": "library_folders", "variables": "variable_folders"}
 
 
 def _documents(project, kind):
     if kind == "screens":
         return project.screens
+    if kind == "variables":
+        return {variable["name"]: variable for variable in project.variables}
     from .faceplate_libraries import owner
     return {name: document for name, document in project.faceplates.items() if not owner(project, name)}
 
@@ -53,7 +56,8 @@ def validate_folders(project):
         explicit = project.manifest.get(key, [])
         if not isinstance(explicit, list) or any(not isinstance(p, str) or not p or clean_folder(p) != p for p in explicit):
             raise ValueError(tr("{key} debe ser una lista de rutas de carpeta", key=key))
-        for name, document in getattr(project, kind).items():
+        documents = _documents(project, kind) if kind == "variables" else getattr(project, kind)
+        for name, document in documents.items():
             folder = document.get("folder", "")
             if not isinstance(folder, str) or clean_folder(folder) != folder:
                 raise ValueError(tr("{name}: carpeta inválida", name=name))
@@ -135,6 +139,13 @@ def move_screen(project, name, folder):
     if folder and folder not in folders(project):
         raise ValueError(tr("Carpeta inexistente"))
     _set_folder(project.screens[name], folder)
+
+
+def move_variable(project, name, folder):
+    folder = clean_folder(folder)
+    if folder and folder not in folders(project, "variables"):
+        raise ValueError(tr("Carpeta inexistente"))
+    _set_folder(_documents(project, "variables")[name], folder)
 
 
 def move_faceplate(project, name, folder):

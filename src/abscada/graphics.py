@@ -4,7 +4,7 @@ import copy
 import math
 import shiboken6
 from PySide6.QtCore import Qt, QRectF, QPointF, QTimer, QEvent, Signal
-from PySide6.QtGui import QColor, QPainter, QPen, QPixmap, QIcon, QFont, QPainterPath, QPainterPathStroker, QTransform
+from PySide6.QtGui import QColor, QPainter, QPen, QPixmap, QIcon, QImage, QFont, QPainterPath, QPainterPathStroker, QTransform
 from PySide6.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsView, QGraphicsScene, QGraphicsProxyWidget, QLineEdit
 
 from .text_lists import display_text
@@ -88,6 +88,50 @@ def draw_element(painter, e, host, rect=None):
     rect = rect or QRectF(0, 0, e["w"], e["h"])
     from .dynamics import effective
     e=effective(e,host.samples,host.design_mode)
+    angle, fill = e.get("_angle"), e.get("_fill")
+    if not angle and fill is None:
+        _paint(painter, e, host, rect)
+        return
+    painter.save()
+    if angle:
+        center = rect.center()
+        painter.translate(center); painter.rotate(angle); painter.translate(-center)
+    if fill is None:
+        _paint(painter, e, host, rect)
+    else:
+        paint_filled(painter, e, host, rect, *fill)
+    painter.restore()
+
+
+def paint_filled(painter, e, host, rect, ratio, color, direction):
+    """The element with a level painted over its own visible pixels (the outline of an image)."""
+    transform = painter.worldTransform()
+    scale = max(math.hypot(transform.m11(), transform.m12()), math.hypot(transform.m21(), transform.m22()), 0.01)
+    device = painter.device()
+    scale *= device.devicePixelRatioF() if device is not None and hasattr(device, "devicePixelRatioF") else 1
+    # Outlines are centred on the edge of the element: the layer keeps room for them.
+    margin = e.get("stroke_width", 2) + 2
+    area = rect.adjusted(-margin, -margin, margin, margin)
+    width, height = max(1, math.ceil(area.width()*scale)), max(1, math.ceil(area.height()*scale))
+    layer = QImage(width, height, QImage.Format.Format_ARGB32_Premultiplied)
+    layer.fill(Qt.GlobalColor.transparent)
+    layer.setDevicePixelRatio(scale)
+    canvas = QPainter(layer)
+    canvas.setRenderHint(QPainter.RenderHint.Antialiasing)
+    canvas.setFont(painter.font())
+    canvas.translate(-area.topLeft())
+    _paint(canvas, e, host, rect)
+    w, h = rect.width(), rect.height()
+    level = {"up": QRectF(rect.left(), rect.bottom()-h*ratio, w, h*ratio), "down": QRectF(rect.left(), rect.top(), w, h*ratio),
+             "right": QRectF(rect.left(), rect.top(), w*ratio, h), "left": QRectF(rect.right()-w*ratio, rect.top(), w*ratio, h)}[direction]
+    canvas.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceAtop)
+    canvas.fillRect(level, QColor(color))
+    canvas.end()
+    painter.drawImage(area, layer)
+
+
+def _paint(painter, e, host, rect):
+    """Paint an element whose dynamics are already applied (see ``dynamics.effective``)."""
     from .project_languages import localized, default_language, resolve
     code = getattr(host, 'editing_language', None) if host.design_mode else getattr(getattr(host, 'runtime', None), 'language', None)
     code = code or default_language(host.project)
@@ -137,10 +181,12 @@ def draw_element(painter, e, host, rect=None):
         if template:
             painter.save()
             painter.scale(rect.width() / template["width"], rect.height() / template["height"])
+            from .structures import substitute
             for source in template["elements"]:
                 child = copy.deepcopy(source)
                 if child.get("tag", "").startswith("$"):
-                    child["tag"] = e.get("bindings", {}).get(child["tag"][1:], "")
+                    try: child["tag"] = substitute(child["tag"], e.get("bindings", {}))
+                    except KeyError: child["tag"] = ""
                 painter.save()
                 painter.translate(child["x"], child["y"])
                 draw_element(painter, child, host)
@@ -496,6 +542,10 @@ class ElementItem(QGraphicsObject):
 
     def boundingRect(self):
         pad = max(8, self.element.get("stroke_width",12 if self.element["kind"] == "pipe" else 2)*2)
+        if not self.host.design_mode and {"rotation", "spin"} & set(self.element.get("dynamics", {})):
+            # A turning element sweeps the circle around its centre.
+            w, h = self.element["w"], self.element["h"]
+            pad += (math.hypot(w, h) - min(w, h)) / 2
         return QRectF(-pad, -pad, self.element["w"]+2*pad, self.element["h"]+2*pad)
 
     def shape(self):

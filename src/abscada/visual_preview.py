@@ -1,10 +1,11 @@
 """Graphical state preview: no Runtime, adapters, scripts or database writers."""
 import copy
 import time
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QFormLayout, QComboBox, QPushButton, QLabel
 from .graphics import CanvasScene,CanvasView,ElementItem
 from .runtime import Sample
+from .dynamics import animated
 from .value_editor import ValueEditor
 from .i18n import tr
 
@@ -51,6 +52,13 @@ class VisualPreview(QMainWindow):
             except ValueError as exc:self.feedback.setText(str(exc))
         apply.clicked.connect(change);self.apply_state=change
         self.screen.currentTextChanged.connect(self.render_scene);self.render_scene()
+        # Blinking states and continuous rotation move with time, not with values.
+        self.animation=QTimer(self);self.animation.timeout.connect(self.animate);self.animation.start(100)
+
+    def animate(self):
+        for scene in [self.scene]+[c.scene for c in self.containers.values()]:
+            for item in scene.items():
+                if isinstance(item,ElementItem) and animated(item.element):item.update()
 
     def render_scene(self):
         self.document_name=self.screen.currentText();self.containers.clear();self.scene.clear();doc=self.project.screens[self.document_name]

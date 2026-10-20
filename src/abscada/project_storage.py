@@ -12,6 +12,9 @@ def documents(project):
     data = {getattr(project, 'manifest_file', 'project.json'): project.manifest}
     for key in ('types','variables','connections','alarms','historian','trends','alarm_views','automation'):
         data[key+'.json'] = getattr(project, key)
+    from .faceplate_libraries import type_owner
+    # Types of linked libraries live in libraries.json, like their objects.
+    data['types.json'] = {name: fields for name, fields in project.types.items() if not type_owner(project, name)}
     if project.libraries:
         data['libraries.json'] = project.libraries
     # Optional documents: written only when they differ from the default, so projects

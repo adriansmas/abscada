@@ -9,6 +9,7 @@ from pathlib import Path
 from dataclasses import dataclass, field
 from .i18n import tr
 from . import button_actions
+from . import structures
 
 PRIMITIVES = {"bool", "int", "float", "string"}
 from .text_lists import validate_text_list
@@ -16,6 +17,7 @@ from .drawing import PATH_KINDS, SHAPE_KINDS, validate_drawing
 from .security import default_security
 from .opcua_server import default_server
 
+MAX_NESTING = 8
 KINDS = PATH_KINDS | SHAPE_KINDS | {"screen_container", "text", "text_list", "lamp", "button", "input", "bar", "gauge", "image", "faceplate", "trend", "alarm_view"}
 
 
@@ -116,7 +118,7 @@ class Project:
         def expand(name, kind, value, source, stack=()):
             if kind in PRIMITIVES:
                 tag = copy.deepcopy(source)
-                relative_name = name.partition(".")[2]
+                relative_name = structures.relative(name)
                 overrides = source.get("overrides", {}).get(relative_name, {})
                 if set(overrides) - {"writable"}:
                     raise ValueError(tr("{name}: override solo admite writable", name=name))
@@ -126,6 +128,15 @@ class Project:
                 if binding:
                     tag["binding"] = binding
                 result[name] = tag
+                return
+            base, length = structures.split_kind(kind)
+            if length is not None:
+                if not structures.known(kind, self.types):
+                    raise ValueError(tr("Tipo inválido o recursivo: {kind}", kind=kind))
+                if not isinstance(value, list) or len(value) != length:
+                    raise ValueError(tr("{name}: el valor de un array debe ser una lista de {length} elementos", name=name, length=length))
+                for index, item in zip(structures.indices(kind), value):
+                    expand(f"{name}[{index}]", base, item, source, stack)
                 return
             if kind in stack or kind not in self.types:
                 raise ValueError(tr("Tipo inválido o recursivo: {kind}", kind=kind))
@@ -156,22 +167,11 @@ class Project:
         if not isinstance(self.manifest.get("name"), str) or not self.manifest["name"]:
             raise ValueError(tr("El proyecto necesita un nombre"))
         names = [v["name"] for v in self.variables]
-        if len(names) != len(set(names)) or any(not n or "." in n for n in names):
+        if len(names) != len(set(names)) or any(not structures.valid_name(n) for n in names):
             raise ValueError(tr("Nombres de variables vacíos, duplicados o con puntos"))
-        for name, fields in self.types.items():
-            if not name or name in PRIMITIVES or not isinstance(fields, dict) or not fields:
-                raise ValueError(tr("Definición de tipo inválida: {name}", name=name))
-            for field, kind in fields.items():
-                if not field or "." in field or kind not in PRIMITIVES | self.types.keys():
-                    raise ValueError(tr("Campo inválido: {name}.{field}", name=name, field=field))
-            def check_type(kind, stack):
-                if kind in stack:
-                    raise ValueError(tr("Tipo recursivo: {kind}", kind=kind))
-                if kind in self.types:
-                    for child in self.types[kind].values():
-                        check_type(child, stack + (kind,))
-            check_type(name, ())
+        structures.check_definitions(self.types)
         tags = self.tags()
+        roots = {v["name"]: v["type"] for v in self.variables}
         from . import dynamics
         from .operation_windows import validate_popup_button, validate_popup_writes, validate_window, validate_display
         from .security import validate_element_permission
@@ -223,8 +223,11 @@ class Project:
                 raise ValueError(tr("Título de pantalla inválido"))
             ids = set()
             parameters = document.get("parameters", {}) if name.startswith("faceplate:") else {}
-            if not isinstance(parameters,dict) or any(not isinstance(key,str) or not key.strip() or kind not in PRIMITIVES for key,kind in parameters.items()):
+            if not isinstance(parameters,dict) or any(not structures.valid_name(key) or not key.strip() or not isinstance(kind,str) or not structures.known(kind,self.types) for key,kind in parameters.items()):
                 raise ValueError(tr('Parámetros de objeto de librería inválidos'))
+            # $name, $name.field and $name[i]: primitive ones can feed elements, any one a nested object.
+            references = structures.parameter_references(parameters, self.types)
+            values = {key: kind for key, kind in references.items() if kind in PRIMITIVES}
             for element in document["elements"]:
                 if not isinstance(element["id"], str) or not element["id"].strip():
                     raise ValueError(tr("Los elementos necesitan un nombre"))
@@ -238,7 +241,7 @@ class Project:
                     raise ValueError(tr("{name}: tamaño inválido", name=name))
                 if element.get("text_align", "center") not in {"left", "center", "right"} or not isinstance(element.get("bold",False),bool):
                     raise ValueError(tr("Formato de texto inválido"))
-                try: dynamics.validate(element,tags,parameters)
+                try: dynamics.validate(element,tags,values)
                 except (ValueError,TypeError,KeyError) as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
                 visual=element.get('dynamics',{})
                 for style in [visual.get(key,{}) for key in ('default','bad','disabled')]+[state['style'] for state in visual.get('states',[])]:
@@ -252,20 +255,20 @@ class Project:
                         dynamics.validate_color(element[color_key])
                 tag = element.get("tag", "")
                 if not isinstance(tag,str):raise ValueError(tr("{name} / {id}: la referencia de variable debe ser texto", name=name, id=element["id"]))
-                if tag and tag not in tags and not (tag.startswith("$") and tag[1:] in parameters):
+                if tag and tag not in tags and not (tag.startswith("$") and tag[1:] in values):
                     raise ValueError(tr("{name}: variable inexistente {tag}", name=name, tag=tag))
-                tag_type = tags[tag]["type"] if tag in tags else parameters.get(tag.lstrip("$"))
+                tag_type = tags[tag]["type"] if tag in tags else values.get(tag.lstrip("$"))
                 try: validate_element_permission(element)
                 except ValueError as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
                 if element['kind'] == 'button' and element.get('action') == button_actions.SEQUENCE:
                     try: button_actions.validate_structure(element)
                     except ValueError as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
                     for number, step in enumerate(element['actions'], 1):
-                        try: self._validate_button_action(name, button_actions.as_button(element, step), tags, parameters)
+                        try: self._validate_button_action(name, button_actions.as_button(element, step), tags, references)
                         except ValueError as exc:
                             raise ValueError(tr("{name} / {id}, acción {number}: {exc}", name=name, id=element["id"], number=number, exc=exc)) from exc
                 elif element['kind'] == 'button':
-                    self._validate_button_action(name, element, tags, parameters)
+                    self._validate_button_action(name, element, tags, references)
                 if dynamics.writable_control(element) and tag in tags and not tags[tag].get('writable',False):
                     raise ValueError(tr("{name} / {id}: variable de solo lectura: {tag}", name=name, id=element["id"], tag=tag))
                 if element["kind"] == "text_list":
@@ -297,15 +300,15 @@ class Project:
                     raise ValueError(tr("decimals debe estar entre 0 y 10"))
                 if element["kind"] == "faceplate":
                     template = self.faceplates.get(element.get("template"))
-                    if template is None or name.startswith("faceplate:"):
-                        raise ValueError(tr("Objeto de librería inexistente o anidado (no soportado en v1)"))
+                    if template is None:
+                        raise ValueError(tr("Objeto de librería inexistente: {template}", template=element.get("template")))
                     bindings = element.get("bindings", {})
-                    if set(bindings) != set(template.get("parameters", {})):
+                    if not isinstance(bindings, dict) or set(bindings) != set(template.get("parameters", {})):
                         raise ValueError(tr("Parámetros del objeto de librería incompletos"))
                     for parameter, kind in template["parameters"].items():
-                        # "" = not assigned yet: the object can be placed first and linked to variables later.
-                        if bindings[parameter] != "" and (bindings[parameter] not in tags or tags[bindings[parameter]]["type"] != kind):
+                        if not self.binding_fits(bindings[parameter], kind, roots, references):
                             raise ValueError(tr("Tipo incorrecto en parámetro {parameter}", parameter=parameter))
+        self._check_nesting()
 
         for screen in self.screens:
             for expanded in self.elements(screen):
@@ -330,10 +333,45 @@ class Project:
         from .scripting import validate_scripts
         validate_scripts(self)
 
+    def binding_fits(self, source, kind, roots, references=None):
+        """A faceplate parameter of ``kind`` can take ``source``.
+
+        ``source`` is a variable path (a leaf, a whole structure or array, or a part of
+        one), ``$parameter...`` of the faceplate that contains the instance, or "" for a
+        parameter not assigned yet: the object can be placed first and linked later.
+        """
+        if not isinstance(source, str):
+            return False
+        if source == "":
+            return True
+        if source.startswith("$"):
+            actual = (references or {}).get(source[1:])
+        else:
+            actual = structures.path_kind(self.types, roots, source)
+        return structures.compatible(self.types, actual, kind)
+
+    def _check_nesting(self):
+        """Objects may contain other objects, without cycles and at most MAX_NESTING levels deep."""
+        def visit(name, stack):
+            if name in stack:
+                raise ValueError(tr("Objetos de librería anidados en ciclo: {path}", path=" → ".join(stack + (name,))))
+            if len(stack) >= MAX_NESTING:
+                raise ValueError(tr("Demasiados niveles de objetos anidados (máximo {count})", count=MAX_NESTING))
+            for element in self.faceplates.get(name, {}).get("elements", []):
+                if element.get("kind") == "faceplate":
+                    visit(element.get("template"), stack + (name,))
+        for name in self.faceplates:
+            visit(name, ())
+
     def _validate_button_action(self, name, element, tags, parameters):
-        """One action: a single-action button or one step of a list (seen as a button)."""
+        """One action: a single-action button or one step of a list (seen as a button).
+
+        ``parameters`` are the references of the containing faceplate (see
+        ``structures.parameter_references``).
+        """
         from . import dynamics
         from .operation_windows import validate_popup_button, validate_window
+        references, parameters = parameters, {key: kind for key, kind in parameters.items() if kind in PRIMITIVES}
         tag = element.get("tag", "")
         if not isinstance(tag, str):
             raise ValueError(tr("{name} / {id}: la referencia de variable debe ser texto", name=name, id=element["id"]))
@@ -346,7 +384,7 @@ class Project:
         if action == 'set_language' and element.get('language') not in self.manifest.get('languages', ['es']):
             raise ValueError('Idioma de destino no declarado')
         if action == 'faceplate_popup':
-            try: validate_popup_button(element, self, tags, parameters)
+            try: validate_popup_button(element, self, tags, references)
             except (ValueError, TypeError) as exc: raise ValueError(f'{name} / {element["id"]}: {exc}') from exc
         if action in {'popup','faceplate_popup'}:
             validate_window(element.get('window', {}))
@@ -371,9 +409,8 @@ class Project:
         """Configure one primitive leaf, including a field within a structure."""
         if name not in self.tags():
             raise ValueError(tr("Variable inexistente: {name}", name=name))
-        root_name, separator, relative = name.partition(".")
-        source = next(v for v in self.variables if v["name"] == root_name)
-        if separator:
+        source = next(v for v in self.variables if v["name"] == structures.root(name))
+        if structures.relative(name):
             bindings = source.setdefault("bindings", {})
             if binding:
                 bindings[name] = copy.deepcopy(binding)
@@ -389,14 +426,10 @@ class Project:
     def configure_tag(self, name, initial, writable, binding):
         tag = self.tags()[name]
         initial = coerce(initial, tag["type"])
-        root_name, separator, relative = name.partition(".")
-        source = next(v for v in self.variables if v["name"] == root_name)
-        if separator:
-            parts = relative.split(".")
-            target = source["initial"]
-            for part in parts[:-1]:
-                target = target[part]
-            target[parts[-1]] = initial
+        source = next(v for v in self.variables if v["name"] == structures.root(name))
+        relative = structures.relative(name)
+        if relative:
+            structures.set_at(self.types, source["type"], source["initial"], structures.steps(name), initial)
             source.setdefault("overrides", {})[relative] = {"writable": writable}
         else:
             source.update(initial=initial, writable=writable)
@@ -421,27 +454,38 @@ class Project:
         return self.expand(self.screens[screen]["elements"])
 
     def expand(self, elements):
-        """Expand a list of document elements; also used for faceplate pop-up windows."""
+        """Expand a list of document elements; also used for faceplate pop-up windows.
+
+        Objects placed inside an object are expanded in turn: their bindings may
+        forward the outer object's parameters (``$motor``, ``$motor.marcha``).
+        """
         from .operation_windows import resolve_popup_bindings
+        from .dynamics import resolve_bindings
         for element in elements:
             if element["kind"] != "faceplate":
                 yield copy.deepcopy(element)
                 continue
             template = self.faceplates[element["template"]]
             sx, sy = element["w"] / template["width"], element["h"] / template["height"]
+            outer = copy.deepcopy(element.get("_guards", []))
             if "background" in template:
-                yield dict(id=element["id"]+".$background",kind="rectangle",x=element["x"],y=element["y"],
+                background = dict(id=element["id"]+".$background",kind="rectangle",x=element["x"],y=element["y"],
                     w=element["w"],h=element["h"],color=template["background"],stroke_color=template["background"],stroke_width=1,filled=True,dynamics=copy.deepcopy(element.get("dynamics",{})),visible=element.get("visible",True))
+                if outer:
+                    background["_guards"] = outer
+                yield background
             for child in template["elements"]:
-                from .dynamics import resolve_bindings
                 child = resolve_bindings(child,element['bindings'])
-                child['_guards']=[element.get('dynamics',{})]
+                child['_guards']=outer+[element.get('dynamics',{})]
                 if element.get('visible') is False: child['visible']=False
                 child["id"] = element["id"] + "." + child["id"]
                 child["x"] = element["x"] + child["x"] * sx
                 child["y"] = element["y"] + child["y"] * sy
                 child["w"] *= sx
                 child["h"] *= sy
-                if child.get("tag", "").startswith("$"):
-                    child["tag"] = element["bindings"][child["tag"][1:]]
+                if child["kind"] == "faceplate":
+                    child["bindings"] = {key: structures.substitute(value, element["bindings"])
+                                         for key, value in child.get("bindings", {}).items()}
+                    yield from self.expand([child])
+                    continue
                 yield resolve_popup_bindings(child, element["bindings"])

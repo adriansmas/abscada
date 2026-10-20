@@ -78,7 +78,7 @@ def edit_text_list(host):
     tag = element.get('tag', '')
     kind = host.project.tags().get(tag, {}).get('type')
     if tag.startswith('$'):
-        kind = host.document().get('parameters', {}).get(tag[1:])
+        kind = host.document_references().get(tag[1:])
     dialog = TextListDialog(element, kind, host)
     if dialog.exec() == EditorDialog.DialogCode.Accepted:
         host.mutate(lambda: element.update(dialog.mapping()), selected_ids=[element['id']])

@@ -28,8 +28,9 @@ def select_tag(studio):
             row=QTreeWidgetItem(text);row.setData(0,Qt.ItemDataRole.UserRole,name)
             if not compatible(element,tag):
                 row.setDisabled(True);row.setToolTip(0,tr('Tipo o acceso incompatible con este objeto'))
-            root=name.split('.')[0]
-            if '.' in name:
+            from .structures import root as root_of
+            root=root_of(name)
+            if root!=name:
                 if root not in groups:groups[root]=QTreeWidgetItem([root]);tree.addTopLevelItem(groups[root]);groups[root].setExpanded(True)
                 groups[root].addChild(row)
             else:tree.addTopLevelItem(row)

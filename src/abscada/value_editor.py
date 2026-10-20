@@ -3,6 +3,7 @@ import re
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QComboBox, QTreeWidget, QTreeWidgetItem, QCheckBox,QHeaderView
 from .project import coerce, PRIMITIVES
+from .structures import DEFAULTS, split_kind, join, default_value, set_at, relative_steps, lower
 from .i18n import tr
 
 
@@ -61,27 +62,32 @@ class StructureEditor(QTreeWidget):
         self.setMinimumHeight(210)
 
     def configure(self, kind, initial=None, writable=False, overrides=None):
-        self.clear(); self.fields={}; overrides=overrides or {}
-        def add(parent, typename, data, prefix=''):
-            for name, childkind in self.project.types[typename].items():
-                path=prefix+name; row=QTreeWidgetItem([name,childkind])
+        """A structure or an array: one row per field or element, nested as deep as the type."""
+        self.clear(); self.fields={}; overrides=overrides or {}; self.kind=kind
+        types=self.project.types
+        def add(parent, kind, data, prefix=''):
+            base, length = split_kind(kind)
+            if length is not None:
+                children=[(f'[{lower(kind)+i}]', base, data[i] if isinstance(data,list) and i<len(data) else None) for i in range(length)]
+            else:
+                children=[(name, sub, data.get(name) if isinstance(data,dict) else None) for name, sub in types[kind].items()]
+            for name, childkind, value in children:
+                path=join(prefix,name); row=QTreeWidgetItem([name,childkind])
                 row.setSizeHint(0,QSize(0,38))
                 row.setToolTip(0,path)
                 (parent.addChild if parent else self.addTopLevelItem)(row)
                 if childkind in PRIMITIVES:
-                    field=ValueEditor(childkind, data.get(name,{'bool':False,'int':0,'float':0.,'string':''}[childkind]))
+                    field=ValueEditor(childkind, DEFAULTS[childkind] if value is None else value)
                     access=QCheckBox(); access.setChecked(overrides.get(path,{}).get('writable',writable))
                     self.setItemWidget(row,2,field); self.setItemWidget(row,3,access)
                     self.fields[path]=(field,access)
-                else: add(row,childkind,data.get(name,{}),path+'.')
-        add(None,kind,initial or {}); self.expandAll()
+                else: add(row,childkind,value,path)
+        add(None,kind,initial); self.expandAll()
         self.resizeColumnToContents(0); self.resizeColumnToContents(1)
         self.setColumnWidth(0,max(140,self.columnWidth(0)));self.setColumnWidth(1,max(70,self.columnWidth(1)))
 
     def values(self):
-        initial={}; overrides={}
+        initial=default_value(self.project.types,self.kind); overrides={}
         for path,(field,access) in self.fields.items():
-            parts=path.split('.'); target=initial
-            for part in parts[:-1]: target=target.setdefault(part,{})
-            target[parts[-1]]=field.value(); overrides[path]={'writable':access.isChecked()}
+            set_at(self.project.types,self.kind,initial,relative_steps(path),field.value()); overrides[path]={'writable':access.isChecked()}
         return initial,overrides

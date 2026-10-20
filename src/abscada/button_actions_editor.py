@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialogButtonBox, QFormLayo
 from .button_actions import STEP_ACTIONS, label
 from .dialogs import EditorDialog
 from .i18n import tr
+from .structures import PRIMITIVES
 from .project_text_editor import ProjectTextField
 
 TITLES = {"set": tr("Escribir valor"), "toggle": tr("Alternar marcha / paro"), "script": tr("Ejecutar script"),
@@ -136,7 +137,7 @@ class ButtonActionsDialog(EditorDialog):
         tags = self.studio.project.tags()
         if tag in tags:
             return tags[tag]["type"]
-        return self.studio.document().get("parameters", {}).get(tag.lstrip("$"))
+        return self.studio.document_references().get(tag.lstrip("$"))
 
     def load(self, step):
         self._loading = True
@@ -146,8 +147,8 @@ class ButtonActionsDialog(EditorDialog):
         options = [name for name, tag in project.tags().items() if tag.get("writable")
                    and (action != "toggle" or tag["type"] == "bool")]
         if self.studio.document_kind == "faceplates":
-            options = ["$" + name for name, kind in self.studio.document().get("parameters", {}).items()
-                       if action != "toggle" or kind == "bool"] + options
+            options = ["$" + name for name, kind in self.studio.document_references().items()
+                       if kind in PRIMITIVES and (action != "toggle" or kind == "bool")] + options
         self.tag_field.addItems(options)
         self.tag_field.setCurrentText(step.get("tag", ""))
         self.value_field.setText(str(step.get("value", "")))

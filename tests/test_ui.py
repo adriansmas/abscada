@@ -241,9 +241,8 @@ def test_regular_variable_form_creates_a_variable(studio):
     from PySide6.QtWidgets import QLineEdit
     def fill():
         dialog = QApplication.activeModalWidget()
-        fields = dialog.findChildren(QLineEdit)
-        fields[0].setText("NewTemperature")
-        fields[1].setText("23.5")
+        dialog.findChild(QLineEdit, "variableName").setText("NewTemperature")
+        dialog.findChild(QLineEdit, "variableInitial").setText("23.5")
         dialog.accept()
     QTimer.singleShot(0, fill)
     studio.variable_form(None)

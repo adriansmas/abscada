@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
 )
 from .project import PRIMITIVES
 from .numbered_rows import NUMBER_ROLE
-from .variable_forms import NEW_ROW
+from .variable_forms import NEW_ROW, FOLDER_ROW
 from .connectors import REGISTRY, definition, binding_summary
 from .protocol_editor import ProtocolForm
 from .project_actions import ProjectActions
@@ -691,6 +691,9 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         tools.addWidget(button(tr("Duplicar…"), self.duplicate_variable))
         more = QToolButton(); more.setText(tr("Más")); more.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         more_menu = QMenu(more)
+        more_menu.addAction(tr("Importar DB de TIA Portal…"), self.import_tia_db)
+        more_menu.addAction(tr("Nueva carpeta…"), lambda: self.new_variable_folder(""))
+        more_menu.addSeparator()
         more_menu.addAction(tr("Expandir todas las estructuras"), lambda: self.table.expandAll())
         more_menu.addAction(tr("Contraer todas las estructuras"), lambda: self.table.collapseAll())
         more_menu.addSeparator()
@@ -730,6 +733,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.table.customContextMenuRequested.connect(lambda pos: self.variable_menu(self.table.itemAt(pos), self.table.viewport().mapToGlobal(pos)))
         self.table.itemDoubleClicked.connect(self.edit_variable_form)
         self.pending_variable_index = None   # where the row being typed will be inserted; None = at the end
+        self.pending_variable_folder = ""     # folder of the variable being typed
         self.focus_new_variable = False
         layout.addWidget(self.table, 1)
         self.variables_page = page
@@ -975,26 +979,39 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if e["kind"] == "faceplate":
             for parameter, kind in self.project.faceplates[e["template"]].get("parameters", {}).items():
                 combo = QComboBox()
-                from .dynamics import parameter_writable
-                needs_write=parameter_writable(self.project.faceplates[e['template']],parameter)
                 combo.addItem(tr("(sin asignar)"), "")
-                for name,tag in self.project.tags().items():
-                    if tag['type']==kind and (not needs_write or tag.get('writable')): combo.addItem(name, name)
+                for option in self.popup_binding_options(e["template"], parameter, kind): combo.addItem(option, option)
                 combo.setCurrentIndex(max(0, combo.findData(e["bindings"][parameter])))
+                combo.setToolTip(tr("Tipo {kind}", kind=kind))
                 combo.activated.connect(self.auto_apply)
                 self.binding_fields[parameter] = combo
                 self.binding_form.addRow(parameter, combo)
         self._syncing = False
 
+    def document_references(self):
+        """``$`` references of the object being edited, with their kinds; none on a screen."""
+        if self.document_kind != "faceplates":
+            return {}
+        from .structures import parameter_references
+        return parameter_references(self.document().get("parameters", {}), self.project.types)
+
     def popup_binding_options(self, template, parameter, kind):
-        """Variables for a faceplate pop-up; inside a faceplate also its own $parameters."""
+        """What can fill a parameter of an object (placed or opened in a window).
+
+        A primitive takes a variable of its type; a structure or array takes a whole
+        variable or part of one with the same shape. Inside an object, its own
+        ``$`` references come first.
+        """
         from .dynamics import parameter_writable
-        needs_write = parameter_writable(self.project.faceplates[template], parameter)
-        options = [name for name, tag in self.project.tags().items()
-                   if tag["type"] == kind and (not needs_write or tag.get("writable"))]
-        if self.document_kind == "faceplates":
-            options = ["$" + name for name, own in self.document().get("parameters", {}).items() if own == kind] + options
-        return options
+        from .structures import compatible, composite_paths
+        types = self.project.types
+        if kind in PRIMITIVES:
+            needs_write = parameter_writable(self.project.faceplates[template], parameter)
+            options = [name for name, tag in self.project.tags().items()
+                       if tag["type"] == kind and (not needs_write or tag.get("writable"))]
+        else:
+            options = [path for path, own in composite_paths(types, self.project.variables).items() if compatible(types, own, kind)]
+        return ["$" + name for name, own in self.document_references().items() if compatible(types, own, kind)] + options
 
     def refresh_popup_faceplate(self, e):
         visible = e.get("action") == "faceplate_popup"
@@ -1140,7 +1157,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 e.pop('language', None)
             tag = e.get('tag', '')
             tags = self.project.tags()
-            kind = tags[tag]['type'] if tag in tags else self.document().get('parameters', {}).get(tag.lstrip('$'))
+            kind = tags[tag]['type'] if tag in tags else self.document_references().get(tag.lstrip('$'))
             if e['action'] == 'toggle' and kind and kind != 'bool' and tag != previous.get('tag', ''):
                 e['action'] = 'set'
             if e['action'] == 'screen':
@@ -1192,7 +1209,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 try:
                     tag = e.get("tag", "")
                     tags = self.project.tags()
-                    kind = tags[tag]["type"] if tag in tags else self.document().get("parameters", {}).get(tag.lstrip("$"))
+                    kind = tags[tag]["type"] if tag in tags else self.document_references().get(tag.lstrip("$"))
                     raw_value = self.value_field.text()
                     if not raw_value and previous.get("action", "toggle") != "set":
                         raw_value = {"bool": False, "int": 0, "float": 0.0, "string": ""}.get(kind, "")
@@ -1324,8 +1341,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 parameters.insertRow(row)
                 parameters.setItem(row, 0, QTableWidgetItem(name))
                 combo = QComboBox()
-                combo.addItems([tr("bool"), tr("int"), tr("float"), tr("string")])
+                # Also data types (a whole Bomba) and arrays, typed as float[8] or Bomba[4].
+                combo.setEditable(True)
+                combo.addItems(["bool", "int", "float", "string"] + list(self.project.types))
                 combo.setCurrentText(kind)
+                combo.setToolTip(tr("Un tipo básico, un tipo de datos del proyecto o un array como float[8]"))
                 parameters.setCellWidget(row, 1, combo)
             for name, kind in self.document().get("parameters", {}).items():
                 add_parameter(name, kind)
@@ -1341,7 +1361,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             data = copy.deepcopy(self.document())
             data.update({key: field.value() for key, field in dimensions.items()})
             if parameters is not None:
-                definitions = [(parameters.item(i, 0).text().strip(), parameters.cellWidget(i, 1).currentText()) for i in range(parameters.rowCount())]
+                definitions = [(parameters.item(i, 0).text().strip(), parameters.cellWidget(i, 1).currentText().strip()) for i in range(parameters.rowCount())]
                 if len({name for name, kind in definitions}) != len(definitions) or any(not name for name, kind in definitions):
                     self.error(tr("Los parámetros deben tener nombres únicos y no vacíos"))
                     return
@@ -1419,9 +1439,6 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             from .screen_tree import new_view_id
             e.update(view=new_view_id(self.project, kind, e["id"]), w=720, h=420)
         if kind == "faceplate":
-            if self.document_kind == "faceplates":
-                self.error(tr("Un objeto de librería no puede contener otros objetos de librería todavía"))
-                return
             from .library_browser import LibraryPicker
             picker = LibraryPicker(self, self.project)
             if picker.exec() != EditorDialog.DialogCode.Accepted or not picker.selected():
@@ -1440,8 +1457,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
 
     def insert_library_object(self, name, position=None):
         """Add an instance of a library object; its parameters are linked to variables right away."""
-        if self.document_kind != "screens":
-            self.error(tr("Los objetos de librería se colocan en pantallas"))
+        if self.document_kind == "faceplates" and name == self.document_name:
+            self.error(tr("Un objeto de librería no puede contenerse a sí mismo"))
             return False
         template = self.project.faceplates[name]
         # The object is placed first; its variables are assigned afterwards in the properties panel.
@@ -1512,12 +1529,43 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             visit(self.table.topLevelItem(i))
         self.table.clear()
         tags = self.project.tags()
+        from .structures import segments, path_kind, split_kind
+        from .screen_tree import folders as folder_paths, parent_folder
+        from .variable_forms import FOLDER_ROW
+        roots = {v["name"]: v["type"] for v in self.project.variables}
         query = self.filter.text().casefold()
+        # Folders first, as in a file explorer; a folder seen for the first time starts open.
+        folder_items = {}
+        seen = getattr(self, "_seen_variable_folders", set())
+        def folder_item(path):
+            if not path:
+                return None
+            if path not in folder_items:
+                parent = folder_item(parent_folder(path))
+                item = QTreeWidgetItem([path.rpartition("/")[2], tr("Carpeta")])
+                item.setData(0, role, FOLDER_ROW + path)
+                item.setToolTip(0, path)
+                item.setSizeHint(0, QSize(0, 38))
+                font = item.font(0); font.setBold(True); item.setFont(0, font)
+                (parent.addChild if parent else self.table.addTopLevelItem)(item)
+                item.setExpanded(bool(query) or FOLDER_ROW + path in expanded or path not in seen)
+                if selected_name == FOLDER_ROW + path:
+                    self.table.setCurrentItem(item)
+                folder_items[path] = item
+            return folder_items[path]
+        if not query:
+            for path in folder_paths(self.project, "variables"):
+                folder_item(path)
+        self._seen_variable_folders = seen | set(folder_paths(self.project, "variables"))
+        def add_top(item, source):
+            container = folder_item(source.get("folder", ""))
+            (container.addChild if container else self.table.addTopLevelItem)(item)
+        shown = 0
         for source_index, source in enumerate(self.project.variables):
             root_name = source["name"]
             matching = []
             for name, tag in tags.items():
-                if name != root_name and not name.startswith(root_name + "."):
+                if name != root_name and not name.startswith((root_name + ".", root_name + "[")):
                     continue
                 binding = tag.get("binding", {})
                 searchable = f"{name} {source['type']} {tag['type']} {tag['initial']} {binding.get('connection', '')} {binding.get('address', '')}"
@@ -1525,13 +1573,14 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                     matching.append((name, tag))
             if not matching:
                 continue
+            shown += 1
             groups = {}
             if source["type"] not in PRIMITIVES:
                 root = QTreeWidgetItem([root_name, source["type"], tr("{len} campos", len=len(matching)), tr("Por campo"), "", ""])
                 root.setData(0, role, root_name)
                 root.setData(0, NUMBER_ROLE, source_index + 1)
                 root.setSizeHint(0, QSize(0, 38))
-                self.table.addTopLevelItem(root)
+                add_top(root, source)
                 root.setExpanded(bool(query) or root_name in expanded)
                 groups[root_name] = root
                 self.table.setItemWidget(root, 6, button(tr("Campos"), lambda checked=False, item=root: item.setExpanded(not item.isExpanded())))
@@ -1541,16 +1590,14 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             for name, tag in matching:
                 binding = tag.get("binding", {})
                 structured = name != root_name
-                parts = name.split(".")
+                levels = segments(name)
                 parent = None
-                group_type = source["type"]
                 if structured:
                     parent = groups[root_name]
-                    for depth, field in enumerate(parts[1:-1], start=1):
-                        path = ".".join(parts[:depth+1])
-                        group_type = self.project.types[group_type][field]
+                    for field, path in levels[1:-1]:
                         if path not in groups:
-                            group = QTreeWidgetItem([field, group_type, tr("Estructura"), tr("Por campo"), "", ""])
+                            group_type = path_kind(self.project.types, roots, path)
+                            group = QTreeWidgetItem([field, group_type, tr("Array") if split_kind(group_type)[1] is not None else tr("Estructura"), tr("Por campo"), "", ""])
                             group.setData(0, role, path)
                             group.setData(0, NUMBER_ROLE, parent.childCount() + 1)
                             group.setSizeHint(0, QSize(0, 38))
@@ -1558,7 +1605,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                             group.setExpanded(bool(query) or path in expanded)
                             groups[path] = group
                         parent = groups[path]
-                item = QTreeWidgetItem([parts[-1] if structured else name, tag["type"], str(tag["initial"]), tr("Lectura / escritura") if tag.get("writable") else tr("Solo lectura"), binding.get("connection", "Local"), binding_summary(binding, self.project.connections, tag["type"])])
+                item = QTreeWidgetItem([levels[-1][0] if structured else name, tag["type"], str(tag["initial"]), tr("Lectura / escritura") if tag.get("writable") else tr("Solo lectura"), binding.get("connection", "Local"), binding_summary(binding, self.project.connections, tag["type"])])
                 item.setData(0, role, name)
                 item.setData(0, NUMBER_ROLE, (parent.childCount() if parent else source_index) + 1)
                 item.setSizeHint(0, QSize(0, 38))
@@ -1567,7 +1614,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 if parent:
                     parent.addChild(item)
                 else:
-                    self.table.addTopLevelItem(item)
+                    add_top(item, source)
                     self.table.setItemWidget(item, 1, self.variable_type_combo(name, source["type"]))
                 self.table.setItemWidget(item, 6, button(tr("Enlace…"), lambda checked=False, n=name: self.tag_form(n)))
                 from . import recording
@@ -1581,7 +1628,6 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 self.table.setItemWidget(item, 7, record)
                 if name == selected_name:
                     self.table.setCurrentItem(item)
-        shown = self.table.topLevelItemCount()
         total = len(self.project.variables)
         self.add_variable_row()
         self.filter_notice.setVisible(bool(query))
@@ -1623,12 +1669,13 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         item = self.table.currentItem()
         if item:
             name = item.data(0, Qt.ItemDataRole.UserRole)
-            if name == NEW_ROW:
+            if name == NEW_ROW or name.startswith(FOLDER_ROW):
                 return
             if name in self.project.tags():
                 self.tag_form(name)
             else:
-                root=name.split(".")[0]
+                from .structures import root as root_of
+                root=root_of(name)
                 self.variable_form(next(i for i,v in enumerate(self.project.variables) if v["name"]==root))
 
     def dialog_buttons(self, dialog, layout):
@@ -1670,7 +1717,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         name = self.new_type_field.text().strip()
         if not name:
             return
-        if "." in name or name in PRIMITIVES or name in self.project.types:
+        from .structures import valid_name
+        if not valid_name(name) or name in PRIMITIVES or name in self.project.types:
             self.error(tr("El nombre del tipo y sus campos deben ser únicos y no vacíos"))
             return
         # A type needs at least one field: it starts with a «valor» that is edited right after.
@@ -1684,6 +1732,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if item:
             name = item.text()
             if key == "types":
+                from .faceplate_libraries import type_owner
+                if type_owner(self.project, name):
+                    self.error(tr("{name} pertenece a una librería vinculada y es de solo lectura", name=name))
+                    return
                 self.mutate(lambda: self.project.types.pop(name))
             else:
                 self.mutate(lambda: self.project.connections.__setitem__(slice(None), [c for c in self.project.connections if c["id"] != name]))
@@ -1755,6 +1807,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 self.mutate(lambda: self.project.connections.__setitem__(index, data))
 
     def type_form(self, name):
+        from .faceplate_libraries import type_owner
+        if name and type_owner(self.project, name):
+            self.error(tr("{name} pertenece a una librería vinculada y es de solo lectura", name=name))
+            return
         dialog = EditorDialog(self)
         dialog.setWindowTitle(tr("Estructura de datos"))
         dialog.resize(540, 480)
@@ -1771,8 +1827,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             fields.insertRow(row)
             fields.setItem(row, 0, QTableWidgetItem(field))
             combo = QComboBox()
+            combo.setEditable(True)
             combo.addItems(["bool", "int", "float", "string"] + [n for n in self.project.types if n != name])
             combo.setCurrentText(kind)
+            combo.setToolTip(tr("Un tipo básico, otro tipo de datos o un array: float[8], Motor[4]"))
             fields.setCellWidget(row, 1, combo)
         for field, kind in self.project.types.get(name, {}).items():
             add_field(field, kind)
@@ -1782,7 +1840,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         row.addWidget(button(tr("Eliminar campo"), lambda: fields.removeRow(fields.currentRow())))
         layout.addLayout(row)
         def validate():
-            definitions=[(fields.item(i,0).text().strip(),fields.cellWidget(i,1).currentText()) for i in range(fields.rowCount())]
+            definitions=[(fields.item(i,0).text().strip(),fields.cellWidget(i,1).currentText().strip()) for i in range(fields.rowCount())]
             from .value_editor import FieldError
             if len({field for field,kind in definitions}) != len(definitions) or not identifier.text().strip() or (name is None and identifier.text().strip() in self.project.types):
                 raise FieldError(tr('El nombre del tipo y sus campos deben ser únicos y no vacíos'),identifier)
@@ -1790,7 +1848,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         dialog.validator=validate
         self.dialog_buttons(dialog, layout)
         if dialog.exec() == EditorDialog.DialogCode.Accepted:
-            definitions = [(fields.item(i, 0).text().strip(), fields.cellWidget(i, 1).currentText()) for i in range(fields.rowCount())]
+            definitions = [(fields.item(i, 0).text().strip(), fields.cellWidget(i, 1).currentText().strip()) for i in range(fields.rowCount())]
             new_name = identifier.text().strip()
             if len({field for field, kind in definitions}) != len(definitions) or (name is None and new_name in self.project.types):
                 self.error(tr("El nombre del tipo y sus campos deben ser únicos"))

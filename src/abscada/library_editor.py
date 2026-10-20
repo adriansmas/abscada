@@ -115,13 +115,16 @@ class LibraryDialog(EditorDialog):
         rows = []
         types = {'bool':tr('Booleano'),'int':tr('Entero'),'float':tr('Real'),'string':tr('Texto')}
         for name, doc in package['faceplates'].items():
-            parameters = '<br>'.join(escape(key)+' · '+types[kind] for key,kind in doc.get('parameters',{}).items()) or tr('Sin parámetros')
+            parameters = '<br>'.join(escape(key)+' · '+escape(types.get(kind, kind)) for key,kind in doc.get('parameters',{}).items()) or tr('Sin parámetros')
             from .project_languages import resolve, default_language
             caption = resolve(doc.get('title', ''), self.host.editing_language, default_language(self.host.project))
             rows.append('<tr><td><b>'+escape(alias+'__'+name)+'</b><br>'+escape(caption)+'</td><td>'+parameters+'</td></tr>')
         self.details.setHtml('<h3>'+escape(package['name'])+' · '+escape(package['version'])+'</h3>'
             +'<p>Autor: '+escape(str(package.get('author',''))) +'<br>Licencia: '+escape(str(package.get('license','')))+'</p>'
-            +tr('<table cellpadding="8"><tr><th align="left">Objeto</th><th align="left">Parámetros</th></tr>')+''.join(rows)+'</table>')
+            +tr('<table cellpadding="8"><tr><th align="left">Objeto</th><th align="left">Parámetros</th></tr>')+''.join(rows)+'</table>'
+            +(tr('<h4>Tipos de datos</h4>') if package.get('types') else '')
+            +''.join('<p><b>'+escape(alias+'__'+name)+'</b> · '+escape(', '.join(f'{field}: {kind}' for field, kind in fields.items()))+'</p>'
+                     for name, fields in package.get('types', {}).items()))
         self.details.setToolTip('SHA-256: '+entry['sha256'])
 
     def source(self, initial=''):

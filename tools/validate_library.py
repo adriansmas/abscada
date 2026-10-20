@@ -18,7 +18,8 @@ def validate(package):
                 from abscada.project import coerce
                 tag = element.get('tag', '')
                 if tag.startswith('$'):
-                    kind = document['parameters'][tag[1:]]
+                    from abscada.structures import parameter_references
+                    kind = parameter_references(document['parameters'], package.get('types', {}))[tag[1:]]
                     for key in ('value', 'press_value', 'release_value'):
                         if key in element:
                             coerce(element[key], kind)

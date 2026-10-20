@@ -1,12 +1,20 @@
 """Serializable visual conditions; shared by runtime and isolated preview."""
 import copy
+import math
 import operator
 import re
+import time
 from .i18n import tr
 from .project_languages import is_text
 
 OPS={'eq':operator.eq,'ne':operator.ne,'gt':operator.gt,'ge':operator.ge,'lt':operator.lt,'le':operator.le}
 COLOR_KEYS={'color','text_color','border_color','stroke_color'}
+# Motion and level are painted over the element, which keeps its place and size.
+ROTATABLE={'image','rectangle','ellipse','line','polyline','pipe','text','lamp'}
+FILLABLE={'image','rectangle','ellipse'}
+DIRECTIONS=('up','down','left','right')
+FILL_COLOR='#cc3da9bf'
+BLINK_HZ=1.0
 
 
 def style_keys(kind):
@@ -38,16 +46,53 @@ def permitted(element,samples,key):
     return all(test(c,samples) for c in conditions)
 
 
-def effective(element,samples,design=False):
+def blink_on(now=None):
+    """Phase shared by every blinking state, so they all blink in step."""
+    now=time.monotonic() if now is None else now
+    return int(now*2*BLINK_HZ)%2==0
+
+
+def ratio(spec,samples):
+    """Position of a variable between min and max (0..1); the last value if its quality is bad."""
+    sample=samples.get(spec['tag'])
+    try: value=float(sample.value)
+    except (AttributeError,TypeError,ValueError): return 0.0
+    if not math.isfinite(value): return 0.0
+    return max(0.0,min(1.0,(value-spec.get('min',0))/(spec.get('max',100)-spec.get('min',0))))
+
+
+def motion_tags(dynamics):
+    return [spec['tag'] for spec in (dynamics.get('rotation'),dynamics.get('fill')) if spec]+([dynamics['spin']['when']['tag']] if dynamics.get('spin') else [])
+
+
+def animated(element):
+    """Needs repainting as time passes: blinking states or continuous rotation."""
+    dynamics=element.get('dynamics',{})
+    return bool(dynamics.get('spin')) or any(state.get('blink') for state in dynamics.get('states',[]))
+
+
+def effective(element,samples,design=False,now=None):
     result=dict(element); dynamics=element.get('dynamics',{})
     if not design:
         appearance={}
+        now=time.monotonic() if now is None else now
         result.update(dynamics.get('default',{}))
         appearance.update(dynamics.get('default',{}))
         for state in dynamics.get('states',[]):
             if test(state['when'],samples):
-                result.update(state['style']); appearance.update(state['style']); break
-        referenced=[element.get('tag')]+[s['when']['tag'] for s in dynamics.get('states',[])]
+                # A blinking state alternates its appearance with the normal one.
+                if not state.get('blink') or blink_on(now):
+                    result.update(state['style']); appearance.update(state['style'])
+                break
+        angle=0.0
+        if dynamics.get('rotation'):
+            spec=dynamics['rotation']; angle+=spec.get('from',0)+ratio(spec,samples)*(spec.get('to',360)-spec.get('from',0))
+        if dynamics.get('spin') and test(dynamics['spin']['when'],samples):
+            angle+=(now/dynamics['spin'].get('seconds',2)*360)%360
+        if angle: result['_angle']=angle
+        if dynamics.get('fill'):
+            spec=dynamics['fill']; result['_fill']=(ratio(spec,samples),spec.get('color',FILL_COLOR),spec.get('direction','up'))
+        referenced=[element.get('tag')]+[s['when']['tag'] for s in dynamics.get('states',[])]+motion_tags(dynamics)
         if any(name and (name not in samples or samples[name].quality!='good') for name in referenced):
             result.update(dynamics.get('bad',{}))
             appearance.update(dynamics.get('bad',{}))
@@ -63,11 +108,12 @@ def effective(element,samples,design=False):
 
 
 def resolve_bindings(element,bindings):
+    from .structures import substitute
     result=copy.deepcopy(element)
     def replace(value):
         if isinstance(value,dict):
             for key,item in value.items():
-                if key=='tag' and isinstance(item,str) and item.startswith('$'): value[key]=bindings[item[1:]]
+                if key=='tag' and isinstance(item,str) and item.startswith('$'): value[key]=substitute(item,bindings)
                 else: replace(item)
         elif isinstance(value,list):
             for item in value: replace(item)
@@ -89,8 +135,27 @@ def validate(element,tags,parameters):
         for key,value in s.items():
             if not (is_text(value) if key == 'text' else isinstance(value, str)): raise ValueError(tr('La apariencia necesita textos o colores'))
             if key in COLOR_KEYS: validate_color(value)
+    def number(value,message):
+        if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value): raise ValueError(message)
+    def analog(spec,keys):
+        if not isinstance(spec,dict) or set(spec)-keys or spec.get('tag') not in kinds: raise ValueError(tr('Indica una variable numérica'))
+        if kinds[spec['tag']] not in {'int','float'}: raise ValueError(tr('El giro y el llenado necesitan una variable numérica'))
+        for key in keys-{'tag','color','direction'}:
+            if key in spec: number(spec[key],tr('{key}: se esperaba un número', key=key))
+        if not spec.get('min',0)<spec.get('max',100): raise ValueError(tr('El máximo debe ser mayor que el mínimo'))
     d=element.get('dynamics',{})
-    if not isinstance(d,dict) or set(d)-{'visible','enabled','states','default','bad','disabled','disabled_reason'}: raise ValueError(tr('Dinámica visual desconocida'))
+    if not isinstance(d,dict) or set(d)-{'visible','enabled','states','default','bad','disabled','disabled_reason','rotation','spin','fill'}: raise ValueError(tr('Dinámica visual desconocida'))
+    if ('rotation' in d or 'spin' in d) and element['kind'] not in ROTATABLE: raise ValueError(tr('Este objeto no admite giro'))
+    if 'fill' in d and element['kind'] not in FILLABLE: raise ValueError(tr('Solo imágenes, rectángulos y elipses admiten nivel de llenado'))
+    if 'rotation' in d: analog(d['rotation'],{'tag','min','max','from','to'})
+    if 'spin' in d:
+        if not isinstance(d['spin'],dict) or set(d['spin'])-{'when','seconds'} or 'when' not in d['spin']: raise ValueError(tr('Giro continuo inválido'))
+        condition(d['spin']['when']); number(d['spin'].get('seconds',2),tr('Duración de vuelta inválida'))
+        if not 0.2<=d['spin'].get('seconds',2)<=3600: raise ValueError(tr('Una vuelta debe durar entre 0,2 y 3600 segundos'))
+    if 'fill' in d:
+        analog(d['fill'],{'tag','min','max','color','direction'})
+        validate_color(d['fill'].get('color',FILL_COLOR))
+        if d['fill'].get('direction','up') not in DIRECTIONS: raise ValueError(tr('Dirección de llenado desconocida'))
     for key in ('visible','enabled'):
         if key in d: condition(d[key])
     if not is_text(d.get('disabled_reason','')): raise ValueError(tr('Motivo de bloqueo inválido'))
@@ -99,7 +164,7 @@ def validate(element,tags,parameters):
     states=d.get('states',[])
     if not isinstance(states,list) or len(states)>128: raise ValueError(tr('Máximo 128 estados por objeto'))
     for state in states:
-        if not isinstance(state,dict) or set(state)!={'when','style'}: raise ValueError(tr('Estado inválido'))
+        if not isinstance(state,dict) or not {'when','style'}<=set(state)<={'when','style','blink'} or not isinstance(state.get('blink',False),bool): raise ValueError(tr('Estado inválido'))
         condition(state['when']); style(state['style'])
     for color in element.get('lamp_colors',{}).values(): validate_color(color)
     if set(element.get('lamp_colors',{}))-{'on','off','bad'}: raise ValueError(tr('Estado de piloto desconocido'))
@@ -138,7 +203,14 @@ def issues(project):
     return result
 
 
-def parameter_writable(template,parameter):
+def written_references(template):
+    """``$`` references (without the $) written by the template's controls."""
     from .button_actions import as_button, steps
     controls=[c for e in template["elements"] for c in [e]+[as_button(e,s) for s in steps(e)]]
-    return any(c.get("tag")=="$"+parameter and writable_control(c) for c in controls)
+    return {c["tag"][1:] for c in controls if isinstance(c.get("tag"),str) and c["tag"].startswith("$") and writable_control(c)}
+
+
+def parameter_writable(template,parameter):
+    """Some control writes the parameter or, for a structure or array, one of its parts."""
+    from .structures import root
+    return any(root(reference)==parameter for reference in written_references(template))
