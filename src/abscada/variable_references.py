@@ -217,3 +217,46 @@ def validate(project):
     if not isinstance(renames, list) or any(not isinstance(e, dict) or set(e) != {"old", "new"}
                                             or not all(isinstance(e[k], str) and e[k] for k in e) for e in renames):
         raise ValueError(tr("historian.renames debe ser una lista de pares old/new"))
+
+
+# --- data types -------------------------------------------------------------------------------
+
+def renamed_kind(kind, old, new):
+    """``Motor[4]`` with ``Motor`` renamed to ``Bomba`` → ``Bomba[4]``; other kinds unchanged."""
+    base, length = structures.split_kind(kind)
+    if length is not None:
+        return renamed_kind(base, old, new) + kind[len(base):]
+    return new if kind == old else kind
+
+
+def type_usages(project, name):
+    """Variables, data types and objects that use the data type ``name`` (also in arrays)."""
+    found = [tr("Variable {name}", name=v["name"]) for v in project.variables if structures.structure_of(v["type"]) == name]
+    found += [tr("Tipo {name}", name=other) for other, fields in project.types.items()
+              if other != name and any(structures.structure_of(kind) == name for kind in fields.values())]
+    found += [tr("Objeto {name}", name=template) for template, document in project.faceplates.items()
+              if any(structures.structure_of(kind) == name for kind in document.get("parameters", {}).values())]
+    return found
+
+
+def rename_type(project, old, new):
+    """Rename a data type in types.json, the variables, other types and object parameters.
+
+    Variable paths do not change: a type name is not part of them.
+    """
+    from .faceplate_libraries import type_owner, owner
+    if new == old:
+        return
+    if type_owner(project, old):
+        raise ValueError(tr("{name} pertenece a una librería vinculada y es de solo lectura", name=old))
+    if not structures.valid_name(new) or not new.strip() or new != new.strip() or new in structures.PRIMITIVES:
+        raise ValueError(tr("Nombre de tipo vacío, reservado, con puntos o con corchetes"))
+    if new in project.types:
+        raise ValueError(tr("Ya existe un tipo «{name}»", name=new))
+    project.types = {new if name == old else name: {field: renamed_kind(kind, old, new) for field, kind in fields.items()}
+                     for name, fields in project.types.items()}
+    for variable in project.variables:
+        variable["type"] = renamed_kind(variable["type"], old, new)
+    for template, document in project.faceplates.items():
+        if not owner(project, template) and "parameters" in document:
+            document["parameters"] = {key: renamed_kind(kind, old, new) for key, kind in document["parameters"].items()}

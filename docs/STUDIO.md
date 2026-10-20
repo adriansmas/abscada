@@ -34,7 +34,7 @@ Los colores son explícitos en cada objeto y estado: `#RRGGBB` o `#AARRGGBB`. No
 
 ## Variables y conexiones
 
-**Variables** y su pestaña **Tipos de datos** definen primitivas (`bool`, `int`, `float`, `string`), estructuras anidadas y arrays. Un array se escribe en el campo Tipo como `float[8]` o `Motor[4]`, tanto en un campo de un tipo como en una variable; sus elementos aparecen como `Motores[2].marcha`. Cada hoja tiene valor inicial, acceso, enlace y registro propios. **Enlace…** elige conexión y dirección con un formulario propio de cada protocolo. **Duplicar** crea la copia sin enlaces para que asignes sus direcciones.
+**Variables** y su pestaña **Tipos de datos** definen primitivas (`bool`, `int`, `float`, `string`), estructuras anidadas y arrays. Un array se escribe en el campo Tipo como `float[8]` o `Motor[4]`, tanto en un campo de un tipo como en una variable; sus elementos aparecen como `Motores[2].marcha`. Un tipo se renombra desde su editor o con clic derecho → **Renombrar…**: cambia en las variables, en otros tipos y en los parámetros de los objetos. Cada hoja tiene valor inicial, acceso, enlace y registro propios. **Enlace…** elige conexión y dirección con un formulario propio de cada protocolo. **Duplicar** crea la copia sin enlaces para que asignes sus direcciones.
 
 Las variables se ordenan en **carpetas** (clic derecho → Nueva carpeta, Mover a carpeta, Renombrar, Mover o Eliminar carpeta). Son solo organización: el nombre de una variable no cambia y debe ser único en todo el proyecto. Eliminar una carpeta sube su contenido a la carpeta superior.
 
@@ -70,15 +70,21 @@ En **Conexiones**, **Probar conexión** abre una conexión de solo lectura con e
 
 ## Propiedades dinámicas
 
-**Propiedades dinámicas** cambia visibilidad, habilitación y apariencia según variables, sin scripts. Cada condición tiene variable, operador, valor y comportamiento sin calidad válida.
+**Propiedades dinámicas** cambia visibilidad, habilitación y apariencia según variables, sin scripts. Cada condición tiene variable, operador, valor y comportamiento sin calidad válida. **+ Y además…** añade otra condición que también se tiene que cumplir (hasta 16).
 
 La apariencia se aplica en este orden: propiedades del objeto, Normal, primer estado que se cumple, Sin comunicación y Deshabilitado. Un estado marcado **Parpadear** alterna su apariencia con la normal una vez por segundo. Los objetos invisibles no reciben clics; los deshabilitados pueden mostrar un motivo.
 
-La pestaña **Giro y nivel** añade:
+En textos, entradas e indicadores, **Unidad y decimales desde variables** toma la unidad de una variable de texto y los decimales de una entera; sin un valor válido se usan los del elemento.
+
+La pestaña **Movimiento y nivel** añade:
 
 - **Girar según una variable**: el ángulo sigue al valor entre un mínimo y un máximo (una válvula de mariposa, una aguja).
 - **Girar continuamente**: una vuelta cada N segundos mientras se cumple una condición (un ventilador o un agitador en marcha).
 - **Nivel de llenado** (imágenes, rectángulos y elipses): pinta el nivel sobre la propia figura; en una imagen SVG o PNG solo se colorea el dibujo, no el fondo transparente.
+- **Desplazar según una variable**: en el mínimo está donde lo dibujas y en el máximo, desplazado los píxeles indicados (una compuerta, un carro).
+- **Escalar según una variable**: de una escala a otra, en ancho, alto o ambos, con un punto fijo (centro o un borde).
+
+Desplazar y escalar no se aplican a botones ni entradas, porque cambiaría dónde se hace clic.
 
 **Herramientas → Prueba visual…** permite introducir valores y calidad a mano para revisar el resultado. No conecta PLC, no ejecuta scripts ni escribe históricos.
 

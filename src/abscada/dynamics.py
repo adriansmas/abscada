@@ -12,6 +12,10 @@ COLOR_KEYS={'color','text_color','border_color','stroke_color'}
 # Motion and level are painted over the element, which keeps its place and size.
 ROTATABLE={'image','rectangle','ellipse','line','polyline','pipe','text','lamp'}
 FILLABLE={'image','rectangle','ellipse'}
+MOVABLE=ROTATABLE|{'bar','gauge','text_list'}
+FORMATTED={'text','input','gauge'}     # unit and decimals may come from variables
+ANCHORS=('center','top','bottom','left','right')
+MAX_CONDITIONS=16
 DIRECTIONS=('up','down','left','right')
 FILL_COLOR='#cc3da9bf'
 BLINK_HZ=1.0
@@ -31,8 +35,15 @@ def validate_color(value):
         raise ValueError(tr('Usa un color HEX #RRGGBB o #AARRGGBB'))
 
 
+def conditions(condition):
+    """The single conditions of a condition: a list means all of them (AND)."""
+    if not condition: return []
+    return list(condition) if isinstance(condition,list) else [condition]
+
+
 def test(condition,samples):
     if not condition: return True
+    if isinstance(condition,list): return all(test(c,samples) for c in condition)
     sample=samples.get(condition['tag'])
     if sample is None or sample.quality!='good': return condition.get('bad',False)
     try: return OPS[condition['op']](sample.value,condition['value'])
@@ -62,7 +73,8 @@ def ratio(spec,samples):
 
 
 def motion_tags(dynamics):
-    return [spec['tag'] for spec in (dynamics.get('rotation'),dynamics.get('fill')) if spec]+([dynamics['spin']['when']['tag']] if dynamics.get('spin') else [])
+    specs=[dynamics.get(key) for key in ('rotation','fill','move','scale')]
+    return [spec['tag'] for spec in specs if spec]+([c['tag'] for c in conditions(dynamics['spin']['when'])] if dynamics.get('spin') else [])
 
 
 def animated(element):
@@ -92,7 +104,19 @@ def effective(element,samples,design=False,now=None):
         if angle: result['_angle']=angle
         if dynamics.get('fill'):
             spec=dynamics['fill']; result['_fill']=(ratio(spec,samples),spec.get('color',FILL_COLOR),spec.get('direction','up'))
-        referenced=[element.get('tag')]+[s['when']['tag'] for s in dynamics.get('states',[])]+motion_tags(dynamics)
+        if dynamics.get('move'):
+            spec=dynamics['move']; position=ratio(spec,samples)
+            offset=(spec.get('x',0)*position,spec.get('y',0)*position)
+            if any(offset): result['_offset']=offset
+        if dynamics.get('scale'):
+            spec=dynamics['scale']; factor=spec.get('from',1)+ratio(spec,samples)*(spec.get('to',2)-spec.get('from',1))
+            axis=spec.get('axis','both')
+            result['_scale']=(factor if axis!='y' else 1.0, factor if axis!='x' else 1.0, spec.get('anchor','center'))
+        for key,kind in (('unit',str),('decimals',int)):
+            source=samples.get(dynamics.get(key,{}).get('tag'))
+            if source is not None and source.quality=='good':
+                result[key]=str(source.value) if kind is str else max(0,min(10,int(source.value)))
+        referenced=[element.get('tag')]+[c['tag'] for s in dynamics.get('states',[]) for c in conditions(s['when'])]+motion_tags(dynamics)
         if any(name and (name not in samples or samples[name].quality!='good') for name in referenced):
             result.update(dynamics.get('bad',{}))
             appearance.update(dynamics.get('bad',{}))
@@ -124,6 +148,11 @@ def validate(element,tags,parameters):
     from .project import coerce
     kinds={name:t['type'] for name,t in tags.items()}|{'$'+key:value for key,value in parameters.items()}
     def condition(c):
+        if isinstance(c,list):
+            # Several conditions that must all hold (AND).
+            if not 1<=len(c)<=MAX_CONDITIONS: raise ValueError(tr('Entre 1 y {count} condiciones a la vez', count=MAX_CONDITIONS))
+            for item in c: condition(item)
+            return
         if not isinstance(c,dict) or set(c)-{'tag','op','value','bad'} or c.get('tag') not in kinds or c.get('op') not in OPS:
             raise ValueError(tr('Condición inválida: revisa variable y operador'))
         kind=kinds[c['tag']]
@@ -139,12 +168,23 @@ def validate(element,tags,parameters):
         if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value): raise ValueError(message)
     def analog(spec,keys):
         if not isinstance(spec,dict) or set(spec)-keys or spec.get('tag') not in kinds: raise ValueError(tr('Indica una variable numérica'))
-        if kinds[spec['tag']] not in {'int','float'}: raise ValueError(tr('El giro y el llenado necesitan una variable numérica'))
-        for key in keys-{'tag','color','direction'}:
+        if kinds[spec['tag']] not in {'int','float'}: raise ValueError(tr('El giro, el llenado, el desplazamiento y la escala necesitan una variable numérica'))
+        for key in keys-{'tag','color','direction','axis','anchor'}:
             if key in spec: number(spec[key],tr('{key}: se esperaba un número', key=key))
         if not spec.get('min',0)<spec.get('max',100): raise ValueError(tr('El máximo debe ser mayor que el mínimo'))
     d=element.get('dynamics',{})
-    if not isinstance(d,dict) or set(d)-{'visible','enabled','states','default','bad','disabled','disabled_reason','rotation','spin','fill'}: raise ValueError(tr('Dinámica visual desconocida'))
+    if not isinstance(d,dict) or set(d)-{'visible','enabled','states','default','bad','disabled','disabled_reason','rotation','spin','fill','move','scale','unit','decimals'}: raise ValueError(tr('Dinámica visual desconocida'))
+    if ('move' in d or 'scale' in d) and element['kind'] not in MOVABLE: raise ValueError(tr('Este objeto no admite desplazamiento ni escala'))
+    if 'move' in d: analog(d['move'],{'tag','min','max','x','y'})
+    if 'scale' in d:
+        analog(d['scale'],{'tag','min','max','from','to','axis','anchor'})
+        if not all(0<=d['scale'].get(key,default)<=20 for key,default in (('from',1),('to',2))): raise ValueError(tr('La escala va de 0 a 20'))
+        if d['scale'].get('axis','both') not in ('both','x','y') or d['scale'].get('anchor','center') not in ANCHORS: raise ValueError(tr('Eje o punto fijo de escala desconocido'))
+    for key,kind in (('unit','string'),('decimals','int')):
+        if key in d:
+            if element['kind'] not in FORMATTED: raise ValueError(tr('Solo textos, entradas e indicadores toman unidad y decimales de una variable'))
+            if not isinstance(d[key],dict) or set(d[key])!={'tag'} or kinds.get(d[key]['tag'])!=kind:
+                raise ValueError(tr('La unidad necesita una variable de texto y los decimales una entera'))
     if ('rotation' in d or 'spin' in d) and element['kind'] not in ROTATABLE: raise ValueError(tr('Este objeto no admite giro'))
     if 'fill' in d and element['kind'] not in FILLABLE: raise ValueError(tr('Solo imágenes, rectángulos y elipses admiten nivel de llenado'))
     if 'rotation' in d: analog(d['rotation'],{'tag','min','max','from','to'})
@@ -187,8 +227,12 @@ def compatible(element,tag):
     return not writable_control(element) or tag.get('writable',False)
 
 
+# Every property an element may store; anything else is reported (Studio) or refused (validate_library).
+KNOWN_PROPERTIES={'id','kind','x','y','w','h','text','tag','font_size','bold','text_align','text_color','border_color','color','unit','decimals','min','max','action','value','screen','modal','target_container','script','source','view','template','bindings','points','stroke_color','stroke_width','stroke_style','arrows','filled','texts','default_text','dynamics','lamp_colors','visible','editor_locked','editor_hidden','group','description','press_value','release_value','gauge_style','warning','alarm','title','window','permission','language','tooltip','actions'}
+
+
 def issues(project):
-    known={'id','kind','x','y','w','h','text','tag','font_size','bold','text_align','text_color','border_color','color','unit','decimals','min','max','action','value','screen','modal','target_container','script','source','view','template','bindings','points','stroke_color','stroke_width','stroke_style','arrows','filled','texts','default_text','dynamics','lamp_colors','visible','editor_locked','editor_hidden','group','description','press_value','release_value','gauge_style','warning','alarm','title','window','permission','language','tooltip','actions'}
+    known=KNOWN_PROPERTIES
     from .button_actions import as_button, steps
     result=[]
     for collection in (project.screens,project.faceplates):

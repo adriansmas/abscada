@@ -88,11 +88,18 @@ def draw_element(painter, e, host, rect=None):
     rect = rect or QRectF(0, 0, e["w"], e["h"])
     from .dynamics import effective
     e=effective(e,host.samples,host.design_mode)
-    angle, fill = e.get("_angle"), e.get("_fill")
-    if not angle and fill is None:
+    angle, fill, offset, scale = e.get("_angle"), e.get("_fill"), e.get("_offset"), e.get("_scale")
+    if not angle and fill is None and not offset and not scale:
         _paint(painter, e, host, rect)
         return
     painter.save()
+    if offset:
+        painter.translate(*offset)
+    if scale:
+        sx, sy, anchor = scale
+        fixed = {"center": rect.center(), "top": QPointF(rect.center().x(), rect.top()), "bottom": QPointF(rect.center().x(), rect.bottom()),
+                 "left": QPointF(rect.left(), rect.center().y()), "right": QPointF(rect.right(), rect.center().y())}[anchor]
+        painter.translate(fixed); painter.scale(sx, sy); painter.translate(-fixed)
     if angle:
         center = rect.center()
         painter.translate(center); painter.rotate(angle); painter.translate(-center)
@@ -542,11 +549,19 @@ class ElementItem(QGraphicsObject):
 
     def boundingRect(self):
         pad = max(8, self.element.get("stroke_width",12 if self.element["kind"] == "pipe" else 2)*2)
-        if not self.host.design_mode and {"rotation", "spin"} & set(self.element.get("dynamics", {})):
+        w, h = self.element["w"], self.element["h"]
+        dynamics = {} if self.host.design_mode else self.element.get("dynamics", {})
+        if {"rotation", "spin"} & set(dynamics):
             # A turning element sweeps the circle around its centre.
-            w, h = self.element["w"], self.element["h"]
             pad += (math.hypot(w, h) - min(w, h)) / 2
-        return QRectF(-pad, -pad, self.element["w"]+2*pad, self.element["h"]+2*pad)
+        if "scale" in dynamics:
+            factor = max(1, dynamics["scale"].get("from", 1), dynamics["scale"].get("to", 2))
+            pad += max(w, h) * (factor - 1)
+        bounds = QRectF(-pad, -pad, w+2*pad, h+2*pad)
+        if "move" in dynamics:
+            # Everywhere it can travel: from its place to its place plus (x, y).
+            bounds = bounds.united(bounds.translated(dynamics["move"].get("x", 0), dynamics["move"].get("y", 0)))
+        return bounds
 
     def shape(self):
         if self.element["kind"] in PATH_KINDS:

@@ -1705,6 +1705,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if row >= 0:
             table.selectRow(row)
             menu.addAction(tr("Editar…"), lambda: self.edit_catalog(key, False))
+            if key == "types":
+                menu.addAction(tr("Renombrar…"), self.rename_type_dialog)
             menu.addSeparator()
         menu.addAction(tr("Nuevo tipo") if key == "types" else tr("Nueva conexión"),
                        self.new_type_field.setFocus if key == "types" else lambda: self.edit_catalog(key, True))
@@ -1712,6 +1714,20 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             menu.addSeparator()
             menu.addAction(tr("Eliminar"), lambda: self.delete_catalog(key))
         menu.exec(position)
+
+    def rename_type_dialog(self):
+        from .variable_references import rename_type, type_usages
+        item = self.types_table.item(self.types_table.currentRow(), 0)
+        if item is None:
+            return
+        old = item.text()
+        users = type_usages(self.project, old)
+        prompt = tr("Nuevo nombre del tipo «{name}».", name=old)
+        if users:
+            prompt += "\n" + tr("Cambia también en: {places}", places=", ".join(users[:8]) + (" …" if len(users) > 8 else ""))
+        new = self.ask_text(tr("Renombrar tipo de datos"), prompt, old)
+        if new and new != old:
+            self.mutate(lambda: rename_type(self.project, old, new))
 
     def create_type_from_field(self):
         name = self.new_type_field.text().strip()
@@ -1817,7 +1833,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         layout = QVBoxLayout(dialog)
         identifier = QLineEdit(name or "")
         identifier.setPlaceholderText(tr("Nombre del tipo, por ejemplo Motor"))
-        identifier.setReadOnly(name is not None)
+        identifier.setToolTip(tr("Cambiar el nombre renombra el tipo en las variables, en otros tipos y en los parámetros de los objetos"))
         layout.addWidget(identifier)
         fields = QTableWidget(0, 2)
         fields.setHorizontalHeaderLabels([tr("Campo"), tr("Tipo")])
@@ -1846,14 +1862,17 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             pairs = [(fields.item(i, 0).data(Qt.ItemDataRole.UserRole), fields.item(i, 0).text().strip()) for i in range(fields.rowCount())]
             return [(old, new) for old, new in pairs if name and old and new and old != new]
         def apply(project, definitions):
-            from .variable_references import rename_field
+            from .variable_references import rename_field, rename_type
             for old, new in renamed():
                 rename_field(project, name, old, new)
-            project.types[identifier.text().strip()] = dict(definitions)
+            new_name = identifier.text().strip()
+            if name and new_name != name:
+                rename_type(project, name, new_name)
+            project.types[new_name] = dict(definitions)
         def validate():
             definitions=[(fields.item(i,0).text().strip(),fields.cellWidget(i,1).currentText().strip()) for i in range(fields.rowCount())]
             from .value_editor import FieldError
-            if len({field for field,kind in definitions}) != len(definitions) or not identifier.text().strip() or (name is None and identifier.text().strip() in self.project.types):
+            if len({field for field,kind in definitions}) != len(definitions) or not identifier.text().strip() or (identifier.text().strip() != name and identifier.text().strip() in self.project.types):
                 raise FieldError(tr('El nombre del tipo y sus campos deben ser únicos y no vacíos'),identifier)
             candidate=copy.deepcopy(self.project); apply(candidate, definitions); candidate.validate()
         dialog.validator=validate
@@ -1861,7 +1880,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if dialog.exec() == EditorDialog.DialogCode.Accepted:
             definitions = [(fields.item(i, 0).text().strip(), fields.cellWidget(i, 1).currentText().strip()) for i in range(fields.rowCount())]
             new_name = identifier.text().strip()
-            if len({field for field, kind in definitions}) != len(definitions) or (name is None and new_name in self.project.types):
+            if len({field for field, kind in definitions}) != len(definitions) or (new_name != name and new_name in self.project.types):
                 self.error(tr("El nombre del tipo y sus campos deben ser únicos"))
                 return
             self.mutate(lambda: apply(self.project, definitions))

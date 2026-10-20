@@ -10,6 +10,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 - **Objetos de librería anidados:** un objeto puede contener otros objetos y reenviarles sus parámetros (`$motor`, `$motor.marcha`), hasta 8 niveles y sin ciclos.
 - **Librerías con tipos de datos (formato 2):** un paquete `.abscada-library.json` incluye los tipos de sus parámetros y los objetos anidados que usa. Se vinculan como `alias__Tipo`, de solo lectura. Los paquetes sin tipos se siguen publicando en formato 1.
 - **Importar un DB de TIA Portal:** en Variables → Más → «Importar DB de TIA Portal…» se pega la fuente generada en TIA («Generar fuente a partir de bloques», con los UDT dependientes). El DB se crea como una variable estructurada con su nombre (`DB_Valvulas.V101.Abierta`), los UDT y `Struct` como tipos, los `Array[a..b]` con sus índices, los valores iniciales de la fuente y la dirección S7 de cada campo calculada para un DB no optimizado. Muestra una vista previa con avisos de lo que no se puede importar. Véase [STUDIO.md](docs/STUDIO.md#importar-un-db-de-tia-portal).
+- **Renombrar tipos de datos:** desde su editor o con clic derecho → «Renombrar…»; cambia en las variables (también en arrays), en otros tipos y en los parámetros de los objetos.
+- **Condiciones con «Y»:** visibilidad, habilitación, estados y giro continuo admiten varias condiciones que se tienen que cumplir todas.
+- **Desplazar y escalar según una variable**, y **unidad y decimales de un texto, entrada o indicador tomados de variables** (también de parámetros de un objeto de librería).
 - **Renombrar variables y campos:** clic derecho → «Renombrar…» (o «Renombrar campo…» en una estructura, o cambiando el nombre en Tipos de datos) actualiza pantallas, objetos, alarmas, registros, tendencias y enlaces PLC, y al renombrar un campo, todas las variables del tipo y los `$parametro.campo` de los objetos. Ofrece sustituir el nombre citado en los scripts, el historial grabado se sigue leyendo con el nombre nuevo y se deshace con Ctrl+Z. «¿Dónde se usa?» lista los usos y ya no se puede eliminar una variable en uso. Al reimportar un DB, la vista previa avisa de los campos en uso que desaparecen.
 - **Carpetas de variables:** la lista de variables admite carpetas y subcarpetas (crear, renombrar, mover, eliminar subiendo su contenido, «Mover a carpeta»). Son organización de Studio: los nombres de las variables no cambian.
 - **Arrays con índice inicial:** `int[1..10]` tiene índices de 1 a 10, como un `Array[1..10]` de Siemens.
@@ -25,6 +28,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 - **Pantalla completa en el runtime:** la pantalla se escala de borde a borde, sin margen ni barras de desplazamiento; si el monitor tiene otra proporción, el hueco sobrante es oscuro en lugar de blanco. En pantalla completa se oculta la barra de estado (salvo con usuarios activados) y sus mensajes aparecen superpuestos.
 - **Lecturas S7 agrupadas:** cada ciclo lee en una sola petición los bytes contiguos de un DB en lugar de una petición por variable; los bits de un mismo byte se leen una vez. El tamaño de bloque se ajusta al PDU negociado. Calidad, errores, reconexión y escrituras se comportan igual que antes.
 - **Ejemplos y documentación simplificados:** quedan cuatro ejemplos en la pantalla de inicio (central hidroeléctrica, cervecería, banco Beckhoff y laboratorio); se retiran `plant`, `s7` y `library_author`. Las guías se reorganizan sin repeticiones y las capturas se reducen a seis, generadas con `tools/capture_docs.py`.
+
+### Corregido
+- `tools/validate_library.py` rechazaba las listas de acciones (`actions`) y otras propiedades válidas: ahora usa la misma lista de propiedades que el Studio.
 
 ## [0.5.0b5] - 2026-10-08
 

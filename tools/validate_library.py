@@ -3,8 +3,7 @@ import argparse
 import json
 from pathlib import Path
 from abscada.faceplate_libraries import validate_package
-
-PROPERTIES = set('id kind x y w h text tag font_size bold text_align text_color border_color color unit decimals min max action value screen modal target_container script source view template bindings points stroke_color stroke_width stroke_style arrows filled texts default_text dynamics lamp_colors visible editor_locked editor_hidden group description press_value release_value'.split())
+from abscada.dynamics import KNOWN_PROPERTIES as PROPERTIES
 
 
 def validate(package):

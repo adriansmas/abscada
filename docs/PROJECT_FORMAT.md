@@ -197,21 +197,26 @@ Al soltar se comprueban todas las acciones; si alguna no es posible, no se enví
 }
 ```
 
-`visible` y `enabled` son condiciones; `op` es `eq`, `ne`, `gt`, `ge`, `lt` o `le` (las ordenadas solo con números) y `bad` es el resultado sin calidad válida. En `states` gana la primera condición que se cumple; con `"blink": true` su apariencia se alterna con la normal una vez por segundo, y todos los estados parpadean a la vez. Las condiciones admiten `$parametro` dentro de faceplates.
+`visible` y `enabled` son condiciones, o listas de condiciones que se tienen que cumplir todas (Y, hasta 16), igual que `when` en estados y giro continuo; `op` es `eq`, `ne`, `gt`, `ge`, `lt` o `le` (las ordenadas solo con números) y `bad` es el resultado sin calidad válida. En `states` gana la primera condición que se cumple; con `"blink": true` su apariencia se alterna con la normal una vez por segundo, y todos los estados parpadean a la vez. Las condiciones admiten `$parametro` dentro de faceplates.
 
-Giro y nivel de llenado, opcionales:
+Movimiento, nivel y formato, opcionales:
 
 ```json
 "dynamics": {
   "rotation": {"tag": "Valve.position", "min": 0, "max": 100, "from": 0, "to": 90},
   "spin": {"when": {"tag": "Fan.running", "op": "eq", "value": true}, "seconds": 2},
-  "fill": {"tag": "Tank.level", "min": 0, "max": 100, "color": "#cc3da9bf", "direction": "up"}
+  "fill": {"tag": "Tank.level", "min": 0, "max": 100, "color": "#cc3da9bf", "direction": "up"},
+  "move": {"tag": "Gate.position", "min": 0, "max": 100, "x": 0, "y": -80},
+  "scale": {"tag": "Tank.level", "min": 0, "max": 100, "from": 0, "to": 1, "axis": "y", "anchor": "bottom"},
+  "unit": {"tag": "Meter.unit"}, "decimals": {"tag": "Meter.decimals"}
 }
 ```
 
 - `rotation` gira el elemento sobre su centro: el ángulo pasa de `from` a `to` (grados) mientras el valor va de `min` a `max`. `spin` gira de forma continua, una vuelta cada `seconds` (0,2–3600), mientras se cumple `when`. Si hay ambos, se suman. Admiten giro imágenes, rectángulos, elipses, líneas, polilíneas, tuberías, textos y pilotos.
 - `fill` pinta el nivel con `color` sobre los píxeles visibles del propio elemento: en una imagen SVG o PNG solo se colorea el dibujo, no su fondo transparente. `direction` es `up`, `down`, `right` o `left`. Admiten nivel imágenes, rectángulos y elipses.
-- Las variables de giro y nivel son numéricas; fuera de rango se recortan y, sin calidad válida, se usa el último valor y el estilo `bad`.
+- `move` desplaza el elemento de su posición (en `min`) a su posición más (`x`, `y`) píxeles (en `max`). `scale` pasa de la escala `from` a `to` (0–20) en `axis` `both`, `x` o `y`, con `anchor` fijo en `center`, `top`, `bottom`, `left` o `right`. Admiten ambos imágenes, rectángulos, elipses, líneas, polilíneas, tuberías, textos, pilotos, barras, indicadores y listas de textos; no botones ni entradas.
+- Las variables de giro, nivel, desplazamiento y escala son numéricas; fuera de rango se recortan y, sin calidad válida, se usa el último valor y el estilo `bad`.
+- `unit` (variable `string`) y `decimals` (variable `int`, 0–10) sustituyen la unidad y los decimales de un texto, entrada o indicador mientras su variable tiene un valor válido.
 
 ## Listas de textos
 
