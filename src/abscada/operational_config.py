@@ -60,6 +60,8 @@ def validate_operations(project, tags):
             if not isinstance(alarm.get(key, True), bool):
                 raise ValueError(tr("{key} debe ser booleano", key=key))
     number(project.historian.get("retention_days", 90), 1, 36500)
+    from .variable_references import validate as validate_renames
+    validate_renames(project)
     number(project.alarms.get("retention_days", 365), 1, 36500)
     from . import recording
     if "files" in project.historian and project.historian.get("tags"):

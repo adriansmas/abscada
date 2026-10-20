@@ -7,7 +7,7 @@ from .dialogs import EditorDialog
 from .value_editor import ValueEditor, StructureEditor, FieldError
 from .protocol_editor import BindingEditor
 from .i18n import tr
-from .structures import PRIMITIVES, known, default_value, root as root_of, valid_name
+from .structures import PRIMITIVES, known, default_value, root as root_of, valid_name, steps as steps_of
 
 
 NEW_ROW = "\0new-variable"   # role value of the row where the next variable is typed
@@ -161,6 +161,12 @@ class VariableForms:
             index = names.index(root) if root in names else None
             if value in self.project.tags():
                 menu.addAction(tr("Enlace y valor…"), lambda: self.tag_form(value))
+            if value == root and index is not None:
+                menu.addAction(tr("Renombrar…"), lambda: self.rename_variable_dialog(root))
+            elif index is not None and isinstance((steps_of(value) or [None])[-1], str):
+                field = steps_of(value)[-1]
+                menu.addAction(tr("Renombrar campo «{field}»…", field=field), lambda: self.rename_field_dialog(value))
+            menu.addAction(tr("¿Dónde se usa?"), lambda: self.show_usages(value))
             if index is not None:
                 menu.addAction(tr("Editar variable…"), lambda: self.variable_form(index))
                 menu.addAction(tr("Duplicar…"), lambda: self.variable_form(None, duplicate=self.project.variables[index]))
@@ -234,7 +240,84 @@ class VariableForms:
             variables[index], variables[index + step] = variables[index + step], variables[index]
         self.mutate(apply)
 
+    # --- renaming: every reference changes with the variable ------------------------------------
+
+    def show_usages(self, path):
+        from .variable_references import usages, scripts_mentioning
+        found = usages(self.project, path)
+        lines = [f"· {where}: {used}" for where, used in found[:40]]
+        if len(found) > 40:
+            lines.append(tr("… y {count} más", count=len(found) - 40))
+        scripts = scripts_mentioning(self.project, path)
+        if scripts:
+            lines.append(tr("Scripts que la mencionan: {names}", names=", ".join(scripts)))
+        QMessageBox.information(self, tr("¿Dónde se usa {path}?", path=path),
+                                "\n".join(lines) if lines else tr("No se usa en pantallas, objetos, alarmas, registros, tendencias ni scripts."))
+
+    def rename_variable_dialog(self, name):
+        from .variable_references import rename_variable, check_name
+        new = self.ask_text(tr("Renombrar variable"), tr("Nuevo nombre de «{name}»", name=name), name)
+        if not new or new == name:
+            return
+        try:
+            check_name(self.project, new, name)
+        except ValueError as exc:
+            self.error(exc); return
+        self.confirm_rename([(name, new)], lambda: rename_variable(self.project, name, new), tr("Renombrar «{old}» a «{new}»", old=name, new=new))
+
+    def rename_field_dialog(self, path):
+        from .structures import steps as steps_of, path_kind, join
+        from .variable_references import rename_field, field_renames
+        parts = steps_of(path)
+        field = parts[-1]
+        parent = path[:len(path) - len(field)].removesuffix(".")
+        type_name = path_kind(self.project.types, {v["name"]: v["type"] for v in self.project.variables}, parent)
+        new = self.ask_text(tr("Renombrar campo"), tr("Nuevo nombre del campo «{field}» del tipo {kind}. Cambia en todas sus variables.",
+                                                      field=field, kind=type_name), field)
+        if not new or new == field:
+            return
+        renames = field_renames(self.project, type_name, field, new)
+        self.confirm_rename(renames, lambda: rename_field(self.project, type_name, field, new),
+                            tr("Renombrar el campo «{old}» de {kind} a «{new}»", old=field, kind=type_name, new=new))
+
+    def confirm_rename(self, renames, operation, title):
+        """Show what changes, offer to update the scripts that quote the old name, then rename."""
+        from .variable_references import usages, scripts_mentioning, replace_in_scripts
+        found = [entry for old, _ in renames for entry in usages(self.project, old)]
+        scripts = sorted({name for old, _ in renames for name in scripts_mentioning(self.project, old)})
+        dialog = EditorDialog(self); dialog.setWindowTitle(title); dialog.resize(560, 360)
+        layout = QVBoxLayout(dialog)
+        places = sorted({where for where, _ in found})
+        text = tr("Se actualizarán {count} usos en: {places}.", count=len(found), places=", ".join(places[:12]) + (" …" if len(places) > 12 else "")) \
+            if found else tr("No se usa en pantallas, objetos, alarmas, registros ni tendencias.")
+        text += "\n\n" + tr("Los enlaces PLC de sus campos se conservan. El historial ya grabado se seguirá mostrando con el nombre nuevo.")
+        if self.project.opcua_server.get("enabled"):
+            text += "\n\n" + tr("El servidor OPC UA publicará la variable con el nombre nuevo: los clientes que lean el nombre antiguo dejarán de encontrarla.")
+        label = QLabel(text); label.setWordWrap(True); layout.addWidget(label)
+        replace = QCheckBox(tr("Sustituir también el nombre entre comillas en los scripts: {names}", names=", ".join(scripts)))
+        if scripts:
+            replace.setChecked(True); layout.addWidget(replace)
+            note = QLabel(tr("Revisa después esos scripts: un nombre construido por partes en el código no se puede detectar."))
+            note.setWordWrap(True); note.setObjectName("muted"); layout.addWidget(note)
+        layout.addStretch()
+        self.dialog_buttons(dialog, layout)
+        if dialog.exec() != EditorDialog.DialogCode.Accepted:
+            return False
+        update = scripts and replace.isChecked()
+        def apply():
+            operation()
+            if update:
+                for old, new in renames:
+                    replace_in_scripts(self.project, old, new)
+        return self.mutate(apply)
+
     def delete_variable(self, name):
+        from .variable_references import usages
+        found = usages(self.project, name)
+        if found:
+            self.error(tr("No se puede eliminar «{name}» porque se usa en:\n· ", name=name)
+                       + "\n· ".join(sorted({where for where, _ in found})[:20]))
+            return
         if QMessageBox.question(self, tr("Eliminar variable"), tr("¿Eliminar la variable «{name}»? Se puede deshacer con Ctrl+Z.", name=name)) \
                 != QMessageBox.StandardButton.Yes:
             return

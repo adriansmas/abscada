@@ -1825,7 +1825,9 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         def add_field(field="", kind="float"):
             row = fields.rowCount()
             fields.insertRow(row)
-            fields.setItem(row, 0, QTableWidgetItem(field))
+            item = QTableWidgetItem(field)
+            item.setData(Qt.ItemDataRole.UserRole, field)   # the name it had: a change is a rename
+            fields.setItem(row, 0, item)
             combo = QComboBox()
             combo.setEditable(True)
             combo.addItems(["bool", "int", "float", "string"] + [n for n in self.project.types if n != name])
@@ -1839,12 +1841,21 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         row.addWidget(button(tr("+ Campo"), lambda: add_field()))
         row.addWidget(button(tr("Eliminar campo"), lambda: fields.removeRow(fields.currentRow())))
         layout.addLayout(row)
+        def renamed():
+            """Fields whose name changed in the table: renamed everywhere instead of dropped and added."""
+            pairs = [(fields.item(i, 0).data(Qt.ItemDataRole.UserRole), fields.item(i, 0).text().strip()) for i in range(fields.rowCount())]
+            return [(old, new) for old, new in pairs if name and old and new and old != new]
+        def apply(project, definitions):
+            from .variable_references import rename_field
+            for old, new in renamed():
+                rename_field(project, name, old, new)
+            project.types[identifier.text().strip()] = dict(definitions)
         def validate():
             definitions=[(fields.item(i,0).text().strip(),fields.cellWidget(i,1).currentText().strip()) for i in range(fields.rowCount())]
             from .value_editor import FieldError
             if len({field for field,kind in definitions}) != len(definitions) or not identifier.text().strip() or (name is None and identifier.text().strip() in self.project.types):
                 raise FieldError(tr('El nombre del tipo y sus campos deben ser únicos y no vacíos'),identifier)
-            candidate=copy.deepcopy(self.project); candidate.types[identifier.text().strip()]=dict(definitions); candidate.validate()
+            candidate=copy.deepcopy(self.project); apply(candidate, definitions); candidate.validate()
         dialog.validator=validate
         self.dialog_buttons(dialog, layout)
         if dialog.exec() == EditorDialog.DialogCode.Accepted:
@@ -1853,7 +1864,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             if len({field for field, kind in definitions}) != len(definitions) or (name is None and new_name in self.project.types):
                 self.error(tr("El nombre del tipo y sus campos deben ser únicos"))
                 return
-            self.mutate(lambda: self.project.types.__setitem__(new_name, dict(definitions)))
+            self.mutate(lambda: apply(self.project, definitions))
 
     def start_runtime(self):
         if self.runtime_window:

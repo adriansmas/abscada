@@ -84,10 +84,22 @@ class ProjectSampleReader:
         return rows
 
     def samples(self, tag, start, end, limit=5000):
-        return self._read("samples", tag, start, end, limit)
+        return self._history("samples", tag, start, end, limit)
 
     def raw_samples(self, tag, start, end, limit=100001):
-        return self._read("raw_samples", tag, start, end, limit)
+        return self._history("raw_samples", tag, start, end, limit)
+
+    def _history(self, method, tag, start, end, limit):
+        """The samples of ``tag`` and of the names it had before a rename, under its current name."""
+        from .variable_references import former_names
+        older = former_names(self.project, tag)
+        rows = self._read(method, tag, start, end, limit)
+        if not older:
+            return rows
+        for name in older:
+            rows.extend(dict(row, tag=tag) for row in self._read(method, name, start, end, limit))
+        rows.sort(key=lambda row: row["recorded_at"])
+        return rows[:limit] if method == "raw_samples" else rows
 
 
 class RuntimeLease:

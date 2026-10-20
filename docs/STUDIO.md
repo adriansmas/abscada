@@ -38,6 +38,19 @@ Los colores son explícitos en cada objeto y estado: `#RRGGBB` o `#AARRGGBB`. No
 
 Las variables se ordenan en **carpetas** (clic derecho → Nueva carpeta, Mover a carpeta, Renombrar, Mover o Eliminar carpeta). Son solo organización: el nombre de una variable no cambia y debe ser único en todo el proyecto. Eliminar una carpeta sube su contenido a la carpeta superior.
 
+### Renombrar y buscar usos
+
+Clic derecho sobre una variable → **Renombrar…**, o sobre un campo de una estructura → **Renombrar campo…** (también cambiando su nombre en la tabla de **Tipos de datos**). Antes de aplicar, abSCADA muestra cuántos usos se actualizarán y dónde. Cambian a la vez:
+
+- pantallas y objetos de librería: variables de los elementos, condiciones, estados, giro y nivel, pasos de botones y enlaces de instancias y ventanas emergentes;
+- alarmas, ficheros de registro y curvas de tendencia;
+- los enlaces PLC de los campos (las direcciones no cambian);
+- al renombrar un campo, todas las variables de ese tipo, sus valores iniciales y los `$motor.campo` de los objetos cuyos parámetros son de ese tipo.
+
+El historial ya grabado se sigue mostrando con el nombre nuevo. Los scripts no se reescriben solos: el diálogo lista los que citan el nombre entre comillas y ofrece sustituirlo en ellos; revísalos si construyen nombres por partes. Si el servidor OPC UA está activo, avisa de que los clientes externos verán el nombre nuevo. Se deshace con Ctrl+Z.
+
+**¿Dónde se usa?** lista los usos de una variable o de una parte de ella. **Eliminar** se niega mientras la variable se use en algún sitio.
+
 ### Importar un DB de TIA Portal
 
 **Más → Importar DB de TIA Portal…** (o clic derecho sobre una carpeta) crea un DB completo de una vez:
