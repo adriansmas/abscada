@@ -228,7 +228,7 @@ def compatible(element,tag):
 
 
 # Every property an element may store; anything else is reported (Studio) or refused (validate_library).
-KNOWN_PROPERTIES={'id','kind','x','y','w','h','text','tag','font_size','bold','text_align','text_color','border_color','color','unit','decimals','min','max','action','value','screen','modal','target_container','script','source','view','template','bindings','points','stroke_color','stroke_width','stroke_style','arrows','filled','texts','default_text','dynamics','lamp_colors','visible','editor_locked','editor_hidden','group','description','press_value','release_value','gauge_style','warning','alarm','title','window','permission','language','tooltip','actions'}
+KNOWN_PROPERTIES={'id','kind','x','y','w','h','text','tag','font_size','bold','text_align','text_color','border_color','color','unit','decimals','min','max','action','value','screen','modal','target_container','script','source','view','template','bindings','points','stroke_color','stroke_width','stroke_style','arrows','filled','texts','default_text','dynamics','lamp_colors','visible','editor_locked','editor_hidden','group','description','press_value','release_value','gauge_style','warning','alarm','title','window','permission','language','tooltip','actions','variants'}
 
 
 def issues(project):

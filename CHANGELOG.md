@@ -33,6 +33,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). C
 
 ### Corregido
 - `tools/validate_library.py` rechazaba las listas de acciones (`actions`) y otras propiedades válidas: ahora usa la misma lista de propiedades que el Studio.
+- `validate_library.py` y «Revisar el proyecto» marcaban como propiedad desconocida las alternativas (`variants`) de un botón «Abrir objeto en ventana».
 
 ## [0.5.0b5] - 2026-10-08
 

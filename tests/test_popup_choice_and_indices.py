@@ -158,3 +158,15 @@ def test_studio_edits_alternatives_and_accepts_typed_indexed_bindings(operationa
     edit_variants(window, button)
     assert window.project.screens["main"]["elements"][0]["variants"][-1]["template"] == "Manual"
     assert len(window.project.screens["main"]["elements"][0]["variants"]) == 2
+
+
+def test_alternatives_are_a_known_property(operational_project, tmp_path):
+    import validate_library
+    from abscada.dynamics import issues
+    project = configure(operational_project)
+    assert not [issue for issue in issues(project) if "variants" in issue]
+    project.faceplates["Panel"] = dict(width=200, height=60, parameters={"p": "float", "mode": "int"}, elements=[
+        dict(id="b", kind="button", x=0, y=0, w=50, h=20, action="faceplate_popup", template="Normal", bindings={"p": "$p"},
+             variants=[dict(when={"tag": "$mode", "op": "eq", "value": 2}, template="Manual", bindings={"p": "$p"})])])
+    project.validate()
+    validate_library.validate(export_library(project, ["Panel"], tmp_path / "lib.json", "Paneles", "1.0.0"))
