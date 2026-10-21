@@ -24,19 +24,29 @@ class ProjectGit:
         if not self.enabled(): self.run('init')
         ignore = self.root/'.gitignore'
         text = ignore.read_text(encoding='utf-8') if ignore.exists() else ''
-        for line in ('/runtime/','/.abscada-save-*/','/.abscada-recovery-*/','/.abscada-save.lock','__pycache__/','*.pyc'):
+        # Accounts and trusted certificates are versioned with the project; passwords of the
+        # connections and the private key of the project certificate never are.
+        for line in ('/runtime/','/.abscada-save-*/','/.abscada-recovery-*/','/.abscada-save.lock','/.users.lock',
+                     '/secrets.json','/pki/own/','/pki/rejected/','__pycache__/','*.pyc'):
             if line not in text.splitlines(): text += '\n'+line+'\n'
         ignore.write_text(text,encoding='utf-8',newline='\n')
         self.commit(tr('Proyecto inicial'))
 
+    def project_paths(self):
+        """Files of the project as saved (read from the project, so call it on its own thread)."""
+        return set(getattr(self.project, '_saved_documents', None) or documents(self.project))
+
     def commit(self, message=tr('Guardar proyecto')):
         if not self.enabled(): return None
-        paths = set(documents(self.project)) | {'.gitignore'}
+        paths = set(getattr(self, 'paths', None) or self.project_paths()) | {'.gitignore'}
         paths.update(p.relative_to(self.root).as_posix() for p in (self.root/'assets').rglob('*') if p.is_file() and not p.is_symlink())
+        paths.update(p.relative_to(self.root).as_posix() for p in (self.root/'pki'/'trusted').rglob('*') if p.is_file() and not p.is_symlink())
+        if (self.root/'users.json').exists():
+            paths.add('users.json')
         tracked = self.run('ls-files','-z').split('\0')
         if 'libraries.json' in tracked:
             paths.add('libraries.json')
-        paths.update(p for p in tracked if p.startswith(('screens/','faceplates/','scripts/','assets/')))
+        paths.update(p for p in tracked if p.startswith(('screens/','faceplates/','scripts/','assets/','pki/trusted/')))
         paths = sorted(p for p in paths if (self.root/p).exists() or p in tracked)
         self.run('add','-A','--',*paths)
         if not self.run('diff','--cached','--name-only','--',*paths).strip(): return None

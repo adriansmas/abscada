@@ -31,7 +31,7 @@ Para el integrador o el responsable de la planta. Aplica la defensa en profundid
    - Lectura anónima desactivada.
    - Una cuenta abSCADA por sistema cliente, con un rol que tenga *Acceso por OPC UA* y, solo si debe escribir, *Mandos y consignas*.
    - Acepta los certificados de cliente en Proyecto → Certificados OPC UA **después de comprobar la huella** con el administrador del otro sistema.
-3. **Conexiones OPC UA a PLC**: política con firma y cifrado y usuario del PLC. La contraseña se guarda en `secrets.json` del proyecto, codificada en base64 y sin cifrar. Protege la carpeta y sus versiones como información confidencial. Acepta el certificado del PLC comprobando su huella en TIA Portal.
+3. **Conexiones OPC UA a PLC**: política con firma y cifrado y usuario del PLC. La contraseña se guarda en `secrets.json` del proyecto, codificada en base64 y sin cifrar; no entra en las versiones Git del proyecto (`.gitignore`). Protege la carpeta como información confidencial. Acepta el certificado del PLC comprobando su huella en TIA Portal.
 4. **Scripts**: revísalos como código. Quien puede editar el proyecto puede ejecutar código en el puesto.
 5. **Auditoría**: haz copia del archivo con Herramientas → Copia de seguridad de los registros y revisa los inicios de sesión fallidos y las órdenes denegadas.
 
@@ -39,10 +39,10 @@ Para el integrador o el responsable de la planta. Aplica la defensa en profundid
 
 | Ruta | Contenido | Protección |
 | --- | --- | --- |
-| `<proyecto>\users.json` | Cuentas (hash scrypt, roles) | Va con el proyecto y sus versiones. Permisos NTFS: solo la cuenta de operación y los administradores |
-| `<proyecto>\secrets.json` | Contraseñas de las conexiones, codificadas en base64 (no cifradas) | Va con el proyecto: protégelo como las credenciales que contiene |
-| `<proyecto>\pki\own\*.pem` | Clave privada del certificado OPC UA del proyecto | Va con el proyecto; permisos restringidos |
-| `<proyecto>\pki\trusted\` | Certificados de PLC y clientes aceptados | Revisa sus cambios en Git: añadir uno aquí equivale a confiar en ese equipo |
+| `<proyecto>\users.json` | Cuentas (hash scrypt, roles) | Va con el proyecto y sus versiones Git (se añade al guardar). Permisos NTFS: solo la cuenta de operación y los administradores |
+| `<proyecto>\secrets.json` | Contraseñas de las conexiones, codificadas en base64 (no cifradas) | Va con la carpeta del proyecto, nunca con sus versiones Git: protégelo como las credenciales que contiene |
+| `<proyecto>\pki\own\*.pem` | Clave privada del certificado OPC UA del proyecto | Va con la carpeta del proyecto, no con sus versiones Git; permisos restringidos |
+| `<proyecto>\pki\trusted\` | Certificados de PLC y clientes aceptados | Se versiona con el proyecto; revisa sus cambios en Git: añadir uno aquí equivale a confiar en ese equipo |
 | `<proyecto>\runtime\*.sqlite3` | Histórico, alarmas y auditoría | Copias de seguridad periódicas |
 
 Todo lo que define el proyecto viaja con él, como en TIA Portal: cuentas, contraseñas de conexión, certificado OPC UA y listas de confianza. Al copiar el proyecto a otro puesto, los PLC siguen confiando en él y no hay que volver a escribir contraseñas. A cambio, **quien tenga una copia del proyecto o de su repositorio tiene las huellas de las cuentas, las contraseñas de los PLC y la clave privada OPC UA**. Trata la carpeta y el repositorio como información confidencial, exige contraseñas largas (`password_min_length`) y no publiques proyectos reales. Solo `runtime\` (histórico, alarmas y auditoría) queda fuera de Git.

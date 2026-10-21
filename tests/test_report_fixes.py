@@ -151,3 +151,36 @@ def test_full_archive_queue_merges_samples_and_recovers(operational_project, mon
         assert service.acknowledge([12345], "Ana") == 0
     finally:
         service.stop()
+
+
+def test_renaming_a_screen_only_in_letter_case_keeps_its_file(tmp_path):
+    project = Project.load(DEMO)
+    project.root = tmp_path
+    project.save()
+    project.screens["OVERVIEW"] = project.screens.pop("overview")
+    project.manifest["startup_screen"] = "OVERVIEW"
+    project.save()
+    assert "OVERVIEW.json" in [p.name for p in (tmp_path / "screens").iterdir()]
+    assert "OVERVIEW" in Project.load(tmp_path).screens
+
+
+def test_orphan_save_lock_of_a_dead_process_is_taken_over(tmp_path):
+    project = Project.load(DEMO)
+    project.root = tmp_path
+    project.save()
+    (tmp_path / ".abscada-save.lock").write_text("999999", encoding="ascii")
+    project.manifest["name"] = "Otro nombre"
+    project.save()
+    assert not (tmp_path / ".abscada-save.lock").exists()
+
+
+def test_disabled_or_locked_account_is_named_only_with_its_password(tmp_path):
+    from abscada.security import AuthenticationError, UserStore, default_security
+    policy = default_security()
+    store = UserStore(tmp_path / "users.json")
+    store.create("ana", "Clave-segura-123", ["operator"], policy, must_change=False)
+    store._update("ana", lambda user: user.update(disabled=True))
+    with pytest.raises(AuthenticationError, match="incorrectos"):
+        store.authenticate("ana", "otra", policy)
+    with pytest.raises(AuthenticationError, match="desactivado"):
+        store.authenticate("ana", "Clave-segura-123", policy)

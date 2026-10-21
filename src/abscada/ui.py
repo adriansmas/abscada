@@ -1296,7 +1296,14 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.redo_stack.clear()
         self.update_history_actions()
 
+    def flush_nudge(self):
+        """Close a pending arrow-key move as its own undo step before anything else changes."""
+        timer = getattr(getattr(self, "view", None), "_nudge_timer", None)
+        if timer is not None and timer.isActive():
+            self.view.finish_nudge()
+
     def mutate(self, callback, selected_ids=None):
+        self.flush_nudge()
         previous = copy.deepcopy(self.project)
         if selected_ids is None:
             selected_ids = [item.element["id"] for item in self.scene.selectedItems()]
@@ -1317,6 +1324,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             return False
 
     def begin_interaction(self):
+        self.flush_nudge()
         self._interaction_backup = copy.deepcopy(self.project)
 
     def end_interaction(self):
@@ -1938,6 +1946,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
 
     def closeEvent(self, event):
         if self.maybe_save() and self.stop_runtime():
+            self.wait_for_version()
             settings=QSettings('abSCADA','Studio');settings.setValue('graphicsSplitter',self.graphics_splitter.saveState())
             event.accept()
         else:

@@ -6,7 +6,7 @@ import json
 import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
-from PySide6.QtCore import Qt, QTimer, QDateTime, QMargins
+from PySide6.QtCore import Qt, QTimer, QDateTime, QMargins, QPointF
 from PySide6.QtGui import QColor, QPen, QPainter
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QLabel, QPushButton, QComboBox, QLineEdit,
     QCheckBox, QTableWidget, QTableWidgetItem, QHeaderView, QFileDialog, QMessageBox, QDateTimeEdit,
@@ -60,6 +60,7 @@ class AlarmViewer(QWidget):
         self.config = config or dict(title=tr("Alarmas"), mode="pending", categories=[], min_priority=1, allow_ack=True)
         self.reader = ArchiveReader(database_path(project))
         self.future = None; self.next_query = 0; self.rows = []; self.token = None
+        self.queried_revision = self.queried_args = None
         layout = QVBoxLayout(self); layout.setContentsMargins(8, 6, 8, 6)
         toolbar = FlowLayout()
         self.mode = QComboBox()
@@ -123,6 +124,7 @@ class AlarmViewer(QWidget):
 
     def reload(self, *args):
         self.next_query = 0
+        self.queried_revision = None
         historical = self.mode.currentData() in {"history", "events"}
         self.date_controls.setVisible(historical)
         for widget in (self.start, self.end, self.apply):
@@ -146,8 +148,10 @@ class AlarmViewer(QWidget):
         pending = getattr(self, 'ack_future', None)
         if pending is not None and pending.done():
             self.ack_future = None
+            # Whatever the answer (even a timeout), the table shows what the archive really holds.
+            self.next_query = 0; self.queried_revision = None
             try:
-                pending.result(); self.next_query = 0
+                pending.result()
             except Exception as exc:
                 self.count.setText(str(exc))
             self.ack.setEnabled(True); self.ack_visible.setEnabled(True)
@@ -155,18 +159,30 @@ class AlarmViewer(QWidget):
             try:
                 token, rows = self.future.result()
                 if token == self.parameters():
-                    self.rows = rows; self.populate()
+                    # Same rows as shown: the table is not rebuilt (selection, scroll and sort stay).
+                    if rows != self.rows or self.qualities() != getattr(self, 'shown_qualities', None):
+                        self.rows = rows; self.populate()
             except Exception as exc:
                 self.count.setText(str(exc))
             self.future = None
         if self.future is None and time.monotonic() >= self.next_query and self.isVisible():
             args = self.parameters()
-            if args[0] in {"history","events"} and args[3]>=args[4]:
+            historical = args[0] in {"history", "events"}
+            if historical and args[3]>=args[4]:
                 self.rows=[]; self.populate()
                 self.count.setText(tr("El inicio debe ser anterior al final"))
                 return
+            operations = getattr(self.runtime, 'operations', None)
+            revision = getattr(operations, 'alarm_revision', None)
+            # Pending and active alarms change only when one enters, returns or is acknowledged.
+            if not historical and revision is not None and revision == self.queried_revision and args == self.queried_args \
+                    and self.qualities() == getattr(self, 'shown_qualities', None):
+                self.next_query = time.monotonic()+1
+                return
+            self.queried_revision, self.queried_args = revision, args
             self.future = READERS.submit(lambda: (args, self.reader.alarms(*args)))
-            self.next_query = time.monotonic()+1
+            # History and events are read when asked (Consultar, a filter): they do not change by themselves.
+            self.next_query = float("inf") if historical else time.monotonic()+1
 
     def project_text(self, value):
         return resolve(value, self.runtime.language if self.runtime else default_language(self.project), default_language(self.project))
@@ -186,14 +202,29 @@ class AlarmViewer(QWidget):
             result.append(alarm)
         return result
 
+    def qualities(self):
+        """Quality of the variable of each shown alarm (a column of the table)."""
+        if not self.runtime:
+            return ()
+        result = []
+        for row in self.rows:
+            try:
+                result.append(self.runtime.sample(row["tag"]).quality)
+            except KeyError:
+                result.append("—")
+        return tuple(result)
+
     def populate(self, *args):
+        from PySide6.QtCore import QItemSelection, QItemSelectionModel
         selected = {item.data(Qt.ItemDataRole.UserRole) for item in self.table.selectedItems()}
+        self.shown_qualities = self.qualities()
         needle = self.search.text().casefold()
         rows = [r for r in self.translated_rows() if needle in f"{r['message']} {r['tag']} {r['alarm_id']}".casefold()]
         self.table.setSortingEnabled(False); self.table.setRowCount(len(rows))
         names = {c["id"]: self.project_text(c["name"]) for c in self.project.alarms["categories"]}
         colors = {c["id"]: c.get("color", "#d74c4c") for c in self.project.alarms["categories"]}
         samples = self.runtime.snapshot() if self.runtime else {}
+        selection = QItemSelection()
         for index, alarm in enumerate(rows):
             event = alarm.get("event")
             status = {"incoming": tr("Entrada"), "outgoing": tr("Salida"), "ack": "ACK", "disabled": tr("Deshabilitada")}.get(event, event) if event else state(alarm)
@@ -211,9 +242,11 @@ class AlarmViewer(QWidget):
                     item.setForeground(QColor(colors.get(alarm["category"], "#d74c4c")))
                 self.table.setItem(index, column, item)
             if alarm["id"] in selected:
-                self.table.selectRow(index)
+                selection.select(self.table.model().index(index, 0), self.table.model().index(index, self.table.columnCount()-1))
+        # Every previously selected alarm stays selected (selectRow would keep only the last one).
+        self.table.selectionModel().select(selection, QItemSelectionModel.SelectionFlag.ClearAndSelect | QItemSelectionModel.SelectionFlag.Rows)
         self.table.setSortingEnabled(True)
-        self.count.setText(f"{len(rows)} registros" + (tr(" · límite 2000; acota la consulta") if len(self.rows) == 2000 else ""))
+        self.count.setText(tr("{count} registros", count=len(rows)) + (tr(" · límite 2000; acota la consulta") if len(self.rows) == 2000 else ""))
         enabled = self.runtime is not None and self.runtime.operations is not None and self.config.get("allow_ack", True) and getattr(self, 'ack_future', None) is None
         self.ack.setEnabled(enabled); self.ack_visible.setEnabled(enabled)
         security = getattr(self.runtime, "security", None)
@@ -235,6 +268,9 @@ class AlarmViewer(QWidget):
                 return
             security.touch(session)
             actor = session.user
+        if not actor:
+            self.count.setText(tr("Escribe el nombre del operador que reconoce"))
+            return
         self.ack_future = COMMANDS.submit(self.runtime.operations.acknowledge, set(ids), actor, self.comment.text().strip())
         self.ack.setEnabled(False); self.ack_visible.setEnabled(False)
 
@@ -299,6 +335,7 @@ class TrendViewer(QWidget):
         self.tag_types = {name: tag["type"] for name, tag in project.tags().items()}
         self.reader = ProjectSampleReader(project)
         self.future, self.next_query, self.data = None, 0, {}
+        self.series, self.last_samples, self.changed, self.next_draw = {}, {}, True, 0.0
         self.export_future = None
         self.generation = 0
         layout = QVBoxLayout(self); layout.setContentsMargins(6, 4, 6, 4)
@@ -360,7 +397,7 @@ class TrendViewer(QWidget):
         self.reload()
 
     def reload(self, *args):
-        self.generation += 1; self.next_query = 0
+        self.generation += 1; self.next_query = 0; self.next_draw = 0.0; self.changed = True
         for widget in (self.start, self.end, self.query):
             widget.setEnabled(not self.live.isChecked())
 
@@ -395,24 +432,31 @@ class TrendViewer(QWidget):
             self.future = None
         if self.runtime:
             now = time.time()
-            snapshot = self.runtime.snapshot()
+            window = self.config.get("window_seconds", 600)
             for tag, buffer in self.buffer.items():
-                sample = snapshot.get(tag)
-                if sample is None:
+                try:
+                    sample = self.runtime.sample(tag)
+                except KeyError:
                     continue
-                numeric = float(sample.value) if isinstance(sample.value, (int, float)) else None
-                buffer.append(dict(tag=tag, recorded_at=now, source_at=sample.timestamp,
-                    value=json.dumps(sample.value), numeric=numeric, quality=sample.quality))
-                while buffer and buffer[0]["recorded_at"] < now-self.config.get("window_seconds", 600):
+                # One point per change: an unchanged variable keeps the same sample object.
+                if self.last_samples.get(tag) is not sample:
+                    self.last_samples[tag] = sample
+                    numeric = float(sample.value) if isinstance(sample.value, (int, float)) else None
+                    buffer.append(dict(tag=tag, recorded_at=now, source_at=sample.timestamp,
+                        value=json.dumps(sample.value), numeric=numeric, quality=sample.quality))
+                    self.changed = True
+                # The newest point before the window stays: it holds the value at the window start.
+                while len(buffer) > 1 and buffer[1]["recorded_at"] < now-window:
                     buffer.popleft()
             if self.source.currentData() == "live":
                 end = now if self.live.isChecked() else self.end.dateTime().toMSecsSinceEpoch()/1000
-                start = end-self.config.get("window_seconds", 600) if self.live.isChecked() else self.start.dateTime().toMSecsSinceEpoch()/1000
+                start = end-window if self.live.isChecked() else self.start.dateTime().toMSecsSinceEpoch()/1000
                 if start >= end:
                     self.readout.setText(tr("El inicio debe ser anterior al final")); return
-                self.data = {tag: [row for row in buffer if start <= row["recorded_at"] <= end] for tag, buffer in self.buffer.items()}
-                self.range = (start, end)
-                if self.isVisible():
+                if self.isVisible() and time.monotonic() >= self.next_draw and (self.changed or self.live.isChecked() or (start, end) != getattr(self, "range", None)):
+                    self.data = {tag: self.window_rows(buffer, start, end) for tag, buffer in self.buffer.items()}
+                    self.range = (start, end)
+                    self.changed = False
                     self.draw()
                 return
         if self.future is None and self.isVisible() and time.monotonic() >= self.next_query:
@@ -425,29 +469,81 @@ class TrendViewer(QWidget):
             self.future = READERS.submit(lambda: (generation, start, end, {tag: self.reader.samples(tag, start, end) for tag in tags}))
             self.next_query = time.monotonic()+1 if self.live.isChecked() else float("inf")
 
+    @staticmethod
+    def window_rows(buffer, start, end):
+        """Points of the buffer between start and end, plus the one before (its value at start)."""
+        rows = list(buffer)
+        times = [row["recorded_at"] for row in rows]
+        first = max(0, bisect.bisect_left(times, start) - 1)
+        return rows[first:bisect.bisect_right(times, end)]
+
+    def curve_points(self, curve, rows, width):
+        """Segments of good values as lists of QPointF, at most a few points per pixel."""
+        stepped = self.tag_types[curve["tag"]] == "bool"
+        segments, points = [], []
+        for row in rows:
+            if row["quality"] != "good" or row["numeric"] is None:
+                if points:
+                    segments.append(points); points = []
+                continue
+            x = max(row["recorded_at"], self.range[0])*1000
+            if stepped and points:
+                points.append(QPointF(x, points[-1].y()))
+            points.append(QPointF(x, row["numeric"]))
+        if points:
+            if self.runtime and self.source.currentData() == "live" and self.live.isChecked() and rows and rows[-1] is self.buffer[curve["tag"]][-1]:
+                # The last value holds until now: the line reaches the right edge.
+                points.append(QPointF(self.range[1]*1000, points[-1].y()))
+            segments.append(points)
+        return [self.decimate(points, width) for points in segments]
+
+    @staticmethod
+    def decimate(points, width):
+        """First, lowest, highest and last point of each pixel column: spikes stay visible."""
+        if len(points) <= 4*width:
+            return points
+        start, span = points[0].x(), max(points[-1].x()-points[0].x(), 1e-9)
+        buckets = {}
+        for point in points:
+            buckets.setdefault(min(width-1, int((point.x()-start)/span*width)), []).append(point)
+        reduced = []
+        for column in sorted(buckets):
+            bucket = buckets[column]
+            chosen = {id(p): p for p in (bucket[0], min(bucket, key=QPointF.y), max(bucket, key=QPointF.y), bucket[-1])}
+            reduced.extend(sorted(chosen.values(), key=QPointF.x))
+        return reduced
+
     def draw(self, *args):
-        self.chart.removeAllSeries()
         if not hasattr(self, "range"):
             return
+        self.next_draw = time.monotonic() + 0.5   # at most two redraws per second
+        width = max(100, int(self.chart.plotArea().width()) or 800)
         axis_values = {key: [] for key in self.axes}
         count = 0
+        wanted = {}
         for curve in self.config["curves"]:
-            if not self.curve_visible[curve["id"]].isChecked():
-                continue
-            series = None
-            for row in self.data.get(curve["tag"], []):
-                if row["quality"] != "good" or row["numeric"] is None:
-                    series = None; continue
-                if series is None:
-                    series = QLineSeries(); series.setName(curve["tag"])
-                    series.setPen(QPen(QColor(curve.get("color", "#147d75")), curve.get("width", 2)))
-                    self.chart.addSeries(series); series.attachAxis(self.x_axis); series.attachAxis(self.axes[curve["axis"]])
-                if self.tag_types[curve["tag"]] == "bool" and series.count():
-                    series.append(row["recorded_at"]*1000, series.at(series.count()-1).y())
-                series.append(row["recorded_at"]*1000, row["numeric"])
-                axis_values[curve["axis"]].append(row["numeric"]); count += 1
-        for series in self.chart.series():
-            series.setPointsVisible(series.count() == 1)
+            if self.curve_visible[curve["id"]].isChecked():
+                wanted[curve["id"]] = (curve, self.curve_points(curve, self.data.get(curve["tag"], []), width))
+        # Series are kept and refilled with replace(): appending point by point notifies the
+        # chart each time and makes a redraw quadratic in the number of points.
+        for key in list(self.series):
+            if key not in wanted:
+                for series in self.series.pop(key):
+                    self.chart.removeSeries(series)
+        for key, (curve, segments) in wanted.items():
+            existing = self.series.setdefault(key, [])
+            while len(existing) > len(segments):
+                self.chart.removeSeries(existing.pop())
+            while len(existing) < len(segments):
+                series = QLineSeries(); series.setName(curve["tag"])
+                series.setPen(QPen(QColor(curve.get("color", "#147d75")), curve.get("width", 2)))
+                self.chart.addSeries(series); series.attachAxis(self.x_axis); series.attachAxis(self.axes[curve["axis"]])
+                existing.append(series)
+            for series, points in zip(existing, segments):
+                series.replace(points)
+                series.setPointsVisible(len(points) == 1)
+                axis_values[curve["axis"]].extend(point.y() for point in points)
+                count += len(points)
         self.x_axis.setRange(QDateTime.fromMSecsSinceEpoch(int(self.range[0]*1000)), QDateTime.fromMSecsSinceEpoch(int(self.range[1]*1000)))
         self.x_axis.setFormat("dd/MM HH:mm" if self.range[1]-self.range[0] >= 86400 else "HH:mm:ss")
         if self.live.isChecked():

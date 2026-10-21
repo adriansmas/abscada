@@ -189,3 +189,44 @@ def test_trend_export_uses_raw_samples_not_decimated_data(operational_project, m
         assert len(list(csv.DictReader(target.open(encoding="utf-8-sig"))))==6000
     finally:
         viewer.close(); app.processEvents()
+
+
+def test_trend_redraw_of_thousands_of_points_is_fast(operational_project):
+    QApplication.instance() or QApplication([])
+    viewer = TrendViewer(operational_project, operational_project.trends["process"])
+    viewer.resize(1000, 500); viewer.show()
+    try:
+        now = time.time()
+        rows = [dict(tag="Level", recorded_at=now-600+i*0.2, source_at=0, value="1", numeric=float(i % 97), quality="good")
+                for i in range(3000)]
+        viewer.data, viewer.range = {"Level": rows, "Fault": []}, (now-600, now)
+        viewer.draw()
+        started = time.perf_counter()
+        viewer.draw()
+        assert time.perf_counter()-started < 0.5
+        level = [s for s in viewer.chart.series() if s.name() == "Level"]
+        assert len(level) == 1 and level[0].count() >= 1000
+        # The same series objects are refilled on the next redraw.
+        viewer.draw()
+        assert [s for s in viewer.chart.series() if s.name() == "Level"] == level
+    finally:
+        viewer.close()
+
+
+def test_alarm_table_keeps_a_multiple_selection(operational_project):
+    repo = Repository(database_path(operational_project))
+    for value in (81, 82, 83):
+        repo.enter(dict(operational_project.alarms["items"][0], id=f"high{value}"), value, time.time())
+    repo.connection.commit(); repo.close()
+    QApplication.instance() or QApplication([])
+    viewer = AlarmViewer(operational_project)
+    viewer.resize(1100, 500); viewer.show()
+    try:
+        pump_until(lambda: viewer.table.rowCount() == 3)
+        viewer.table.selectAll()
+        assert len({i.row() for i in viewer.table.selectedIndexes()}) == 3
+        viewer.rows = [dict(row) for row in viewer.rows]
+        viewer.populate()
+        assert len({i.row() for i in viewer.table.selectedIndexes()}) == 3
+    finally:
+        viewer.close()

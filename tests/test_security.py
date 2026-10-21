@@ -177,6 +177,7 @@ def test_connection_secrets_from_0_5_0b2_move_into_the_project(tmp_path):
 
 
 def test_opcua_certificates_travel_with_the_project(tmp_path):
+    pytest.importorskip("cryptography")  # extra «opcua»
     from abscada import pki
     project = tmp_path / "Mi Planta"
     legacy = project / "runtime" / "pki" / "trusted"

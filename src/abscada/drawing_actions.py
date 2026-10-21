@@ -156,10 +156,12 @@ class DrawingActions:
         selected = [item.element for item in self.scene.selectedItems()]
         if len(selected)<2:
             return
+        # Locked elements are references: the others align to them, they do not move.
+        movable = [e for e in selected if not e.get("editor_locked")]
         left,top = min(e["x"] for e in selected),min(e["y"] for e in selected)
         right,bottom = max(e["x"]+e["w"] for e in selected),max(e["y"]+e["h"] for e in selected)
         def apply():
-            for element in selected:
+            for element in movable:
                 if mode in {"left","center","right"}:
                     element["x"] = left if mode=="left" else right-element["w"] if mode=="right" else (left+right-element["w"])/2
                 else:

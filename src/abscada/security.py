@@ -172,13 +172,16 @@ class UserStore:
         legacy.unlink()
 
     def save(self, data):
+        from .durable import sync, sync_directory
         self.path.parent.mkdir(parents=True, exist_ok=True)
         descriptor, temporary = tempfile.mkstemp(prefix=".users-", dir=self.path.parent)
         try:
             with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as stream:
                 json.dump(data, stream, indent=2, ensure_ascii=False)
                 stream.write("\n")
+                sync(stream)
             os.replace(temporary, self.path)
+            sync_directory(self.path.parent)
         except BaseException:
             Path(temporary).unlink(missing_ok=True)
             raise
@@ -195,13 +198,16 @@ class UserStore:
         return next((u for u in data["users"] if u["name"].lower() == name.lower()), None)
 
     def _update(self, name, change):
-        data = self.load()
-        user = self.find(name, data)
-        if user is None:
-            raise KeyError(tr("Usuario inexistente: {name}", name=name))
-        change(user)
-        self.save(data)
-        return user
+        # Studio and the Runtime may both change accounts: one read-modify-write at a time.
+        from .durable import file_lock
+        with file_lock(self.path.with_name(".users.lock")):
+            data = self.load()
+            user = self.find(name, data)
+            if user is None:
+                raise KeyError(tr("Usuario inexistente: {name}", name=name))
+            change(user)
+            self.save(data)
+            return user
 
     def create(self, name, password, roles, policy, full_name="", must_change=True):
         if not _NAME.match(name or ""):
@@ -263,15 +269,19 @@ class UserStore:
             # Spend the same time as a real check so response time does not reveal accounts.
             verify_password(password or "", _DUMMY)
             raise AuthenticationError(tr("Usuario o contraseña incorrectos"))
-        if user.get("disabled"):
-            raise AuthenticationError(tr("Usuario desactivado"))
         key = user["name"].lower()
         with self._lock:
             failed, locked_until = self.attempts.get(key, (0, 0))
+        correct = verify_password(password or "", user["password"])
+        # A disabled or locked account is named only to whom knows its password: otherwise
+        # the answer would tell a stranger that the account exists.
+        if user.get("disabled"):
+            raise AuthenticationError(tr("Usuario desactivado") if correct else tr("Usuario o contraseña incorrectos"))
         if locked_until > now:
             minutes = int((locked_until - now) // 60) + 1
-            raise AuthenticationError(tr("Usuario bloqueado por intentos fallidos; espera {minutes} min", minutes=minutes))
-        if not verify_password(password or "", user["password"]):
+            raise AuthenticationError(tr("Usuario bloqueado por intentos fallidos; espera {minutes} min", minutes=minutes)
+                                      if correct else tr("Usuario o contraseña incorrectos"))
+        if not correct:
             with self._lock:
                 failed += 1
                 if failed >= policy["max_failed_logins"]:

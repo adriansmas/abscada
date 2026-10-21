@@ -73,16 +73,23 @@ def _dpapi_unprotect(data: bytes) -> bytes:
 
 
 def _write(path, data):
+    from .durable import sync, sync_directory
     path.parent.mkdir(parents=True, exist_ok=True)
     descriptor, temporary = tempfile.mkstemp(prefix=".secrets-", dir=path.parent)
     try:
         with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as stream:
             json.dump(data, stream, indent=2)
             stream.write("\n")
+            sync(stream)
         os.replace(temporary, path)
+        sync_directory(path.parent)
     except BaseException:
         Path(temporary).unlink(missing_ok=True)
         raise
+    try:
+        os.chmod(path, 0o600)
+    except OSError:
+        pass
 
 
 class SecretStore:

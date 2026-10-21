@@ -59,9 +59,7 @@ class ClipboardActions:
             element["id"] = element["kind"] + "_" + uuid.uuid4().hex[:6]
             if same_document:
                 element["x"] += 20
-                element["y"] += 20
-                if "points" in element:
-                    element["points"] = [[x + 20, y + 20] for x, y in element["points"]]
+                element["y"] += 20   # points are relative to the element: they move with it
             if element.get("group"):
                 element["group"] = groups.setdefault(element["group"], "grupo_" + uuid.uuid4().hex[:6])
             elements.append(element)

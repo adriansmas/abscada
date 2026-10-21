@@ -130,12 +130,35 @@ class DrawingInteraction:
         if self.host.design_mode and event.key() in arrows and self.scene().selectedItems():
             dx,dy=arrows[event.key()]
             step = self.host.document().get("grid_size",10) if event.modifiers() & Qt.KeyboardModifier.ShiftModifier else 1
-            selected=[item.element for item in self.scene().selectedItems()]
-            def move():
-                for element in selected:
-                    element.update(x=element["x"]+dx*step,y=element["y"]+dy*step)
-            self.host.mutate(move); event.accept(); return
+            # Locked elements stay where they are, as when dragging.
+            items=[item for item in self.scene().selectedItems() if not item.element.get('editor_locked')]
+            if items:
+                self.nudge(items,dx*step,dy*step)
+            event.accept(); return
         super().keyPressEvent(event)
+
+    def nudge(self,items,dx,dy):
+        """Arrow keys move the items at once; the project is checked and one undo step recorded
+        when the keys have been released for a moment, not at every pixel."""
+        from PySide6.QtCore import QTimer
+        timer=getattr(self,'_nudge_timer',None)
+        if timer is None:
+            timer=self._nudge_timer=QTimer(self); timer.setSingleShot(True); timer.setInterval(400)
+            timer.timeout.connect(self.finish_nudge)
+        if not timer.isActive():
+            self.host.begin_interaction()
+        for item in items:
+            element=item.element
+            element.update(x=element["x"]+dx,y=element["y"]+dy)
+            item.setPos(element["x"],element["y"])
+        timer.start()
+
+    def finish_nudge(self):
+        timer=getattr(self,'_nudge_timer',None)
+        if timer is not None:
+            timer.stop()
+            if getattr(self.host,'_interaction_backup',None) is not None:
+                self.host.end_interaction()
 
     def drawForeground(self,painter,rect):
         super().drawForeground(painter,rect)

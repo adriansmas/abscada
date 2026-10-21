@@ -1,10 +1,15 @@
 """Project file operations and advanced document editing for Studio."""
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import json
+from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QVBoxLayout, QPlainTextEdit, QDialogButtonBox, QMessageBox
 from .project import Project
 from .dialogs import EditorDialog
 from .i18n import tr
+
+# Git versions are created one after another, outside the interface thread.
+VERSIONS = ThreadPoolExecutor(max_workers=1, thread_name_prefix="abscada-git")
 
 
 class ProjectActions:
@@ -61,22 +66,46 @@ class ProjectActions:
     def save_project(self):
         try:
             if hasattr(self, 'automation_editor'): self.automation_editor.end_edit_group()
+            if hasattr(self, 'flush_nudge'): self.flush_nudge()
             focus = self.focusWidget()
             if focus: focus.clearFocus()
             self.project.save()
             self.dirty = False
             self.setWindowTitle("abSCADA Studio · " + self.project.manifest["name"])
             self.statusBar().showMessage(tr("Proyecto guardado"), 5000)
-            from .versioning import ProjectGit
-            try:
-                revision = ProjectGit(self.project).commit()
-                if revision: self.statusBar().showMessage(tr("Proyecto guardado · versión ") + revision, 5000)
-            except Exception as exc:
-                self.error(tr("El proyecto está guardado, pero no se pudo crear la versión Git: ") + str(exc))
-                return False
+            self.commit_version()
             return True
         except Exception as exc:
             self.error(exc)
+
+    def commit_version(self):
+        """The Git version of the saved files, in the background: git takes most of a second."""
+        from .versioning import ProjectGit
+        git = ProjectGit(self.project)
+        if not git.enabled():
+            return
+        self.wait_for_version()
+        git.paths = git.project_paths()   # read now, on this thread, from the project just saved
+        self._version_future = VERSIONS.submit(git.commit)
+        self._version_timer = QTimer(self)
+        self._version_timer.timeout.connect(self.check_version)
+        self._version_timer.start(100)
+
+    def check_version(self, wait=False):
+        future = getattr(self, "_version_future", None)
+        if future is None or (not wait and not future.done()):
+            return
+        self._version_future = None
+        self._version_timer.stop()
+        try:
+            revision = future.result(timeout=60)
+            if revision: self.statusBar().showMessage(tr("Proyecto guardado · versión ") + revision, 5000)
+        except Exception as exc:
+            self.error(tr("El proyecto está guardado, pero no se pudo crear la versión Git: ") + str(exc))
+
+    def wait_for_version(self):
+        """Before closing or saving again: an interrupted git commit leaves the repository locked."""
+        self.check_version(wait=True)
 
     def maybe_save(self):
         if not self.dirty:

@@ -150,3 +150,39 @@ def test_project_settings_keep_the_retention(window):
     QTimer.singleShot(0, fill)
     edit_project_settings(window)
     assert window.project.historian["retention_days"] == 30
+
+
+def test_copy_paste_a_line_on_the_same_screen(window):
+    window.document_kind, window.document_name = "screens", "10_general"
+    window.render_scene()
+    errors = []
+    window.error = errors.append
+    window.mutate(lambda: window.document()["elements"].append(
+        dict(id="linea_prueba", kind="line", x=100, y=100, w=200, h=50, points=[[0, 0], [1, 1]])), selected_ids=["linea_prueba"])
+    window.copy_elements()
+    window.paste_elements()
+    pasted = window.scene.selectedItems()[0].element
+    assert not errors and pasted["kind"] == "line" and pasted["id"] != "linea_prueba"
+    # Points are relative to the element: the copy is shifted, its shape is the same.
+    assert (pasted["x"], pasted["y"], pasted["points"]) == (120, 120, [[0, 0], [1, 1]])
+
+
+def test_arrow_keys_move_without_rebuilding_and_skip_locked_elements(window, monkeypatch):
+    from PySide6.QtCore import Qt
+    from PySide6.QtTest import QTest
+    window.document_kind, window.document_name = "screens", "10_general"
+    window.render_scene()
+    items = [i for i in window.scene.items() if hasattr(i, "element")][:2]
+    items[1].element["editor_locked"] = True
+    for item in items:
+        item.setSelected(True)
+    free, locked = (dict(items[0].element), dict(items[1].element))
+    rebuilt = []
+    monkeypatch.setattr(window, "render_scene", lambda *a, **k: rebuilt.append(1))
+    history = len(window.undo_stack)
+    for _ in range(5):
+        QTest.keyClick(window.view, Qt.Key.Key_Right)
+    assert items[0].element["x"] == free["x"] + 5 and items[1].element["x"] == locked["x"]
+    assert not rebuilt and len(window.undo_stack) == history
+    window.view.finish_nudge()
+    assert len(window.undo_stack) == history + 1
