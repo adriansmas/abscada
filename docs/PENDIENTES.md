@@ -35,7 +35,6 @@ Lista vigente, revisada el 10 de octubre de 2026. Las funciones implementadas se
 - Shelving, alarmas PLC nativas y ACK asociado al PLC.
 - Gestor genérico de recetas, informes y calendarios de tareas. La cervecería ya demuestra recetas gestionadas en su PLC.
 - Zonas de aviso/alarma en el extremo bajo del indicador analógico.
-- Ejecutor de scripts persistente para reducir el coste de lanzar el `.exe` en cada tarea.
 - Límites de recursos y auditoría persistente de ejecuciones Python.
 - Fusión de cambios externos y recuperación de una revisión completa tras corte de alimentación.
 

@@ -1,6 +1,11 @@
 """Event/task scheduler with killable Python execution.
 
-Scripts with a time limit run one after another; scripts without a limit run in parallel,
+Scripts run in separate Python processes that stay open between executions (a pool); each
+one is told only the samples that changed since its previous execution. A script that
+exceeds its time or is cancelled has its process killed; the next execution gets a new one.
+
+Scripts with a time limit run in a small pool of threads, one execution of each script at a
+time, so a slow task does not delay the buttons; scripts without a limit run in parallel,
 each in its own thread, and only one execution of each at a time.
 """
 import json
@@ -15,6 +20,9 @@ from .i18n import tr
 from .button_actions import with_steps
 
 MAX_LIMIT = 86400
+# Threads for scripts with a time limit; processes kept waiting for the next execution.
+SCRIPT_THREADS = 4
+IDLE_RUNNERS = 4
 
 
 def validate_scripts(project):
@@ -71,6 +79,41 @@ def _pump(stream, lines):
     lines.put(None)
 
 
+class Runner:
+    """One script process in serve mode (see script_runner). It knows the samples up to
+    ``revision`` of the Runtime, so the next request only carries what changed since."""
+    def __init__(self, cwd):
+        from .app_paths import script_runner_command
+        flags = subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
+        self.process = subprocess.Popen(script_runner_command(),
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8',
+            cwd=cwd, creationflags=flags)
+        self.lines, self.errors = Queue(), []
+        Thread(target=_pump, args=(self.process.stdout, self.lines), daemon=True).start()
+        Thread(target=self._errors, daemon=True).start()
+        self.revision = None
+        self.send(dict(op='serve'))
+
+    def _errors(self):
+        for line in self.process.stderr:
+            self.errors.append(line)
+            del self.errors[:-200]
+
+    def alive(self):
+        return self.process.poll() is None
+
+    def send(self, message):
+        self.process.stdin.write(json.dumps(message) + '\n'); self.process.stdin.flush()
+
+    def kill(self):
+        try:
+            if self.process.poll() is None:
+                self.process.kill()
+            self.process.wait()
+        except OSError:
+            pass
+
+
 class ScriptService:
     GRACE = 2  # seconds a stopping script has to end after ctx.sleep returns False
 
@@ -84,6 +127,9 @@ class ScriptService:
         self.logs = deque(maxlen=500)
         self.lock = Lock()
         self.state = {}
+        self.idle = []          # Runner processes waiting for the next execution
+        self.limited = {}       # script -> thread running it (scripts with a time limit)
+        self.pending = {}       # script -> events waiting for its running execution to end
 
     def log(self, name, status, message):
         with self.lock:
@@ -111,7 +157,7 @@ class ScriptService:
     def start(self):
         if self.thread and self.thread.is_alive():
             return
-        self.stop_event.clear(); self.state.clear(); self.background.clear()
+        self.stop_event.clear(); self.state.clear(); self.background.clear(); self.limited.clear()
         self.thread = Thread(target=self.run, name='abscada-scripts', daemon=True)
         self.thread.start()
 
@@ -119,15 +165,40 @@ class ScriptService:
         self.stop_event.set()
         deadline = time.monotonic() + timeout
         with self.lock:
-            threads = ([self.thread] if self.thread else []) + list(self.background.values())
+            threads = ([self.thread] if self.thread else []) + list(self.background.values()) + list(self.limited.values())
         for thread in threads:
             if thread.ident is not None:
                 thread.join(max(0, deadline - time.monotonic()))
+        with self.lock:
+            idle, self.idle = self.idle, []
+        for runner in idle:
+            runner.kill()
         if any(thread.is_alive() for thread in threads):
             raise TimeoutError(tr('Los scripts siguen terminando'))
         while not self.queue.empty():
             try: self.queue.get_nowait()
             except Empty: break
+
+    def acquire(self):
+        """A waiting runner process, or a new one."""
+        with self.lock:
+            while self.idle:
+                runner = self.idle.pop()
+                if runner.alive():
+                    return runner
+                runner.kill()
+        return Runner(self.project.root)
+
+    def release(self, runner):
+        with self.lock:
+            if not self.stop_event.is_set() and runner.alive() and len(self.idle) < IDLE_RUNNERS:
+                self.idle.append(runner)
+                return
+        runner.kill()
+
+    def busy(self, name):
+        with self.lock:
+            return any(name in group and group[name].is_alive() for group in (self.background, self.limited))
 
     def run(self):
         # Initialization is a barrier: no screen event or periodic task may
@@ -136,24 +207,52 @@ class ScriptService:
         for name in self.project.automation.get('startup', []):
             if self.stop_event.is_set(): return
             self.dispatch(name, 'startup', '')
+            self.join_limited()
         tasks = [t for t in self.project.automation.get('tasks', []) if t.get('enabled', True)]
         due = {t['id']: time.monotonic()+t['interval_ms']/1000 for t in tasks}
         while not self.stop_event.is_set():
+            wait = min([max(0.0, d - time.monotonic()) for d in due.values()] + [0.5])
             try:
-                self.dispatch(*self.queue.get(timeout=.05))
+                self.dispatch(*self.queue.get(timeout=max(0.005, wait)))
             except Empty:
                 pass
             for task in tasks:
                 if self.stop_event.is_set(): break
-                if time.monotonic() >= due[task['id']]:
-                    # On a script without a limit, a task starts it again once it has ended.
-                    if task['script'] not in self.running():
+                now = time.monotonic()
+                if now >= due[task['id']]:
+                    # A task starts its script again once the previous execution has ended.
+                    if not self.busy(task['script']):
                         self.dispatch(task['script'], 'task:'+task['id'], '')
-                    due[task['id']] = time.monotonic()+task['interval_ms']/1000
+                    # The period does not drift with the time the script takes; after a long
+                    # pause (a busy PC) it starts again from now instead of catching up.
+                    period = task['interval_ms']/1000
+                    due[task['id']] += period
+                    if due[task['id']] <= now:
+                        due[task['id']] = now + period
+
+    def join_limited(self):
+        """Startup is a barrier: wait for the startup scripts that have a time limit."""
+        with self.lock:
+            threads = list(self.limited.values())
+        for thread in threads:
+            while thread.is_alive() and not self.stop_event.is_set():
+                thread.join(0.05)
 
     def dispatch(self, name, event, screen):
         if script_timeout(self.project, name) is not None:
-            self.execute(name, event, screen)
+            # One execution of each script at a time; other scripts run meanwhile.
+            with self.lock:
+                running = self.limited.get(name)
+                if running is not None and running.is_alive():
+                    pending = self.pending.setdefault(name, deque())
+                    if len(pending) < 32:
+                        pending.append((event, screen))
+                    else:
+                        self.log(name, 'error', tr('Cola de eventos llena; evento descartado'))
+                    return
+                thread = Thread(target=self.execute_limited, args=(name, event, screen), name='abscada-script-'+name, daemon=True)
+                self.limited[name] = thread
+            thread.start()
             return
         with self.lock:
             busy = name in self.background and self.background[name].is_alive()
@@ -165,6 +264,17 @@ class ScriptService:
             return
         self.log(name, 'running', tr('En ejecución sin límite de tiempo ({event})', event=event))
         thread.start()
+
+    def execute_limited(self, name, event, screen):
+        """Run a script with a time limit, then the events that arrived for it meanwhile."""
+        while True:
+            self.execute(name, event, screen)
+            with self.lock:
+                pending = self.pending.get(name)
+                if self.stop_event.is_set() or not pending:
+                    self.pending.pop(name, None)
+                    return
+                event, screen = pending.popleft()
 
     def apply(self, name, actions, change, state):
         """Validate every requested write before applying any of them."""
@@ -198,23 +308,30 @@ class ScriptService:
     def samples(self):
         return {n: dict(value=s.value, quality=s.quality) for n, s in self.runtime.snapshot().items()}
 
+    def changes(self, runner):
+        """What ``runner`` does not know yet: {'samples': all} or {'changes': changed only}."""
+        revision, names = self.runtime.changes(runner.revision)
+        runner.revision = revision
+        if names is None:
+            return dict(samples=self.samples())
+        result = {}
+        for name in names:
+            sample = self.runtime.sample(name)
+            result[name] = dict(value=sample.value, quality=sample.quality)
+        return dict(changes=result)
+
     def execute(self, name, event, screen):
         request = dict(source=self.project.scripts[name], filename=f'scripts/{name}.py', event=event,
                        language=self.runtime.language, languages=self.project.manifest.get('languages', ['es']),
-                       screen=screen, state=self.state.get(name, {}), samples=self.samples())
-        flags = subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
+                       screen=screen, state=self.state.get(name, {}))
         limit = script_timeout(self.project, name)
         deadline = None if limit is None else time.monotonic() + limit
-        process = None
+        runner, finished = None, False
         try:
-            from .app_paths import script_runner_command
-            process = subprocess.Popen(script_runner_command(),
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8',
-                cwd=self.project.root, creationflags=flags)
-            lines, errors = Queue(), []
-            Thread(target=_pump, args=(process.stdout, lines), daemon=True).start()
-            Thread(target=lambda: errors.append(process.stderr.read()), daemon=True).start()
-            process.stdin.write(json.dumps(request) + '\n'); process.stdin.flush()
+            runner = self.acquire()
+            process, lines, errors = runner.process, runner.lines, runner.errors
+            request.update(self.changes(runner))
+            runner.send(request)
             stopping = None
             while True:
                 if self.stop_event.is_set() and stopping is None:
@@ -232,8 +349,9 @@ class ScriptService:
                     raise ValueError(''.join(errors).strip() or tr('El proceso del script terminó sin resultado'))
                 message = json.loads(line)
                 if message.get('op') == 'result':
+                    finished = True
                     break
-                self.sync(name, message, process, deadline)
+                self.sync(name, message, runner, deadline)
             if not message['ok']:
                 raise ValueError(message.get('error', tr('Error de script')))
             if self.stop_event.is_set():
@@ -245,12 +363,11 @@ class ScriptService:
         except Exception as exc:
             self.log(name, 'error', str(exc))
         finally:
-            if process and process.poll() is None:
-                process.kill()
-            if process:
-                process.wait()
+            if runner is not None:
+                # A process that answered goes back to the pool; one cut off is killed.
+                self.release(runner) if finished else runner.kill()
 
-    def sync(self, name, message, process, deadline):
+    def sync(self, name, message, runner, deadline):
         """Answer ctx.commit()/ctx.sleep(): apply, log the output, wait, send fresh samples."""
         if message.get('output'):
             self.log(name, 'output', message['output'])
@@ -264,8 +381,8 @@ class ScriptService:
         if deadline is not None:
             wake = min(wake, deadline)
         self.stop_event.wait(max(0, wake - time.monotonic()))
-        reply.update(stop=self.stop_event.is_set(), samples=self.samples())
+        reply.update(stop=self.stop_event.is_set(), **self.changes(runner))
         try:
-            process.stdin.write(json.dumps(reply) + '\n'); process.stdin.flush()
+            runner.send(reply)
         except OSError:
             pass  # the process has already ended; its result or error follows

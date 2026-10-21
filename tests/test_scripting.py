@@ -118,3 +118,32 @@ def test_script_write_reaches_s7_and_checks_readonly(plc_project):
         assert r.snapshot()['Pump1.setpoint'].value==42.5
         assert r.scripts.diagnostics()[-1]['status']=='error'
     finally:r.stop()
+
+
+def test_script_processes_are_reused_and_get_fresh_values(operational_project):
+    p=operational_project
+    p.variables.append(dict(name='Pid', type='int', initial=0, writable=True))
+    p.scripts={'pid':"import os\nctx.write('Pid', os.getpid())\nctx.write('Level', ctx.read('Level')+1)"}
+    p.automation=dict(startup=[],tasks=[],timeout_seconds=10)
+    r=Runtime(p);r.start()
+    try:
+        r.write('Level', 40)
+        r.scripts.submit('pid'); wait_for(lambda:r.snapshot()['Level'].value==41,10)
+        first=r.snapshot()['Pid'].value
+        r.write('Level', 50)   # only this change travels to the waiting process
+        r.scripts.submit('pid'); wait_for(lambda:r.snapshot()['Level'].value==51,10)
+        assert r.snapshot()['Pid'].value==first
+    finally: r.stop()
+
+
+def test_a_slow_task_does_not_delay_other_scripts(operational_project):
+    p=operational_project
+    p.scripts={'slow':"import time\ntime.sleep(3)", 'button':"ctx.write('Level', 7)"}
+    p.automation=dict(startup=[],tasks=[dict(id='slow',script='slow',interval_ms=100,enabled=True)],timeout_seconds=10)
+    r=Runtime(p);r.start()
+    try:
+        wait_for(lambda:r.scripts.busy('slow'),5)
+        started=time.monotonic(); r.scripts.submit('button')
+        wait_for(lambda:r.snapshot()['Level'].value==7,5)
+        assert time.monotonic()-started<2.5
+    finally: r.stop()

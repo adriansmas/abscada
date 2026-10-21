@@ -105,7 +105,7 @@ Se valida y se aplica junto con las escrituras, en el mismo orden. Solo admite v
 
 ## Estado e idioma
 
-`ctx.state` empieza vacío al arrancar Runtime y se conserva entre ejecuciones del mismo script, sea cual sea el disparador; cada script tiene el suyo. Solo admite datos JSON y solo se guarda si la ejecución termina bien o en cada `ctx.commit()`/`ctx.sleep()` aceptado. Las variables Python normales no sobreviven: cada ejecución es un proceso nuevo.
+`ctx.state` empieza vacío al arrancar Runtime y se conserva entre ejecuciones del mismo script, sea cual sea el disparador; cada script tiene el suyo. Solo admite datos JSON y solo se guarda si la ejecución termina bien o en cada `ctx.commit()`/`ctx.sleep()` aceptado. Las variables Python normales no sobreviven: cada ejecución empieza con variables globales nuevas. El proceso que la ejecuta sí puede ser el de una ejecución anterior (se reutilizan para no arrancar Python cada vez), así que los módulos importados quedan cargados: no guardes estado en ellos, usa `ctx.state`.
 
 ```python
 nombre = "Bomba.Marcha"
@@ -148,7 +148,8 @@ print("Detenido")
 | Aspecto | Comportamiento |
 | --- | --- |
 | Concurrencia | Los scripts con límite, uno detrás de otro: uno lento retrasa a los demás, pero no a la interfaz ni a la adquisición. Los sin límite, en paralelo |
-| Proceso | Uno nuevo por ejecución, con la carpeta del proyecto como directorio de trabajo |
+| Proceso | Separado de Runtime, con la carpeta del proyecto como directorio de trabajo. Los procesos se reutilizan entre ejecuciones (hasta 4 en espera) y reciben solo las variables que han cambiado; uno que se cancela o supera su límite se mata y la siguiente ejecución usa otro |
+| Concurrencia | Scripts con límite: hasta 4 a la vez, una ejecución de cada script cada vez (los eventos que llegan mientras corre esperan su turno, hasta 32). Una tarea no se solapa consigo misma y su periodo no se desplaza por lo que tarde el script |
 | Tiempo máximo | General: 10 s por defecto, de 0,1 a 300 s (Eventos de inicio…). Propio por script: de 0,1 s a 24 h, o sin límite. Al superarlo se mata el proceso |
 | Tareas | Periodo de 100 ms a 24 h, contado desde el final de la ejecución; no se solapan ni recuperan periodos perdidos |
 | Cola | 128 eventos; los que no caben se descartan con aviso |

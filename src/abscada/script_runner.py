@@ -3,6 +3,11 @@
 The Runtime sends the request as the first line. While the script runs, ``ctx.commit()`` and
 ``ctx.sleep()`` send a ``sync`` line (pending writes, state and output) and wait for the reply
 (accepted or not, fresh samples, and whether the Runtime is stopping). The last line is the result.
+
+A first line ``{"op": "serve"}`` keeps the process for many executions, one after another:
+starting Python for every task was most of the cost of the scripts. Then requests and replies
+carry ``changes`` (only the samples that changed since the previous message) instead of all
+the ``samples``; each execution still runs in fresh globals.
 """
 import contextlib
 import io
@@ -92,6 +97,8 @@ class Context:
         self.stopping = reply.get('stop', False)
         if 'samples' in reply:
             self.samples = reply['samples']
+        if 'changes' in reply:
+            self.samples = dict(self.samples, **reply['changes'])
         if not reply['ok']:
             raise ValueError(reply['error'])
 
@@ -105,6 +112,23 @@ def main():
     stdin = _pipe(sys.stdin, 0, 'r')
     stdout = _pipe(sys.stdout, 1, 'w')
     request = json.loads(stdin.readline())
+    if request.get('op') != 'serve':
+        execute(request, stdin, stdout)
+        return
+    samples = {}
+    while True:
+        line = stdin.readline()
+        if not line:
+            return   # the Runtime closed the pipe: nothing more to run
+        request = json.loads(line)
+        if 'samples' in request:
+            samples = request['samples']
+        samples.update(request.get('changes', {}))
+        execute(dict(request, samples=dict(samples)), stdin, stdout, samples)
+
+
+def execute(request, stdin, stdout, known=None):
+    """Run one script. ``known`` (serve mode) is kept up to date with the samples received."""
     output = TailOutput()
 
     def channel(message):
@@ -113,7 +137,10 @@ def main():
         line = stdin.readline()
         if not line:
             raise SystemExit('Runtime detenido')
-        return json.loads(line)
+        reply = json.loads(line)
+        if known is not None and 'changes' in reply:
+            known.update(reply['changes'])
+        return reply
 
     ctx = Context(request, channel, output)
     try:
