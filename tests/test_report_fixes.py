@@ -217,3 +217,30 @@ def test_names_cannot_start_with_a_dollar_or_have_spaces_at_the_ends():
     from abscada.structures import valid_name
     assert valid_name("Bomba1") and valid_name("Bomba 1")
     assert not valid_name("$motor") and not valid_name(" Bomba") and not valid_name("Bomba ")
+
+
+def test_runtime_window_refreshes_only_items_of_changed_variables(tmp_path):
+    import os
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtWidgets import QApplication
+    QApplication.instance() or QApplication([])
+    from abscada.runtime_window import RuntimeWindow
+    project = Project.load(DEMO)
+    project.root = tmp_path
+    project.connections = []
+    for variable in project.variables:
+        variable.pop("binding", None); variable.pop("bindings", None)
+    window = RuntimeWindow(project)
+    try:
+        window.refresh()   # first tick: everything
+        refreshed = []
+        for item in window.items_shown:
+            item.refresh_state = lambda item=item: refreshed.append(item)
+        window.refresh()
+        assert refreshed == []   # nothing changed, nothing redrawn
+        window.runtime.write("Operator", "Ana")
+        window.refresh()
+        assert refreshed and all("Operator" in item.dependencies for item in refreshed)
+    finally:
+        window.runtime.stop() if window.running else None
+        window.close()

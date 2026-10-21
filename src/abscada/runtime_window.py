@@ -6,7 +6,7 @@ from PySide6.QtCore import QTimer, Signal, Qt, QEvent, QPoint, QSettings
 from PySide6.QtGui import QGuiApplication, QColor
 from PySide6.QtWidgets import QMainWindow, QInputDialog, QMessageBox, QLabel
 from .theme import STYLE, configure_fonts
-from .graphics import CanvasScene, CanvasView, ElementItem
+from .graphics import CanvasScene, CanvasView, ElementItem, index_items
 from .runtime import Runtime
 from .viewers import AlarmViewer, TrendViewer
 from .operation_windows import MAIN_MODE, popup_key, popup_title, settings_key
@@ -20,6 +20,11 @@ from .runtime_language_ui import runtime_ui
 LETTERBOX = "#1b232d"
 NOTICE_STYLE = ("QLabel { background: rgba(27, 35, 45, 225); color: white; border-radius: 4px;"
                 " padding: 6px 10px; }")
+
+
+def refresh_period(project):
+    """Milliseconds between refreshes of the operation windows (Ajustes → Operación)."""
+    return project.manifest.get("display", {}).get("main", {}).get("refresh_ms", 100)
 
 
 def monitors():
@@ -45,6 +50,10 @@ class RuntimeWindow(QMainWindow):
         self.project = owner.project if owner else copy.deepcopy(project)
         self.runtime = owner.runtime if owner else Runtime(self.project)
         self.samples = self.runtime.snapshot()
+        # Revision of the variables this window shows (see Runtime.changes); None = refresh all.
+        self.seen_revision = None
+        self.shown_document = None
+        self.dependents, self.animated, self.items_shown = {}, [], []
         # A faceplate pop-up shows one template instance instead of a project screen.
         self.faceplate = faceplate
         self.document_name = "" if faceplate else screen or project.manifest["startup_screen"]
@@ -56,7 +65,7 @@ class RuntimeWindow(QMainWindow):
         self.resize(1180, 820)
         self.scene = CanvasScene(self)
         self.view = CanvasView(self.scene, self)
-        self.view.scale_mode = self.project.manifest.get("display", {}).get("main", {}).get("scale", "fit")
+        self.view.scale_mode = "fit" if owner else self.project.manifest.get("display", {}).get("main", {}).get("scale", "fit")
         self.setCentralWidget(self.view)
         self.scene.setBackgroundBrush(QColor(LETTERBOX))
         # Full screen hides the status bar; its messages float over the bottom of the screen.
@@ -134,7 +143,9 @@ class RuntimeWindow(QMainWindow):
         if not self.owner:
             self.runtime.start()
         self.running = True
-        self.timer.start(100)
+        # One clock for the whole station: the main window refreshes its pop-ups too.
+        if not self.owner:
+            self.timer.start(refresh_period(self.project))
         self.opened()
 
     def opened(self):
@@ -255,7 +266,8 @@ class RuntimeWindow(QMainWindow):
             siblings = sum(1 for other in self.popups if isinstance(key, tuple) and isinstance(other, tuple)
                            and other[1] == key[1] and other != key)
             document = popup.screen_document()
-            popup.place(document["width"], document["height"], options, anchor=self, cascade=30 * siblings)
+            chrome = popup.statusBar().sizeHint().height() if not popup.statusBar().isHidden() else 0
+            popup.place(document["width"], document["height"] + chrome, options, anchor=self, cascade=30 * siblings)
             popup.start()
         else:
             popup.show_target(target)
@@ -313,10 +325,13 @@ class RuntimeWindow(QMainWindow):
         title = resolve(document.get('title', ''), self.runtime.language, default_language(self.project)) or self.document_name
         self.setWindowTitle(title if self.owner else "abSCADA Runtime · " + self.project.manifest["name"] + " · " + title)
         self.scene.setSceneRect(0, 0, document["width"], document["height"])
+        self.shown_document = document
         from .dynamics import resolve_indices
         elements, self.index_state = resolve_indices(self.project.expand(document["elements"]), self.samples)
-        for element in elements:
-            self.scene.addItem(ElementItem(self, element))
+        items = [ElementItem(self, element) for element in elements]
+        for item in items:
+            self.scene.addItem(item)
+        index_items(self, items)
         self.view.fit_canvas()
         if self.running and opened:
             self.opened()
@@ -325,30 +340,61 @@ class RuntimeWindow(QMainWindow):
         for name in self.project.screens[screen].get('on_open', []):
             self.runtime.scripts.submit(name, 'screen_open', screen)
 
-    def refresh(self):
+    def refresh_view(self):
+        """Refresh what changed since the last tick: only the items that show a changed
+        variable, plus the blinking or turning ones. Nothing is repainted when nothing changed."""
+        full = False
         if self.displayed_language != self.runtime.language:
             self.displayed_language = self.runtime.language
             self.language_selector.blockSignals(True)
             self.language_selector.setCurrentText(self.runtime.language)
             self.language_selector.blockSignals(False)
             from .project_languages import resolve, default_language
+            self.shown_document = self.screen_document() if self.faceplate else self.shown_document
             title = resolve(self.screen_document().get('title', ''), self.runtime.language, default_language(self.project)) or self.document_name
             self.setWindowTitle(title if self.owner else 'abSCADA Runtime · ' + self.project.manifest['name'] + ' · ' + title)
+            full = True
         self.check_releases()
+        revision, changed = self.runtime.changes(self.seen_revision)
+        if self.isMinimized():
+            return   # nothing to see: changes are picked up when it is shown again
+        self.seen_revision = revision
+        full = full or changed is None
+        if not full and not changed:
+            for host in [self] + list(self.containers.values()):
+                for item in host.animated:
+                    item.update()
+            return
         self.samples = self.runtime.snapshot()
         # A variable used as an index changed: the screen now shows other elements of the array.
         from .dynamics import index_values
         state = getattr(self, "index_state", {})
-        if state and index_values(state, self.samples) != state:
+        if state and (full or changed & set(state)) and index_values(state, self.samples) != state:
+            shown = {key: container.document_name for key, container in self.containers.items()}
             self.render_scene(opened=False)
+            for key, screen in shown.items():
+                container = self.containers.get(key)
+                if container is not None and screen and container.document_name != screen:
+                    container.select_screen(screen, opened=False)
+            full = True
         for container in list(self.containers.values()):
             state = getattr(container, "index_state", {})
-            if state and container.document_name and index_values(state, self.samples) != state:
+            if state and container.document_name and (full or changed & set(state)) and index_values(state, self.samples) != state:
                 container.select_screen(container.document_name, opened=False)
-        for scene in [self.scene]+[c.scene for c in self.containers.values()]:
-            for item in scene.items():
-                if isinstance(item,ElementItem): item.refresh_state()
-            scene.update()
+        for host in [self] + list(self.containers.values()):
+            if full:
+                items = host.items_shown
+            else:
+                items = {id(item): item for name in changed for item in host.dependents.get(name, ())}.values()
+            for item in items:
+                item.refresh_state()
+            for item in host.animated:
+                item.update()
+
+    def refresh(self):
+        self.refresh_view()
+        for popup in list(self.popups.values()):
+            popup.refresh_view()
         if not self.owner:
             for result in self.runtime.scripts.diagnostics():
                 if result['time'] <= self.last_script_log:
@@ -361,15 +407,14 @@ class RuntimeWindow(QMainWindow):
                     self.statusBar().showMessage(text, 15000)
                     for popup in self.popups.values():
                         popup.statusBar().showMessage(text, 15000)
-        if self.runtime.operations and self.runtime.operations.error:
-            self.statusBar().showMessage(self.runtime.operations.error)
+        self.show_lasting("archive", self.runtime.operations.notice() if self.runtime.operations else "")
         if not self.owner and self.runtime.session and self.runtime.security.expired(self.runtime.session):
             self.release_momentaries()
             self.runtime.logout("session_timeout")
             self.update_session_widgets()
             self.statusBar().showMessage(tr("Sesión cerrada por inactividad"), 15000)
-        if not self.owner and self.runtime.opcua and self.runtime.opcua.error:
-            self.statusBar().showMessage(self.runtime.opcua.error)
+        if not self.owner:
+            self.show_lasting("opcua", self.runtime.opcua.error if self.runtime.opcua else "")
         for name, success, message in ([] if self.owner else self.runtime.write_results()):
             text = f"{name}: {'OK' if success else 'ERROR'} · {message}"
             self.diagnostic.emit(text)
@@ -377,6 +422,16 @@ class RuntimeWindow(QMainWindow):
                 self.statusBar().showMessage(text, 10000)
                 for popup in self.popups.values():
                     popup.statusBar().showMessage(text, 10000)
+
+    def show_lasting(self, source, text):
+        """A condition that lasts (archive stopped, OPC UA server error): shown when it appears
+        or changes, for 30 s; other messages are not hidden under it at every tick."""
+        shown = getattr(self, "lasting", {})
+        self.lasting = shown
+        if text and shown.get(source) != text:
+            self.statusBar().showMessage(text, 30000)
+            self.diagnostic.emit(text)
+        shown[source] = text
 
     def navigate_screen(self, screen, target='', source=None):
         if target == '__window__':
@@ -567,8 +622,12 @@ class RuntimeWindow(QMainWindow):
             self.save_geometry()
             self.running = False
             self.timer.stop()
-            for viewer in self.findChildren(AlarmViewer) + self.findChildren(TrendViewer):
-                viewer.timer.stop()
+            # Embedded viewers live in proxies: they are not child widgets of the window.
+            for host in [self] + list(self.containers.values()):
+                for item in host.items_shown:
+                    viewer = getattr(getattr(item, "proxy", None), "widget", lambda: None)()
+                    if isinstance(viewer, (AlarmViewer, TrendViewer)):
+                        viewer.timer.stop()
             self.closed.emit()
             event.accept()
         except TimeoutError as exc:

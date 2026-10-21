@@ -37,6 +37,7 @@ class ScreenContainer(QWidget):
         layout = QVBoxLayout(self); layout.setContentsMargins(0, 0, 0, 0)
         layout.setSizeConstraint(QLayout.SizeConstraint.SetNoConstraint)
         layout.addWidget(self.view)
+        self.dependents, self.animated, self.items_shown = {}, [], []
         self.initializing = True
         if self.document_name:
             self.select_screen(self.document_name)
@@ -55,9 +56,12 @@ class ScreenContainer(QWidget):
         self.scene.clear()
         self.scene.setSceneRect(0, 0, document['width'], document['height'])
         from .dynamics import resolve_indices
+        from .graphics import index_items
         elements, self.index_state = resolve_indices(self.project.elements(screen), self.samples)
-        for element in elements:
-            self.scene.addItem(ElementItem(self, element))
+        items = [ElementItem(self, element) for element in elements]
+        for item in items:
+            self.scene.addItem(item)
+        index_items(self, items)
         self.view.fit_canvas()
         if not self.initializing and self.window.running and opened:
             self.window.screen_opened(screen)

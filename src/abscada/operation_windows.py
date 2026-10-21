@@ -33,13 +33,16 @@ def validate_window(options):
 
 
 def validate_display(project):
-    """manifest.display = {main: {monitor, mode, scale}, windows: [{screen, monitor, mode, on_top}]}"""
+    """manifest.display = {main: {monitor, mode, scale, refresh_ms}, windows: [{screen, monitor, mode, on_top}]}"""
     display = project.manifest.get("display", {})
     if not isinstance(display, dict) or set(display) - {"main", "windows"}:
         raise ValueError(tr("Configuración de monitores inválida"))
     main = display.get("main", {})
-    if not isinstance(main, dict) or set(main) - {"monitor", "mode", "scale"}:
+    if not isinstance(main, dict) or set(main) - {"monitor", "mode", "scale", "refresh_ms"}:
         raise ValueError(tr("Configuración de la ventana principal inválida"))
+    refresh = main.get("refresh_ms", 100)
+    if isinstance(refresh, bool) or not isinstance(refresh, int) or not 50 <= refresh <= 2000:
+        raise ValueError(tr("El refresco de pantalla debe estar entre 50 y 2000 ms"))
     monitor_number(main.get("monitor"))
     if main.get("mode", MAIN_MODE) not in MODES:
         raise ValueError(tr("Modo de ventana desconocido"))

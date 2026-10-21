@@ -71,6 +71,12 @@ class DisplayPanel(QWidget):
         self.main_scale = choice_field(SCALE_TITLES, main_settings.get("scale", "fit"))
         self.main_scale.setObjectName("runtimeScale")
         form.addRow(tr("Monitor"), self.main_monitor); form.addRow(tr("Al abrir"), self.main_mode); form.addRow(tr("Escalado"), self.main_scale)
+        from PySide6.QtWidgets import QSpinBox
+        self.main_refresh = QSpinBox(); self.main_refresh.setObjectName("runtimeRefresh")
+        self.main_refresh.setRange(50, 2000); self.main_refresh.setSingleStep(50); self.main_refresh.setSuffix(" ms")
+        self.main_refresh.setValue(main_settings.get("refresh_ms", 100))
+        self.main_refresh.setToolTip(tr("Cada cuánto se redibujan los valores. En puestos lentos, 250 ms alivia el procesador."))
+        form.addRow(tr("Refresco de pantalla"), self.main_refresh)
         hint = QLabel(tr("Las pantallas se dibujan en vectorial: textos, líneas y controles se escalan sin perder nitidez."))
         hint.setWordWrap(True); hint.setObjectName("muted"); form.addRow(hint)
         layout.addWidget(main)
@@ -104,6 +110,8 @@ class DisplayPanel(QWidget):
         main = placement(self.main_monitor, self.main_mode, MAIN_MODE)
         if self.main_scale.currentData() != "fit":
             main["scale"] = self.main_scale.currentData()
+        if self.main_refresh.value() != 100:
+            main["refresh_ms"] = self.main_refresh.value()
         if main:
             result["main"] = main
         windows = []

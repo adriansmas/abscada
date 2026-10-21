@@ -124,3 +124,17 @@ def test_popup_writes_through_existing_s7_connection(studio):
     popup.close()
     root.actuate(dict(action='set', tag='Pump1.setpoint', value=41.5))
     pump_until(lambda: root.samples['Pump1.setpoint'].value == 41.5)
+
+
+def test_popup_page_is_shown_at_its_own_size(operational_studio):
+    window = operational_studio
+    configure(window)
+    window.project.manifest.setdefault('display', {})['main'] = dict(scale='stretch')
+    window.start_runtime()
+    root = window.runtime_window
+    popup = root.open_popup('settings')
+    QApplication.processEvents()
+    # The status bar adds to the window: the 480 × 320 page is drawn 1:1, not shrunk.
+    assert abs(popup.view.transform().m11() - 1) < 0.02 and abs(popup.view.transform().m22() - 1) < 0.02
+    # The stretch of the main window does not deform pop-ups.
+    assert popup.view.scale_mode == 'fit'

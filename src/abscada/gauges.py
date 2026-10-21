@@ -6,7 +6,7 @@ alone; paint_gauge draws with a QPainter supplied by graphics.py.
 import math
 from .i18n import tr
 
-STYLES = {"dial": "Esfera 240°", "semi": tr("Semicírculo 180°"), "thermometer": tr("Termómetro")}
+STYLES = {"dial": tr("Esfera 240°"), "semi": tr("Semicírculo 180°"), "thermometer": tr("Termómetro")}
 SWEEP = {"dial": 240.0, "semi": 180.0}
 WARNING_COLOR = "#e5a339"
 ALARM_COLOR = "#d64545"

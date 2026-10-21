@@ -10,7 +10,7 @@ from PySide6.QtWidgets import QGraphicsObject, QGraphicsItem, QGraphicsView, QGr
 from .text_lists import display_text
 from .drawing import PATH_KINDS, SHAPE_KINDS, world_points, set_points
 from .vector_graphics import element_path, paint_vector, DrawingInteraction
-from .i18n import tr
+from .i18n import tr, tr_existing, using_language
 
 TOOL_NAMES = {"text": tr("Texto"), "lamp": tr("Piloto"), "button": tr("Botón"),
            "input": tr("Entrada"), "bar": tr("Barra"), "gauge": tr("Indicador"), "image": tr("Imagen"), "faceplate": tr("Objeto de librería"),
@@ -67,14 +67,33 @@ def tool_icon(kind):
 
 
 _SVG = {}
+_PIXMAPS = {}
+_STATS = {}
+# A file edited while the program runs is noticed within this time, without a file system
+# call at every repaint.
+STAT_SECONDS = 2.0
+
+
+def _version(path):
+    """(path, modification time) of an image, asked to the disk at most every STAT_SECONDS."""
+    import time
+    key = str(path)
+    now = time.monotonic()
+    known = _STATS.get(key)
+    if known is None or now - known[0] >= STAT_SECONDS:
+        try:
+            known = (now, path.stat().st_mtime_ns)
+        except OSError:
+            known = (now, None)
+        _STATS[key] = known
+    return None if known[1] is None else (key, known[1])
 
 
 def svg_renderer(path):
     """Cached QSvgRenderer per file and modification time; None if the SVG is invalid."""
     from PySide6.QtSvg import QSvgRenderer
-    try:
-        key = (str(path), path.stat().st_mtime_ns)
-    except OSError:
+    key = _version(path)
+    if key is None:
         return None
     if key not in _SVG:
         renderer = QSvgRenderer(str(path))
@@ -82,6 +101,45 @@ def svg_renderer(path):
             renderer.setAspectRatioMode(Qt.AspectRatioMode.KeepAspectRatio)
         _SVG[key] = renderer if renderer.isValid() else None
     return _SVG[key]
+
+
+def pixmap(path):
+    """Cached QPixmap per file and modification time (PNG, JPG...)."""
+    key = _version(path)
+    if key is None:
+        return QPixmap()
+    if key not in _PIXMAPS:
+        _PIXMAPS[key] = QPixmap(str(path))
+    return _PIXMAPS[key]
+
+
+def dependencies(element):
+    """Every variable an element shows or depends on: its tag and those of its conditions,
+    motions, unit, decimals and the guards of the objects that contain it."""
+    found = set()
+    def walk(value):
+        if isinstance(value, dict):
+            for key, item in value.items():
+                if key == "tag" and isinstance(item, str) and item:
+                    found.add(item)
+                else:
+                    walk(item)
+        elif isinstance(value, list):
+            for item in value:
+                walk(item)
+    walk(element)
+    return found
+
+
+def index_items(host, items):
+    """Who to refresh when variables change: ``host.dependents`` {variable: [items]},
+    ``host.animated`` (blinking or turning) and ``host.items_shown`` (all of them)."""
+    host.dependents, host.animated, host.items_shown = {}, [], list(items)
+    for item in host.items_shown:
+        for name in item.dependencies:
+            host.dependents.setdefault(name, []).append(item)
+        if item.is_animated:
+            host.animated.append(item)
 
 
 def draw_element(painter, e, host, rect=None):
@@ -112,6 +170,19 @@ def draw_element(painter, e, host, rect=None):
 
 def paint_filled(painter, e, host, rect, ratio, color, direction):
     """The element with a level painted over its own visible pixels (the outline of an image)."""
+    w, h = rect.width(), rect.height()
+    level = {"up": QRectF(rect.left(), rect.bottom()-h*ratio, w, h*ratio), "down": QRectF(rect.left(), rect.top(), w, h*ratio),
+             "right": QRectF(rect.left(), rect.top(), w*ratio, h), "left": QRectF(rect.right()-w*ratio, rect.top(), w*ratio, h)}[direction]
+    if e["kind"] in {"rectangle", "ellipse"}:
+        # A plain shape: its outline is known, no off-screen layer is needed.
+        _paint(painter, e, host, rect)
+        shape = QPainterPath()
+        shape.addEllipse(rect) if e["kind"] == "ellipse" else shape.addRect(rect)
+        painter.save()
+        painter.setClipPath(shape, Qt.ClipOperation.IntersectClip)
+        painter.fillRect(level, QColor(color))
+        painter.restore()
+        return
     transform = painter.worldTransform()
     scale = max(math.hypot(transform.m11(), transform.m12()), math.hypot(transform.m21(), transform.m22()), 0.01)
     device = painter.device()
@@ -128,21 +199,29 @@ def paint_filled(painter, e, host, rect, ratio, color, direction):
     canvas.setFont(painter.font())
     canvas.translate(-area.topLeft())
     _paint(canvas, e, host, rect)
-    w, h = rect.width(), rect.height()
-    level = {"up": QRectF(rect.left(), rect.bottom()-h*ratio, w, h*ratio), "down": QRectF(rect.left(), rect.top(), w, h*ratio),
-             "right": QRectF(rect.left(), rect.top(), w*ratio, h), "left": QRectF(rect.right()-w*ratio, rect.top(), w*ratio, h)}[direction]
     canvas.setCompositionMode(QPainter.CompositionMode.CompositionMode_SourceAtop)
     canvas.fillRect(level, QColor(color))
     canvas.end()
     painter.drawImage(area, layer)
 
 
+def painted_texts(e, code, default):
+    """The element with the texts it paints in ``code``. Only its own texts: rebuilding the
+    whole element (dynamics, conditions...) at every repaint was most of the drawing time."""
+    from .project_languages import resolve, TEXT_KEYS
+    changed = {key: resolve(e[key], code, default) for key in TEXT_KEYS if isinstance(e.get(key), dict)}
+    if isinstance(e.get("texts"), list) and any(isinstance(t, dict) and isinstance(t.get("text"), dict) for t in e["texts"]):
+        changed["texts"] = [dict(t, text=resolve(t["text"], code, default)) if isinstance(t, dict) and isinstance(t.get("text"), dict) else t
+                            for t in e["texts"]]
+    return dict(e, **changed) if changed else e
+
+
 def _paint(painter, e, host, rect):
     """Paint an element whose dynamics are already applied (see ``dynamics.effective``)."""
-    from .project_languages import localized, default_language, resolve
+    from .project_languages import default_language, resolve
     code = getattr(host, 'editing_language', None) if host.design_mode else getattr(getattr(host, 'runtime', None), 'language', None)
     code = code or default_language(host.project)
-    e = localized(e, code, default_language(host.project))
+    e = painted_texts(e, code, default_language(host.project))
     kind = e["kind"]
     if kind in PATH_KINDS | SHAPE_KINDS:
         paint_vector(painter, e, rect)
@@ -190,7 +269,7 @@ def _paint(painter, e, host, rect):
             painter.scale(rect.width() / template["width"], rect.height() / template["height"])
             from .structures import substitute
             for source in template["elements"]:
-                child = copy.deepcopy(source)
+                child = dict(source)   # only its tag changes; nested values are read, not written
                 if child.get("tag", "").startswith("$"):
                     try: child["tag"] = substitute(child["tag"], e.get("bindings", {}))
                     except KeyError: child["tag"] = ""
@@ -204,7 +283,7 @@ def _paint(painter, e, host, rect):
         painter.setBrush(QColor("#ffffff")); painter.drawRoundedRect(rect, 5, 5)
         painter.setPen(QColor("#506176"))
         views = host.project.trends if kind == "trend" else host.project.alarm_views
-        title = resolve(views.get(e.get("view"), {}).get("title", TOOL_NAMES[kind]), code, default_language(host.project))
+        title = resolve(views.get(e.get("view"), {}).get("title", tr_existing(TOOL_NAMES[kind])), code, default_language(host.project))
         painter.drawText(rect.adjusted(14, 8, -14, -rect.height()+42), title)
         painter.setPen(QPen(QColor("#dde5ed"), 1))
         for y in range(55, int(rect.height())-15, 35):
@@ -244,7 +323,7 @@ def _paint(painter, e, host, rect):
         painter.drawRoundedRect(QRectF(inner.left(), inner.bottom()-inner.height()*ratio, inner.width(), inner.height()*ratio), 4, 4)
         return
     if kind == "image":
-        pixmap = QPixmap()
+        image = QPixmap()
         try:
             source = e.get("source", "")
             path = host.project.asset(source) if source else None
@@ -254,11 +333,12 @@ def _paint(painter, e, host, rect):
                     renderer.render(painter, rect)  # vector: sharp at any size and zoom
                     return
             elif path is not None:
-                pixmap = QPixmap(str(path))
+                image = pixmap(path)
         except ValueError:
             pass
-        if not pixmap.isNull():
-            painter.drawPixmap(rect.toRect(), pixmap)
+        if not image.isNull():
+            painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+            painter.drawPixmap(rect, image, QRectF(image.rect()))
             return
         painter.setBrush(QColor("#f3f6fa"))
         painter.drawRoundedRect(rect, 5, 5)
@@ -274,7 +354,7 @@ def _paint(painter, e, host, rect):
         painter.drawRoundedRect(rect.adjusted(1, 1, -1, -1), 5, 5)
     elif "color" in e or e.get("tag"):
         painter.drawRoundedRect(rect, 5, 5)
-    text = display_text(e, sample, design=design) if kind == "text_list" and not e.get('_text_override') else e.get("text", TOOL_NAMES[kind])
+    text = display_text(e, sample, design=design) if kind == "text_list" and not e.get('_text_override') else e.get("text", tr_existing(TOOL_NAMES[kind]))
     if e.get("tag") and kind in ("text", "input"):
         if design:
             display = "—"
@@ -313,6 +393,8 @@ class CanvasScene(QGraphicsScene):
         bounds = self.sceneRect()
         if self.host.design_mode:
             document = self.host.document()
+        elif getattr(self.host, "shown_document", None) is not None:
+            document = self.host.shown_document   # kept by the runtime window while it shows it
         elif hasattr(self.host, "screen_document"):
             document = self.host.screen_document()
         else:
@@ -514,10 +596,17 @@ class ElementItem(QGraphicsObject):
                 # Laid out at its own size: the view scales it uniformly with the rest of the screen.
                 self.proxy.resize(element["w"], element["h"])
         self.setToolTip(element.get("tag", element["id"]))
+        from .dynamics import animated
+        self.dependencies = set() if host.design_mode else dependencies(element)
+        self.is_animated = not host.design_mode and animated(element)
         if host.design_mode:
             self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, not element.get('editor_locked',False))
             if element.get('editor_hidden'): self.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
-        else: self.refresh_state()
+        else:
+            self.refresh_state()
+            if not self.dependencies and not self.is_animated and element["kind"] not in {"screen_container", "trend", "alarm_view"}:
+                # Fixed drawing (frames, labels, pipes...): painted once per zoom, then copied.
+                self.setCacheMode(QGraphicsItem.CacheMode.DeviceCoordinateCache)
 
     def refresh_state(self):
         if self.host.design_mode: return
@@ -601,7 +690,11 @@ class ElementItem(QGraphicsObject):
 
     def paint(self, painter, option, widget=None):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        if not self.host.design_mode or not self.element.get("editor_hidden"):
+        runtime = None if self.host.design_mode else getattr(self.host, "runtime", None)
+        if runtime is not None:
+            with using_language(runtime.language):
+                draw_element(painter, self.element, self.host)
+        elif not self.host.design_mode or not self.element.get("editor_hidden"):
             draw_element(painter, self.element, self.host)
         if self.isSelected():
             rect = QRectF(0, 0, self.element["w"], self.element["h"])

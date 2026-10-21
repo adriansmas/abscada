@@ -1475,5 +1475,9 @@
  "{path}: traducciones sin idioma por defecto o con idioma no declarado": "{path}: translations without the default language or with an undeclared language",
  "Fila de traducción inválida: {path}": "Invalid translation row: {path}",
  "{path}: librería de solo lectura; traduce la biblioteca en su proyecto de origen": "{path}: read-only library; translate the library in its source project",
- "Variable · {name}": "Variable · {name}"
+ "Variable · {name}": "Variable · {name}",
+ "Cada cuánto se redibujan los valores. En puestos lentos, 250 ms alivia el procesador.": "How often values are redrawn. On slow stations, 250 ms eases the processor.",
+ "Refresco de pantalla": "Screen refresh",
+ "Esfera 240°": "240° dial",
+ "El refresco de pantalla debe estar entre 50 y 2000 ms": "The screen refresh must be between 50 and 2000 ms"
 }
