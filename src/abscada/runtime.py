@@ -122,6 +122,19 @@ class Runtime:
         with self._lock:
             return {cid: dict(values) for cid, values in self._diagnostics.items()}
 
+    def cycle_text(self, cid):
+        """«ciclo 120 ms de 250 · 3 peticiones · 1 error» for a connection, or ""."""
+        values = self.diagnostics().get(cid)
+        if not values or values.get("cycle_ms") is None:
+            return ""
+        text = tr("ciclo {cycle} ms de {poll} · {requests} peticiones", cycle=round(values["cycle_ms"]),
+                  poll=values["poll_ms"], requests=values["requests"])
+        if values.get("errors"):
+            text += " · " + tr("{count} variables con error", count=values["errors"])
+        if values.get("reconnects"):
+            text += " · " + tr("{count} reconexiones", count=values["reconnects"])
+        return text
+
     def write_results(self):
         with self._lock:
             results, self._results = self._results, []

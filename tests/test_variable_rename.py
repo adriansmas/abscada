@@ -48,7 +48,8 @@ def test_renaming_a_variable_moves_every_reference(project):
     assert set(project.variables[0]["bindings"]) == {"Bomba1.marcha", "Bomba1.temps[2]"}
     assert project.tags()["Bomba1.temps[2]"]["binding"]["address"] == "%DB1.DBD8"
     assert references.usages(project, "B1") == []
-    assert project.historian["renames"] == [dict(old="B1", new="Bomba1")]
+    assert [dict(old=e["old"], new=e["new"]) for e in project.historian["renames"]] == [dict(old="B1", new="Bomba1")]
+    assert isinstance(project.historian["renames"][0]["at"], float)
     assert references.former_names(project, "Bomba1.velocidad") == ["B1.velocidad"]
 
 
@@ -101,7 +102,7 @@ def test_renames_survive_save_and_load(project):
     project.root.mkdir(parents=True)
     project.save()
     loaded = Project.load(project.root)
-    assert loaded.historian["renames"] == [dict(old="B1", new="Bomba1")]
+    assert [(e["old"], e["new"]) for e in loaded.historian["renames"]] == [("B1", "Bomba1")]
     loaded.historian["renames"] = [dict(old="X")]
     with pytest.raises(ValueError, match="renames"):
         loaded.validate()

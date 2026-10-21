@@ -1479,5 +1479,12 @@
  "Cada cuánto se redibujan los valores. En puestos lentos, 250 ms alivia el procesador.": "How often values are redrawn. On slow stations, 250 ms eases the processor.",
  "Refresco de pantalla": "Screen refresh",
  "Esfera 240°": "240° dial",
- "El refresco de pantalla debe estar entre 50 y 2000 ms": "The screen refresh must be between 50 and 2000 ms"
+ "El refresco de pantalla debe estar entre 50 y 2000 ms": "The screen refresh must be between 50 and 2000 ms",
+ "{tag}: la conexión no acepta órdenes ahora": "{tag}: the connection does not take commands now",
+ "ciclo {cycle} ms de {poll} · {requests} peticiones": "cycle {cycle} ms of {poll} · {requests} requests",
+ "{count} variables con error": "{count} variables with errors",
+ "{count} reconexiones": "{count} reconnections",
+ "Comunicaciones: {good} de {total}": "Communications: {good} of {total}",
+ "Alarmas: {active} activas · {unacknowledged} sin reconocer": "Alarms: {active} active · {unacknowledged} unacknowledged",
+ "Conectando…": "Connecting…"
 }

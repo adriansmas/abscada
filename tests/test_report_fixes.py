@@ -244,3 +244,30 @@ def test_runtime_window_refreshes_only_items_of_changed_variables(tmp_path):
     finally:
         window.runtime.stop() if window.running else None
         window.close()
+
+
+def test_history_of_a_renamed_variable_ignores_a_new_one_with_the_old_name(operational_project):
+    from abscada.runtime import Sample
+    from abscada.storage import ProjectSampleReader, Repository, database_path
+    project = operational_project
+    repository = Repository(database_path(project))
+    now = time.time()
+    repository.sample("Level", Sample(1.0, "good", now - 20), now - 20)       # before the rename
+    project.historian["renames"] = [dict(old="Level", new="Nivel", at=now - 10)]
+    repository.sample("Level", Sample(99.0, "good", now - 5), now - 5)        # a new «Level» afterwards
+    repository.connection.commit(); repository.close()
+    rows = ProjectSampleReader(project).samples("Nivel", now - 60, now)
+    assert [row["numeric"] for row in rows] == [1.0]
+
+
+def test_connection_cycle_is_measured_and_shown(faked):
+    adapter, runtime = faked({})
+    runtime.start()
+    try:
+        connection = runtime.project.connections[0]["id"]
+        wait_for(lambda: runtime.diagnostics().get(connection, {}).get("cycle_ms") is not None)
+        values = runtime.diagnostics()[connection]
+        assert values["connected"] and values["poll_ms"] == 50 and values["requests"] >= 1
+        assert "ciclo" in runtime.cycle_text(connection)
+    finally:
+        runtime.stop()

@@ -89,6 +89,14 @@ class RuntimeWindow(QMainWindow):
         if len(languages(self.project)) > 1:
             self.statusBar().addPermanentWidget(self.language_selector)
         self.session_label = self.session_button = None
+        # Main window: communications and alarms at a glance, always visible.
+        self.comms_label = self.alarms_label = None
+        if not owner:
+            self.alarms_label = QLabel(); self.alarms_label.setObjectName("alarmBand")
+            self.comms_label = QLabel(); self.comms_label.setObjectName("commsState")
+            self.statusBar().addPermanentWidget(self.alarms_label)
+            self.statusBar().addPermanentWidget(self.comms_label)
+            self.next_band = 0.0
         if not owner and self.runtime.security.enabled:
             from PySide6.QtWidgets import QPushButton
             self.session_label = QLabel(); self.session_label.setObjectName("session_label")
@@ -391,10 +399,37 @@ class RuntimeWindow(QMainWindow):
             for item in host.animated:
                 item.update()
 
+    def update_band(self):
+        """Alarm counters and the state of each connection, once a second."""
+        if self.comms_label is None or time.monotonic() < self.next_band:
+            return
+        self.next_band = time.monotonic() + 1
+        operations = self.runtime.operations
+        if operations is not None and self.project.alarms.get("items"):
+            summary = operations.alarm_summary
+            self.alarms_label.setText(tr("Alarmas: {active} activas · {unacknowledged} sin reconocer", active=summary["active"], unacknowledged=summary["unacknowledged"]))
+            self.alarms_label.setStyleSheet("color: #c0392b; font-weight: bold;" if summary["unacknowledged"] else "")
+            self.alarms_label.show()
+        else:
+            self.alarms_label.hide()
+        connections = self.project.connections
+        if not connections:
+            self.comms_label.hide()
+            return
+        statuses, diagnostics = self.runtime.status(), self.runtime.diagnostics()
+        good = [c["id"] for c in connections if diagnostics.get(c["id"], {}).get("connected")]
+        self.comms_label.setText(tr("Comunicaciones: {good} de {total}", good=len(good), total=len(connections)))
+        self.comms_label.setStyleSheet("" if len(good) == len(connections) else "color: #c0392b; font-weight: bold;")
+        self.comms_label.setToolTip("\n".join(
+            f"{c['id']}: {statuses.get(c['id'], tr('Conectando…'))}" + (f" · {self.runtime.cycle_text(c['id'])}" if self.runtime.cycle_text(c['id']) else "")
+            for c in connections))
+        self.comms_label.show()
+
     def refresh(self):
         self.refresh_view()
         for popup in list(self.popups.values()):
             popup.refresh_view()
+        self.update_band()
         if not self.owner:
             for result in self.runtime.scripts.diagnostics():
                 if result['time'] <= self.last_script_log:

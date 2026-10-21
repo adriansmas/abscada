@@ -150,7 +150,11 @@ def _apply(project, renames):
                 updated[leaf] = binding
             variable["bindings"] = updated
     if renames:
-        project.historian.setdefault("renames", []).extend(dict(old=old, new=new) for old, new in renames)
+        # The time of the rename: what is recorded later under the old name (a new variable
+        # that takes it) belongs to that variable, not to the renamed one.
+        import time
+        at = time.time()
+        project.historian.setdefault("renames", []).extend(dict(old=old, new=new, at=at) for old, new in renames)
 
 
 def check_name(project, name, current=None):
@@ -244,19 +248,28 @@ def rename_field(project, type_name, old, new):
 
 def former_names(project, path):
     """Names ``path`` had before, newest first, so its archived history is still found."""
-    names, current = [], path
+    return [name for name, _ in former_periods(project, path)]
+
+
+def former_periods(project, path):
+    """``[(former name, until)]``: the samples of each former name recorded before ``until``
+    (the time of the rename; infinite for renames recorded without it) belong to ``path``."""
+    periods, current, until = [], path, float("inf")
     for entry in reversed(project.historian.get("renames", [])):
         if inside(current, entry["new"]):
             current = moved(current, entry["new"], entry["old"])
-            if current not in names and current != path:
-                names.append(current)
-    return names
+            until = min(until, entry.get("at", float("inf")))
+            if current != path and current not in [name for name, _ in periods]:
+                periods.append((current, until))
+    return periods
 
 
 def validate(project):
     renames = project.historian.get("renames", [])
-    if not isinstance(renames, list) or any(not isinstance(e, dict) or set(e) != {"old", "new"}
-                                            or not all(isinstance(e[k], str) and e[k] for k in e) for e in renames):
+    if not isinstance(renames, list) or any(not isinstance(e, dict) or not {"old", "new"} <= set(e) <= {"old", "new", "at"}
+                                            or not all(isinstance(e[k], str) and e[k] for k in ("old", "new"))
+                                            or isinstance(e.get("at", 0), bool) or not isinstance(e.get("at", 0), (int, float))
+                                            for e in renames):
         raise ValueError(tr("historian.renames debe ser una lista de pares old/new"))
 
 

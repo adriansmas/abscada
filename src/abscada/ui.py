@@ -1798,6 +1798,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             else:
                 source=next((r for r in live.project.connections if r['id']==c['id']),None)
                 text=statuses.get(c['id'],tr('No incluida en esta ejecución'))
+                cycle=live.runtime.cycle_text(c['id'])
+                if cycle:text+=' · '+cycle
                 if source is not None and source!=c:text=tr('Configuración distinta · ')+text
             self.connections_table.setItem(row,5,QTableWidgetItem(text))
 

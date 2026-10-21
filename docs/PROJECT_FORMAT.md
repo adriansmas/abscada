@@ -290,7 +290,7 @@ Un botón navega en una zona con `"action": "screen", "screen": "historico", "ta
 ```
 
 - `alarms.json`: arriba. `condition` es `true` o `false` para bool, `high`, `low`, `equal` o `not_equal` para números, y `bad_quality` (sin datos válidos) para cualquier tipo simple; prioridad hasta 1000.
-- `historian.json`: `retention_days` y `files`, cada uno con `id`, `name`, `interval_ms` y `variables`. Una variable solo puede estar en un fichero. `renames` (opcional) lista en orden los renombrados `{"old": "B1", "new": "Bomba1"}` que hace el Studio, para leer con el nombre nuevo lo grabado con el antiguo; vale para la variable y todo lo que contiene. Los ID tienen 1–64 caracteres ASCII (letras, números, `_`, `-`).
+- `historian.json`: `retention_days` y `files`, cada uno con `id`, `name`, `interval_ms` y `variables`. Una variable solo puede estar en un fichero. `renames` (opcional) lista en orden los renombrados `{"old": "B1", "new": "Bomba1", "at": 1761040000.0}` que hace el Studio, para leer con el nombre nuevo lo grabado con el antiguo; vale para la variable y todo lo que contiene. `at` (segundos Unix del renombrado; los antiguos no lo tienen) limita lo que se lee del nombre antiguo a lo grabado antes: una variable nueva que reutilice ese nombre no se mezcla en la tendencia de la renombrada. Los ID tienen 1–64 caracteres ASCII (letras, números, `_`, `-`).
 - `trends.json`: visores con `title`, `window_seconds`, `axes` (`id`, `title`, `side`, `auto`, `min`, `max`, `visible`) y `curves` (`id`, `tag`, `axis`, `color`, `width`, `visible`).
 - `alarm_views.json`: visores con `title`, `categories`, `min_priority`, `mode`, `allow_ack` y `columns`.
 

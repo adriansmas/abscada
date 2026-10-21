@@ -6,11 +6,17 @@ Cómo se comporta Runtime: mandos, alarmas, registro, tendencias y almacenamient
 
 La ventana principal, sus contenedores y las emergentes comparten comunicaciones, idioma, sesión, alarmas y registros. Runtime solo añade controles comunes de sesión, idioma y diagnóstico; la navegación de proceso la hacen los botones de las pantallas.
 
+La barra inferior de la ventana principal muestra siempre las alarmas activas y sin reconocer (en rojo si hay alguna sin reconocer) y cuántas conexiones están comunicando; su ayuda emergente da el estado de cada conexión con su ciclo real frente al configurado, las peticiones por ciclo, las variables con error y las reconexiones. Lo mismo aparece en Studio, pestaña Conexiones, mientras Runtime está abierto, y cada cinco minutos en el registro del programa.
+
+Las pantallas se redibujan solo donde cambia algo: un valor que no cambia no consume procesador. El periodo de refresco (100 ms por defecto) se ajusta en **Ajustes del proyecto → Operación → Refresco de pantalla**; en puestos lentos, 250 ms.
+
 Con usuarios y roles activados, hay que iniciar sesión para dar órdenes, cambiar consignas, ejecutar scripts de botón y reconocer alarmas, y cada acción queda a nombre del usuario. Sin seguridad, el nombre de operador es texto libre y no acredita identidad.
 
 ## Órdenes
 
-Una escritura comprueba tipo, permiso y calidad, y entra en la cola de su conexión. Que se envíe no confirma el estado físico: el valor se actualiza con la siguiente lectura. Las órdenes que no se pudieron enviar se descartan y no se repiten al reconectar.
+Una escritura comprueba tipo y permiso, y entra en la cola de su conexión; se rechaza si la conexión no está comunicando o si la dirección de esa variable da error. Las órdenes se atienden entre una petición de lectura y la siguiente, y lo escrito se vuelve a leer enseguida, sin esperar al ciclo completo. Que se envíe no confirma el estado físico: el valor se actualiza con esa lectura. Las órdenes que no se pudieron enviar se descartan y no se repiten al reconectar.
+
+**Errores de una variable.** Un valor imposible (NaN, un REAL sin inicializar, un BOOL que vale 2) o una dirección que el equipo rechaza (excepción Modbus, símbolo ADS inexistente, nodo OPC UA con calidad mala, DB S7 que no existe) marca **solo esa variable** con calidad mala y el motivo; el resto de la conexión sigue leyéndose. Los valores OPC UA `Uncertain` se muestran con su valor y calidad incierta. Una conexión que cae se reintenta a los 2, 4, 8, 16 y luego cada 30 s, y un esclavo Modbus RTU que no responde se deja de preguntar durante 1, 2… 30 s para no retrasar al resto del bus.
 
 Los pulsadores momentáneos y press/release envían la liberación al soltar, perder el foco, navegar, cerrar o deshabilitarse el control, y la mala calidad cancela el gesto. Al cerrar se esperan hasta 2 s las liberaciones pendientes. Una caída de red o de alimentación puede impedir la liberación: **el PLC debe implementar el tiempo máximo y los permisos de esas órdenes**.
 
@@ -45,7 +51,7 @@ Cada fichero de registro tiene su propio ciclo y guarda en cada uno todas sus va
 
 ## Tendencias
 
-- **Tiempo real** toma muestras cada 200 ms y guarda en memoria hasta 50000 por variable. Ese búfer se pierde al cambiar de pantalla.
+- **Tiempo real** guarda en memoria un punto por cada cambio de valor o calidad (hasta 50000 por variable) y se redibuja como mucho dos veces por segundo. Ese búfer se pierde al cambiar de pantalla.
 - **Histórico** consulta los SQLite de los días elegidos.
 
 **Seguir** desplaza la ventana de tiempo; desactivado, permite elegir inicio y fin. El cursor muestra la muestra más cercana de cada curva con su calidad. La calidad mala corta la curva y las variables bool se dibujan escalonadas.
@@ -64,9 +70,9 @@ runtime/
 ```
 
 - Solo se crean archivos para días con muestras. Las consultas recorren los días necesarios e incluyen los registros retirados: quitar una variable de un registro no borra su pasado.
-- SQLite en modo WAL con `synchronous FULL`; los lotes se confirman cada 200 ms y el ACK antes de responder al operador. Una caída abrupta puede perder el último lote.
+- SQLite en modo WAL con `synchronous NORMAL`: protege el archivo frente a la corrupción; un corte de alimentación puede perder los últimos lotes (se confirman cada 200 ms). El ACK se confirma antes de responder al operador.
 - Un único escritor por proyecto: un bloqueo de archivo impide arrancar dos Runtime sobre la misma carpeta.
-- Cola llena, error SQLite o disco lleno aparecen en la barra de estado. Tras un fallo de archivo, corrige la causa y reinicia Runtime.
+- Si el disco no da abasto y la cola se llena, el archivo no se detiene: se guarda el último valor de cada variable, se pierden los intermedios, se avisa en la barra de estado y queda anotado en la auditoría (`archive_overflow`). Un ACK que falla devuelve el error al operador y el archivo sigue. Un error SQLite que detiene el archivo o el disco lleno aparecen en la barra de estado: corrige la causa y reinicia Runtime.
 - La retención se aplica al arrancar y cada hora: borra los días caducados y las ocurrencias cerradas antiguas, nunca las activas o pendientes de ACK. Borrar datos no reduce el tamaño del archivo; no ejecutes VACUUM durante la adquisición.
 - Usa almacenamiento local. Para copiar en caliente, usa **Herramientas → Copia de seguridad de los registros**: copiar solo el `.sqlite3` puede perder lo que aún está en el WAL.
 

@@ -38,7 +38,7 @@ def sections(project):
 
 def template_icon(project, name):
     """Preview of an object: its SVG symbol when it has one."""
-    from .graphics import svg_renderer, tool_icon
+    from .graphics import svg_renderer, tool_icon, _version
     document = project.faceplates.get(name) or {}
     image = next((e for e in document.get("elements", []) if e.get("kind") == "image" and e.get("source")), None)
     if image is None:
@@ -47,7 +47,9 @@ def template_icon(project, name):
         path = project.asset(image["source"])
     except ValueError:
         return tool_icon("faceplate")
-    if path not in _ICONS:
+    # By file and modification time: an edited symbol shows its new look.
+    key = _version(path) or (str(path), None)
+    if key not in _ICONS:
         renderer = svg_renderer(path) if path.suffix.lower() == ".svg" else None
         pixmap = QPixmap(40, 40); pixmap.fill(QColor(0, 0, 0, 0))
         painter = QPainter(pixmap); painter.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -62,8 +64,8 @@ def template_icon(project, name):
                 painter.drawPixmap(2, 2, source.scaled(36, 36, Qt.AspectRatioMode.KeepAspectRatio,
                                                        Qt.TransformationMode.SmoothTransformation))
         painter.end()
-        _ICONS[path] = QIcon(pixmap)
-    return _ICONS[path]
+        _ICONS[key] = QIcon(pixmap)
+    return _ICONS[key]
 
 
 def fill(project, parent, add, folder_icon, include_empty_folders=True):

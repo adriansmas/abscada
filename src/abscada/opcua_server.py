@@ -126,13 +126,13 @@ class OpcUaServer:
         async with server:
             self.runtime.audit("opcua_server_start", endpoint(self.config))
             self.ready.set()
-            published = {}
+            revision = None
             while not self.stopping.is_set():
-                for name, sample in self.runtime.snapshot().items():
-                    if published.get(name) is sample or name not in self.nodes:
-                        continue
-                    published[name] = sample
-                    await server.write_attribute_value(self.nodes[name], self._data_value(ua, name, sample))
+                # Only the variables that changed since the last pass (all of them the first time).
+                revision, changed = self.runtime.changes(revision)
+                for name in self.nodes if changed is None else changed:
+                    if name in self.nodes:
+                        await server.write_attribute_value(self.nodes[name], self._data_value(ua, name, self.runtime.sample(name)))
                 try:
                     await asyncio.wait_for(self.stopping.wait(), UPDATE_SECONDS)
                 except asyncio.TimeoutError:
@@ -206,7 +206,8 @@ class OpcUaServer:
                 self.runtime.audit("write_denied", str(item.NodeId), session, "opcua: nodo no escribible")
                 return False
             requests.append((tag, item.Value.Value.Value))
-        # Check every item before sending any, so a request is applied entirely or not at all.
+        # Check every item before sending any, so a request is applied entirely or not at all:
+        # also that each connection takes orders now (running, with room in its queue).
         from .project import coerce
         try:
             for tag, value in requests:
@@ -215,6 +216,8 @@ class OpcUaServer:
                 coerce(value, self.runtime.tags[tag]["type"])
                 if not self.runtime.security.permits(session, "operate"):
                     raise PermissionError(tr("sin permiso de mando"))
+                if not self.runtime.accepts_writes(tag):
+                    raise ValueError(tr("{tag}: la conexión no acepta órdenes ahora", tag=tag))
         except (ValueError, PermissionError) as exc:
             self.runtime.audit("write_denied", requests[0][0] if requests else "", session, f"opcua: {exc}")
             return False
