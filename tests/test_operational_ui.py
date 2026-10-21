@@ -230,3 +230,19 @@ def test_alarm_table_keeps_a_multiple_selection(operational_project):
         assert len({i.row() for i in viewer.table.selectedIndexes()}) == 3
     finally:
         viewer.close()
+
+
+def test_alarm_priorities_sort_as_numbers(operational_project):
+    repo = Repository(database_path(operational_project))
+    for priority in (700, 250, 1000):
+        repo.enter(dict(operational_project.alarms["items"][0], id=f"p{priority}", priority=priority), 90, time.time())
+    repo.connection.commit(); repo.close()
+    QApplication.instance() or QApplication([])
+    viewer = AlarmViewer(operational_project)
+    viewer.resize(1100, 500); viewer.show()
+    try:
+        pump_until(lambda: viewer.table.rowCount() == 3)
+        viewer.table.sortItems(0, Qt.SortOrder.DescendingOrder)
+        assert [viewer.table.item(row, 0).text() for row in range(3)] == ["1000", "700", "250"]
+    finally:
+        viewer.close()

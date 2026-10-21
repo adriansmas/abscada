@@ -117,3 +117,18 @@ def test_studio_dialog_requires_an_administrator_before_enabling(operational_stu
     assert (window.project.root / "security.json").exists()
     window.undo()
     assert not window.project.security["enabled"]
+
+
+def test_any_click_in_runtime_keeps_the_session_alive(operational_studio):
+    from PySide6.QtCore import QPointF, Qt
+    from PySide6.QtTest import QTest
+    window = operational_studio
+    secure(window, session_timeout_minutes=1)
+    window.start_runtime()
+    root = window.runtime_window
+    root.runtime.login("ana", "operar-la-planta")
+    root.runtime.session.last_activity -= 50
+    # A click on an empty part of the screen: no order, but the operator is there.
+    QTest.mouseClick(root.view.viewport(), Qt.MouseButton.LeftButton, pos=root.view.mapFromScene(QPointF(600, 500)))
+    assert not root.runtime.security.expired(root.runtime.session, root.runtime.session.last_activity + 30)
+    assert root.runtime.session.last_activity > __import__("time").monotonic() - 5

@@ -150,6 +150,9 @@ class RuntimeWindow(QMainWindow):
     def start(self):
         if not self.owner:
             self.runtime.start()
+            if self.runtime.security.enabled:
+                from PySide6.QtWidgets import QApplication
+                QApplication.instance().installEventFilter(self)
         self.running = True
         # One clock for the whole station: the main window refreshes its pop-ups too.
         if not self.owner:
@@ -503,6 +506,17 @@ class RuntimeWindow(QMainWindow):
             self.release_momentaries()
         return super().event(event)
 
+    ACTIVITY = (QEvent.Type.MouseButtonPress, QEvent.Type.KeyPress, QEvent.Type.Wheel, QEvent.Type.TouchBegin)
+
+    def eventFilter(self, watched, event):
+        """Any click, key or wheel in a window of this Runtime keeps the operator session
+        alive: an operator who only navigates or reads is not logged out for inactivity."""
+        if event.type() in self.ACTIVITY and self.runtime.session is not None:
+            window = watched.window() if hasattr(watched, "window") and callable(watched.window) else None
+            if window is self or window in self.popups.values():
+                self.runtime.security.touch(self.runtime.session)
+        return False
+
     def actuate(self, element, entry=False, source=None, phase=None, editor=None, text=None):
         """``entry``: an input box. With ``editor`` (the item) the value is typed in place and comes back in
         ``text``; without it a dialog asks for the value."""
@@ -657,6 +671,9 @@ class RuntimeWindow(QMainWindow):
             self.save_geometry()
             self.running = False
             self.timer.stop()
+            if not self.owner:
+                from PySide6.QtWidgets import QApplication
+                QApplication.instance().removeEventFilter(self)
             # Embedded viewers live in proxies: they are not child widgets of the window.
             for host in [self] + list(self.containers.values()):
                 for item in host.items_shown:

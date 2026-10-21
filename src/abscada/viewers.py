@@ -52,6 +52,15 @@ def csv_export(parent, rows, columns, filename):
         QMessageBox.warning(parent, tr("Exportación"), str(exc))
 
 
+class NumericItem(QTableWidgetItem):
+    """Sorted by number: priority 1000 goes above 700, not below it as text."""
+    def __lt__(self, other):
+        try:
+            return float(self.data(Qt.ItemDataRole.DisplayRole)) < float(other.data(Qt.ItemDataRole.DisplayRole))
+        except (TypeError, ValueError):
+            return super().__lt__(other)
+
+
 @runtime_ui
 class AlarmViewer(QWidget):
     def __init__(self, project, runtime=None, config=None):
@@ -234,7 +243,7 @@ class AlarmViewer(QWidget):
             if event:
                 texts[5] = stamp(alarm["timestamp"])
             for column, text in enumerate(texts):
-                item = QTableWidgetItem(str(text))
+                item = NumericItem(str(text)) if column == 0 else QTableWidgetItem(str(text))
                 item.setData(Qt.ItemDataRole.UserRole, alarm["id"])
                 if column == 0:
                     item.setData(Qt.ItemDataRole.DisplayRole, alarm["priority"])

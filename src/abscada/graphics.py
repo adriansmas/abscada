@@ -580,13 +580,10 @@ class ElementItem(QGraphicsObject):
         else:
             self.setCursor(Qt.CursorShape.PointingHandCursor if element["kind"] in {"button", "input"} else Qt.CursorShape.ArrowCursor)
             if element["kind"] == "screen_container":
+                # Its screen is drawn as children of this item, clipped to it.
                 self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemClipsChildrenToShape, True)
                 from .screen_container import ScreenContainer
-                self.proxy = QGraphicsProxyWidget(self)
-                widget = ScreenContainer(host, element)
-                host.containers[element['id']] = widget
-                self.proxy.setWidget(widget)
-                self.proxy.resize(element['w'], element['h'])
+                host.containers[element['id']] = ScreenContainer(host, element, self)
             if element["kind"] in {"trend", "alarm_view"} and not getattr(host,"preview_mode",False):
                 from .viewers import TrendViewer, AlarmViewer
                 self.proxy = QGraphicsProxyWidget(self)

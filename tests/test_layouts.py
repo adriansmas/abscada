@@ -29,8 +29,9 @@ def test_layout_navigation_preserves_header_and_shares_runtime(operational_studi
     assert set(root.containers)=={'header','content'}
     header=root.containers['header']; content=root.containers['content']
     QApplication.processEvents()
-    QTest.mouseClick(header.view.viewport(),Qt.MouseButton.LeftButton,
-                     pos=header.view.mapFromScene(QPointF(100,45)))
+    # The header screen is drawn in the window's own scene, inside its container.
+    QTest.mouseClick(root.view.viewport(),Qt.MouseButton.LeftButton,
+                     pos=root.view.mapFromScene(header.map_to_scene(QPointF(100,45))))
     pump_until(lambda: content.document_name=='detail')
     assert root.document_name=='layout' and root.containers['header'] is header
     assert content.runtime is root.runtime is header.runtime

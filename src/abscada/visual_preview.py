@@ -45,9 +45,8 @@ class VisualPreview(QMainWindow):
                 name=self.tag.currentText()
                 if name not in tags:raise ValueError(tr('Variable inexistente'))
                 self.samples[name]=Sample(self.value.value(),self.quality.currentData(),time.time())
-                for scene in [self.scene]+[c.scene for c in self.containers.values()]:
-                    for item in scene.items():
-                        if isinstance(item,ElementItem):item.refresh_state()
+                for item in [i for i in self.scene.items() if isinstance(i,ElementItem)]:
+                    item.refresh_state()
                 self.feedback.setText(tr('Estado aplicado a la previsualización'))
             except ValueError as exc:self.feedback.setText(str(exc))
         apply.clicked.connect(change);self.apply_state=change
@@ -56,9 +55,9 @@ class VisualPreview(QMainWindow):
         self.animation=QTimer(self);self.animation.timeout.connect(self.animate);self.animation.start(100)
 
     def animate(self):
-        for scene in [self.scene]+[c.scene for c in self.containers.values()]:
-            for item in scene.items():
-                if isinstance(item,ElementItem) and animated(item.element):item.update()
+        # Containers draw their screens in this same scene.
+        for item in self.scene.items():
+            if isinstance(item,ElementItem) and animated(item.element):item.update()
 
     def render_scene(self):
         self.document_name=self.screen.currentText();self.containers.clear();self.scene.clear();doc=self.project.screens[self.document_name]
