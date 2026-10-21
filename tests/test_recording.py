@@ -164,6 +164,7 @@ def test_variable_table_assigns_moves_and_unsets_recording_with_undo(operational
     window = operational_studio
     window.navigate("variables")
     item = next(window.table.topLevelItem(i) for i in range(window.table.topLevelItemCount()) if window.table.topLevelItem(i).text(0) == "Level")
+    window.table.setCurrentItem(item)   # the row's lists appear on the current row
     combo = window.table.itemWidget(item, 7)
     assert isinstance(combo, QComboBox)
     combo.setCurrentIndex(combo.findData(""))

@@ -104,6 +104,19 @@ def usages(project, path):
     return [(where, container[key]) for where, container, key in slots(project) if mentions(container[key], path)]
 
 
+def used_paths(project, paths):
+    """The ``paths`` used somewhere (as in ``usages``), looking at every place only once."""
+    reached = set()
+    for _, container, key in slots(project):
+        value = container[key]
+        for candidate in [value] + structures.index_tags(value):
+            try:
+                reached.update(path for _, path in structures.segments(candidate))
+            except (ValueError, TypeError):
+                reached.add(candidate)
+    return [path for path in paths if path in reached]
+
+
 def scripts_mentioning(project, path):
     """Scripts whose code quotes ``path`` or a path inside it; they need a review."""
     pattern = _quoted(path)

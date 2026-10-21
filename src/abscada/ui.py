@@ -16,6 +16,8 @@ from PySide6.QtWidgets import (
 )
 from .project import PRIMITIVES
 from .numbered_rows import NUMBER_ROLE
+# Which widgets the current row of the variable list gets (see show_row_widgets).
+ROW_WIDGETS_ROLE = Qt.ItemDataRole.UserRole + 7
 from .variable_forms import NEW_ROW, FOLDER_ROW
 from .connectors import REGISTRY, definition, binding_summary
 from .protocol_editor import ProtocolForm
@@ -127,6 +129,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.runtime_window = None
         self.samples = {}
         self.dirty = False
+        self.saved_project = copy.deepcopy(project)   # what is on disk, for undo back to it
         self.document_kind = "screens"
         self.document_name = project.manifest["startup_screen"]
         self.undo_stack, self.redo_stack = [], []
@@ -710,7 +713,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.filter.setToolTip(tr("Muestra solo las variables cuyo nombre, tipo, conexión o dirección contienen este texto"))
         self.filter.setClearButtonEnabled(True)
         self.filter.setFixedWidth(300)
-        self.filter.textChanged.connect(self.refresh_variables)
+        self.filter.textChanged.connect(self.filter_variables_later)
         tools.addWidget(self.filter)
         layout.addLayout(tools)
         self.filter_notice = QLabel(); self.filter_notice.setObjectName("filterNotice"); self.filter_notice.hide()
@@ -723,6 +726,8 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.table.setIndentation(18)
         self.table.setUniformRowHeights(True)
         self.table.setSelectionMode(QTreeWidget.SelectionMode.SingleSelection)
+        # Measured from the visible rows only: a long list stays fast to fill.
+        self.table.header().setResizeContentsPrecision(30)
         self.table.header().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table.header().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         self.table.header().setStretchLastSection(False)
@@ -735,6 +740,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.table.customContextMenuRequested.connect(lambda pos: self.variable_menu(self.table.itemAt(pos), self.table.viewport().mapToGlobal(pos)))
         self.table.itemDoubleClicked.connect(self.edit_variable_form)
+        self.table.currentItemChanged.connect(self.show_row_widgets)
         self.pending_variable_index = None   # where the row being typed will be inserted; None = at the end
         self.pending_variable_folder = ""     # folder of the variable being typed
         self.focus_new_variable = False
@@ -974,6 +980,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.image_group.setVisible(e["kind"] == "image")
         self.image_label.setText(e.get("source", tr("Sin archivo")))
         self.binding_group.setVisible(e["kind"] == "faceplate")
+        focused = self.focused_parameter(getattr(self, "binding_fields", {}))
         while self.binding_form.count():
             entry = self.binding_form.takeAt(0)
             if entry.widget():
@@ -987,7 +994,20 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 combo.lineEdit().editingFinished.connect(self.auto_apply)
                 self.binding_fields[parameter] = combo
                 self.binding_form.addRow(parameter, combo)
+            self.restore_parameter_focus(self.binding_fields, focused)
         self._syncing = False
+
+    @staticmethod
+    def focused_parameter(fields):
+        """The parameter whose list has the keyboard focus (Tab may have just moved to it)."""
+        return next((name for name, combo in fields.items()
+                     if combo.hasFocus() or (combo.lineEdit() is not None and combo.lineEdit().hasFocus())), None)
+
+    @staticmethod
+    def restore_parameter_focus(fields, parameter):
+        # The lists are rebuilt after each change; the focus stays on the same parameter.
+        if parameter in fields:
+            fields[parameter].setFocus()
 
     def document_references(self):
         """``$`` references of the object being edited, with their kinds; none on a screen."""
@@ -1007,7 +1027,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         from .structures import compatible, composite_paths
         types = self.project.types
         if kind in PRIMITIVES:
-            needs_write = parameter_writable(self.project.faceplates[template], parameter)
+            needs_write = parameter_writable(self.project.faceplates[template], parameter, self.project.faceplates)
             options = [name for name, tag in self.project.tags().items()
                        if tag["type"] == kind and (not needs_write or tag.get("writable"))]
         else:
@@ -1025,6 +1045,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.popup_template_field.addItems(list(self.project.faceplates))
         self.popup_template_field.setCurrentText(e.get("template", ""))
         self.popup_title_field.set_value(e.get("title", ""))
+        focused = self.focused_parameter(getattr(self, "popup_binding_fields", {}))
         while self.popup_binding_form.count():
             entry = self.popup_binding_form.takeAt(0)
             if entry.widget():
@@ -1040,6 +1061,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             combo.lineEdit().editingFinished.connect(self.auto_apply)
             self.popup_binding_fields[parameter] = combo
             self.popup_binding_form.addRow(parameter, combo)
+        self.restore_parameter_focus(self.popup_binding_fields, focused)
 
     def edit_popup_variants(self):
         selected = self.scene.selectedItems()
@@ -1281,6 +1303,13 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         if hasattr(self, "unsaved_label"):
             self.unsaved_label.setVisible(value)
 
+    def mark_saved(self):
+        """The project equals the saved files: no asterisk, no question when closing."""
+        self.saved_project = copy.deepcopy(self.project)
+        self.dirty = False
+        self.update_runtime_difference()
+        self.setWindowTitle("abSCADA Studio · " + self.project.manifest["name"])
+
     def mark_dirty(self):
         self.dirty = True
         self.update_runtime_difference()
@@ -1309,13 +1338,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             selected_ids = [item.element["id"] for item in self.scene.selectedItems()]
         try:
             callback()
-            self.project.validate()
+            changed = self.changed_fields(previous)
+            self.check_project(previous, changed)
             self.record_history(previous)
             self.mark_dirty()
-            self.refresh_variables()
-            self.refresh_catalogs()
-            self.populate_navigation()
-            self.render_scene(selected_ids)
+            self.refresh_changed(previous, selected_ids, changed)
             return True
         except Exception as exc:
             self.project = previous
@@ -1323,16 +1350,60 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             self.render_scene(selected_ids)
             return False
 
+    # What each Studio view shows, besides the drawing of the open document.
+    VARIABLE_VIEWS = {"variables", "types", "connections", "historian"}
+    CATALOG_VIEWS = {"variables", "types", "connections", "alarms", "historian", "trends", "alarm_views", "scripts",
+                     "automation", "manifest", "security", "opcua_server", "libraries"}
+
+    @staticmethod
+    def navigation_signature(project):
+        """Everything the project tree shows: names, folders, layouts, start screen, libraries."""
+        from .screen_tree import is_layout
+        screens = [(name, document.get("folder", ""), is_layout(document)) for name, document in project.screens.items()]
+        faceplates = [(name, {key: value for key, value in document.items() if key != "elements"})
+                      for name, document in project.faceplates.items()]
+        return screens, faceplates, project.manifest, project.libraries
+
+    def changed_fields(self, previous):
+        return {name for name in self.project.__dataclass_fields__ if getattr(previous, name) != getattr(self.project, name)}
+
+    def check_project(self, previous, changed):
+        """Validate after a change. A change inside the open screen and nowhere else checks
+        that screen only; anything else checks the whole project (as saving does)."""
+        if (changed == {"screens"} and self.document_kind == "screens" and previous.screens.keys() == self.project.screens.keys()
+                and [n for n in self.project.screens if previous.screens[n] != self.project.screens[n]] == [self.document_name]):
+            self.project.validate_screen(self.document_name)
+        else:
+            self.project.validate()
+
+    def refresh_changed(self, previous, selected_ids=(), changed=None):
+        """Rebuild only the views whose data changed: moving an element redraws the canvas,
+        not the variable tree, the catalogs and the project tree."""
+        if changed is None:
+            changed = self.changed_fields(previous)
+        if changed & self.VARIABLE_VIEWS:
+            self.refresh_variables()
+        if changed & self.CATALOG_VIEWS:
+            self.refresh_catalogs()
+        if changed & {"screens", "faceplates", "manifest", "libraries"} and \
+                self.navigation_signature(previous) != self.navigation_signature(self.project):
+            self.populate_navigation()
+        self.render_scene(selected_ids)
+
     def begin_interaction(self):
         self.flush_nudge()
         self._interaction_backup = copy.deepcopy(self.project)
 
     def end_interaction(self):
         previous, self._interaction_backup = self._interaction_backup, None
-        if previous and previous != self.project:
-            self.project.validate()
+        changed = self.changed_fields(previous) if previous else set()
+        if changed:
+            self.check_project(previous, changed)
             self.record_history(previous)
             self.mark_dirty()
+            if changed - {"screens", "faceplates"}:
+                self.refresh_changed(previous, [item.element["id"] for item in self.scene.selectedItems()], changed)
+                return
         self.show_properties()
 
     def edit_graphic_document(self):
@@ -1401,7 +1472,10 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 if hasattr(current_project,key): setattr(self.project,key,getattr(current_project,key))
             if self.document_name not in getattr(self.project, self.document_kind):
                 self.document_kind, self.document_name = "screens", self.project.manifest["startup_screen"]
-            self.mark_dirty()
+            if self.project == getattr(self, "saved_project", None):
+                self.mark_saved()
+            else:
+                self.mark_dirty()
             self.populate_navigation()
             self.refresh_variables()
             self.refresh_catalogs()
@@ -1547,9 +1621,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 visit(item.child(i))
         for i in range(self.table.topLevelItemCount()):
             visit(self.table.topLevelItem(i))
+        self.row_widgets_item = None
         self.table.clear()
         tags = self.project.tags()
-        from .structures import segments, path_kind, split_kind
+        from . import recording
+        from .structures import segments, path_kind, split_kind, root as root_of
         from .screen_tree import folders as folder_paths, parent_folder
         from .variable_forms import FOLDER_ROW
         roots = {v["name"]: v["type"] for v in self.project.variables}
@@ -1581,12 +1657,15 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
             container = folder_item(source.get("folder", ""))
             (container.addChild if container else self.table.addTopLevelItem)(item)
         shown = 0
+        # Leaves of each variable, in one pass over all of them.
+        leaves = {}
+        for name, tag in tags.items():
+            leaves.setdefault(root_of(name), []).append((name, tag))
+        file_names = {file["id"]: file["name"] for file in recording.files(self.project)}
         for source_index, source in enumerate(self.project.variables):
             root_name = source["name"]
             matching = []
-            for name, tag in tags.items():
-                if name != root_name and not name.startswith((root_name + ".", root_name + "[")):
-                    continue
+            for name, tag in leaves.get(root_name, []):
                 binding = tag.get("binding", {})
                 searchable = f"{name} {source['type']} {tag['type']} {tag['initial']} {binding.get('connection', '')} {binding.get('address', '')}"
                 if query in searchable.casefold():
@@ -1603,8 +1682,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                 add_top(root, source)
                 root.setExpanded(bool(query) or root_name in expanded)
                 groups[root_name] = root
-                self.table.setItemWidget(root, 6, button(tr("Campos"), lambda checked=False, item=root: item.setExpanded(not item.isExpanded())))
-                self.table.setItemWidget(root, 1, self.variable_type_combo(root_name, source["type"]))
+                root.setData(1, ROW_WIDGETS_ROLE, ("structure", root_name, source["type"]))
                 if selected_name == root_name:
                     self.table.setCurrentItem(root)
             for name, tag in matching:
@@ -1625,7 +1703,7 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                             group.setExpanded(bool(query) or path in expanded)
                             groups[path] = group
                         parent = groups[path]
-                item = QTreeWidgetItem([levels[-1][0] if structured else name, tag["type"], str(tag["initial"]), tr("Lectura / escritura") if tag.get("writable") else tr("Solo lectura"), binding.get("connection", "Local"), binding_summary(binding, self.project.connections, tag["type"])])
+                item = QTreeWidgetItem([levels[-1][0] if structured else name, tag["type"], str(tag["initial"]), tr("Lectura / escritura") if tag.get("writable") else tr("Solo lectura"), binding.get("connection", tr("Local")), binding_summary(binding, self.project.connections, tag["type"])])
                 item.setData(0, role, name)
                 item.setData(0, NUMBER_ROLE, (parent.childCount() if parent else source_index) + 1)
                 item.setSizeHint(0, QSize(0, 38))
@@ -1635,17 +1713,11 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
                     parent.addChild(item)
                 else:
                     add_top(item, source)
-                    self.table.setItemWidget(item, 1, self.variable_type_combo(name, source["type"]))
-                self.table.setItemWidget(item, 6, button(tr("Enlace…"), lambda checked=False, n=name: self.tag_form(n)))
-                from . import recording
-                record = QComboBox()
-                record.addItem(tr("Ninguno"), "")
-                for file in recording.files(self.project):
-                    record.addItem(file["name"], file["id"])
-                record.setCurrentIndex(max(0, record.findData(recording.assignment(self.project, name))))
-                record.currentIndexChanged.connect(lambda index, n=name, combo=record:
-                    self.mutate(lambda: recording.assign(self.project, n, combo.currentData())))
-                self.table.setItemWidget(item, 7, record)
+                # The buttons and lists of a row exist only while it is the current row:
+                # thousands of widgets made the list slow to build. The others show text.
+                item.setData(1, ROW_WIDGETS_ROLE, ("leaf", name, None if parent else source["type"]))
+                item.setText(6, tr("Enlace…"))
+                item.setText(7, file_names.get(recording.assignment(self.project, name), tr("Ninguno")))
                 if name == selected_name:
                     self.table.setCurrentItem(item)
         total = len(self.project.variables)
@@ -1653,6 +1725,50 @@ class Window(VariableForms, DrawingActions, ProjectActions, ProjectTreeActions, 
         self.filter_notice.setVisible(bool(query))
         if query:
             self.filter_notice.setText(tr("Filtro «{text}»: se muestran {shown} de {total} variables · <a href='clear'>Quitar el filtro</a>", text=self.filter.text(), shown=shown, total=total))
+
+    def show_row_widgets(self, current, previous=None):
+        """Type list, link button and recording list on the current row of the variables."""
+        old = getattr(self, "row_widgets_item", None)
+        if old is not None:
+            try:
+                for column in (1, 6, 7):
+                    self.table.removeItemWidget(old, column)
+            except RuntimeError:
+                pass   # the row went away with the last refresh
+        self.row_widgets_item = None
+        spec = current.data(1, ROW_WIDGETS_ROLE) if current is not None else None
+        if not spec:
+            return
+        kind, name, type_name = spec
+        if kind == "structure":
+            self.table.setItemWidget(current, 6, button(tr("Campos"), lambda checked=False, item=current: item.setExpanded(not item.isExpanded())))
+            self.table.setItemWidget(current, 1, self.variable_type_combo(name, type_name))
+        else:
+            from . import recording
+            if type_name is not None:
+                self.table.setItemWidget(current, 1, self.variable_type_combo(name, type_name))
+            self.table.setItemWidget(current, 6, button(tr("Enlace…"), lambda checked=False, n=name: self.tag_form(n)))
+            record = QComboBox()
+            record.addItem(tr("Ninguno"), "")
+            for file in recording.files(self.project):
+                record.addItem(file["name"], file["id"])
+            record.setCurrentIndex(max(0, record.findData(recording.assignment(self.project, name))))
+            record.currentIndexChanged.connect(lambda index, n=name, combo=record:
+                self.mutate(lambda: recording.assign(self.project, n, combo.currentData())))
+            self.table.setItemWidget(current, 7, record)
+        self.row_widgets_item = current
+
+    def filter_variables_later(self, *args):
+        """Typing in the filter of a long list rebuilds it once the user pauses, not at every key."""
+        if len(self.project.variables) < 300:
+            self.refresh_variables()
+            return
+        timer = getattr(self, "_filter_timer", None)
+        if timer is None:
+            timer = self._filter_timer = QTimer(self)
+            timer.setSingleShot(True); timer.setInterval(250)
+            timer.timeout.connect(self.refresh_variables)
+        timer.start()
 
     def fill_table(self, table, rows):
         table.setRowCount(len(rows))

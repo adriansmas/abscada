@@ -1,5 +1,6 @@
 """Project file operations and advanced document editing for Studio."""
 from concurrent.futures import ThreadPoolExecutor
+import copy
 from pathlib import Path
 import json
 from PySide6.QtCore import QTimer
@@ -70,8 +71,7 @@ class ProjectActions:
             focus = self.focusWidget()
             if focus: focus.clearFocus()
             self.project.save()
-            self.dirty = False
-            self.setWindowTitle("abSCADA Studio · " + self.project.manifest["name"])
+            self.mark_saved()
             self.statusBar().showMessage(tr("Proyecto guardado"), 5000)
             self.commit_version()
             return True
@@ -132,6 +132,7 @@ class ProjectActions:
             self.fill_language_field()
             self.document_kind, self.document_name = "screens", project.manifest["startup_screen"]
             self.dirty = False
+            self.saved_project = copy.deepcopy(project)
             self.undo_stack.clear()
             self.redo_stack.clear()
             self.update_history_actions()

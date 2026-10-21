@@ -91,7 +91,9 @@ def check(project):
                 raise ValueError(tr("{name}: objeto de la librería estándar, de solo lectura", name=name))
 
 
+@lru_cache(maxsize=None)
 def asset(relative):
+    # The standard library ships with the program and does not change while it runs.
     from .faceplate_libraries import resource_name
     resource_name(relative)
     path = (FOLDER / relative).resolve()

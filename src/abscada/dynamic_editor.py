@@ -298,7 +298,7 @@ class DynamicDialog(EditorDialog):
         self.table.cellDoubleClicked.connect(lambda r,c: edit(False))
         refresh(); page.addWidget(states)
         page.addWidget(style_group('bad',tr('3 · Sin comunicación (mala calidad)'),tr('Cuando alguna de sus variables no tiene un valor válido del PLC.')))
-        page.addWidget(style_group('disabled','4 · Deshabilitado',tr('Cuando no se cumple la condición de la pestaña «Habilitación».')))
+        page.addWidget(style_group('disabled',tr('4 · Deshabilitado'),tr('Cuando no se cumple la condición de la pestaña «Habilitación».')))
         self.format={}
         if element['kind'] in dynamics.FORMATTED:
             group=QGroupBox(tr('Unidad y decimales desde variables')); form=QFormLayout(group)

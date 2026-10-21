@@ -184,3 +184,36 @@ def test_disabled_or_locked_account_is_named_only_with_its_password(tmp_path):
         store.authenticate("ana", "otra", policy)
     with pytest.raises(AuthenticationError, match="desactivado"):
         store.authenticate("ana", "Clave-segura-123", policy)
+
+
+@pytest.mark.parametrize("example", ["hydro", "brewery"])
+def test_parameters_offered_as_read_only_pass_the_popup_validation(example):
+    from pathlib import Path
+    from abscada.dynamics import parameter_writable
+    from abscada.operation_windows import validate_popup_writes
+    project = Project.load(Path(DEMO).parent / example)
+    tags = project.tags()
+    checked = 0
+    for name, template in project.faceplates.items():
+        parameters = template.get("parameters", {})
+        if not parameters or any(kind not in ("bool", "int", "float", "string") for kind in parameters.values()):
+            continue
+        # Every parameter linked to a read-only variable wherever the editor would allow it.
+        bindings = {}
+        for parameter, kind in parameters.items():
+            writable = parameter_writable(template, parameter, project.faceplates)
+            choice = next((n for n, t in tags.items() if t["type"] == kind and t.get("writable", False) == writable), None)
+            choice = choice or next((n for n, t in tags.items() if t["type"] == kind and (t.get("writable") or not writable)), None)
+            if choice is None:
+                break
+            bindings[parameter] = choice
+        else:
+            validate_popup_writes(dict(id="x", template=name, bindings=bindings), project, tags)
+            checked += 1
+    assert checked
+
+
+def test_names_cannot_start_with_a_dollar_or_have_spaces_at_the_ends():
+    from abscada.structures import valid_name
+    assert valid_name("Bomba1") and valid_name("Bomba 1")
+    assert not valid_name("$motor") and not valid_name(" Bomba") and not valid_name("Bomba ")

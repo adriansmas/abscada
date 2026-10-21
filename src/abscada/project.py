@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import copy
+import functools
 import json
 import math
+import re
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -49,6 +51,18 @@ def coerce(value, kind):
             raise ValueError(tr("Se esperaba un texto"))
         return value
     raise ValueError(tr("Tipo desconocido: {kind}", kind=kind))
+
+
+_INDEXED_TEXT = re.compile(r"[\w$\]]\[")
+
+
+@functools.lru_cache(maxsize=4096)
+def _inside(root, relative):
+    """Resolved path of an image of the project (asked at every validation and repaint)."""
+    path = (Path(root) / relative).resolve()
+    if not path.is_relative_to(Path(root)):
+        raise ValueError(tr("La imagen debe estar dentro del proyecto"))
+    return path
 
 
 def read_json(path):
@@ -112,55 +126,67 @@ class Project:
         return project
 
     def tags(self):
-        """Expand structured variables into typed leaf tags."""
+        """Expand structured variables into typed leaf tags.
+
+        Linear in the number of leaves: each leaf copies only the variable's own settings,
+        never its whole ``initial`` value, ``bindings`` or ``overrides``."""
         result = {}
-
-        def expand(name, kind, value, source, stack=()):
-            if kind in PRIMITIVES:
-                tag = copy.deepcopy(source)
-                relative_name = structures.relative(name)
-                overrides = source.get("overrides", {}).get(relative_name, {})
-                if set(overrides) - {"writable"}:
-                    raise ValueError(tr("{name}: override solo admite writable", name=name))
-                tag.update(overrides)
-                tag.update(name=name, type=kind, initial=coerce(value, kind))
-                binding = source.get("bindings", {}).get(name)
-                if binding:
-                    tag["binding"] = binding
-                result[name] = tag
-                return
-            base, length = structures.split_kind(kind)
-            if length is not None:
-                if not structures.known(kind, self.types):
-                    raise ValueError(tr("Tipo inválido o recursivo: {kind}", kind=kind))
-                if not isinstance(value, list) or len(value) != length:
-                    raise ValueError(tr("{name}: el valor de un array debe ser una lista de {length} elementos", name=name, length=length))
-                for index, item in zip(structures.indices(kind), value):
-                    expand(f"{name}[{index}]", base, item, source, stack)
-                return
-            if kind in stack or kind not in self.types:
-                raise ValueError(tr("Tipo inválido o recursivo: {kind}", kind=kind))
-            if not isinstance(value, dict):
-                raise ValueError(tr("{name}: el valor de una estructura debe ser un objeto", name=name))
-            fields = self.types[kind]
-            if set(value) != set(fields):
-                raise ValueError(tr("{name}: los campos no coinciden con el tipo {kind}", name=name, kind=kind))
-            for field, field_type in fields.items():
-                expand(f"{name}.{field}", field_type, value[field], source, stack + (kind,))
-
         for variable in self.variables:
-            expand(variable["name"], variable["type"], variable["initial"], variable)
+            base = {key: value for key, value in variable.items() if key not in ("initial", "bindings", "overrides")}
+            overrides = variable.get("overrides", {})
+            bindings = variable.get("bindings", {})
+            self._expand(result, variable["name"], variable["type"], variable["initial"], base, overrides, bindings, ())
         return result
 
+    def _expand(self, result, name, kind, value, base, overrides, bindings, stack):
+        if kind in PRIMITIVES:
+            tag = dict(base)
+            override = overrides.get(structures.relative(name), {})
+            if set(override) - {"writable"}:
+                raise ValueError(tr("{name}: override solo admite writable", name=name))
+            tag.update(override)
+            tag.update(name=name, type=kind, initial=coerce(value, kind))
+            binding = bindings.get(name) or base.get("binding")
+            if binding:
+                tag["binding"] = copy.deepcopy(binding)
+            result[name] = tag
+            return
+        item, length = structures.split_kind(kind)
+        if length is not None:
+            if not structures.known(kind, self.types):
+                raise ValueError(tr("Tipo inválido o recursivo: {kind}", kind=kind))
+            if not isinstance(value, list) or len(value) != length:
+                raise ValueError(tr("{name}: el valor de un array debe ser una lista de {length} elementos", name=name, length=length))
+            for index, element in zip(structures.indices(kind), value):
+                self._expand(result, f"{name}[{index}]", item, element, base, overrides, bindings, stack)
+            return
+        if kind in stack or kind not in self.types:
+            raise ValueError(tr("Tipo inválido o recursivo: {kind}", kind=kind))
+        if not isinstance(value, dict):
+            raise ValueError(tr("{name}: el valor de una estructura debe ser un objeto", name=name))
+        fields = self.types[kind]
+        if set(value) != set(fields):
+            raise ValueError(tr("{name}: los campos no coinciden con el tipo {kind}", name=name, kind=kind))
+        for field, field_type in fields.items():
+            self._expand(result, f"{name}.{field}", field_type, value[field], base, overrides, bindings, stack + (kind,))
+
     def validate(self):
-        from .project_languages import validate, resolved_project, default_language
-        validate(self)
+        from .project_languages import validate, validate_codes, resolved_project, default_language
         from .faceplate_libraries import validate_links
+        validate_codes(self)   # linked libraries are translated into these languages
         validate_links(self)
         validate(self)
         resolved_project(self, default_language(self))._validate()
 
-    def _validate(self):
+    def validate_screen(self, screen):
+        """Quick check after a change inside one screen and nowhere else (Studio, while
+        drawing): the same checks as ``validate`` for that screen and for what depends on
+        screens. ``validate`` still runs in full before saving and before operating."""
+        from .project_languages import validate, resolved_project, default_language
+        validate(self, only=("screens", screen))
+        resolved_project(self, default_language(self), only=screen)._validate(only=screen)
+
+    def _validate(self, only=None):
         from .validation import filenames
         for collection in (self.screens, self.faceplates, self.scripts):
             filenames(collection)
@@ -171,20 +197,31 @@ class Project:
             raise ValueError(tr("Nombres de variables vacíos, duplicados o con puntos"))
         structures.check_definitions(self.types)
         tags = self.tags()
+        for variable in ([] if only else self.variables):
+            name = variable["name"]
+            if variable["type"] not in PRIMITIVES and variable.get("binding"):
+                raise ValueError(tr("{name}: una variable estructurada se enlaza campo a campo, no entera", name=name))
+            # Links and overrides of fields that no longer exist would come back with an old
+            # address if a field with that name were created again.
+            orphans = [key for key in variable.get("bindings", {}) if key not in tags or structures.root(key) != name]
+            orphans += [key for key in variable.get("overrides", {}) if structures.join(name, key) not in tags]
+            if orphans:
+                raise ValueError(tr("{name}: enlaces o ajustes de campos inexistentes: {fields}", name=name, fields=", ".join(orphans)))
         roots = {v["name"]: v["type"] for v in self.variables}
         from . import dynamics
         from .operation_windows import validate_popup_button, validate_popup_writes, validate_window, validate_display
         from .security import validate_element_permission
         from .operational_config import validate_operations
         try:
-            validate_operations(self, tags)
+            if not only:
+                validate_operations(self, tags)
         except (KeyError, TypeError, AttributeError) as exc:
             raise ValueError(tr("Definición de operaciones inválida: {exc}", exc=exc)) from exc
         connections = {c["id"]: c for c in self.connections}
         if len(connections) != len(self.connections):
             raise ValueError(tr("Conexiones duplicadas"))
         from .connectors import REGISTRY, definition
-        for connection in self.connections:
+        for connection in ([] if only else self.connections):
             if not isinstance(connection["id"], str) or not connection["id"].strip():
                 raise ValueError(tr("Las conexiones necesitan un nombre"))
             if connection.get("protocol") not in REGISTRY:
@@ -193,7 +230,7 @@ class Project:
             if isinstance(cycle, bool) or not isinstance(cycle, int) or not 50 <= cycle <= 60000:
                 raise ValueError(tr("poll_ms debe estar entre 50 y 60000"))
             definition(connection["protocol"]).validate_connection(connection)
-        for name, tag in tags.items():
+        for name, tag in ({} if only else tags).items():
             if not isinstance(tag.get("writable", False), bool):
                 raise ValueError(tr("{name}: writable debe ser booleano", name=name))
             binding = tag.get("binding")
@@ -206,7 +243,8 @@ class Project:
                     binding["address"], tag["type"], tag.get("writable", False))
         if not self.screens or self.manifest.get("startup_screen") not in self.screens:
             raise ValueError(tr("Pantalla inicial inexistente"))
-        for name, document in {**self.screens, **{f'faceplate:{k}': v for k, v in self.faceplates.items()}}.items():
+        documents = {only: self.screens[only]} if only else {**self.screens, **{f'faceplate:{k}': v for k, v in self.faceplates.items()}}
+        for name, document in documents.items():
             for dimension in ("width", "height"):
                 value = document.get(dimension)
                 if isinstance(value,bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 < value <= 10000:
@@ -309,9 +347,10 @@ class Project:
                     for parameter, kind in template["parameters"].items():
                         if not self.binding_fits(bindings[parameter], kind, roots, references):
                             raise ValueError(tr("Tipo incorrecto en parámetro {parameter}", parameter=parameter))
-        self._check_nesting()
+        if not only:
+            self._check_nesting()
 
-        for screen in self.screens:
+        for screen in [only] if only else self.screens:
             for expanded in self.elements(screen):
                 expanded = self._concrete(screen, expanded, tags, roots, {}, {})
                 for element in [expanded] + [button_actions.as_button(expanded, step) for step in button_actions.steps(expanded)]:
@@ -323,16 +362,18 @@ class Project:
                             try: validate_popup_writes(dict(element, template=variant['template'], bindings=variant.get('bindings', {})), self, tags)
                             except ValueError as exc: raise ValueError(f'{screen} / {element["id"]}: {exc}') from exc
         validate_display(self)
-        from .security import validate_security
-        validate_security(self.security)
-        from .opcua_server import validate_server
-        validate_server(self.opcua_server)
+        if not only:
+            from .security import validate_security
+            validate_security(self.security)
+            from .opcua_server import validate_server
+            validate_server(self.opcua_server)
         from .screen_layouts import validate_layouts
         validate_layouts(self)
         from .screen_tree import validate_folders
         validate_folders(self)
-        from .project_settings import validate_settings
-        validate_settings(self)
+        if not only:
+            from .project_settings import validate_settings
+            validate_settings(self)
         from .scripting import validate_scripts
         validate_scripts(self)
 
@@ -360,6 +401,13 @@ class Project:
         every other check then runs on the sample path.
         """
         from .variable_references import _element_slots
+        # Most elements hold no indexed path at all: a name followed by «[» can only appear
+        # inside a string, so the serialised element tells it without walking it.
+        try:
+            if not _INDEXED_TEXT.search(json.dumps(element, ensure_ascii=False)):
+                return element
+        except (TypeError, ValueError):
+            pass
         slots = [(container, key) for container, key in _element_slots(element)
                  if structures.index_tags(container[key])]
         if not slots:
@@ -497,10 +545,7 @@ class Project:
         if relative.startswith('library://'):
             from .faceplate_libraries import asset
             return asset(self, relative)
-        path = (self.root / relative).resolve()
-        if not path.is_relative_to(self.root):
-            raise ValueError(tr("La imagen debe estar dentro del proyecto"))
-        return path
+        return _inside(str(self.root), relative)
 
     def elements(self, screen):
         """Resolve faceplate parameter references into ordinary graphical elements."""

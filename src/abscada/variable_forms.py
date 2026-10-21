@@ -326,7 +326,7 @@ class VariableForms:
 
     def tag_form(self, name):
         tag=self.project.tags()[name]
-        dialog=EditorDialog(self); dialog.setWindowTitle('Variable · '+name); dialog.resize(560,330)
+        dialog=EditorDialog(self); dialog.setWindowTitle(tr('Variable · {name}', name=name)); dialog.resize(560,330)
         layout=QVBoxLayout(dialog); form=QFormLayout(); layout.addLayout(form)
         initial=ValueEditor(tag['type'],tag['initial']); initial.edit.setObjectName('tagInitial')
         writable=QCheckBox(tr('Permitir escritura')); writable.setChecked(tag.get('writable',False))
@@ -396,6 +396,9 @@ class VariableForms:
         def data():
             value=copy.deepcopy(previous); value.update(name=name.text().strip(),type=kind.currentText().strip())
             if not known(value['type'], self.project.types): raise FieldError(tr('Tipo desconocido: {kind}', kind=value['type']),kind)
+            if value['type']!=previous.get('type'):
+                # The PLC addresses of the fields belong to the old type.
+                value.pop('bindings',None)
             if value['type'] not in PRIMITIVES:
                 value['initial'],value['overrides']=structure.values(); value.pop('binding',None)
             else:

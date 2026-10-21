@@ -53,8 +53,10 @@ def structure_of(kind):
 
 
 def valid_name(name):
-    """Names of variables, fields and parameters: no dots or brackets."""
-    return isinstance(name, str) and bool(_NAME.fullmatch(name))
+    """Names of variables, fields and parameters: no dots or brackets, no spaces at either end
+    and not starting with «$», which marks the parameters of an object."""
+    return (isinstance(name, str) and bool(_NAME.fullmatch(name)) and name == name.strip()
+            and not name.startswith("$"))
 
 
 def root(path):

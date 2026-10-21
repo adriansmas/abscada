@@ -22,7 +22,7 @@ def select_tag(studio):
     def refresh():
         tree.clear();groups={}
         for name,tag in available_tags(studio).items():
-            binding=tag.get('binding',{});location=binding_summary(binding,studio.project.connections,tag['type']) if binding else 'Local'
+            binding=tag.get('binding',{});location=binding_summary(binding,studio.project.connections,tag['type']) if binding else tr('Local')
             text=[name,tag['type'],tr('Escribible') if tag.get('writable') else tr('Solo lectura'),binding.get('connection','')+' '+location]
             if search.text().casefold() not in ' '.join(text).casefold():continue
             row=QTreeWidgetItem(text);row.setData(0,Qt.ItemDataRole.UserRole,name)

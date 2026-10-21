@@ -144,9 +144,25 @@ def resolve_bindings(element,bindings):
     replace(result); return result
 
 
+class Kinds:
+    """Type of a variable or a ``$parameter`` without building a dictionary of every leaf for
+    each element validated (a big project has thousands of both)."""
+    def __init__(self,tags,parameters):
+        self.tags,self.parameters=tags,parameters
+    def get(self,name,default=None):
+        if isinstance(name,str) and name.startswith('$') and name[1:] in self.parameters: return self.parameters[name[1:]]
+        tag=self.tags.get(name) if isinstance(name,str) else None
+        return tag['type'] if tag is not None else default
+    def __contains__(self,name): return self.get(name) is not None
+    def __getitem__(self,name):
+        kind=self.get(name)
+        if kind is None: raise KeyError(name)
+        return kind
+
+
 def validate(element,tags,parameters):
     from .project import coerce
-    kinds={name:t['type'] for name,t in tags.items()}|{'$'+key:value for key,value in parameters.items()}
+    kinds=Kinds(tags,parameters)
     def condition(c):
         if isinstance(c,list):
             # Several conditions that must all hold (AND).
@@ -254,10 +270,30 @@ def written_references(template):
     return {c["tag"][1:] for c in controls if isinstance(c.get("tag"),str) and c["tag"].startswith("$") and writable_control(c)}
 
 
-def parameter_writable(template,parameter):
-    """Some control writes the parameter or, for a structure or array, one of its parts."""
+def parameter_writable(template,parameter,faceplates=None,_seen=()):
+    """Some control writes the parameter or, for a structure or array, one of its parts.
+
+    With ``faceplates`` it also counts the writes of the objects the template forwards the
+    parameter to: objects placed inside it and objects it opens in a window (with their
+    alternatives), as the validation of the project does."""
     from .structures import root
-    return any(root(reference)==parameter for reference in written_references(template))
+    from .button_actions import as_button, steps
+    if any(root(reference)==parameter for reference in written_references(template)): return True
+    if faceplates is None: return False
+    for element in template["elements"]:
+        targets=[(element.get("template"),element.get("bindings",{}))] if element.get("kind")=="faceplate" else []
+        for control in [element]+[as_button(element,step) for step in steps(element)]:
+            if control.get("action")=="faceplate_popup":
+                targets.append((control.get("template"),control.get("bindings",{})))
+                targets.extend((variant.get("template"),variant.get("bindings",{})) for variant in control.get("variants",[]))
+        for name,bindings in targets:
+            inner=faceplates.get(name)
+            if inner is None or name in _seen: continue
+            for key,value in (bindings or {}).items():
+                forwarded=isinstance(value,str) and value.startswith("$") and root(value[1:])==parameter
+                if forwarded and parameter_writable(inner,key,faceplates,_seen+(name,)):
+                    return True
+    return False
 
 
 def index_values(names,samples):

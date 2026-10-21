@@ -6,6 +6,7 @@ import csv
 import io
 import re
 from dataclasses import dataclass
+from .i18n import tr
 
 TEXT_KEYS = {'text', 'title', 'message', 'default_text', 'disabled_reason', 'tooltip', 'description'}
 
@@ -81,7 +82,7 @@ class TextEntry:
         return self.owner[self.key]
 
 
-def entries(project):
+def entries(project, only=None):
     def walk(value, path, category=False):
         if isinstance(value, dict):
             for key, child in value.items():
@@ -100,27 +101,38 @@ def entries(project):
                         identity = '=' + child['value']
                 identity = identity.replace('~', '~0').replace('/', '~1')
                 yield from walk(child, path + '/' + identity, category)
+    if only:
+        # One document: («screens», name).
+        kind, name = only
+        yield from walk(getattr(project, kind)[name], kind + '/' + name.replace('~', '~0').replace('/', '~1'))
+        return
     for key in ('screens', 'faceplates', 'alarms', 'trends', 'alarm_views'):
         yield from walk(getattr(project, key), key)
 
 
-def validate(project):
+def validate(project, only=None):
+    validate_codes(project)
+    codes, default = languages(project), default_language(project)
+    for entry in entries(project, only):
+        value = entry.value
+        if not is_text(value):
+            raise ValueError(tr('{path}: texto o traducciones inválidos', path=entry.path))
+        if isinstance(value, dict) and (set(value) - set(codes) or default not in value):
+            raise ValueError(tr('{path}: traducciones sin idioma por defecto o con idioma no declarado', path=entry.path))
+
+
+def validate_codes(project):
+    """The declared languages only (the texts are checked by ``validate``)."""
     codes = languages(project)
     if (not isinstance(codes, list) or not codes
             or any(not isinstance(c, str) or not re.fullmatch(r'[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*', c) for c in codes)
             or len(codes) != len(set(codes))):
-        raise ValueError('Idiomas de proyecto inválidos')
+        raise ValueError(tr('Idiomas de proyecto inválidos'))
     default = default_language(project)
     if default not in codes:
-        raise ValueError('El idioma por defecto debe pertenecer a los idiomas del proyecto')
+        raise ValueError(tr('El idioma por defecto debe pertenecer a los idiomas del proyecto'))
     if project.manifest.get('initial_language', 'project') not in {'project', 'station', 'user'}:
-        raise ValueError('Origen del idioma inicial inválido')
-    for entry in entries(project):
-        value = entry.value
-        if not is_text(value):
-            raise ValueError(f'{entry.path}: texto o traducciones inválidos')
-        if isinstance(value, dict) and (set(value) - set(codes) or default not in value):
-            raise ValueError(f'{entry.path}: traducciones sin idioma por defecto o con idioma no declarado')
+        raise ValueError(tr('Origen del idioma inicial inválido'))
 
 
 def missing(project):
@@ -132,9 +144,17 @@ def missing(project):
                 yield f'{entry.path}: falta traducción {code}'
 
 
-def resolved_project(project, language):
-    result = copy.deepcopy(project)
+def resolved_project(project, language, only=None):
+    """The project with its texts in ``language``. Only the translated collections are new;
+    the rest is shared with ``project`` (read it, do not change it). With ``only`` (a screen)
+    the other screens keep their stored texts."""
+    result = copy.copy(project)
     default = default_language(project)
+    if only:
+        result.screens = dict(project.screens)
+        result.screens[only] = localized(project.screens[only], language, default)
+        result.faceplates = localized(project.faceplates, language, default)
+        return result
     for key in ('screens', 'faceplates', 'trends', 'alarm_views'):
         setattr(result, key, localized(getattr(project, key), language, default))
     result.alarms = localized(project.alarms, language, default)
@@ -157,13 +177,13 @@ def import_csv(project, content):
     """Validate the whole import before changing anything; paths identify source fields."""
     reader = csv.DictReader(io.StringIO(content.lstrip('\ufeff')))
     if reader.fieldnames != ['path', *languages(project)]:
-        raise ValueError('Las columnas deben ser path y los idiomas del proyecto')
+        raise ValueError(tr('Las columnas deben ser path y los idiomas del proyecto'))
     available = {e.path: e for e in entries(project)}
     updates, seen = [], set()
     for row in reader:
         path = row['path']
         if path not in available or path in seen or None in row or any(v is None for v in row.values()):
-            raise ValueError(f'Fila de traducción inválida: {path}')
+            raise ValueError(tr('Fila de traducción inválida: {path}', path=path))
         seen.add(path)
         entry = available[path]
         if path.startswith('faceplates/'):
@@ -173,7 +193,7 @@ def import_csv(project, content):
                 expected = {c: entry.value.get(c, '') if isinstance(entry.value, dict)
                     else entry.value if c == default_language(project) else '' for c in languages(project)}
                 if any(row[c] != expected[c] for c in languages(project)):
-                    raise ValueError(f'{path}: librería de solo lectura; traduce la biblioteca en su proyecto de origen')
+                    raise ValueError(tr('{path}: librería de solo lectura; traduce la biblioteca en su proyecto de origen', path=path))
                 continue
         updates.append((entry, {c: row[c] for c in languages(project)}))
     for entry, value in updates:

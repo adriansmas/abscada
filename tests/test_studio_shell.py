@@ -186,3 +186,15 @@ def test_arrow_keys_move_without_rebuilding_and_skip_locked_elements(window, mon
     assert not rebuilt and len(window.undo_stack) == history
     window.view.finish_nudge()
     assert len(window.undo_stack) == history + 1
+
+
+def test_undo_back_to_the_saved_state_is_not_a_pending_change(window):
+    window.document_kind, window.document_name = "screens", "10_general"
+    window.render_scene()
+    element = window.document()["elements"][0]
+    window.mutate(lambda: element.update(x=element["x"] + 5))
+    assert window.dirty
+    window.undo()
+    assert not window.dirty and not window.windowTitle().endswith("*")
+    window.redo()
+    assert window.dirty

@@ -1463,5 +1463,17 @@
  "Cola de órdenes llena: la conexión {connection} no da abasto; inténtalo de nuevo": "Command queue full: connection {connection} cannot keep up; try again",
  "Dirección con error; escritura descartada: {error}": "Address with an error; write discarded: {error}",
  "{count} registros": "{count} records",
- "Escribe el nombre del operador que reconoce": "Type the name of the acknowledging operator"
+ "Escribe el nombre del operador que reconoce": "Type the name of the acknowledging operator",
+ "4 · Deshabilitado": "4 · Disabled",
+ "{name}: una variable estructurada se enlaza campo a campo, no entera": "{name}: a structured variable is linked field by field, not as a whole",
+ "{name}: enlaces o ajustes de campos inexistentes: {fields}": "{name}: links or settings of fields that do not exist: {fields}",
+ "Idiomas de proyecto inválidos": "Invalid project languages",
+ "El idioma por defecto debe pertenecer a los idiomas del proyecto": "The default language must be one of the project languages",
+ "Origen del idioma inicial inválido": "Invalid source of the initial language",
+ "Las columnas deben ser path y los idiomas del proyecto": "The columns must be path and the project languages",
+ "{path}: texto o traducciones inválidos": "{path}: invalid text or translations",
+ "{path}: traducciones sin idioma por defecto o con idioma no declarado": "{path}: translations without the default language or with an undeclared language",
+ "Fila de traducción inválida: {path}": "Invalid translation row: {path}",
+ "{path}: librería de solo lectura; traduce la biblioteca en su proyecto de origen": "{path}: read-only library; translate the library in its source project",
+ "Variable · {name}": "Variable · {name}"
 }

@@ -550,10 +550,10 @@ def plan(project, text, *, db=None, connection="", writable=False, replace=False
     result.warnings = _omitted(converter) + result.warnings
     if existing is not None:
         # Replacing: fields that disappear but are still used make the import fail validation.
-        from .variable_references import usages
+        from .variable_references import used_paths
         kept = {row[0] for row in result.rows}
         gone = sorted(name for name in project.tags() if structures.root(name) == variable_name and name not in kept)
-        used = [name for name in gone if usages(project, name)]
+        used = used_paths(project, gone) if gone else []
         if used:
             result.warnings.insert(0, tr("Desaparecen campos que se usan: {fields}. Si solo han cambiado de nombre, renómbralos antes en "
                                          "abSCADA (clic derecho → Renombrar…) y vuelve a importar", fields=", ".join(used[:8])))
