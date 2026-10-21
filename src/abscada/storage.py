@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS samples(
  id INTEGER PRIMARY KEY, tag TEXT NOT NULL, recorded_at REAL NOT NULL,
  source_at REAL NOT NULL, value TEXT NOT NULL, numeric REAL, quality TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS sample_tag_time ON samples(tag,recorded_at);
+CREATE INDEX IF NOT EXISTS sample_time ON samples(recorded_at);
 CREATE TABLE IF NOT EXISTS recording_sources(
  tag TEXT NOT NULL, file_id TEXT NOT NULL, PRIMARY KEY(tag,file_id));
 CREATE TABLE IF NOT EXISTS alarm_instances(
@@ -20,6 +21,8 @@ CREATE TABLE IF NOT EXISTS alarm_instances(
  ack_required INTEGER NOT NULL, value TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS alarm_time ON alarm_instances(entered_at);
 CREATE INDEX IF NOT EXISTS alarm_pending ON alarm_instances(returned_at,ack_at);
+CREATE INDEX IF NOT EXISTS alarm_open ON alarm_instances(priority,entered_at)
+ WHERE returned_at IS NULL OR (ack_required=1 AND ack_at IS NULL);
 CREATE TABLE IF NOT EXISTS alarm_events(
  id INTEGER PRIMARY KEY, instance_id INTEGER NOT NULL REFERENCES alarm_instances(id),
  event TEXT NOT NULL, timestamp REAL NOT NULL, actor TEXT NOT NULL, comment TEXT NOT NULL);
@@ -27,6 +30,7 @@ CREATE INDEX IF NOT EXISTS alarm_event_time ON alarm_events(timestamp);
 CREATE TABLE IF NOT EXISTS audit(
  id INTEGER PRIMARY KEY, timestamp REAL NOT NULL, action TEXT NOT NULL,
  target TEXT NOT NULL, actor TEXT NOT NULL, detail TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS audit_time ON audit(timestamp);
 PRAGMA user_version=1;
 """
 
@@ -37,22 +41,34 @@ def database_path(project):
 
 class ProjectSampleReader:
     """Read current and retired recording files; retain access to legacy history."""
+    # One trend query reads several curves: the folders are listed and the recording catalog
+    # read once for all of them, not once per curve.
+    CACHE_SECONDS = 0.5
+
     def __init__(self, project):
         self.project = project
+        self._layout, self._layout_until = None, 0.0
+
+    def _files(self):
+        import time
+        if self._layout is None or time.monotonic() >= self._layout_until:
+            directory = self.project.root / "runtime" / "records"
+            catalog = ArchiveReader(database_path(self.project))
+            has_catalog = catalog.query("SELECT name FROM sqlite_master WHERE type='table' AND name='recording_sources'")
+            sources = catalog.query("SELECT tag,file_id FROM recording_sources") if has_catalog else []
+            self._layout = (sorted(directory.glob("*.sqlite3")), sorted(directory.glob("*/*.sqlite3")), sources)
+            self._layout_until = time.monotonic() + self.CACHE_SECONDS
+        return self._layout
 
     def _read(self, method, tag, start, end, limit):
-        paths = [database_path(self.project)]
-        directory = self.project.root / "runtime" / "records"
-        paths.extend(sorted(directory.glob("*.sqlite3")))
+        legacy, daily, sources = self._files()
+        paths = [database_path(self.project)] + legacy
         first = datetime.fromtimestamp(start, timezone.utc).date().isoformat()
         last = datetime.fromtimestamp(end, timezone.utc).date().isoformat()
-        catalog = ArchiveReader(database_path(self.project))
-        has_catalog = catalog.query("SELECT name FROM sqlite_master WHERE type='table' AND name='recording_sources'")
-        sources = catalog.query("SELECT tag,file_id FROM recording_sources") if has_catalog else []
         known = {s["file_id"] for s in sources}
         relevant = {s["file_id"] for s in sources if s["tag"] == tag}
         # Unknown directories are legacy/unmanaged archives: retain access to them.
-        paths.extend(p for p in sorted(directory.glob("*/*.sqlite3"))
+        paths.extend(p for p in daily
                      if first <= p.stem <= last and (p.parent.name in relevant or p.parent.name not in known))
         rows = []
         budget = max(20, limit // max(1, len(paths)))
@@ -141,8 +157,14 @@ class Repository:
         if version not in (0, 1):
             self.connection.close()
             raise ValueError(tr("Versión de base de datos no soportada"))
+        if not self.connection.execute("SELECT count(*) FROM sqlite_master").fetchone()[0]:
+            # New file: pruning gives the space back little by little (incremental_vacuum).
+            self.connection.execute("PRAGMA auto_vacuum=INCREMENTAL")
         self.connection.execute("PRAGMA journal_mode=WAL")
-        self.connection.execute("PRAGMA synchronous=FULL")
+        # With WAL, NORMAL still protects the file against corruption; a power cut can only
+        # lose the last commits (at most a fraction of a second of samples), and it avoids
+        # several disk syncs per second.
+        self.connection.execute("PRAGMA synchronous=NORMAL")
         self.connection.execute("PRAGMA foreign_keys=ON")
         self.connection.executescript(SCHEMA)
 
@@ -194,6 +216,8 @@ class Repository:
         self.connection.execute(f"DELETE FROM alarm_events WHERE instance_id IN (SELECT id FROM alarm_instances WHERE {eligible})", (cutoff,))
         self.connection.execute(f"DELETE FROM alarm_instances WHERE {eligible}", (cutoff,))
         self.connection.execute("DELETE FROM audit WHERE timestamp<?", (cutoff,))
+        self.connection.commit()
+        self.connection.execute("PRAGMA incremental_vacuum(2000)").fetchall()
 
 
 class ArchiveReader:
@@ -201,6 +225,10 @@ class ArchiveReader:
         self.path = Path(path)
 
     def query(self, sql, values=()):
+        return self.queries(lambda run: run(sql, values))
+
+    def queries(self, body):
+        """Run ``body(run)`` on one read-only connection; ``run(sql, values)`` returns rows."""
         if not self.path.exists():
             return []
         try:
@@ -211,7 +239,7 @@ class ArchiveReader:
             raise
         try:
             connection.row_factory = sqlite3.Row
-            return [dict(row) for row in connection.execute(sql, values)]
+            return body(lambda sql, values=(): [dict(row) for row in connection.execute(sql, values)])
         finally:
             connection.close()
 
@@ -262,13 +290,17 @@ class ArchiveReader:
         return self.query(sql+condition+" ORDER BY "+order+" LIMIT ?", args)
 
     def samples(self, tag, start, end, limit=5000):
+        return self.queries(lambda run: self._samples(run, tag, start, end, limit))
+
+    @staticmethod
+    def _samples(run, tag, start, end, limit):
         # Bucket extrema retain spikes while bounding the amount sent to Qt.
-        counts = self.query("SELECT count(*) AS n FROM samples WHERE tag=? AND recorded_at BETWEEN ? AND ?", (tag, start, end))
+        counts = run("SELECT count(*) AS n FROM samples WHERE tag=? AND recorded_at BETWEEN ? AND ?", (tag, start, end))
         count = counts[0]["n"] if counts else 0
         if count <= limit:
-            return self.query("SELECT * FROM samples WHERE tag=? AND recorded_at BETWEEN ? AND ? ORDER BY recorded_at,id", (tag, start, end))
+            return run("SELECT * FROM samples WHERE tag=? AND recorded_at BETWEEN ? AND ? ORDER BY recorded_at,id", (tag, start, end))
         width = max((end-start)/max(1,limit//5-1), 0.001)
-        return self.query("""WITH bucket AS (
+        return run("""WITH bucket AS (
           SELECT *,CAST((recorded_at-?)/? AS INTEGER) AS b FROM samples
           WHERE tag=? AND recorded_at BETWEEN ? AND ?), ranked AS (
           SELECT *,row_number() OVER(PARTITION BY b ORDER BY recorded_at,id) AS first,

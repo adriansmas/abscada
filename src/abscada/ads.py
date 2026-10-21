@@ -15,7 +15,7 @@ import re
 import socket
 import struct
 
-from .protocol_definition import Field, ProtocolDefinition
+from .protocol_definition import AddressError, Field, ProtocolDefinition
 from .i18n import tr
 
 AMS_TCP_PORT = 48898
@@ -24,6 +24,8 @@ SOURCE_PORT = 32905
 CMD_READ_DEVICE_INFO, CMD_READ, CMD_WRITE, CMD_READ_STATE, CMD_READ_WRITE = 1, 2, 3, 4, 9
 STATE_REQUEST, STATE_RESPONSE = 0x0004, 0x0005
 IG_SYM_HANDLE_BY_NAME, IG_SYM_VALUE_BY_HANDLE, IG_SYM_RELEASE_HANDLE = 0xF003, 0xF005, 0xF006
+# Sum read: many (group, offset, length) reads in one request; TwinCAT accepts up to 500.
+IG_SUM_READ, SUM_READ_MAX = 0xF080, 500
 
 # PLC type -> (struct format, size, SCADA kind). Little endian, like the PLC.
 TYPES = {
@@ -45,6 +47,8 @@ ERRORS = {
     0x745: tr("tiempo de espera agotado"), 0x74C: "acceso denegado",
 }
 STALE_HANDLE = {0x710, 0x711, 0x702}
+# Errors about one address (the symbol, its offset, its size or its access), not about the link.
+ADDRESS_ERRORS = {0x702, 0x703, 0x704, 0x705, 0x706, 0x710, 0x711, 0x74C}
 
 _RAW_ADDRESS = re.compile(r"^(0x[0-9a-fA-F]+|\d+):(0x[0-9a-fA-F]+|\d+)$")
 _SYMBOL = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(\[[0-9, ]+\])?(\.[A-Za-z_][A-Za-z0-9_]*(\[[0-9, ]+\])?)*$")
@@ -264,13 +268,84 @@ class TwinCatADS:
 
     def read(self, address, kind):
         a = self.definition.validate_binding(address, kind, False)
-        data = self._access(a, lambda group, offset: self.client.read(group, offset, size_of(a), a["symbol"]))
+        try:
+            data = self._access(a, lambda group, offset: self.client.read(group, offset, size_of(a), a["symbol"]))
+        except AdsError as error:
+            if error.code in ADDRESS_ERRORS:
+                raise AddressError(str(error)) from None
+            raise
         return decode(a, data)
+
+    def prepare_reads(self, requests):
+        """Sum reads of up to 500 variables per request; one request per variable if the PLC
+        does not support them. A missing symbol only fails its own variable."""
+        addresses = [self.definition.validate_binding(address, kind, False) for address, kind in requests]
+        indices = list(range(len(addresses)))
+        return [lambda chunk=indices[start:start + SUM_READ_MAX]: self._sum_read(addresses, chunk)
+                for start in range(0, len(indices), SUM_READ_MAX)]
+
+    def _location(self, a):
+        symbol = a["symbol"].strip()
+        raw = raw_address(symbol)
+        if raw:
+            return raw
+        key = symbol.lower()
+        if key not in self.handles:
+            self.handles[key] = self.client.handle(symbol)
+        return IG_SYM_VALUE_BY_HANDLE, self.handles[key]
+
+    def _single(self, a):
+        try:
+            return decode(a, self._access(a, lambda group, offset: self.client.read(group, offset, size_of(a), a["symbol"])))
+        except AdsError as error:
+            if error.code in ADDRESS_ERRORS:
+                return AddressError(str(error))
+            raise
+
+    def _sum_read(self, addresses, chunk):
+        result, items = {}, []
+        for index in chunk:
+            try:
+                items.append((index,) + self._location(addresses[index]))
+            except AdsError as error:
+                if error.code not in ADDRESS_ERRORS:
+                    raise
+                result[index] = AddressError(str(error))
+        if not getattr(self, "sum_read", True) or len(items) < 2:
+            result.update({index: self._single(addresses[index]) for index, _, _ in items})
+            return result
+        sizes = [size_of(addresses[index]) for index, _, _ in items]
+        payload = b"".join(struct.pack("<III", group, offset, size) for (_, group, offset), size in zip(items, sizes))
+        try:
+            data = self.client.read_write(IG_SUM_READ, len(items), 4 * len(items) + sum(sizes), payload)
+        except AdsError as error:
+            if error.code not in {0x701, 0x702}:
+                raise
+            self.sum_read = False   # an old runtime without sum reads: one request per variable
+            result.update({index: self._single(addresses[index]) for index, _, _ in items})
+            return result
+        position = 4 * len(items)
+        for number, ((index, _, _), size) in enumerate(zip(items, sizes)):
+            code = struct.unpack_from("<I", data, 4 * number)[0]
+            if code:
+                a = addresses[index]
+                if code in STALE_HANDLE:
+                    self.handles.pop(a["symbol"].strip().lower(), None)  # resolved again next cycle
+                result[index] = AddressError(str(AdsError(code, a["symbol"])))
+            else:
+                result[index] = decode(addresses[index], data[position:position + size])
+            position += size
+        return result
 
     def write(self, address, kind, value):
         a = self.definition.validate_binding(address, kind, True)
         payload = encode(a, kind, value)
-        self._access(a, lambda group, offset: self.client.write(group, offset, payload, a["symbol"]))
+        try:
+            self._access(a, lambda group, offset: self.client.write(group, offset, payload, a["symbol"]))
+        except AdsError as error:
+            if error.code in ADDRESS_ERRORS:
+                raise AddressError(str(error)) from None
+            raise
 
     def close(self):
         if not self.client:

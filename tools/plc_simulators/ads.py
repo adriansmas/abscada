@@ -14,7 +14,8 @@ import threading
 import time
 
 from abscada.ads import (CMD_READ, CMD_READ_DEVICE_INFO, CMD_READ_STATE, CMD_READ_WRITE, CMD_WRITE,
-                  IG_SYM_HANDLE_BY_NAME, IG_SYM_RELEASE_HANDLE, IG_SYM_VALUE_BY_HANDLE, STATE_RESPONSE, TYPES)
+                  IG_SUM_READ, IG_SYM_HANDLE_BY_NAME, IG_SYM_RELEASE_HANDLE, IG_SYM_VALUE_BY_HANDLE,
+                  STATE_RESPONSE, TYPES)
 
 AREAS = {0x4020: "M", 0xF020: "I", 0xF030: "Q"}
 
@@ -170,6 +171,18 @@ class AdsSimulator:
         if cmd == CMD_READ_WRITE:
             group, offset, read_size, write_size = struct.unpack_from("<IIII", payload)
             body = payload[16:16 + write_size]
+            if group == IG_SUM_READ:
+                # Sum read: every error code first, then the data of every item (TwinCAT layout).
+                codes, values = b"", b""
+                for index in range(offset):
+                    item_group, item_offset, item_size = struct.unpack_from("<III", body, index * 12)
+                    buffer = self._buffer(item_group, item_offset)
+                    if not isinstance(buffer, int) and buffer[1] + item_size > len(buffer[0]):
+                        buffer = 0x705
+                    codes += struct.pack("<I", buffer if isinstance(buffer, int) else 0)
+                    values += b"\x00" * item_size if isinstance(buffer, int) else bytes(buffer[0][buffer[1]:buffer[1] + item_size])
+                answer = codes + values
+                return ok + struct.pack("<I", len(answer)) + answer
             if group != IG_SYM_HANDLE_BY_NAME:
                 return fail(0x701)
             name = body.split(b"\x00", 1)[0].decode("cp1252").strip().lower()

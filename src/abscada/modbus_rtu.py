@@ -35,6 +35,15 @@ class SlaveError(Exception):
     """The slave answered with a Modbus exception or did not answer at all."""
 
 
+class SlaveSilent(SlaveError):
+    """No answer at all (timeout): the slave is probably off or disconnected."""
+
+
+# A silent slave is not asked again for 1, 2, 4... up to 30 s: on a shared bus each timeout
+# delays every other slave.
+SLAVE_RETRY_FIRST, SLAVE_RETRY_MAX = 1, 30
+
+
 def check_binding(address, kind, writable):
     modbus.check_binding(address, kind, writable)
 
@@ -48,14 +57,17 @@ DEFINITION = ProtocolDefinition(
     transport_fields() + (
         Field("single_register", tr("Escribir un solo registro con"), "fc16", choices=(
             ("fc16", tr("FC16 (varios registros)"), ()), ("fc06", tr("FC06 (un registro)"), ()))),
-        Field("gap_ms", tr("Pausa entre peticiones (ms)"), 0, 0, 1000)),
+        Field("gap_ms", tr("Pausa entre peticiones (ms)"), 0, 0, 1000),
+        Field("gap_registers", tr("Leer huecos de hasta (registros)"), 0, 0, 100)),
     (Field("unit_id", tr("Esclavo (1-247)"), 1, 1, 247),) + modbus.DEFINITION.binding_fields,
     modbus.normalize, check_binding, describe)
 
 
-def plan_reads(addresses, bits_limit=2000, registers_limit=125):
-    """Group validated addresses into contiguous reads of one slave and area, without gaps.
+def plan_reads(addresses, bits_limit=2000, registers_limit=125, gap=0):
+    """Group validated addresses into contiguous reads of one slave and area.
 
+    Unrequested gaps of up to ``gap`` registers (or bits) are read too, to save requests;
+    with 0 nothing outside the variables is read (some devices refuse unmapped addresses).
     ``addresses`` = [(address, kind), ...]. Returns ``[(unit, area, start, count, [(index, address, kind)])]``.
     """
     spans = []
@@ -67,7 +79,7 @@ def plan_reads(addresses, bits_limit=2000, registers_limit=125):
     for unit, area, begin, end, index, a, kind in spans:
         limit = bits_limit if area in ("coils", "discrete_inputs") else registers_limit
         last = blocks[-1] if blocks else None
-        if last and last[:2] == [unit, area] and begin <= last[3] and max(end, last[3]) - last[2] <= limit:
+        if last and last[:2] == [unit, area] and begin <= last[3] + gap and max(end, last[3]) - last[2] <= limit:
             last[3] = max(end, last[3])
             last[4].append((index, a, kind))
         else:
@@ -89,6 +101,7 @@ class ModbusRTU:
 
     def __init__(self, config):
         self.config, self.link, self.last_io = config, None, 0.0
+        self.silent = {}   # unit -> (monotonic time of the next attempt, current wait, message)
 
     def connect(self):
         self.link = Link(self.config)
@@ -97,6 +110,7 @@ class ModbusRTU:
         baud = self.config.get("baudrate", 9600)
         self.gap = max(0.00175 if baud > 19200 else 3.5 * 11 / baud, self.config.get("gap_ms", 0) / 1000)
         self.last_io = 0.0
+        self.silent = {}
 
     def _transaction(self, unit, function, payload):
         wait = self.last_io + self.gap - time.monotonic()
@@ -115,7 +129,7 @@ class ModbusRTU:
             else:
                 rest = self.link.read_exact(6, deadline)
         except TimeoutError as exc:
-            raise SlaveError(tr("El esclavo {unit} no responde ({error})", unit=unit, error=exc)) from None
+            raise SlaveSilent(tr("El esclavo {unit} no responde ({error})", unit=unit, error=exc)) from None
         finally:
             self.last_io = time.monotonic()
         message = head + rest
@@ -146,13 +160,24 @@ class ModbusRTU:
 
     def prepare_reads(self, requests):
         addresses = [(self.definition.validate_binding(address, kind, False), kind) for address, kind in requests]
-        return [lambda block=block: self._read_block(*block) for block in plan_reads(addresses)]
+        gap = self.config.get("gap_registers", 0)
+        return [lambda block=block: self._read_block(*block) for block in plan_reads(addresses, gap=gap)]
 
     def _read_block(self, unit, area, start, count, members):
+        indices = [index for index, _, _ in members]
+        silent = self.silent.get(unit)
+        if silent and time.monotonic() < silent[0]:
+            raise GroupError(indices, silent[2])
         try:
             data = self._read(unit, area, start, count)
+        except SlaveSilent as exc:
+            wait = min(SLAVE_RETRY_MAX, silent[1] * 2) if silent else SLAVE_RETRY_FIRST
+            self.silent[unit] = (time.monotonic() + wait, wait, str(exc))
+            raise GroupError(indices, str(exc)) from None
         except SlaveError as exc:
-            raise GroupError([index for index, _, _ in members], str(exc)) from None
+            self.silent.pop(unit, None)
+            raise GroupError(indices, str(exc)) from None
+        self.silent.pop(unit, None)
         return {index: decode(area, start, data, a, kind) for index, a, kind in members}
 
     def write(self, address, kind, value):

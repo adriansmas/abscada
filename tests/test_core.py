@@ -106,6 +106,10 @@ def test_s7_endianness_and_preserve_neighbor_bits():
             return self.memory[start:start+size]
         def db_write(self, db, start, data):
             self.memory[start:start+len(data)] = data
+        def write_area(self, area, db, start, data, word_len):
+            # A bit write addresses one bit (byte * 8 + bit) and touches nothing else.
+            byte, bit = divmod(start, 8)
+            self.memory[byte] = self.memory[byte] | (1 << bit) if data[0] else self.memory[byte] & ~(1 << bit)
     s7 = S7({})
     s7.client = MemoryClient()
     s7.client.memory[0] = 0b10100000

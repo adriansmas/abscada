@@ -72,7 +72,13 @@ def test_values_match_individual_reads_for_every_type_and_notation():
     s7.client.calls.clear()
     values = read_all(read_groups(s7, requests))
     assert [values[i] for i in range(len(requests))] == individual == [True, True, False, 255, -123, -123456, -42.5, -42.5, 7, -123]
-    # Byte 0, byte 2 and 4..17 are separated by gaps (bytes 1 and 3), which are not read.
+    # Small gaps (bytes 1 and 3) are read with their neighbours: one request.
+    assert s7.client.calls == [(1, 0, 18)]
+    # Without gaps, byte 0, byte 2 and 4..17 are read apart.
+    s7.config["gap_bytes"] = 0
+    s7.client.calls.clear()
+    values = read_all(read_groups(s7, requests))
+    assert [values[i] for i in range(len(requests))] == individual
     assert s7.client.calls == [(1, 0, 1), (1, 2, 1), (1, 4, 14)]
 
 
@@ -148,8 +154,8 @@ def test_runtime_reads_s7_blocks_over_tcp(monkeypatch):
         snapshot = runtime.snapshot()
         assert [snapshot[f"Bit{b}"].value for b in range(8)] == [True, False, True, False, False, False, False, False]
         assert (snapshot["Real8"].value, snapshot["Real12"].value) == (60.0, 12.5)
-        # One cycle: byte 0 alone (bytes 1..3 are a gap) and bytes 4..15 together.
-        assert set(calls) == {(1, 0, 1), (1, 4, 12)}
+        # One cycle, one request: the gap of bytes 1..3 is read with the rest.
+        assert set(calls) == {(1, 0, 16)}
         # Writes keep their contract and are read back by the next cycle.
         runtime.write("Bit1", True).result(timeout=3)
         runtime.write("Real8", 37.25).result(timeout=3)

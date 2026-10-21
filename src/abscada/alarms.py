@@ -32,6 +32,11 @@ class AlarmEngine:
                 now = time.time()
                 repository.connection.execute('UPDATE alarm_instances SET returned_at=? WHERE id=?', (now,row['id']))
                 repository.event(row['id'], 'disabled', now, comment='Definición retirada o deshabilitada')
+        # Occurrences still waiting for an acknowledgement (active or returned).
+        self.unacknowledged = {row[0] for row in repository.connection.execute(
+            "SELECT id FROM alarm_instances WHERE ack_required=1 AND ack_at IS NULL")}
+        # Rises with every entry, return or acknowledgement.
+        self.revision = 0
         self.samples, self.pending = {}, {}
         self.by_tag = {}
         for alarm in self.definitions.values():
@@ -67,14 +72,31 @@ class AlarmEngine:
             self.pending[key] = (desired, monotonic+delay)
         if monotonic >= self.pending[key][1]:
             if desired:
-                self.active[key] = self.repository.enter(alarm, sample.value, wall)
+                # A delayed entry happens when its delay ends, not when the value changed.
+                now = wall if alarm.get("on_delay_ms", 0) <= 0 else time.time()
+                self.active[key] = self.repository.enter(alarm, sample.value, now)
+                if alarm.get("ack_required", True):
+                    self.unacknowledged.add(self.active[key])
             else:
-                self.repository.returned(self.active.pop(key), wall)
+                now = wall if alarm.get("off_delay_ms", 0) <= 0 else time.time()
+                self.repository.returned(self.active.pop(key), now)
             self.pending.pop(key, None)
+            self.revision += 1
 
     def tick(self, monotonic, wall):
         for key in list(self.pending):
             self.evaluate(self.definitions[key], monotonic, wall)
+
+    def next_deadline(self):
+        """Monotonic times at which a delayed entry or return is due (empty without delays)."""
+        return [deadline for _, deadline in self.pending.values()]
+
+    def acknowledged(self, instances):
+        self.unacknowledged.difference_update(instances)
+        self.revision += 1
+
+    def summary(self):
+        return dict(active=len(self.active), unacknowledged=len(self.unacknowledged))
 
 
 def state(row):

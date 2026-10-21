@@ -7,7 +7,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import re
 import struct
-from .protocol_definition import Field, ProtocolDefinition
+from .protocol_definition import AddressError, Field, GroupError, ProtocolDefinition
 from .i18n import tr
 
 
@@ -52,20 +52,23 @@ def _decode(a, data, start):
 # Smallest PDU a S7 CPU negotiates; python-snap7 answers (pdu_length - 18) data bytes per request.
 S7_MIN_PDU = 240
 S7_READ_OVERHEAD = 18
+# Unrequested bytes read between two variables of a DB instead of sending another request.
+S7_GAP = 32
 
 
-def plan_s7_reads(addresses, max_block):
-    """Group S7 addresses into blocks of one DB without reading gaps.
+def plan_s7_reads(addresses, max_block, gap=0):
+    """Group S7 addresses into blocks of one DB.
 
     Returns ``[(db, start, size, [(index, address), ...]), ...]``. Overlapping or contiguous
-    ranges share a block while it stays within ``max_block`` bytes; a value is never split.
+    ranges, or ranges separated by at most ``gap`` unrequested bytes, share a block while it
+    stays within ``max_block`` bytes; a value is never split.
     """
     spans = sorted(((a.db, a.offset, a.offset + a.size, index, a) for index, a in enumerate(addresses)),
                    key=lambda s: s[:3])
     blocks = []
     for db, begin, end, index, a in spans:
         last = blocks[-1] if blocks else None
-        if last and last[0] == db and begin <= last[2] and max(end, last[2]) - last[1] <= max_block:
+        if last and last[0] == db and begin <= last[2] + gap and max(end, last[2]) - last[1] <= max_block:
             last[2] = max(end, last[2])
             last[3].append((index, a))
         else:
@@ -81,6 +84,13 @@ class S7:
     def connect(self):
         import snap7
         self.client = snap7.Client()
+        timeout = int(self.config.get("timeout_ms", 5000))
+        try:
+            from snap7.type import Parameter
+            for parameter in (Parameter.PingTimeout, Parameter.SendTimeout, Parameter.RecvTimeout):
+                self.client.set_param(parameter, timeout)
+        except Exception:
+            pass  # a client without these parameters keeps its own timeouts
         self.client.connect(self.config["host"], int(self.config.get("rack", 0)),
                             int(self.config.get("slot", 1)), int(self.config.get("port", 102)))
 
@@ -96,15 +106,25 @@ class S7:
     def prepare_reads(self, requests):
         """One read per block of contiguous bytes; bits of one byte are read once."""
         addresses = [parse_address(address, kind) for address, kind in requests]
+        gap = int(self.config.get("gap_bytes", S7_GAP))
         return [lambda db=db, start=start, size=size, members=members: self._read_block(db, start, size, members)
-                for db, start, size, members in plan_s7_reads(addresses, self.max_block())]
+                for db, start, size, members in plan_s7_reads(addresses, self.max_block(), gap)]
 
     def _read_block(self, db, start, size, members):
-        data = self._db_read(db, start, size)
+        try:
+            data = self._db_read(db, start, size)
+        except AddressError as exc:
+            raise GroupError([index for index, _ in members], str(exc)) from None
         return {index: _decode(a, data, start) for index, a in members}
 
     def _db_read(self, db, start, size):
-        data = self.client.db_read(db, start, size)
+        try:
+            data = self.client.db_read(db, start, size)
+        except Exception as exc:
+            # The CPU answered, but refuses this area (DB missing or too short, no access).
+            if str(exc).startswith("Read operation failed"):
+                raise AddressError(tr("DB{db}, byte {start}: {error}", db=db, start=start, error=exc)) from None
+            raise
         if len(data) != size:
             raise ConnectionError(tr("Respuesta S7 incompleta: DB{db}, byte {start}, {got} de {size} bytes",
                                      db=db, start=start, got=len(data), size=size))
@@ -112,13 +132,18 @@ class S7:
 
     def write(self, address, kind, value):
         a = parse_address(address, kind)
-        if a.kind == "X":
-            data = bytearray(self.client.db_read(a.db, a.offset, 1))
-            mask = 1 << a.bit
-            data[0] = (data[0] | mask) if value else (data[0] & ~mask)
-        else:
+        try:
+            if a.kind == "X":
+                # One bit on its own: the PLC may change the other bits of the byte meanwhile.
+                from snap7.type import Area, WordLen
+                self.client.write_area(Area.DB, a.db, a.offset * 8 + a.bit, bytearray([1 if value else 0]), WordLen.Bit)
+                return
             data = bytearray(struct.pack({"B": ">B", "W": ">h", "D": ">i", "R": ">f"}[a.kind], value))
-        self.client.db_write(a.db, a.offset, data)
+            self.client.db_write(a.db, a.offset, data)
+        except Exception as exc:
+            if str(exc).startswith("Write operation failed"):
+                raise AddressError(tr("DB{db}, byte {start}: {error}", db=a.db, start=a.offset, error=exc)) from None
+            raise
 
     def close(self):
         if self.client:
@@ -151,7 +176,9 @@ def describe_s7(address, kind):
 S7.definition = ProtocolDefinition(
     tr("Siemens S7"),
     (Field("host", tr("IP / host"), "127.0.0.1"), Field("port", tr("Puerto TCP"), 102, 1, 65535),
-     Field("rack", tr("Rack"), 0, 0, 7), Field("slot", tr("Slot"), 1, 0, 31)),
+     Field("rack", tr("Rack"), 0, 0, 7), Field("slot", tr("Slot"), 1, 0, 31),
+     Field("timeout_ms", tr("Timeout (ms)"), 5000, 100, 60000),
+     Field("gap_bytes", tr("Leer huecos de hasta (bytes)"), S7_GAP, 0, 200)),
     (Field("db", tr("DB"), 1, 1, 65535), Field("offset", tr("Byte"), 0, 0, 65535),
      Field("encoding", tr("Codificación"), "float32", choices=(("bool", "BOOL", ("bool",)),
           ("uint8", "BYTE", ("int",)), ("int16", "INT", ("int",)),
@@ -191,7 +218,12 @@ def read_groups(adapter, requests):
     prepare = getattr(adapter, "prepare_reads", None)
     if prepare:
         return prepare(requests)
-    return [lambda index=index, address=address, kind=kind: {index: adapter.read(address, kind)}
+    def read(index, address, kind):
+        try:
+            return {index: adapter.read(address, kind)}
+        except AddressError as exc:
+            return {index: exc}
+    return [lambda index=index, address=address, kind=kind: read(index, address, kind)
             for index, (address, kind) in enumerate(requests)]
 
 

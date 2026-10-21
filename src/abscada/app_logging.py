@@ -15,7 +15,9 @@ log = logging.getLogger("abscada")
 
 
 def log_file():
-    return log_dir() / "abscada.log"
+    # One file per mode: Studio and the Runtime run at the same time, and on Windows a
+    # rotating file shared by two processes cannot be renamed when it is full.
+    return log_dir() / f"abscada-{getattr(setup, 'mode', 'studio')}.log"
 
 
 def setup(mode="studio"):
@@ -23,6 +25,7 @@ def setup(mode="studio"):
     if getattr(setup, "done", False):
         return log_file()
     setup.done = True
+    setup.mode = "runtime" if mode in ("runtime", "headless") else "studio"
     handlers = []
     try:
         log_dir().mkdir(parents=True, exist_ok=True)

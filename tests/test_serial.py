@@ -6,7 +6,7 @@ import time
 import pytest
 from abscada.modbus_rtu import DEFINITION as RTU, ModbusRTU, crc16, frame, plan_reads
 from abscada.project import Project
-from abscada.protocol_definition import GroupError
+from abscada.protocol_definition import AddressError, GroupError
 from abscada.runtime import Runtime
 from abscada.serial_ascii import DEFINITION as RAW, SerialAscii
 from abscada.serial_link import Framer, decode, encode, unescape
@@ -154,7 +154,7 @@ def test_raw_request_response(scale):
         assert adapter.read(dict(function="rx"), "string") == "-0001.00 G U"
         assert adapter.read(dict(function="count"), "int") == 2
         assert adapter.read(dict(function="request", command="T"), "string") == "A00"
-        with pytest.raises(TimeoutError, match="SIN"):
+        with pytest.raises(AddressError, match="SIN"):
             adapter.read(dict(function="request", command="SIN"), "string")
     finally:
         adapter.close()

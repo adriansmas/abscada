@@ -17,7 +17,7 @@ from __future__ import annotations
 import asyncio
 import re
 
-from .protocol_definition import Field, ProtocolDefinition
+from .protocol_definition import AddressError, Field, ProtocolDefinition, Uncertain
 from .i18n import tr
 
 SECURITY = (
@@ -58,6 +58,12 @@ DEFINITION = ProtocolDefinition(
     normalize, check_binding, describe)
 
 _INTEGERS = {"SByte", "Byte", "Int16", "UInt16", "Int32", "UInt32", "Int64", "UInt64"}
+# Nodes per Read request when the server does not say (OperationLimits/MaxNodesPerRead).
+READ_CHUNK = 500
+# Service results that concern the node, not the session: only that variable goes bad.
+NODE_ERRORS = {"BadNodeIdUnknown", "BadNodeIdInvalid", "BadAttributeIdInvalid", "BadNotReadable",
+               "BadNotWritable", "BadUserAccessDenied", "BadTypeMismatch", "BadOutOfRange",
+               "BadIndexRangeInvalid", "BadDataEncodingUnsupported", "BadWriteNotSupported"}
 
 
 class OpcUaClient:
@@ -75,9 +81,9 @@ class OpcUaClient:
         self.root = project_root
 
     # The worker thread owns a private event loop: no extra threads, and close() is synchronous.
-    def _run(self, coroutine):
+    def _run(self, coroutine, factor=2):
         timeout = self.config.get("timeout_ms", 4000) / 1000
-        return self.loop.run_until_complete(asyncio.wait_for(coroutine, timeout * 2))
+        return self.loop.run_until_complete(asyncio.wait_for(coroutine, timeout * factor))
 
     def connect(self):
         if self.root is None:
@@ -145,14 +151,67 @@ class OpcUaClient:
             self.nodes[text] = self.client.get_node(node_id)
         return self.nodes[text]
 
-    def read(self, address, kind):
-        node = self._node(address)
-        value = self._run(node.read_data_value())
-        if not value.StatusCode.is_good():
-            raise ConnectionError(tr("Calidad OPC UA {name}", name=value.StatusCode.name))
-        result = value.Value.Value
+    def _node_error(self, exc):
+        """An OPC UA error about the node itself (as AddressError), or None for the session."""
+        from asyncua import ua
+        if isinstance(exc, ua.UaStatusCodeError):
+            name = ua.StatusCode(exc.code).name if hasattr(exc, "code") else type(exc).__name__
+            if name in NODE_ERRORS or type(exc).__name__ in NODE_ERRORS:
+                return AddressError(tr("OPC UA {name}", name=name if name in NODE_ERRORS else type(exc).__name__))
+        return None
+
+    @staticmethod
+    def _value(data_value, kind):
+        status = data_value.StatusCode
+        result = data_value.Value.Value if data_value.Value is not None else None
         if kind == "string" and result is not None and not isinstance(result, str):
             result = getattr(result, "Text", None) or str(result)
+        if status.is_good():
+            return result
+        if status.is_uncertain() and result is not None:
+            return Uncertain(result, tr("Calidad OPC UA {name}", name=status.name))
+        return AddressError(tr("Calidad OPC UA {name}", name=status.name))
+
+    def read(self, address, kind):
+        try:
+            node = self._node(address)
+            value = self._value(self._run(node.read_data_value()), kind)
+        except Exception as exc:
+            error = self._node_error(exc)
+            if error is None:
+                raise
+            raise error from None
+        if isinstance(value, AddressError):
+            raise value
+        return value
+
+    def prepare_reads(self, requests):
+        """One Read service per chunk of nodes (as many as the server accepts per request)."""
+        limit = READ_CHUNK
+        try:
+            from asyncua import ua
+            limit = int(self._run(self.client.get_node(ua.NodeId(ua.ObjectIds.Server_ServerCapabilities_OperationLimits_MaxNodesPerRead)).read_value())) or READ_CHUNK
+        except Exception:
+            pass
+        limit = max(1, min(limit, READ_CHUNK))
+        indices = list(range(len(requests)))
+        return [lambda chunk=indices[start:start + limit]: self._read_many(requests, chunk)
+                for start in range(0, len(indices), limit)]
+
+    def _read_many(self, requests, chunk):
+        result, nodes = {}, []
+        for index in chunk:
+            try:
+                nodes.append((index, self._node(requests[index][0])))
+            except Exception as exc:
+                error = self._node_error(exc) or (AddressError(str(exc)) if isinstance(exc, ValueError) else None)
+                if error is None:
+                    raise
+                result[index] = error
+        if nodes:
+            values = self._run(self.client.read_attributes([node for _, node in nodes]))
+            for (index, _), data_value in zip(nodes, values):
+                result[index] = self._value(data_value, requests[index][1])
         return result
 
     def write(self, address, kind, value):
@@ -167,13 +226,19 @@ class OpcUaClient:
         elif variant_type.name in {"Float", "Double"}:
             value = float(value)
         # No timestamps: many servers (S7-1500 among them) reject writes that carry one.
-        self._run(node.write_value(ua.DataValue(ua.Variant(value, variant_type))))
+        try:
+            self._run(node.write_value(ua.DataValue(ua.Variant(value, variant_type))))
+        except Exception as exc:
+            error = self._node_error(exc)
+            if error is None:
+                raise
+            raise error from None
 
     def close(self):
         try:
             if self.client is not None and self.loop is not None:
                 try:
-                    self._run(self.client.disconnect())
+                    self._run(self.client.disconnect(), factor=1)
                 except Exception:
                     pass
         finally:

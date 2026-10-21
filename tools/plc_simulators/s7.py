@@ -5,13 +5,42 @@ import struct
 import time
 
 
-def create_server(port=1102):
+def s7_server():
+    """A python-snap7 server that writes single bits like a real CPU (WordLen.Bit).
+
+    python-snap7's own server drops the bit number of the address and writes the whole byte,
+    which would clear the neighbouring bits that abSCADA now leaves alone.
+    """
     from snap7.server import Server
+
+    class BitServer(Server):
+        def _parse_address_specification(self, addr_spec):
+            parsed = super()._parse_address_specification(addr_spec)
+            if parsed and len(addr_spec) >= 12 and parsed.get("word_len") == 1:
+                parsed["bit"] = addr_spec[11] & 7
+            return parsed
+
+        def _handle_write_area(self, request, client_address):
+            spec = request.get("parameters", {}).get("address_spec", {})
+            data = request.get("data", {})
+            if spec.get("word_len") == 1 and data.get("data"):
+                key = (spec["area"], spec["db_number"])
+                memory = self.memory_areas.get(key)
+                if memory is not None and spec["start"] < len(memory):
+                    mask = 1 << spec.get("bit", 0)
+                    current = memory[spec["start"]]
+                    data["data"] = bytes([current | mask if data["data"][0] & 1 else current & ~mask & 0xFF])
+            return super()._handle_write_area(request, client_address)
+
+    return BitServer(log=False)
+
+
+def create_server(port=1102):
     from snap7.type import SrvArea
     memory = bytearray(32)
     struct.pack_into(">f", memory, 8, 60.0)
     struct.pack_into(">f", memory, 24, 45.0)
-    server = Server(log=False)
+    server = s7_server()
     server.host = "127.0.0.1"
     server.register_area(SrvArea.DB, 1, memory)
     server.start(tcp_port=port)

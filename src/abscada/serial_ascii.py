@@ -3,7 +3,7 @@ interprets them. Parsing a device's frames belongs to the project (a script)."""
 import threading
 import time
 from collections import deque
-from .protocol_definition import Field, ProtocolDefinition
+from .protocol_definition import AddressError, Field, ProtocolDefinition
 from .serial_link import Framer, Link, decode, encode, transport_fields, unescape
 from .i18n import tr
 
@@ -134,7 +134,7 @@ class SerialAscii:
                 remaining = deadline - time.monotonic()
                 if self.error is not None or remaining <= 0:
                     self._check()
-                    raise TimeoutError(tr("Sin respuesta a «{command}»", command=a["command"]))
+                    raise AddressError(tr("Sin respuesta a «{command}»", command=a["command"]))
                 self.lock.wait(remaining)
             return self.frames.popleft()
 

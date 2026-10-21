@@ -461,11 +461,9 @@
  "Las curvas necesitan variables numéricas o bool": "Curves need numeric or bool variables",
  "Eje de curva inexistente": "Curve axis does not exist",
  "La visibilidad de la curva debe ser booleana": "Curve visibility must be boolean",
- "Cola de archivo llena: hay pérdida de registros; revisar carga y disco": "Archive queue full: records are being lost; check load and disk",
  "Archivo SQLite: {exc}": "SQLite archive: {exc}",
  "El archivo no responde": "The archive does not respond",
  "El archivo está detenido": "The archive is stopped",
- "Cola de auditoría llena": "Audit queue full",
  "El archivo sigue cerrando": "The archive is still closing",
  "Archivo cerrado": "Archive closed",
  "Orden de archivo desconocida": "Unknown archive command",
@@ -1454,5 +1452,14 @@
  "{name} / {id}, alternativa {number}: {exc}": "{name} / {id}, alternative {number}: {exc}",
  "Alternativas según condiciones…": "Alternatives by condition…",
  "Abrir otro objeto cuando se cumpla una condición; si no se cumple ninguna, el de arriba": "Open another object when a condition holds; if none holds, the one above",
- "Alternativas según condiciones ({count})…": "Alternatives by condition ({count})…"
+ "Alternativas según condiciones ({count})…": "Alternatives by condition ({count})…",
+ "Leer huecos de hasta (bytes)": "Read gaps of up to (bytes)",
+ "DB{db}, byte {start}: {error}": "DB{db}, byte {start}: {error}",
+ "Leer huecos de hasta (registros)": "Read gaps of up to (registers)",
+ "OPC UA {name}": "OPC UA {name}",
+ "Archivo sobrecargado: {count} muestras intermedias no registradas; revisar carga y disco": "Archive overloaded: {count} intermediate samples not recorded; check load and disk",
+ "El archivo está sobrecargado; inténtalo de nuevo en unos segundos": "The archive is overloaded; try again in a few seconds",
+ "El archivo no responde; la orden no se ha aplicado": "The archive does not respond; the command was not applied",
+ "Cola de órdenes llena: la conexión {connection} no da abasto; inténtalo de nuevo": "Command queue full: connection {connection} cannot keep up; try again",
+ "Dirección con error; escritura descartada: {error}": "Address with an error; write discarded: {error}"
 }

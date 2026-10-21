@@ -12,6 +12,20 @@ class GroupError(Exception):
         self.indices = list(indices)
 
 
+class AddressError(Exception):
+    """One address cannot be read or written (it does not exist, is refused, holds no valid
+    value): only its variable goes bad; the connection is fine and stays open.
+
+    ``adapter.read`` raises it; a grouped read may also return it as the value of an index."""
+
+
+@dataclass(frozen=True)
+class Uncertain:
+    """A value the device delivers with a doubtful quality (OPC UA ``Uncertain*``)."""
+    value: object
+    reason: str = ""
+
+
 @dataclass(frozen=True)
 class Field:
     key: str

@@ -494,7 +494,7 @@ class HydroPLCs:
         self.stop_event = Event()
 
     def start(self):
-        from snap7.server import Server
+        from .s7 import s7_server
         from snap7.type import SrvArea
         from pyModbusTCP.server import ModbusServer
         # snap7 may share a busy port silently on Windows: refuse instead of mixing two plants.
@@ -504,7 +504,7 @@ class HydroPLCs:
         try:
             blocks = [("PLC_G1", self.plant.units[0].db), ("PLC_G2", self.plant.units[1].db), ("PLC_SSCC", self.plant.common)]
             for name, block in blocks:
-                server = Server(log=False)
+                server = s7_server()
                 server.host = self.host
                 server.register_area(SrvArea.DB, 1, block.memory)
                 server.start(tcp_port=self.ports[name])

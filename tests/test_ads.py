@@ -7,6 +7,7 @@ from abscada.ads import AdsClient, AdsError, TwinCatADS, decode, encode, net_id_
 from plc_simulators.ads import AdsSimulator
 from abscada.connectors import REGISTRY, definition
 from abscada.project import Project
+from abscada.protocol_definition import AddressError
 from abscada.runtime import Runtime
 from test_core import wait_for
 
@@ -101,7 +102,8 @@ def test_stale_handles_are_resolved_again(sim):
 def test_errors_are_explicit(sim):
     adapter = TwinCatADS(config(sim))
     adapter.connect()
-    with pytest.raises(AdsError, match="símbolo no encontrado · MAIN.missing"):
+    # A missing symbol is a fault of that variable only, not of the connection.
+    with pytest.raises(AddressError, match="símbolo no encontrado · MAIN.missing"):
         adapter.read({"symbol": "MAIN.missing", "encoding": "REAL"}, "float")
     adapter.close()
     with pytest.raises(AdsError, match="puerto ADS de destino"):
